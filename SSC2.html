@@ -47,12 +47,50 @@
       flex: 1;
       margin: 0 10px;
     }
+    /* عنوان SIKSA */
+    #title {
+      position: absolute;
+      top: 10px;
+      left: 20px;
+      color: white;
+      font-size: 24px;
+      font-weight: bold;
+      font-family: 'Arial', sans-serif;
+      z-index: 9999;
+      opacity: 0.3;
+      pointer-events: none;
+      text-shadow: 1px 1px 2px black;
+    }
+    /* دائرة التحميل */
+    #loadingSpinner {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      width: 60px;
+      height: 60px;
+      margin: -30px 0 0 -30px;
+      border: 8px solid #00ff00; /* أخضر */
+      border-top: 8px solid transparent;
+      border-radius: 50%;
+      animation: spin 1s linear infinite;
+      z-index: 10000;
+      display: none;
+    }
+    @keyframes spin {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
+    }
   </style>
 
-  <!-- مكتبة Shaka Player -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/shaka-player/4.3.6/shaka-player.compiled.min.js"></script>
 </head>
 <body>
+
+<!-- عنوان SIKSA -->
+<div id="title">SIKSA</div>
+
+<!-- دائرة التحميل -->
+<div id="loadingSpinner"></div>
 
 <video id="videoPlayer" autoplay playsinline controls crossorigin="anonymous"></video>
 
@@ -72,6 +110,7 @@
   const seekbar = document.getElementById('seekbar');
   const currentTime = document.getElementById('currentTime');
   const duration = document.getElementById('duration');
+  const loadingSpinner = document.getElementById('loadingSpinner');
 
   const videoUrl = "https://ssc-2-enc.edgenextcdn.net/out/v1/a16db2ec338a445a82d9c541cc9293f9/index.mpd";
 
@@ -87,13 +126,16 @@
 
   async function initPlayer() {
     try {
+      loadingSpinner.style.display = 'block'; // إظهار دائرة التحميل
       await player.load(videoUrl);
       console.log("✅ تم تحميل القناة بنجاح!");
-      video.muted = false;   // ← فك الكتم
-      video.volume = 1.0;    // ← رفع الصوت
-      await video.play();    // ← تشغيل الفيديو تلقائيًا بالصوت
+      video.muted = false;
+      video.volume = 1.0;
+      await video.play();
     } catch (error) {
       console.error("❌ خطأ في تحميل القناة:", error);
+    } finally {
+      loadingSpinner.style.display = 'none'; // إخفاء دائرة التحميل بعد التحميل أو الخطأ
     }
   }
 
