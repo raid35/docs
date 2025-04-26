@@ -3,124 +3,56 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>📺 مشغل قنوات احترافي</title>
+    <title>📺 مشغل قناة مباشرة</title>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/shaka-player/4.3.6/shaka-player.compiled.min.js"></script>
     <style>
-        body {
-            margin: 0;
-            background-color: #121212;
-            color: white;
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            display: flex;
-            height: 100vh;
-            overflow: hidden;
-        }
-        .sidebar {
-            width: 300px;
-            background-color: #1e1e1e;
-            overflow-y: auto;
-            padding: 10px;
-        }
-        .channel {
-            display: flex;
-            align-items: center;
-            padding: 10px;
-            margin-bottom: 5px;
-            background-color: #2c2c2c;
-            border-radius: 8px;
-            cursor: pointer;
-            transition: background 0.3s;
-        }
-        .channel.selected {
-            background-color: #3e8ed0;
-        }
-        .channel img {
-            width: 50px;
-            height: 50px;
-            object-fit: contain;
-            margin-right: 10px;
-            border-radius: 5px;
-            background: #fff;
-        }
-        .channel span {
-            font-size: 16px;
-        }
-        .player {
-            flex-grow: 1;
-            background-color: black;
-            position: relative;
-        }
-        video {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-        }
-        .channel-name {
-            position: absolute;
-            top: 20px;
-            left: 20px;
-            background: rgba(0, 0, 0, 0.7);
-            padding: 10px 15px;
-            border-radius: 10px;
-            font-size: 20px;
-        }
+        body, html { margin: 0; padding: 0; height: 100%; background: black; }
+        #videoContainer { width: 100vw; height: 100vh; display: flex; justify-content: center; align-items: center; background: black; }
+        video { width: 100%; height: 100%; object-fit: cover; }
     </style>
 </head>
 <body>
-    <div class="sidebar" id="channelList"></div>
-    <div class="player">
-        <div class="channel-name" id="channelName">... جاري التحميل</div>
+    <div id="videoContainer">
         <video id="videoPlayer" autoplay muted></video>
     </div>
-
     <script>
         const channels = [
-            { name: "AD SPORTS PREMIUM 1", logo: "https://cdn.livesoccertv.com/images/channels/thumbnails/abu-dhabi-sports-premium-1.png", url: "https://fastly-live.cdn.intigral-ott.net/JAW1/JAW1.isml/manifest.mpd", license: "e74c7d697bd26595b196c6b96e2d4f5b:e288110233737502e8af9184098ab50b" },
-            { name: "AD SPORTS PREMIUM 2", logo: "https://cdn.livesoccertv.com/images/channels/thumbnails/abu-dhabi-sports-premium-2.png", url: "https://fastly-live.cdn.intigral-ott.net/ADSP2/ADSP2.isml/manifest.mpd", license: "efca93272b9d34f5cf9d8598f43be5ea:55e5fe489e9c18f6c979c3126d4bcfed" },
-            { name: "DUBAI SPORTS 1", logo: "https://1.bp.blogspot.com/-vh8Qvc4Zm9c/XZTKstHn4-I/AAAAAAAACg8/Tf-r6UNOI9kBnE4nVaPlUzPOm3CBtj81QCLcBGAsYHQ/s1600/11.png", url: "https://fastly-live.cdn.intigral-ott.net/DBSH/DBSH.isml/manifest.mpd", license: "507e961ed13ca34c449ba45d6070b06e:c79fa598a6b4ccd40d4b264e16de6134" },
-            { name: "SHARJAH SPORTS", logo: "https://www.parsatv.com/index_files/channels/sharjah.jpg", url: "https://fastly-live.cdn.intigral-ott.net/SHS/SHS.isml/manifest.mpd", license: "12d37f04317d5c2e5f044a79f967c67e:75deea8e41e389997f34d0ebca3f1fb7" }
+            { name: "SSC 1", url: "https://ssc-1-enc.edgenextcdn.net/out/v1/c696e4819b55414388a1a487e8a45ca1/index.mpd", license: "d84c325f36814f39bbe59080272b10c3:550727de4c96ef1ecff874905493580f" },
+            { name: "SSC 2", url: "https://ssc-2-enc.edgenextcdn.net/out/v1/a16db2ec338a445a82d9c541cc9293f9/index.mpd", license: "8bcfc55359e24bd7ad1c5560a96ddd3c:b5dcf721ab522af92a9d3bf0bd55b596" },
+            { name: "SSC 3", url: "https://ssc-3-enc.edgenextcdn.net/out/v1/42e86125555242aaa2a12056832e7814/index.mpd", license: "7de5dd08ad8041d586c2f16ccc9490a1:5e1503f3398b34f5099933fedab847ef" }
+            // أضف باقي القنوات إذا رغبت
         ];
 
-        const listEl = document.getElementById('channelList');
-        const nameEl = document.getElementById('channelName');
         const video = document.getElementById('videoPlayer');
         const player = new shaka.Player(video);
-        let selectedIndex = 0;
 
-        function renderList() {
-            listEl.innerHTML = '';
-            channels.forEach((ch, i) => {
-                const div = document.createElement('div');
-                div.className = 'channel' + (i === selectedIndex ? ' selected' : '');
-                div.innerHTML = `<img src="${ch.logo}" alt=""> <span>${ch.name}</span>`;
-                div.onclick = () => loadChannel(i);
-                listEl.appendChild(div);
-            });
+        function getQueryParam(param) {
+            const params = new URLSearchParams(window.location.search);
+            return params.get(param);
         }
 
-        function loadChannel(index) {
-            selectedIndex = index;
-            renderList();
-            const ch = channels[index];
-            nameEl.textContent = ch.name;
-            player.configure({ drm: { clearKeys: { [ch.license.split(':')[0]]: ch.license.split(':')[1] } } });
-            player.load(ch.url).catch(e => console.error("فشل التحميل", e));
+        function enterFullscreen() {
+            const container = document.getElementById('videoContainer');
+            if (container.requestFullscreen) container.requestFullscreen();
+            else if (container.webkitRequestFullscreen) container.webkitRequestFullscreen();
+            else if (container.msRequestFullscreen) container.msRequestFullscreen();
         }
 
-        document.addEventListener("keydown", (e) => {
-            if (e.key === 'ArrowUp') {
-                selectedIndex = (selectedIndex - 1 + channels.length) % channels.length;
-                renderList();
-            } else if (e.key === 'ArrowDown') {
-                selectedIndex = (selectedIndex + 1) % channels.length;
-                renderList();
-            } else if (e.key === 'Enter') {
-                loadChannel(selectedIndex);
+        function playChannel(channelName) {
+            const channel = channels.find(c => c.name === channelName);
+            if (!channel) {
+                alert("القناة غير موجودة.");
+                return;
             }
-        });
+            player.configure({ drm: { clearKeys: { [channel.license.split(":")[0]]: channel.license.split(":")[1] } } });
+            player.load(channel.url).then(() => {
+                enterFullscreen();
+            }).catch(err => console.error("فشل في تحميل القناة:", err));
+        }
 
-        renderList();
-        loadChannel(selectedIndex);
+        const channelFromURL = getQueryParam("channel");
+        if (channelFromURL) playChannel(channelFromURL);
+        else alert("يرجى تحديد اسم القناة في الرابط. مثال: ?channel=SSC+1");
     </script>
 </body>
 </html>
