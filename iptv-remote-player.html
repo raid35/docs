@@ -1,0 +1,53 @@
+
+<!DOCTYPE html>
+<html lang="ar">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>📺 مشغل القنوات المباشرة</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/shaka-player/4.3.6/shaka-player.compiled.min.js"></script>
+    <style>
+        body { font-family: sans-serif; background-color: #000; color: white; margin: 0; }
+        .video-container { position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; background: black; display: flex; flex-direction: column; justify-content: center; align-items: center; }
+        video { width: 100%; height: 100%; object-fit: cover; }
+        .channel-name { position: absolute; top: 20px; left: 20px; background: rgba(0,0,0,0.6); padding: 10px 15px; border-radius: 10px; font-size: 20px; }
+    </style>
+</head>
+<body>
+    <div class="video-container">
+        <div class="channel-name" id="channelName">... جاري التحميل</div>
+        <video id="videoPlayer" autoplay></video>
+    </div>
+    <script>
+        const channels = [
+            { name: "AD SPORTS PREMIUM 1", logo: "", url: "https://fastly-live.cdn.intigral-ott.net/JAW1/JAW1.isml/manifest.mpd", license: "e74c7d697bd26595b196c6b96e2d4f5b:e288110233737502e8af9184098ab50b" },
+            { name: "AD SPORTS PREMIUM 2", logo: "", url: "https://fastly-live.cdn.intigral-ott.net/ADSP2/ADSP2.isml/manifest.mpd", license: "efca93272b9d34f5cf9d8598f43be5ea:55e5fe489e9c18f6c979c3126d4bcfed" },
+            { name: "AD SPORTS 1", logo: "", url: "https://fastly-live.cdn.intigral-ott.net/AD1/AD1.isml/manifest.mpd", license: "2810c600349a0cd3a920c7d99bbe00b1:3911049bf0e342e70e0fba2cba6aa628" },
+            { name: "AD SPORTS 2", logo: "", url: "https://uselector.cdn.intigral-ott.net/JAW1/JAW1.isml/manifest.mpd", license: "7295fc09a7633fd460808f1ed854a8b6:5b4c9115617286036232fbb0d583a651" },
+            { name: "DUBAI SPORTS 1", logo: "", url: "https://fastly-live.cdn.intigral-ott.net/DBSH/DBSH.isml/manifest.mpd", license: "507e961ed13ca34c449ba45d6070b06e:c79fa598a6b4ccd40d4b264e16de6134" },
+            { name: "DUBAI SPORTS 2", logo: "", url: "https://fastly-live.cdn.intigral-ott.net/DBS2/DBS2.isml/manifest.mpd", license: "b56ae1a253e92a7efe223858f1b909a5:6f3a9f6cf736fc3cd1727b4b626c943a" },
+            { name: "BAHRAIN SPORTS", logo: "", url: "https://fastly-live.cdn.intigral-ott.net/BST/BST.isml/manifest.mpd", license: "4715ff70915cd2a490da7e63251072c2:1c349d100a1abaacd76fe62d628fd7ab" },
+            { name: "SHARJAH SPORTS", logo: "", url: "https://fastly-live.cdn.intigral-ott.net/SHS/SHS.isml/manifest.mpd", license: "12d37f04317d5c2e5f044a79f967c67e:75deea8e41e389997f34d0ebca3f1fb7" }
+        ];
+        let currentIndex = 0;
+        const video = document.getElementById('videoPlayer');
+        const player = new shaka.Player(video);
+        const nameEl = document.getElementById('channelName');
+
+        function loadChannel(index) {
+            currentIndex = index;
+            const channel = channels[index];
+            nameEl.textContent = channel.name;
+            player.configure({ drm: { clearKeys: { [channel.license.split(':')[0]]: channel.license.split(':')[1] } } });
+            player.load(channel.url).catch(e => console.error('فشل التحميل', e));
+        }
+
+        document.addEventListener("keydown", function(e) {
+            if (e.key === "ArrowUp") loadChannel((currentIndex - 1 + channels.length) % channels.length);
+            else if (e.key === "ArrowDown") loadChannel((currentIndex + 1) % channels.length);
+        });
+
+        loadChannel(currentIndex);
+    </script>
+</body>
+</html>
