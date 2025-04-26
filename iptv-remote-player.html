@@ -3,11 +3,12 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>📺 تشغيل مباشر للقناة</title>
+  <title>📺 بث مباشر - قناة SSC 1</title>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/shaka-player/4.3.6/shaka-player.compiled.min.js"></script>
   <style>
     html, body {
-      margin: 0; padding: 0;
+      margin: 0;
+      padding: 0;
       background: black;
       height: 100vh;
       overflow: hidden;
@@ -20,46 +21,36 @@
   </style>
 </head>
 <body>
-  <video id="videoPlayer" autoplay></video>
+  <video id="videoPlayer" autoplay playsinline></video>
 
   <script>
-    // القناة الوحيدة التي تريد تشغيلها
     const channel = {
-      name: "SSC 1", // اسم القناة
-      url: "https://ssc-1-enc.edgenextcdn.net/out/v1/c696e4819b55414388a1a487e8a45ca1/index.mpd", // رابط الفيديو
-      license: "d84c325f36814f39bbe59080272b10c3:550727de4c96ef1ecff874905493580f" // الترخيص
+      url: "https://ssc-1-enc.edgenextcdn.net/out/v1/c696e4819b55414388a1a487e8a45ca1/index.mpd",
+      license: "d84c325f36814f39bbe59080272b10c3:550727de4c96ef1ecff874905493580f"
     };
 
     const video = document.getElementById("videoPlayer");
     const player = new shaka.Player(video);
 
-    function enterFullscreen() {
-      const container = document.documentElement;
-      if (container.requestFullscreen) container.requestFullscreen();
-      else if (container.webkitRequestFullscreen) container.webkitRequestFullscreen();
-      else if (container.msRequestFullscreen) container.msRequestFullscreen();
-    }
-
-    // تشغيل القناة تلقائيًا
-    function playChannel() {
-      player.configure({
-        drm: {
-          clearKeys: {
-            [channel.license.split(":")[0]]: channel.license.split(":")[1]
+    async function startChannel() {
+      try {
+        player.configure({
+          drm: {
+            clearKeys: {
+              [channel.license.split(":")[0]]: channel.license.split(":")[1]
+            }
           }
-        }
-      });
-
-      player.load(channel.url).then(() => {
-        video.muted = false;  // التأكد من أن الصوت ليس مُطفأ
-        enterFullscreen();  // الدخول في وضع ملء الشاشة
-      }).catch(err => {
-        console.error("فشل في تشغيل القناة:", err);
-      });
+        });
+        await player.load(channel.url);
+        video.volume = 1.0;
+        video.muted = false;
+        await video.play();
+      } catch (err) {
+        console.error("خطأ في تشغيل القناة:", err);
+      }
     }
 
-    // تشغيل القناة عند تحميل الصفحة
-    playChannel();
+    startChannel();
   </script>
 </body>
 </html>
