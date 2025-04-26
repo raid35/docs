@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>📺 بث مباشر - قناة SSC 1</title>
+  <title>📺 بث مباشر - قناة JAW1</title>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/shaka-player/4.3.6/shaka-player.compiled.min.js"></script>
   <style>
     html, body {
@@ -24,11 +24,6 @@
   <video id="videoPlayer" autoplay playsinline></video>
 
   <script>
-    const channel = {
-      url: "https://fastly-live.cdn.intigral-ott.net/JAW1/JAW1.isml/manifest.mpd",
-      license: "e74c7d697bd26595b196c6b96e2d4f5b:e288110233737502e8af9184098ab50b"
-    };
-
     const video = document.getElementById("videoPlayer");
     const player = new shaka.Player(video);
 
@@ -37,23 +32,21 @@
         player.configure({
           drm: {
             clearKeys: {
-              [channel.license.split(":")[0]]: channel.license.split(":")[1]
+              'e74c7d697bd26595b196c6b96e2d4f5b': 'e288110233737502e8af9184098ab50b'
             }
           }
         });
 
-        // تحميل الفيديو
-        await player.load(channel.url);
+        await player.load("https://fastly-live.cdn.intigral-ott.net/JAW1/JAW1.isml/manifest.mpd");
 
-        // اختيار الصوت باللغة العربية إذا كانت متاحة
+        // محاولة تفعيل صوت عربي
         player.selectAudioLanguage('ar');
 
-        // تشغيل الفيديو مع الصوت
         video.volume = 1.0;
         video.muted = false;
         await video.play();
-      } catch (err) {
-        console.error("خطأ في تشغيل القناة:", err);
+      } catch (error) {
+        console.error("خطأ في تشغيل القناة:", error);
       }
     }
 
