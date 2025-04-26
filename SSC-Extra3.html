@@ -2,7 +2,7 @@
 <html lang="ar" dir="rtl">
 <head>
   <meta charset="UTF-8">
-  <title>مشغل فيديو احترافي مع DRM</title>
+  <title>مشغل فيديو مع DRM</title>
   <style>
     body, html {
       margin: 0;
@@ -47,12 +47,52 @@
       flex: 1;
       margin: 0 10px;
     }
+    /* عنوان SIKSA */
+    #title {
+      position: absolute;
+      top: 10px;
+      left: 20px;
+      color: white;
+      font-size: 24px;
+      font-weight: bold;
+      font-family: 'Arial', sans-serif;
+      z-index: 9999;
+      opacity: 0.3;
+      pointer-events: none;
+      text-shadow: 1px 1px 2px black;
+    }
+    /* دائرة التحميل */
+    #loadingSpinner {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      width: 60px;
+      height: 60px;
+      margin: -30px 0 0 -30px;
+      border: 8px solid #00ff00; /* أخضر */
+      border-top: 8px solid transparent;
+      border-radius: 50%;
+      animation: spin 1s linear infinite;
+      z-index: 10000;
+      display: none;
+    }
+    @keyframes spin {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
+    }
   </style>
-  <script src="https://cdn.dashjs.org/latest/dash.all.min.js"></script>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/shaka-player/4.3.6/shaka-player.compiled.min.js"></script>
 </head>
 <body>
 
-<video id="videoPlayer" controls crossorigin="anonymous"></video>
+<!-- عنوان SIKSA -->
+<div id="title">SIKSA</div>
+
+<!-- دائرة التحميل -->
+<div id="loadingSpinner"></div>
+
+<video id="videoPlayer" autoplay playsinline controls crossorigin="anonymous"></video>
 
 <div id="controls" class="controls">
   <button id="playPause" class="btn">⏯️</button>
@@ -70,20 +110,36 @@
   const seekbar = document.getElementById('seekbar');
   const currentTime = document.getElementById('currentTime');
   const duration = document.getElementById('duration');
+  const loadingSpinner = document.getElementById('loadingSpinner');
 
-  // رابط MPD مع DRM و مفتاح الترخيص
-  const videoUrl = "https://ssc-1-enc.edgenextcdn.net/out/v1/c696e4819b55414388a1a487e8a45ca1/index.mpd";
-  const licenseUrl = "d84c325f36814f39bbe59080272b10c3:550727de4c96ef1ecff874905493580f"; // استبدل بهذا الرابط الفعلي للترخيص
+  const videoUrl = "https://ssc-extra3-enc.edgenextcdn.net/out/v1/8f1c6c3f05ef4284a64b342891bd85ae/index.mpd";
 
-  const player = dashjs.MediaPlayer().create();
-  player.initialize(video, videoUrl, true);
+  const player = new shaka.Player(video);
 
-  // إعدادات DRM (مثل clearkey)
-  player.setProtectionData({
-    "com.widevine.alpha": {
-      "serverURL": licenseUrl
+  player.configure({
+    drm: {
+      clearKeys: {
+        "98cfd6fd4812497fb24dc75f7545f2ee": "d3006ee69e77b25939728ebf30d3180a"
+      }
     }
   });
+
+  async function initPlayer() {
+    try {
+      loadingSpinner.style.display = 'block'; // إظهار دائرة التحميل
+      await player.load(videoUrl);
+      console.log("✅ تم تحميل القناة بنجاح!");
+      video.muted = false;
+      video.volume = 1.0;
+      await video.play();
+    } catch (error) {
+      console.error("❌ خطأ في تحميل القناة:", error);
+    } finally {
+      loadingSpinner.style.display = 'none'; // إخفاء دائرة التحميل بعد التحميل أو الخطأ
+    }
+  }
+
+  document.addEventListener('DOMContentLoaded', initPlayer);
 
   let hideControlsTimeout;
 
@@ -106,9 +162,9 @@
 
   playPause.addEventListener('click', () => {
     if (video.paused) {
-      player.play();
+      video.play();
     } else {
-      player.pause();
+      video.pause();
     }
   });
 
@@ -116,20 +172,19 @@
     video.muted = !video.muted;
   });
 
-  player.on('timeupdate', () => {
-    seekbar.value = (player.time() / player.duration()) * 100;
-    currentTime.textContent = formatTime(player.time());
-  });
-
-  player.on('durationchange', () => {
-    duration.textContent = formatTime(player.duration());
-  });
-
   seekbar.addEventListener('input', () => {
-    player.seek(seekbar.value / 100 * player.duration());
+    video.currentTime = (seekbar.value / 100) * video.duration;
   });
 
-  // إظهار التحكم أول بداية
+  video.addEventListener('timeupdate', () => {
+    seekbar.value = (video.currentTime / video.duration) * 100;
+    currentTime.textContent = formatTime(video.currentTime);
+  });
+
+  video.addEventListener('loadedmetadata', () => {
+    duration.textContent = formatTime(video.duration);
+  });
+
   showControls();
 </script>
 
