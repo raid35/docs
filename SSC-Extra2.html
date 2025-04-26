@@ -1,142 +1,191 @@
 <!DOCTYPE html>
-<html lang="ar">
+<html lang="ar" dir="rtl">
 <head>
   <meta charset="UTF-8">
-  <title>مشغل تلفزيون احترافي</title>
+  <title>مشغل فيديو مع DRM</title>
   <style>
-    html, body {
+    body, html {
       margin: 0;
       padding: 0;
       height: 100%;
-      background-color: black;
       overflow: hidden;
+      background: black;
     }
-    #video {
+    #videoPlayer {
       width: 100%;
       height: 100%;
-      background-color: black;
+      background: black;
+      object-fit: cover;
     }
-    #controls {
+    .controls {
       position: absolute;
       bottom: 0;
-      left: 0;
       width: 100%;
-      background: rgba(0,0,0,0.5);
+      background: rgba(0, 0, 0, 0.6);
       display: flex;
-      justify-content: space-around;
       align-items: center;
+      justify-content: space-between;
       padding: 10px;
-      transition: opacity 0.5s;
       opacity: 0;
+      transition: opacity 0.5s;
     }
-    #controls.visible {
+    .controls.show {
       opacity: 1;
     }
     .btn {
       color: white;
+      background: none;
+      border: none;
       font-size: 20px;
-      padding: 10px;
+      cursor: pointer;
+    }
+    .time {
+      color: white;
+      font-size: 14px;
+    }
+    #seekbar {
+      flex: 1;
+      margin: 0 10px;
+    }
+    /* عنوان SIKSA */
+    #title {
+      position: absolute;
+      top: 10px;
+      left: 20px;
+      color: white;
+      font-size: 24px;
+      font-weight: bold;
+      font-family: 'Arial', sans-serif;
+      z-index: 9999;
+      opacity: 0.3;
+      pointer-events: none;
+      text-shadow: 1px 1px 2px black;
+    }
+    /* دائرة التحميل */
+    #loadingSpinner {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      width: 60px;
+      height: 60px;
+      margin: -30px 0 0 -30px;
+      border: 8px solid #00ff00; /* أخضر */
+      border-top: 8px solid transparent;
+      border-radius: 50%;
+      animation: spin 1s linear infinite;
+      z-index: 10000;
+      display: none;
+    }
+    @keyframes spin {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
     }
   </style>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/shaka-player/4.3.6/shaka-player.compiled.min.js"></script>
 </head>
 <body>
 
-<video id="video" autoplay controls></video>
+<!-- عنوان SIKSA -->
+<div id="title">SIKSA</div>
 
-<div id="controls">
-  <div class="btn" id="playPause">⏯️ تشغيل/إيقاف</div>
-  <div class="btn" id="volumeUp">🔊 صوت ↑</div>
-  <div class="btn" id="volumeDown">🔉 صوت ↓</div>
-  <div class="btn" id="seekForward">⏩ تقديم</div>
-  <div class="btn" id="seekBackward">⏪ تأخير</div>
+<!-- دائرة التحميل -->
+<div id="loadingSpinner"></div>
+
+<video id="videoPlayer" autoplay playsinline controls crossorigin="anonymous"></video>
+
+<div id="controls" class="controls">
+  <button id="playPause" class="btn">⏯️</button>
+  <div class="time" id="currentTime">00:00</div>
+  <input type="range" id="seekbar" value="0" min="0" max="100" step="1">
+  <div class="time" id="duration">00:00</div>
+  <button id="mute" class="btn">🔇</button>
 </div>
 
-<script src="https://cdn.jsdelivr.net/npm/shaka-player@4.3.5/dist/shaka-player.compiled.js"></script>
 <script>
-  const manifestUri = 'https://ssc-news-live-enc.edgenextcdn.net/out/v1/ef466f43623c4bbaa3f905b566ec35ea/index.mpd';
-  const clearkeys = {
-    '3d04975236a44f62857d181597705ee6': '362133e9cb13189ad4fe095ced216f60'
-  };
-
-  const video = document.getElementById('video');
+  const video = document.getElementById('videoPlayer');
   const controls = document.getElementById('controls');
+  const playPause = document.getElementById('playPause');
+  const mute = document.getElementById('mute');
+  const seekbar = document.getElementById('seekbar');
+  const currentTime = document.getElementById('currentTime');
+  const duration = document.getElementById('duration');
+  const loadingSpinner = document.getElementById('loadingSpinner');
 
-  async function initPlayer() {
-    const player = new shaka.Player(video);
+  const videoUrl = "https://ssc-extra-2-enc.edgenextcdn.net/out/v1/8b70de2b70d447ba8a7450ba90926a2d/index.mpd";
 
-    player.configure({
-      drm: { clearKeys: clearkeys }
-    });
+  const player = new shaka.Player(video);
 
-    try {
-      await player.load(manifestUri);
-      console.log('تم تحميل القناة');
-    } catch (e) {
-      console.error('خطأ في التحميل:', e);
-    }
-  }
-
-  shaka.polyfill.installAll();
-  if (shaka.Player.isBrowserSupported()) {
-    initPlayer();
-  } else {
-    console.error('المتصفح لا يدعم Shaka Player');
-  }
-
-  // عرض وإخفاء الشريط عند الحركة
-  let hideTimeout;
-  function showControls() {
-    controls.classList.add('visible');
-    clearTimeout(hideTimeout);
-    hideTimeout = setTimeout(() => {
-      controls.classList.remove('visible');
-    }, 3000); // يخفي بعد 3 ثواني
-  }
-
-  document.addEventListener('keydown', (e) => {
-    showControls();
-    if (e.code === 'Space' || e.code === 'Enter') {
-      togglePlayPause();
-    } else if (e.code === 'ArrowUp') {
-      volumeUp();
-    } else if (e.code === 'ArrowDown') {
-      volumeDown();
-    } else if (e.code === 'ArrowRight') {
-      seekForward();
-    } else if (e.code === 'ArrowLeft') {
-      seekBackward();
+  player.configure({
+    drm: {
+      clearKeys: {
+        "4d89249bd4ca4ebc9e70443265f9507d": "cf074ffd2646c9c2f8513b47fa57bc30"
+      }
     }
   });
 
-  function togglePlayPause() {
+  async function initPlayer() {
+    try {
+      loadingSpinner.style.display = 'block'; // إظهار دائرة التحميل
+      await player.load(videoUrl);
+      console.log("✅ تم تحميل القناة بنجاح!");
+      video.muted = false;
+      video.volume = 1.0;
+      await video.play();
+    } catch (error) {
+      console.error("❌ خطأ في تحميل القناة:", error);
+    } finally {
+      loadingSpinner.style.display = 'none'; // إخفاء دائرة التحميل بعد التحميل أو الخطأ
+    }
+  }
+
+  document.addEventListener('DOMContentLoaded', initPlayer);
+
+  let hideControlsTimeout;
+
+  function formatTime(sec) {
+    const minutes = Math.floor(sec / 60).toString().padStart(2, '0');
+    const seconds = Math.floor(sec % 60).toString().padStart(2, '0');
+    return `${minutes}:${seconds}`;
+  }
+
+  function showControls() {
+    controls.classList.add('show');
+    clearTimeout(hideControlsTimeout);
+    hideControlsTimeout = setTimeout(() => {
+      controls.classList.remove('show');
+    }, 3000);
+  }
+
+  document.body.addEventListener('mousemove', showControls);
+  document.body.addEventListener('keydown', showControls);
+
+  playPause.addEventListener('click', () => {
     if (video.paused) {
       video.play();
     } else {
       video.pause();
     }
-  }
+  });
 
-  function volumeUp() {
-    video.volume = Math.min(video.volume + 0.1, 1);
-  }
+  mute.addEventListener('click', () => {
+    video.muted = !video.muted;
+  });
 
-  function volumeDown() {
-    video.volume = Math.max(video.volume - 0.1, 0);
-  }
+  seekbar.addEventListener('input', () => {
+    video.currentTime = (seekbar.value / 100) * video.duration;
+  });
 
-  function seekForward() {
-    video.currentTime += 10;
-  }
+  video.addEventListener('timeupdate', () => {
+    seekbar.value = (video.currentTime / video.duration) * 100;
+    currentTime.textContent = formatTime(video.currentTime);
+  });
 
-  function seekBackward() {
-    video.currentTime -= 10;
-  }
+  video.addEventListener('loadedmetadata', () => {
+    duration.textContent = formatTime(video.duration);
+  });
 
-  document.getElementById('playPause').onclick = togglePlayPause;
-  document.getElementById('volumeUp').onclick = volumeUp;
-  document.getElementById('volumeDown').onclick = volumeDown;
-  document.getElementById('seekForward').onclick = seekForward;
-  document.getElementById('seekBackward').onclick = seekBackward;
+  showControls();
 </script>
 
 </body>
