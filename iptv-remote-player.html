@@ -1,53 +1,126 @@
-
 <!DOCTYPE html>
 <html lang="ar">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>📺 مشغل القنوات المباشرة</title>
+    <title>📺 مشغل قنوات احترافي</title>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/shaka-player/4.3.6/shaka-player.compiled.min.js"></script>
     <style>
-        body { font-family: sans-serif; background-color: #000; color: white; margin: 0; }
-        .video-container { position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; background: black; display: flex; flex-direction: column; justify-content: center; align-items: center; }
-        video { width: 100%; height: 100%; object-fit: cover; }
-        .channel-name { position: absolute; top: 20px; left: 20px; background: rgba(0,0,0,0.6); padding: 10px 15px; border-radius: 10px; font-size: 20px; }
+        body {
+            margin: 0;
+            background-color: #121212;
+            color: white;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            display: flex;
+            height: 100vh;
+            overflow: hidden;
+        }
+        .sidebar {
+            width: 300px;
+            background-color: #1e1e1e;
+            overflow-y: auto;
+            padding: 10px;
+        }
+        .channel {
+            display: flex;
+            align-items: center;
+            padding: 10px;
+            margin-bottom: 5px;
+            background-color: #2c2c2c;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: background 0.3s;
+        }
+        .channel.selected {
+            background-color: #3e8ed0;
+        }
+        .channel img {
+            width: 50px;
+            height: 50px;
+            object-fit: contain;
+            margin-right: 10px;
+            border-radius: 5px;
+            background: #fff;
+        }
+        .channel span {
+            font-size: 16px;
+        }
+        .player {
+            flex-grow: 1;
+            background-color: black;
+            position: relative;
+        }
+        video {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+        .channel-name {
+            position: absolute;
+            top: 20px;
+            left: 20px;
+            background: rgba(0, 0, 0, 0.7);
+            padding: 10px 15px;
+            border-radius: 10px;
+            font-size: 20px;
+        }
     </style>
 </head>
 <body>
-    <div class="video-container">
+    <div class="sidebar" id="channelList"></div>
+    <div class="player">
         <div class="channel-name" id="channelName">... جاري التحميل</div>
-        <video id="videoPlayer" autoplay></video>
+        <video id="videoPlayer" autoplay muted></video>
     </div>
+
     <script>
         const channels = [
-            { name: "AD SPORTS PREMIUM 1", logo: "", url: "https://fastly-live.cdn.intigral-ott.net/JAW1/JAW1.isml/manifest.mpd", license: "e74c7d697bd26595b196c6b96e2d4f5b:e288110233737502e8af9184098ab50b" },
-            { name: "AD SPORTS PREMIUM 2", logo: "", url: "https://fastly-live.cdn.intigral-ott.net/ADSP2/ADSP2.isml/manifest.mpd", license: "efca93272b9d34f5cf9d8598f43be5ea:55e5fe489e9c18f6c979c3126d4bcfed" },
-            { name: "AD SPORTS 1", logo: "", url: "https://fastly-live.cdn.intigral-ott.net/AD1/AD1.isml/manifest.mpd", license: "2810c600349a0cd3a920c7d99bbe00b1:3911049bf0e342e70e0fba2cba6aa628" },
-            { name: "AD SPORTS 2", logo: "", url: "https://uselector.cdn.intigral-ott.net/JAW1/JAW1.isml/manifest.mpd", license: "7295fc09a7633fd460808f1ed854a8b6:5b4c9115617286036232fbb0d583a651" },
-            { name: "DUBAI SPORTS 1", logo: "", url: "https://fastly-live.cdn.intigral-ott.net/DBSH/DBSH.isml/manifest.mpd", license: "507e961ed13ca34c449ba45d6070b06e:c79fa598a6b4ccd40d4b264e16de6134" },
-            { name: "DUBAI SPORTS 2", logo: "", url: "https://fastly-live.cdn.intigral-ott.net/DBS2/DBS2.isml/manifest.mpd", license: "b56ae1a253e92a7efe223858f1b909a5:6f3a9f6cf736fc3cd1727b4b626c943a" },
-            { name: "BAHRAIN SPORTS", logo: "", url: "https://fastly-live.cdn.intigral-ott.net/BST/BST.isml/manifest.mpd", license: "4715ff70915cd2a490da7e63251072c2:1c349d100a1abaacd76fe62d628fd7ab" },
-            { name: "SHARJAH SPORTS", logo: "", url: "https://fastly-live.cdn.intigral-ott.net/SHS/SHS.isml/manifest.mpd", license: "12d37f04317d5c2e5f044a79f967c67e:75deea8e41e389997f34d0ebca3f1fb7" }
+            { name: "AD SPORTS PREMIUM 1", logo: "https://cdn.livesoccertv.com/images/channels/thumbnails/abu-dhabi-sports-premium-1.png", url: "https://fastly-live.cdn.intigral-ott.net/JAW1/JAW1.isml/manifest.mpd", license: "e74c7d697bd26595b196c6b96e2d4f5b:e288110233737502e8af9184098ab50b" },
+            { name: "AD SPORTS PREMIUM 2", logo: "https://cdn.livesoccertv.com/images/channels/thumbnails/abu-dhabi-sports-premium-2.png", url: "https://fastly-live.cdn.intigral-ott.net/ADSP2/ADSP2.isml/manifest.mpd", license: "efca93272b9d34f5cf9d8598f43be5ea:55e5fe489e9c18f6c979c3126d4bcfed" },
+            { name: "DUBAI SPORTS 1", logo: "https://1.bp.blogspot.com/-vh8Qvc4Zm9c/XZTKstHn4-I/AAAAAAAACg8/Tf-r6UNOI9kBnE4nVaPlUzPOm3CBtj81QCLcBGAsYHQ/s1600/11.png", url: "https://fastly-live.cdn.intigral-ott.net/DBSH/DBSH.isml/manifest.mpd", license: "507e961ed13ca34c449ba45d6070b06e:c79fa598a6b4ccd40d4b264e16de6134" },
+            { name: "SHARJAH SPORTS", logo: "https://www.parsatv.com/index_files/channels/sharjah.jpg", url: "https://fastly-live.cdn.intigral-ott.net/SHS/SHS.isml/manifest.mpd", license: "12d37f04317d5c2e5f044a79f967c67e:75deea8e41e389997f34d0ebca3f1fb7" }
         ];
-        let currentIndex = 0;
+
+        const listEl = document.getElementById('channelList');
+        const nameEl = document.getElementById('channelName');
         const video = document.getElementById('videoPlayer');
         const player = new shaka.Player(video);
-        const nameEl = document.getElementById('channelName');
+        let selectedIndex = 0;
 
-        function loadChannel(index) {
-            currentIndex = index;
-            const channel = channels[index];
-            nameEl.textContent = channel.name;
-            player.configure({ drm: { clearKeys: { [channel.license.split(':')[0]]: channel.license.split(':')[1] } } });
-            player.load(channel.url).catch(e => console.error('فشل التحميل', e));
+        function renderList() {
+            listEl.innerHTML = '';
+            channels.forEach((ch, i) => {
+                const div = document.createElement('div');
+                div.className = 'channel' + (i === selectedIndex ? ' selected' : '');
+                div.innerHTML = `<img src="${ch.logo}" alt=""> <span>${ch.name}</span>`;
+                div.onclick = () => loadChannel(i);
+                listEl.appendChild(div);
+            });
         }
 
-        document.addEventListener("keydown", function(e) {
-            if (e.key === "ArrowUp") loadChannel((currentIndex - 1 + channels.length) % channels.length);
-            else if (e.key === "ArrowDown") loadChannel((currentIndex + 1) % channels.length);
+        function loadChannel(index) {
+            selectedIndex = index;
+            renderList();
+            const ch = channels[index];
+            nameEl.textContent = ch.name;
+            player.configure({ drm: { clearKeys: { [ch.license.split(':')[0]]: ch.license.split(':')[1] } } });
+            player.load(ch.url).catch(e => console.error("فشل التحميل", e));
+        }
+
+        document.addEventListener("keydown", (e) => {
+            if (e.key === 'ArrowUp') {
+                selectedIndex = (selectedIndex - 1 + channels.length) % channels.length;
+                renderList();
+            } else if (e.key === 'ArrowDown') {
+                selectedIndex = (selectedIndex + 1) % channels.length;
+                renderList();
+            } else if (e.key === 'Enter') {
+                loadChannel(selectedIndex);
+            }
         });
 
-        loadChannel(currentIndex);
+        renderList();
+        loadChannel(selectedIndex);
     </script>
 </body>
 </html>
