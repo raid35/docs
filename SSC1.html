@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>📺 بث مباشر - قناة SSC 2</title>
+  <title>📺 مشغل قوي - بث مباشر</title>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/shaka-player/4.3.6/shaka-player.compiled.min.js"></script>
   <style>
     body {
@@ -43,8 +43,8 @@
 </head>
 <body>
 
-  <div class="loading-screen" id="loading">⏳ جاري تحميل القناة...</div>
-  <video id="videoPlayer" autoplay playsinline preload="auto"></video>
+  <div class="loading-screen" id="loading">⏳ جاري التحميل...</div>
+  <video id="videoPlayer" autoplay playsinline preload="auto" controls></video>
 
   <script>
     const channel = {
@@ -53,29 +53,41 @@
     };
 
     const video = document.getElementById("videoPlayer");
-    const loadingScreen = document.getElementById("loading");
+    const loading = document.getElementById("loading");
     const player = new shaka.Player(video);
 
     async function startChannel() {
       try {
+        // إعدادات لتحسين الأداء
         player.configure({
           drm: {
             clearKeys: {
               [channel.license.split(":")[0]]: channel.license.split(":")[1]
             }
+          },
+          streaming: {
+            bufferingGoal: 30,
+            rebufferingGoal: 10,
+            stallEnabled: true,
+            alwaysStreamText: true
+          },
+          abr: {
+            enabled: true,
+            defaultBandwidthEstimate: 5e6 // يساعد على بدء التشغيل بسرعة
           }
         });
 
         await player.load(channel.url);
-        player.selectAudioLanguage('ar');
+        player.selectAudioLanguage("ar"); // صوت المعلق العربي إن وُجد
+
         video.volume = 1.0;
         video.muted = false;
         await video.play();
 
-        loadingScreen.classList.add("hidden");
-      } catch (err) {
-        console.error("❌ خطأ في تشغيل القناة:", err);
-        loadingScreen.innerText = "❌ فشل في تحميل القناة!";
+        loading.classList.add("hidden");
+      } catch (error) {
+        console.error("⚠️ فشل التحميل:", error);
+        loading.textContent = "❌ تعذر تحميل البث!";
       }
     }
 
