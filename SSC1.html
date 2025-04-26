@@ -3,25 +3,48 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>📺 بث مباشر - قناة AD 1.html</title>
+  <title>📺 بث مباشر - قناة SSC 2</title>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/shaka-player/4.3.6/shaka-player.compiled.min.js"></script>
   <style>
-    html, body {
+    body {
       margin: 0;
-      padding: 0;
       background: black;
-      height: 100vh;
       overflow: hidden;
     }
+
+    .loading-screen {
+      position: absolute;
+      width: 100vw;
+      height: 100vh;
+      background: url('https://i.imgur.com/MkXdzgZ.jpeg') center center / cover no-repeat;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: white;
+      font-size: 24px;
+      font-family: Arial, sans-serif;
+      z-index: 10;
+      transition: opacity 0.5s ease;
+    }
+
+    .loading-screen.hidden {
+      opacity: 0;
+      pointer-events: none;
+    }
+
     video {
       width: 100vw;
       height: 100vh;
       object-fit: cover;
+      z-index: 1;
+      position: relative;
     }
   </style>
 </head>
 <body>
-  <video id="videoPlayer" autoplay playsinline></video>
+
+  <div class="loading-screen" id="loading">⏳ جاري تحميل القناة...</div>
+  <video id="videoPlayer" autoplay playsinline preload="auto"></video>
 
   <script>
     const channel = {
@@ -30,6 +53,7 @@
     };
 
     const video = document.getElementById("videoPlayer");
+    const loadingScreen = document.getElementById("loading");
     const player = new shaka.Player(video);
 
     async function startChannel() {
@@ -42,18 +66,16 @@
           }
         });
 
-        // تحميل الفيديو
         await player.load(channel.url);
-
-        // اختيار الصوت باللغة العربية إذا كانت متاحة
         player.selectAudioLanguage('ar');
-
-        // تشغيل الفيديو مع الصوت
         video.volume = 1.0;
         video.muted = false;
         await video.play();
+
+        loadingScreen.classList.add("hidden");
       } catch (err) {
-        console.error("خطأ في تشغيل القناة:", err);
+        console.error("❌ خطأ في تشغيل القناة:", err);
+        loadingScreen.innerText = "❌ فشل في تحميل القناة!";
       }
     }
 
