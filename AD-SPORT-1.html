@@ -3,50 +3,91 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>📺 بث مباشر - قناة JAW1</title>
+  <title>📺 مشغل قوي - بث مباشر</title>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/shaka-player/4.3.6/shaka-player.compiled.min.js"></script>
   <style>
-    html, body {
+    body {
       margin: 0;
-      padding: 0;
       background: black;
-      height: 100vh;
       overflow: hidden;
     }
+
+    .loading-screen {
+      position: absolute;
+      width: 100vw;
+      height: 100vh;
+      background: url('https://i.imgur.com/MkXdzgZ.jpeg') center center / cover no-repeat;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: white;
+      font-size: 24px;
+      font-family: Arial, sans-serif;
+      z-index: 10;
+      transition: opacity 0.5s ease;
+    }
+
+    .loading-screen.hidden {
+      opacity: 0;
+      pointer-events: none;
+    }
+
     video {
       width: 100vw;
       height: 100vh;
       object-fit: cover;
+      z-index: 1;
+      position: relative;
     }
   </style>
 </head>
 <body>
-  <video id="videoPlayer" autoplay playsinline></video>
+
+  <div class="loading-screen" id="loading">⏳ جاري التحميل...</div>
+  <video id="videoPlayer" autoplay playsinline preload="auto" controls></video>
 
   <script>
+    const channel = {
+      url: "https://fastly-live.cdn.intigral-ott.net/JAW1/JAW1.isml/manifest.mpd",
+      license: "e74c7d697bd26595b196c6b96e2d4f5b:e288110233737502e8af9184098ab50b"
+    };
+
     const video = document.getElementById("videoPlayer");
+    const loading = document.getElementById("loading");
     const player = new shaka.Player(video);
 
     async function startChannel() {
       try {
+        // إعدادات لتحسين الأداء
         player.configure({
           drm: {
             clearKeys: {
-              'e74c7d697bd26595b196c6b96e2d4f5b': 'e288110233737502e8af9184098ab50b'
+              [channel.license.split(":")[0]]: channel.license.split(":")[1]
             }
+          },
+          streaming: {
+            bufferingGoal: 30,
+            rebufferingGoal: 10,
+            stallEnabled: true,
+            alwaysStreamText: true
+          },
+          abr: {
+            enabled: true,
+            defaultBandwidthEstimate: 5e6 // يساعد على بدء التشغيل بسرعة
           }
         });
 
-        await player.load("https://fastly-live.cdn.intigral-ott.net/JAW1/JAW1.isml/manifest.mpd");
-
-        // محاولة تفعيل صوت عربي
-        player.selectAudioLanguage('ar');
+        await player.load(channel.url);
+        player.selectAudioLanguage("ar"); // صوت المعلق العربي إن وُجد
 
         video.volume = 1.0;
         video.muted = false;
         await video.play();
+
+        loading.classList.add("hidden");
       } catch (error) {
-        console.error("خطأ في تشغيل القناة:", error);
+        console.error("⚠️ فشل التحميل:", error);
+        loading.textContent = "❌ تعذر تحميل البث!";
       }
     }
 
