@@ -20,14 +20,14 @@
   </style>
 </head>
 <body>
-  <video id="videoPlayer" autoplay muted></video>
+  <video id="videoPlayer" autoplay></video>
 
   <script>
     // القناة الوحيدة التي تريد تشغيلها
     const channel = {
       name: "SSC 1", // اسم القناة
-      url: "https://ssc-extra-1-enc.edgenextcdn.net/out/v1/647c58693f1d46af92bd7e69f17912cb/index.mpd", // رابط الفيديو
-      license: "ecbc9e6fe6b145efb6658fb5cf7427f8:03c17e28911f71221acbc0b11f900401" // الترخيص
+      url: "https://ssc-1-enc.edgenextcdn.net/out/v1/c696e4819b55414388a1a487e8a45ca1/index.mpd", // رابط الفيديو
+      license: "d84c325f36814f39bbe59080272b10c3:550727de4c96ef1ecff874905493580f" // الترخيص
     };
 
     const video = document.getElementById("videoPlayer");
@@ -51,6 +51,7 @@
       });
 
       player.load(channel.url).then(() => {
+        video.muted = false;  // التأكد من أن الصوت ليس مُطفأ
         enterFullscreen();  // الدخول في وضع ملء الشاشة
       }).catch(err => {
         console.error("فشل في تشغيل القناة:", err);
