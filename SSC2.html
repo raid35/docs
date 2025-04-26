@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="ar">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>📺 بث مباشر - قناة JAW1</title>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/shaka-player/4.3.6/shaka-player.compiled.min.js"></script>
+  <style>
+    html, body {
+      margin: 0;
+      padding: 0;
+      background: black;
+      height: 100vh;
+      overflow: hidden;
+    }
+    video {
+      width: 100vw;
+      height: 100vh;
+      object-fit: cover;
+    }
+  </style>
+</head>
+<body>
+  <video id="videoPlayer" autoplay playsinline></video>
+
+  <script>
+    const video = document.getElementById("videoPlayer");
+    const player = new shaka.Player(video);
+
+    async function startChannel() {
+      try {
+        player.configure({
+          drm: {
+            clearKeys: {
+              '8bcfc55359e24bd7ad1c5560a96ddd3c': 'b5dcf721ab522af92a9d3bf0bd55b596'
+            }
+          }
+        });
+
+        await player.load("https://ssc-2-enc.edgenextcdn.net/out/v1/a16db2ec338a445a82d9c541cc9293f9/index.mpd");
+
+        // محاولة تفعيل صوت عربي
+        player.selectAudioLanguage('ar');
+
+        video.volume = 1.0;
+        video.muted = false;
+        await video.play();
+      } catch (error) {
+        console.error("خطأ في تشغيل القناة:", error);
+      }
+    }
+
+    startChannel();
+  </script>
+</body>
+</html>
