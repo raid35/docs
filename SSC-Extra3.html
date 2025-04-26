@@ -1,106 +1,128 @@
 <!DOCTYPE html>
-<html lang="ar">
+<html lang="ar" dir="rtl">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>مشغل الفيديو الاحترافي</title>
+  <title>مشغل احترافي</title>
   <style>
-    body {
+    body, html {
       margin: 0;
-      background-color: black;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      height: 100vh;
+      padding: 0;
+      background: black;
+      height: 100%;
+      overflow: hidden;
     }
     video {
       width: 100%;
-      height: auto;
-      max-width: 80%;
-      border-radius: 10px;
-      box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
+      height: 100%;
+      background: black;
     }
-    .controls {
+    #controls {
       position: absolute;
-      bottom: 20px;
-      left: 50%;
-      transform: translateX(-50%);
+      bottom: 0;
+      left: 0;
+      width: 100%;
+      background: rgba(0, 0, 0, 0.6);
       display: flex;
-      justify-content: space-between;
-      width: 90%;
-    }
-    .button {
-      background: rgba(0, 0, 0, 0.5);
-      color: white;
+      justify-content: center;
+      align-items: center;
+      gap: 20px;
       padding: 10px;
-      border-radius: 5px;
+      transition: opacity 0.5s;
+      opacity: 0;
+    }
+    #controls.show {
+      opacity: 1;
+    }
+    button {
+      background: none;
+      border: none;
+      color: white;
+      font-size: 24px;
       cursor: pointer;
     }
-    .button:hover {
-      background: rgba(0, 0, 0, 0.7);
+    .info {
+      position: absolute;
+      top: 10px;
+      left: 10px;
+      color: white;
+      font-size: 16px;
+      background: rgba(0,0,0,0.5);
+      padding: 5px 10px;
+      border-radius: 10px;
     }
   </style>
 </head>
 <body>
-  <video id="video" controls autoplay></video>
 
-  <div class="controls">
-    <button class="button" onclick="togglePlayPause()">تشغيل/إيقاف</button>
-    <button class="button" onclick="increaseSpeed()">زيادة السرعة</button>
-    <button class="button" onclick="decreaseSpeed()">خفض السرعة</button>
-  </div>
+<video id="video" controlsList="nodownload">
+  <source src="https://ssc-news-live-enc.edgenextcdn.net/out/v1/ef466f43623c4bbaa3f905b566ec35ea/index.mpd" type="application/dash+xml">
+  متصفحك لا يدعم تشغيل الفيديو.
+</video>
 
-  <script src="https://cdn.jsdelivr.net/npm/shaka-player@4.3.5/dist/shaka-player.compiled.js"></script>
-  <script>
-    async function initPlayer() {
-      const manifestUri = 'https://ssc-news-live-enc.edgenextcdn.net/out/v1/ef466f43623c4bbaa3f905b566ec35ea/index.mpd'; // رابط MPD
-      const clearkeys = {
-        '3d04975236a44f62857d181597705ee6': '362133e9cb13189ad4fe095ced216f60'
-      };
+<div class="info" id="info">الجودة: HD | الصوت: 100%</div>
 
-      const video = document.getElementById('video');
-      const player = new shaka.Player(video);
+<div id="controls">
+  <button id="rewind">⏪</button>
+  <button id="playpause">⏯️</button>
+  <button id="forward">⏩</button>
+  <button id="mute">🔈</button>
+</div>
 
-      player.configure({
-        drm: {
-          clearKeys: clearkeys
-        }
-      });
+<script>
+  const video = document.getElementById('video');
+  const controls = document.getElementById('controls');
+  const playpause = document.getElementById('playpause');
+  const rewind = document.getElementById('rewind');
+  const forward = document.getElementById('forward');
+  const mute = document.getElementById('mute');
+  const info = document.getElementById('info');
 
-      try {
-        await player.load(manifestUri); // تحميل الفيديو
-        console.log('تم التحميل!');
-      } catch (e) {
-        console.error('فشل التحميل:', e);
-      }
+  let hideTimeout;
+
+  function showControls() {
+    controls.classList.add('show');
+    clearTimeout(hideTimeout);
+    hideTimeout = setTimeout(() => {
+      controls.classList.remove('show');
+    }, 3000);
+  }
+
+  document.addEventListener('mousemove', showControls);
+  document.addEventListener('keydown', (e) => {
+    showControls();
+    if (e.key === "ArrowRight") {
+      video.currentTime += 10;
+    } else if (e.key === "ArrowLeft") {
+      video.currentTime -= 10;
+    } else if (e.key === " ") {
+      if (video.paused) video.play();
+      else video.pause();
     }
+  });
 
-    function togglePlayPause() {
-      const video = document.getElementById('video');
-      if (video.paused) {
-        video.play();
-      } else {
-        video.pause();
-      }
-    }
+  playpause.onclick = () => {
+    if (video.paused) video.play();
+    else video.pause();
+  };
 
-    function increaseSpeed() {
-      const video = document.getElementById('video');
-      video.playbackRate += 0.25;
-    }
+  rewind.onclick = () => {
+    video.currentTime -= 10;
+  };
 
-    function decreaseSpeed() {
-      const video = document.getElementById('video');
-      video.playbackRate -= 0.25;
-    }
+  forward.onclick = () => {
+    video.currentTime += 10;
+  };
 
-    // التحقق من دعم المتصفح
-    shaka.polyfill.installAll();
-    if (shaka.Player.isBrowserSupported()) {
-      initPlayer();
-    } else {
-      console.error('المتصفح لا يدعم Shaka Player');
-    }
-  </script>
+  mute.onclick = () => {
+    video.muted = !video.muted;
+    mute.textContent = video.muted ? "🔇" : "🔈";
+    info.textContent = video.muted ? "الصوت: مكتوم" : "الصوت: 100%";
+    showControls();
+  };
+
+  // إظهار الشريط عند بداية التشغيل
+  video.addEventListener('play', showControls);
+</script>
+
 </body>
 </html>
