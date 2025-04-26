@@ -25,8 +25,8 @@
 
   <script>
     const channel = {
-      url: "https://fastly-live.cdn.intigral-ott.net/HGTV/HGTV.isml/manifest.mpd",
-      license: "9692022f609d8b8fa2525048aaed26c3:42f4137b0a0f3ee9e52aeddb8a9544e1"
+      url: "https://ssc-1-enc.edgenextcdn.net/out/v1/c696e4819b55414388a1a487e8a45ca1/index.mpd",
+      license: "d84c325f36814f39bbe59080272b10c3:550727de4c96ef1ecff874905493580f"
     };
 
     const video = document.getElementById("videoPlayer");
@@ -41,7 +41,14 @@
             }
           }
         });
+
+        // تحميل الفيديو
         await player.load(channel.url);
+
+        // اختيار الصوت باللغة العربية إذا كانت متاحة
+        player.selectAudioLanguage('ar');
+
+        // تشغيل الفيديو مع الصوت
         video.volume = 1.0;
         video.muted = false;
         await video.play();
