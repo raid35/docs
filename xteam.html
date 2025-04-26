@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>مشغل الأفلام والمسلسلات</title>
     <style>
+        /* نفس التنسيق السابق */
         body {
             font-family: Arial, sans-serif;
             direction: rtl;
@@ -81,7 +82,6 @@
             transform: scale(1.1);
             outline: 3px solid yellow;
         }
-        /* زر الرجوع */
         .back-button {
             position: fixed;
             top: 10px;
@@ -126,7 +126,7 @@
                 container.appendChild(div);
             });
             setTimeout(() => {
-                container.firstChild?.focus(); // تحديد الباقة الأولى ليعمل الريموت
+                container.firstChild?.focus(); // تحديد الفئة الأولى ليعمل الريموت
             }, 100);
         }
 
@@ -168,13 +168,16 @@
             document.getElementById("content").innerHTML = "";
 
             setTimeout(() => {
-                document.querySelector(".category")?.focus(); // إعادة التركيز على أول باقة
+                document.querySelector(".category")?.focus(); // إعادة التركيز على أول فئة
             }, 100);
         }
 
         function openItem(streamId) {
+            // هنا نرسل الرابط إلى التطبيق الأندرويد بدلاً من window.open()
             const streamUrl = `${serverUrl}/movie/${username}/${password}/${streamId}.mp4`;
-            window.open(streamUrl, '_blank');
+            if (window.Android && typeof window.Android.openMovie === "function") {
+                window.Android.openMovie(streamUrl); // إرسال الرابط إلى التطبيق
+            }
         }
 
         document.addEventListener("DOMContentLoaded", loadCategories);
