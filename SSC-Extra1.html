@@ -27,7 +27,7 @@
       justify-content: space-between;
       padding: 10px;
       opacity: 0;
-      transition: opacity 0.5s;
+      transition: opacity 0.5s ease-in-out;
     }
     .controls.show {
       opacity: 1;
@@ -47,19 +47,8 @@
       flex: 1;
       margin: 0 10px;
     }
-    /* عنوان SIKSA */
-    #title {
-      position: absolute;
-      top: 10px;
-      left: 20px;
-      color: white;
-      font-size: 24px;
-      font-weight: bold;
-      font-family: 'Arial', sans-serif;
-      z-index: 9999;
-      opacity: 0.3;
-      pointer-events: none;
-      text-shadow: 1px 1px 2px black;
+    #volumeControl {
+      width: 100px;
     }
     /* دائرة التحميل */
     #loadingSpinner {
@@ -81,13 +70,9 @@
       100% { transform: rotate(360deg); }
     }
   </style>
-
   <script src="https://cdnjs.cloudflare.com/ajax/libs/shaka-player/4.3.6/shaka-player.compiled.min.js"></script>
 </head>
 <body>
-
-<!-- عنوان SIKSA -->
-<div id="title">SIKSA</div>
 
 <!-- دائرة التحميل -->
 <div id="loadingSpinner"></div>
@@ -100,6 +85,7 @@
   <input type="range" id="seekbar" value="0" min="0" max="100" step="1">
   <div class="time" id="duration">00:00</div>
   <button id="mute" class="btn">🔇</button>
+  <input type="range" id="volumeControl" min="0" max="1" step="0.1" value="1" />
 </div>
 
 <script>
@@ -108,15 +94,26 @@
   const playPause = document.getElementById('playPause');
   const mute = document.getElementById('mute');
   const seekbar = document.getElementById('seekbar');
+  const volumeControl = document.getElementById('volumeControl');
   const currentTime = document.getElementById('currentTime');
   const duration = document.getElementById('duration');
   const loadingSpinner = document.getElementById('loadingSpinner');
 
-  const videoUrl = "https://ssc-extra-1-enc.edgenextcdn.net/out/v1/647c58693f1d46af92bd7e69f17912cb/index.mpd";
+  const videoUrl = "https://ssc-extra1-ak.akamaized.net/out/v1/647c58693f1d46af92bd7e69f17912cb/index.mpd";
 
   const player = new shaka.Player(video);
 
   player.configure({
+    streaming: {
+      bufferingGoal: 60,  // تحسين التخزين المؤقت لتخزين المزيد من الفيديو مسبقًا
+      rebufferingGoal: 5,  // تقليل المدة التي تنتظر فيها لإعادة التخزين المؤقت
+      preload: 3,  // تحميل جزء أكبر من الفيديو مسبقًا
+      retryParameters: {
+        maxAttempts: 5,  // تحديد عدد المحاولات في حال فشل التحميل
+        baseDelay: 1,  // تأخير أساسي قبل المحاولة الجديدة
+        backoffFactor: 2,  // زيادة التأخير بعد كل محاولة فاشلة
+      }
+    },
     drm: {
       clearKeys: {
         "ecbc9e6fe6b145efb6658fb5cf7427f8": "03c17e28911f71221acbc0b11f900401"
@@ -129,6 +126,15 @@
       loadingSpinner.style.display = 'block'; // إظهار دائرة التحميل
       await player.load(videoUrl);
       console.log("✅ تم تحميل القناة بنجاح!");
+
+      // التحقق من وجود الصوت باللغة العربية وتحديده إذا كان موجودًا
+      const audioTracks = player.getAudioTracks();
+      const arabicAudioTrack = audioTracks.find(track => track.language === 'ar');
+      if (arabicAudioTrack) {
+        player.selectAudioTrack(arabicAudioTrack);
+        console.log("✅ تم تحديد الصوت باللغة العربية");
+      }
+
       video.muted = false;
       video.volume = 1.0;
       await video.play();
@@ -170,6 +176,10 @@
 
   mute.addEventListener('click', () => {
     video.muted = !video.muted;
+  });
+
+  volumeControl.addEventListener('input', (event) => {
+    video.volume = event.target.value;
   });
 
   seekbar.addEventListener('input', () => {
