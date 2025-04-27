@@ -112,14 +112,14 @@
   const duration = document.getElementById('duration');
   const loadingSpinner = document.getElementById('loadingSpinner');
 
-  const videoUrl = "https://fastly-live.cdn.intigral-ott.net/JAW1/JAW1.isml/manifest.mpd";
+  const videoUrl = "https://live-video.dpgmedia.net/f1d26a28c95485cc/out/v1/6810477d8b1b4e458506df3803486870/index.mpd";
 
   const player = new shaka.Player(video);
 
   player.configure({
     drm: {
       clearKeys: {
-        "e74c7d697bd26595b196c6b96e2d4f5b": "e288110233737502e8af9184098ab50b"
+        "a23c541ad1334ea697bab962336d31e6": "996515f9b655011b20993c5514298eb3"
       }
     }
   });
