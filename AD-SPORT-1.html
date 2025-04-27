@@ -129,6 +129,19 @@
       loadingSpinner.style.display = 'block'; // إظهار دائرة التحميل
       await player.load(videoUrl);
       console.log("✅ تم تحميل القناة بنجاح!");
+
+      // التحقق من لغة الصفحة
+      const pageLanguage = document.documentElement.lang;
+
+      // إذا كانت اللغة العربية، قم بتغيير الصوت أو الترجمة إلى اللغة العربية
+      if (pageLanguage === "ar") {
+        // افترض أن القناة تدعم مسارات صوتية متعددة
+        const languages = player.getConfiguration().manifest.drm['clearKeys'].languages || [];
+        if (languages.includes('ar')) {
+          player.selectAudioLanguage('ar');
+        }
+      }
+
       video.muted = false;
       video.volume = 1.0;
       await video.play();
