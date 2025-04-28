@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8">
+  <title>مشغل فيديو مع DRM (ClearKey)</title>
+  <style>
+    body, html {
+      margin: 0;
+      padding: 0;
+      height: 100%;
+      overflow: hidden;
+      background: black;
+    }
+    #videoPlayer {
+      width: 100%;
+      height: 100%;
+      background: black;
+      object-fit: cover;
+    }
+    #loadingSpinner {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      width: 60px;
+      height: 60px;
+      margin: -30px 0 0 -30px;
+      border: 8px solid #00ff00;
+      border-top: 8px solid transparent;
+      border-radius: 50%;
+      animation: spin 1s linear infinite;
+      z-index: 10000;
+      display: none;
+    }
+    @keyframes spin {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
+    }
+  </style>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/shaka-player/4.3.6/shaka-player.compiled.min.js"></script>
+</head>
+<body>
+
+<div id="loadingSpinner"></div>
+<video id="videoPlayer" autoplay playsinline controls crossorigin="anonymous"></video>
+
+<script>
+  const video = document.getElementById('videoPlayer');
+  const loadingSpinner = document.getElementById('loadingSpinner');
+
+  const videoUrl = "https://a204aivottepl-a.akamaihd.net/sin-nitro/live/clients/dash/enc/nf4cd3x1tq/out/v1/217476e3b50e4451975170fa67ff5eac/cenc.mpd";
+
+  const player = new shaka.Player(video);
+
+  player.configure({
+    streaming: {
+      bufferingGoal: 60,
+      rebufferingGoal: 5,
+      preload: 3,
+      retryParameters: {
+        maxAttempts: 5,
+        baseDelay: 1,
+        backoffFactor: 2,
+      }
+    },
+    drm: {
+      clearKeys: {
+        'ec426ed0179bd597da53009b5134b464': '4d141c015d8437c4c87e29cfa9e26744'
+      }
+    }
+  });
+
+  async function initPlayer() {
+    try {
+      loadingSpinner.style.display = 'block';
+      await player.load(videoUrl);
+      console.log("✅ تم تحميل الفيديو بنجاح!");
+
+      video.muted = false;
+      video.volume = 1.0;
+      await video.play();
+    } catch (error) {
+      console.error("❌ فشل تحميل الفيديو:", error);
+    } finally {
+      loadingSpinner.style.display = 'none';
+    }
+  }
+
+  document.addEventListener('DOMContentLoaded', initPlayer);
+</script>
+
+</body>
+</html>
