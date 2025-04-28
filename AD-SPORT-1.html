@@ -2,7 +2,7 @@
 <html lang="ar" dir="rtl">
 <head>
   <meta charset="UTF-8">
-  <title>مشغل فيديو مع تغيير الصوت</title>
+  <title>مشغل فيديو مع زر تغيير الصوت</title>
   <style>
     body, html {
       margin: 0;
@@ -34,22 +34,10 @@
     }
     .btn {
       color: white;
-      background: rgba(255, 255, 255, 0.1);
-      border: 1px solid rgba(255, 255, 255, 0.2);
-      font-size: 18px;
-      border-radius: 50%;
-      width: 36px;
-      height: 36px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
+      background: none;
+      border: none;
+      font-size: 20px;
       cursor: pointer;
-      transition: background 0.3s, transform 0.3s;
-      position: relative;
-    }
-    .btn:hover {
-      background: rgba(255, 255, 255, 0.2);
-      transform: scale(1.1);
     }
     .time {
       color: white;
@@ -62,7 +50,6 @@
     #volumeControl {
       width: 100px;
     }
-    /* دائرة التحميل */
     #loadingSpinner {
       position: absolute;
       top: 50%;
@@ -81,27 +68,30 @@
       0% { transform: rotate(0deg); }
       100% { transform: rotate(360deg); }
     }
-    /* قائمة تغيير الصوت */
     #audioMenu {
+      display: none;
       position: absolute;
-      bottom: 50px;
-      right: 10px;
-      background: rgba(0, 0, 0, 0.8);
+      bottom: 60px;
+      right: 60px;
+      background: rgba(0,0,0,0.8);
       border: 1px solid #00ff00;
       border-radius: 8px;
-      display: none;
-      flex-direction: column;
-      min-width: 100px;
-      z-index: 1000;
+      padding: 5px;
+      z-index: 9999;
     }
     .audio-option {
-      padding: 8px;
+      background: none;
       color: white;
+      border: none;
+      font-size: 16px;
       cursor: pointer;
+      padding: 5px;
       text-align: center;
+      width: 100%;
     }
-    .audio-option:hover {
-      background: rgba(0, 255, 0, 0.3);
+    .audio-option:focus {
+      outline: 2px solid #00ff00;
+      background: rgba(0,255,0,0.2);
     }
   </style>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/shaka-player/4.3.6/shaka-player.compiled.min.js"></script>
@@ -120,10 +110,10 @@
   <div class="time" id="duration">00:00</div>
   <button id="mute" class="btn">🔇</button>
   <input type="range" id="volumeControl" min="0" max="1" step="0.1" value="1" />
-  <button id="audioTrack" class="btn" style="display: none;">🎵</button>
+  <button id="audioTrack" class="btn">🎵</button>
 </div>
 
-<!-- قائمة تغيير الصوت -->
+<!-- قائمة مسارات الصوت -->
 <div id="audioMenu"></div>
 
 <script>
@@ -171,11 +161,10 @@
       const arabicAudioTrack = audioTracks.find(track => track.language === 'ar');
       if (arabicAudioTrack) {
         player.selectAudioTrack(arabicAudioTrack);
-        console.log("✅ تم تحديد الصوت باللغة العربية");
+        console.log("✅ تم اختيار الصوت العربي");
       }
 
       if (audioTracks.length > 1) {
-        audioTrackBtn.style.display = 'inline-flex';
         populateAudioMenu(audioTracks);
       } else {
         audioTrackBtn.style.display = 'none';
@@ -193,15 +182,15 @@
 
   function populateAudioMenu(tracks) {
     audioMenu.innerHTML = '';
-    tracks.forEach((track, index) => {
-      const option = document.createElement('div');
-      option.className = 'audio-option';
-      option.textContent = track.language.toUpperCase();
-      option.addEventListener('click', () => {
+    tracks.forEach(track => {
+      const btn = document.createElement('button');
+      btn.className = 'audio-option';
+      btn.textContent = track.language.toUpperCase();
+      btn.addEventListener('click', () => {
         player.selectAudioTrack(track);
         audioMenu.style.display = 'none';
       });
-      audioMenu.appendChild(option);
+      audioMenu.appendChild(btn);
     });
   }
 
@@ -220,7 +209,7 @@
     clearTimeout(hideControlsTimeout);
     hideControlsTimeout = setTimeout(() => {
       controls.classList.remove('show');
-      audioMenu.style.display = 'none'; // إخفاء قائمة الصوت مع اختفاء الكنترولز
+      audioMenu.style.display = 'none'; // إخفاء قائمة الصوت عند إخفاء الشريط
     }, 3000);
   }
 
@@ -257,7 +246,13 @@
   });
 
   audioTrackBtn.addEventListener('click', () => {
-    audioMenu.style.display = (audioMenu.style.display === 'flex') ? 'none' : 'flex';
+    if (audioMenu.style.display === 'none') {
+      audioMenu.style.display = 'block';
+      const firstOption = audioMenu.querySelector('.audio-option');
+      if (firstOption) firstOption.focus();
+    } else {
+      audioMenu.style.display = 'none';
+    }
   });
 
   showControls();
