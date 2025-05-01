@@ -17,6 +17,7 @@
       background: black;
       object-fit: cover;
     }
+    /* تحكم واجهة المستخدم */
     .controls {
       position: absolute;
       bottom: 0;
@@ -70,8 +71,9 @@
       100% { transform: rotate(360deg); }
     }
   </style>
-  <!-- تضمين ملفات Shaka Player الحديثة -->
+  <!-- دمج ملفات Shaka Player -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/shaka-player/4.12.6/shaka-player.compiled.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/shaka-player/4.12.6/shaka-player.ui.min.js"></script>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/shaka-player/4.12.6/controls.min.css">
 </head>
 <body>
@@ -103,17 +105,18 @@
 
   const videoUrl = "https://sps2.starzplayarabia.com/out/v1/ff6cef29465f4c3a9b0e8ea5bbf8839f/index.mpd";
 
+  // إعداد Shaka Player
   const player = new shaka.Player(video);
 
   player.configure({
     streaming: {
-      bufferingGoal: 60,  // تحسين التخزين المؤقت لتخزين المزيد من الفيديو مسبقًا
-      rebufferingGoal: 5,  // تقليل المدة التي تنتظر فيها لإعادة التخزين المؤقت
-      preload: 3,  // تحميل جزء أكبر من الفيديو مسبقًا
+      bufferingGoal: 60,
+      rebufferingGoal: 5,
+      preload: 3,
       retryParameters: {
-        maxAttempts: 5,  // تحديد عدد المحاولات في حال فشل التحميل
-        baseDelay: 1,  // تأخير أساسي قبل المحاولة الجديدة
-        backoffFactor: 2,  // زيادة التأخير بعد كل محاولة فاشلة
+        maxAttempts: 5,
+        baseDelay: 1,
+        backoffFactor: 2,
       }
     },
     drm: {
@@ -123,13 +126,13 @@
     }
   });
 
+  // وظيفة تحميل الفيديو
   async function initPlayer() {
     try {
-      loadingSpinner.style.display = 'block'; // إظهار دائرة التحميل
+      loadingSpinner.style.display = 'block';
       await player.load(videoUrl);
       console.log("✅ تم تحميل القناة بنجاح!");
 
-      // التحقق من وجود الصوت باللغة العربية وتحديده إذا كان موجودًا
       const audioTracks = player.getAudioTracks();
       const arabicAudioTrack = audioTracks.find(track => track.language === 'ar');
       if (arabicAudioTrack) {
@@ -143,20 +146,21 @@
     } catch (error) {
       console.error("❌ خطأ في تحميل القناة:", error);
     } finally {
-      loadingSpinner.style.display = 'none'; // إخفاء دائرة التحميل بعد التحميل أو الخطأ
+      loadingSpinner.style.display = 'none';
     }
   }
 
+  // عند تحميل الصفحة
   document.addEventListener('DOMContentLoaded', initPlayer);
 
-  let hideControlsTimeout;
-
+  // عرض الوقت
   function formatTime(sec) {
     const minutes = Math.floor(sec / 60).toString().padStart(2, '0');
     const seconds = Math.floor(sec % 60).toString().padStart(2, '0');
     return `${minutes}:${seconds}`;
   }
 
+  // التحكم في الإخفاء والظهور
   function showControls() {
     controls.classList.add('show');
     clearTimeout(hideControlsTimeout);
