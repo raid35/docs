@@ -70,7 +70,9 @@
       100% { transform: rotate(360deg); }
     }
   </style>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/shaka-player/4.3.6/shaka-player.compiled.min.js"></script>
+  <!-- تضمين ملفات Shaka Player الحديثة -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/shaka-player/4.12.6/shaka-player.compiled.min.js"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/shaka-player/4.12.6/controls.min.css">
 </head>
 <body>
 
@@ -99,7 +101,7 @@
   const duration = document.getElementById('duration');
   const loadingSpinner = document.getElementById('loadingSpinner');
 
-  const videoUrl = "https://ssc1-ak.akamaized.net/out/v1/c696e4819b55414388a1a487e8a45ca1/index.mpd";
+  const videoUrl = "https://ssc-1-enc.edgenextcdn.net/out/v1/c696e4819b55414388a1a487e8a45ca1/index.mpd";
 
   const player = new shaka.Player(video);
 
