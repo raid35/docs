@@ -105,7 +105,6 @@
 
   const videoUrl = "https://sps2.starzplayarabia.com/out/v1/ff6cef29465f4c3a9b0e8ea5bbf8839f/index.mpd";
 
-  // إعداد Shaka Player
   const player = new shaka.Player(video);
 
   player.configure({
@@ -164,14 +163,18 @@
   function showControls() {
     controls.classList.add('show');
     clearTimeout(hideControlsTimeout);
+
+    // إخفاء شريط المهام بعد 3 ثوانٍ من التفاعل الأخير
     hideControlsTimeout = setTimeout(() => {
       controls.classList.remove('show');
     }, 3000);
   }
 
+  let hideControlsTimeout;
   document.body.addEventListener('mousemove', showControls);
   document.body.addEventListener('keydown', showControls);
 
+  // عند النقر على زر التشغيل/الإيقاف المؤقت
   playPause.addEventListener('click', () => {
     if (video.paused) {
       video.play();
@@ -180,27 +183,33 @@
     }
   });
 
+  // عند النقر على زر كتم الصوت
   mute.addEventListener('click', () => {
     video.muted = !video.muted;
   });
 
+  // عند تغيير مستوى الصوت
   volumeControl.addEventListener('input', (event) => {
     video.volume = event.target.value;
   });
 
+  // عند تغيير موقع شريط التقدم
   seekbar.addEventListener('input', () => {
     video.currentTime = (seekbar.value / 100) * video.duration;
   });
 
+  // تحديث شريط التقدم
   video.addEventListener('timeupdate', () => {
     seekbar.value = (video.currentTime / video.duration) * 100;
     currentTime.textContent = formatTime(video.currentTime);
   });
 
+  // عند تحميل معلومات الفيديو
   video.addEventListener('loadedmetadata', () => {
     duration.textContent = formatTime(video.duration);
   });
 
+  // عرض شريط التحكم عند تحميل الصفحة
   showControls();
 </script>
 
