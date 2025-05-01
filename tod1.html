@@ -2,7 +2,7 @@
 <html lang="ar" dir="rtl">
 <head>
   <meta charset="UTF-8">
-  <title>مشغل فيديو مع زر تغيير الصوت</title>
+  <title>مشغل فيديو مع DRM</title>
   <style>
     body, html {
       margin: 0;
@@ -50,6 +50,7 @@
     #volumeControl {
       width: 100px;
     }
+    /* دائرة التحميل */
     #loadingSpinner {
       position: absolute;
       top: 50%;
@@ -57,7 +58,7 @@
       width: 60px;
       height: 60px;
       margin: -30px 0 0 -30px;
-      border: 8px solid #00ff00;
+      border: 8px solid #00ff00; /* أخضر */
       border-top: 8px solid transparent;
       border-radius: 50%;
       animation: spin 1s linear infinite;
@@ -68,33 +69,10 @@
       0% { transform: rotate(0deg); }
       100% { transform: rotate(360deg); }
     }
-    #audioMenu {
-      display: none;
-      position: absolute;
-      bottom: 60px;
-      right: 60px;
-      background: rgba(0,0,0,0.8);
-      border: 1px solid #00ff00;
-      border-radius: 8px;
-      padding: 5px;
-      z-index: 9999;
-    }
-    .audio-option {
-      background: none;
-      color: white;
-      border: none;
-      font-size: 16px;
-      cursor: pointer;
-      padding: 5px;
-      text-align: center;
-      width: 100%;
-    }
-    .audio-option:focus {
-      outline: 2px solid #00ff00;
-      background: rgba(0,255,0,0.2);
-    }
   </style>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/shaka-player/4.3.6/shaka-player.compiled.min.js"></script>
+  <!-- تضمين ملفات Shaka Player الحديثة -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/shaka-player/4.12.6/shaka-player.compiled.min.js"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/shaka-player/4.12.6/controls.min.css">
 </head>
 <body>
 
@@ -110,11 +88,7 @@
   <div class="time" id="duration">00:00</div>
   <button id="mute" class="btn">🔇</button>
   <input type="range" id="volumeControl" min="0" max="1" step="0.1" value="1" />
-  <button id="audioTrack" class="btn">🎵</button>
 </div>
-
-<!-- قائمة مسارات الصوت -->
-<div id="audioMenu"></div>
 
 <script>
   const video = document.getElementById('videoPlayer');
@@ -126,8 +100,6 @@
   const currentTime = document.getElementById('currentTime');
   const duration = document.getElementById('duration');
   const loadingSpinner = document.getElementById('loadingSpinner');
-  const audioTrackBtn = document.getElementById('audioTrack');
-  const audioMenu = document.getElementById('audioMenu');
 
   const videoUrl = "https://cdn-bein-prod-a-01.vos360.video/Content/Channel/svc-spo-hd-08-dt/DASH/playlist.mpd";
 
@@ -135,13 +107,13 @@
 
   player.configure({
     streaming: {
-      bufferingGoal: 60,
-      rebufferingGoal: 5,
-      preload: 3,
+      bufferingGoal: 60,  // تحسين التخزين المؤقت لتخزين المزيد من الفيديو مسبقًا
+      rebufferingGoal: 5,  // تقليل المدة التي تنتظر فيها لإعادة التخزين المؤقت
+      preload: 3,  // تحميل جزء أكبر من الفيديو مسبقًا
       retryParameters: {
-        maxAttempts: 5,
-        baseDelay: 1,
-        backoffFactor: 2,
+        maxAttempts: 5,  // تحديد عدد المحاولات في حال فشل التحميل
+        baseDelay: 1,  // تأخير أساسي قبل المحاولة الجديدة
+        backoffFactor: 2,  // زيادة التأخير بعد كل محاولة فاشلة
       }
     },
     drm: {
@@ -153,21 +125,16 @@
 
   async function initPlayer() {
     try {
-      loadingSpinner.style.display = 'block';
+      loadingSpinner.style.display = 'block'; // إظهار دائرة التحميل
       await player.load(videoUrl);
       console.log("✅ تم تحميل القناة بنجاح!");
 
+      // التحقق من وجود الصوت باللغة العربية وتحديده إذا كان موجودًا
       const audioTracks = player.getAudioTracks();
       const arabicAudioTrack = audioTracks.find(track => track.language === 'ar');
       if (arabicAudioTrack) {
         player.selectAudioTrack(arabicAudioTrack);
-        console.log("✅ تم اختيار الصوت العربي");
-      }
-
-      if (audioTracks.length > 1) {
-        populateAudioMenu(audioTracks);
-      } else {
-        audioTrackBtn.style.display = 'none';
+        console.log("✅ تم تحديد الصوت باللغة العربية");
       }
 
       video.muted = false;
@@ -176,22 +143,8 @@
     } catch (error) {
       console.error("❌ خطأ في تحميل القناة:", error);
     } finally {
-      loadingSpinner.style.display = 'none';
+      loadingSpinner.style.display = 'none'; // إخفاء دائرة التحميل بعد التحميل أو الخطأ
     }
-  }
-
-  function populateAudioMenu(tracks) {
-    audioMenu.innerHTML = '';
-    tracks.forEach(track => {
-      const btn = document.createElement('button');
-      btn.className = 'audio-option';
-      btn.textContent = track.language.toUpperCase();
-      btn.addEventListener('click', () => {
-        player.selectAudioTrack(track);
-        audioMenu.style.display = 'none';
-      });
-      audioMenu.appendChild(btn);
-    });
   }
 
   document.addEventListener('DOMContentLoaded', initPlayer);
@@ -209,7 +162,6 @@
     clearTimeout(hideControlsTimeout);
     hideControlsTimeout = setTimeout(() => {
       controls.classList.remove('show');
-      audioMenu.style.display = 'none'; // إخفاء قائمة الصوت عند إخفاء الشريط
     }, 3000);
   }
 
@@ -243,16 +195,6 @@
 
   video.addEventListener('loadedmetadata', () => {
     duration.textContent = formatTime(video.duration);
-  });
-
-  audioTrackBtn.addEventListener('click', () => {
-    if (audioMenu.style.display === 'none') {
-      audioMenu.style.display = 'block';
-      const firstOption = audioMenu.querySelector('.audio-option');
-      if (firstOption) firstOption.focus();
-    } else {
-      audioMenu.style.display = 'none';
-    }
   });
 
   showControls();
