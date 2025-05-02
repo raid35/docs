@@ -101,29 +101,45 @@
     const serverUrl = "http://faiv5.biz";
     const username = "MOSTAFA";
     const password = "MOSTAFA";
+    let categories = [];
 
-    async function loadMovies() {
+    async function loadCategories() {
         try {
-            // نحصل على قائمة الفئات للفيديو حسب الطلب (VOD)
-            const vodCategories = await fetch(`${serverUrl}/player_api.php?username=${username}&password=${password}&action=get_vod_categories`).then(res => res.json());
-
-            // نحاول إيجاد فئة تحتوي على كلمة "افلام" أو "movies"
-            const movieCategory = vodCategories.find(cat =>
-                cat.category_name.includes("فيلم") || cat.category_name.toLowerCase().includes("movie")
-            );
-
-            if (!movieCategory) {
-                document.getElementById("content").innerText = "❌ لم يتم العثور على قسم الأفلام.";
-                return;
-            }
-
-            // تحميل الأفلام من الفئة المحددة
-            const response = await fetch(`${serverUrl}/player_api.php?username=${username}&password=${password}&action=get_vod_streams&category_id=${movieCategory.category_id}`);
-            const items = await response.json();
-            displayItems(items);
-
+            // نحصل على فئات الفيديو حسب الطلب (VOD)
+            let vodCategories = await fetch(`${serverUrl}/player_api.php?username=${username}&password=${password}&action=get_vod_categories`).then(res => res.json());
+            categories = vodCategories;
+            displayCategories();
         } catch (error) {
-            document.getElementById("content").innerText = "⚠️ حدث خطأ أثناء تحميل الأفلام.";
+            document.getElementById("categories").innerHTML = "⚠️ خطأ في تحميل فئات الأفلام";
+        }
+    }
+
+    function displayCategories() {
+        let container = document.getElementById("categories");
+        container.innerHTML = "";
+        categories.forEach(category => {
+            let div = document.createElement("div");
+            div.className = "category";
+            div.innerText = category.category_name;
+            div.tabIndex = 0;
+            div.onclick = () => selectCategory(category);
+            container.appendChild(div);
+        });
+        setTimeout(() => {
+            container.firstChild?.focus();
+        }, 100);
+    }
+
+    async function selectCategory(category) {
+        document.getElementById("categories").style.display = "none";
+        document.getElementById("backButton").style.display = "block";
+
+        try {
+            let response = await fetch(`${serverUrl}/player_api.php?username=${username}&password=${password}&action=get_vod_streams&category_id=${category.category_id}`);
+            let items = await response.json();
+            displayItems(items);
+        } catch (error) {
+            document.getElementById("content").innerHTML = "⚠️ خطأ في تحميل الأفلام";
         }
     }
 
@@ -138,12 +154,22 @@
             div.onclick = () => openItem(item.stream_id, item.container_extension);
             let img = document.createElement("img");
             img.src = item.stream_icon || "https://via.placeholder.com/100";
-            img.alt = "Movie Poster";
+            img.alt = "Movie";
             div.appendChild(img);
             container.appendChild(div);
         });
 
         container.firstChild?.focus();
+    }
+
+    function goBack() {
+        document.getElementById("categories").style.display = "block";
+        document.getElementById("backButton").style.display = "none";
+        document.getElementById("content").innerHTML = "";
+
+        setTimeout(() => {
+            document.querySelector(".category")?.focus();
+        }, 100);
     }
 
     function openItem(streamId, containerExtension = 'mp4') {
@@ -153,7 +179,7 @@
         window.location.href = `https://play/stream?url=${encodeURIComponent(streamUrl)}&name=${channelName}`;
     }
 
-    document.addEventListener("DOMContentLoaded", loadMovies);
+    document.addEventListener("DOMContentLoaded", loadCategories);
 </script>
 </head>
 <body>
