@@ -51,7 +51,7 @@
         .content-container {
             flex: 1;
             display: grid;
-            grid-template-columns: repeat(5, 1fr); /* تم التعديل هنا ليصبح 5 أعمدة */
+            grid-template-columns: repeat(5, 1fr);
             gap: 12px;
             padding: 20px;
             overflow-y: auto;
@@ -81,7 +81,6 @@
             transform: scale(1.1);
             outline: 3px solid yellow;
         }
-        /* زر الرجوع */
         .back-button {
             position: fixed;
             top: 10px;
@@ -126,7 +125,7 @@
                 container.appendChild(div);
             });
             setTimeout(() => {
-                container.firstChild?.focus(); // تحديد الباقة الأولى ليعمل الريموت
+                container.firstChild?.focus();
             }, 100);
         }
 
@@ -168,13 +167,14 @@
             document.getElementById("content").innerHTML = "";
 
             setTimeout(() => {
-                document.querySelector(".category")?.focus(); // إعادة التركيز على أول باقة
+                document.querySelector(".category")?.focus();
             }, 100);
         }
 
+        // ✅ التعديل هنا لفتح الرابط بـ xmtv:// لتشغيله في PlayerActivity
         function openItem(streamId) {
             const streamUrl = `${serverUrl}/live/${username}/${password}/${streamId}.m3u8`;
-            window.open(streamUrl, '_blank');
+            window.location.href = `xmtv://${streamUrl}`;
         }
 
         document.addEventListener("DOMContentLoaded", loadCategories);
