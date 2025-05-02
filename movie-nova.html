@@ -1,166 +1,131 @@
 <!DOCTYPE html>
 <html lang="ar">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>مشغل البث المباشر</title>
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            direction: rtl;
-            background: linear-gradient(-45deg, #1e3c72, #2a5298, #000000, #3b1d56);
-            background-size: 400% 400%;
-            animation: gradientAnimation 10s ease infinite;
-            color: white;
-            margin: 0;
-            display: flex;
-            height: 100vh;
-            overflow: hidden;
-        }
-        @keyframes gradientAnimation {
-            0% { background-position: 0% 50%; }
-            50% { background-position: 100% 50%; }
-            100% { background-position: 0% 50%; }
-        }
-        .sidebar {
-            width: 300px;
-            background: rgba(30, 30, 30, 0.9);
-            padding: 15px;
-            overflow-y: auto;
-            border-right: 3px solid #333;
-        }
-        .hidden {
-            display: none;
-        }
-        .category {
-            background: #ff5722;
-            padding: 15px;
-            margin: 8px 0;
-            border-radius: 8px;
-            text-align: center;
-            font-size: 18px;
-            font-weight: bold;
-            cursor: pointer;
-            transition: 0.3s;
-        }
-        .category:focus, .category.active {
-            background: #e64a19;
-            outline: 3px solid yellow;
-            transform: scale(1.1);
-        }
-        .content-container {
-            flex: 1;
-            display: grid;
-            grid-template-columns: repeat(5, 1fr);
-            gap: 12px;
-            padding: 20px;
-            overflow-y: auto;
-            justify-content: center;
-            position: relative;
-        }
-        .item {
-            background: rgba(255, 255, 255, 0.1);
-            width: 100%;
-            height: 180px;
-            border-radius: 12px;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            cursor: pointer;
-            transition: 0.3s;
-        }
-        .item img {
-            width: 80%;
-            height: 80%;
-            object-fit: contain;
-            border-radius: 8px;
-        }
-        .item:focus {
-            background: rgba(255, 255, 255, 0.2);
-            transform: scale(1.1);
-            outline: 3px solid yellow;
-        }
-        .back-button {
-            position: fixed;
-            top: 10px;
-            left: 10px;
-            background: none;
-            border: none;
-            cursor: pointer;
-            outline: none;
-            display: none;
-            z-index: 1000;
-        }
-        .back-button img {
-            width: 50px;
-            height: 50px;
-        }
-    </style>
-    <script>
-        const serverUrl = "http://148.251.133.153:8181";
-        const username = "N9eSp8k95MieWyC";
-        const password = "9sr8aO4rJUZ";
-        let categories = [];
-        
-        async function loadCategories() {
-    const res = await fetch(`${serverUrl}/player_api.php?username=${username}&password=${password}&action=get_vod_categories`);
-    const data = await res.json();
-    const catDiv = document.getElementById("categories");
-    catDiv.innerHTML = "";
-    data.forEach(cat => {
-      const div = document.createElement("div");
-      div.className = "category";
-      div.innerText = cat.category_name;
-      div.onclick = () => loadMovies(cat.category_id);
-      catDiv.appendChild(div);
-    });
-  }
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>أفلام</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      direction: rtl;
+      background: #111;
+      color: white;
+      margin: 0;
+      display: flex;
+      height: 100vh;
+      overflow: hidden;
+    }
+    .sidebar {
+      width: 300px;
+      background: #222;
+      overflow-y: auto;
+      padding: 15px;
+      border-left: 3px solid #444;
+    }
+    .category {
+      background: #009688;
+      padding: 10px;
+      margin: 5px 0;
+      border-radius: 6px;
+      cursor: pointer;
+      text-align: center;
+    }
+    .content-container {
+      flex: 1;
+      overflow-y: auto;
+      padding: 20px;
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+      gap: 15px;
+    }
+    .item {
+      background: #333;
+      padding: 10px;
+      border-radius: 10px;
+      cursor: pointer;
+      text-align: center;
+    }
+    .item img {
+      width: 100%;
+      height: 160px;
+      object-fit: cover;
+      border-radius: 8px;
+    }
+    .back-button {
+      position: fixed;
+      top: 10px;
+      left: 10px;
+      background: #f44336;
+      color: white;
+      padding: 10px 15px;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+      display: none;
+      z-index: 1000;
+    }
+  </style>
+  <script>
+    const serverUrl = "http://faiv5.biz"; // ← ضع رابط السيرفر الخاص بك هنا
+    const username = "MOSTAFA";
+    const password = "MOSTAFA";
 
-  async function loadMovies(categoryId) {
-    showBackButton();
-    const res = await fetch(`${serverUrl}/player_api.php?username=${username}&password=${password}&action=get_vod_streams&category_id=${categoryId}`);
-    const movies = await res.json();
-    const content = document.getElementById("content");
-    content.innerHTML = "";
-    movies.forEach(item => {
-      const div = document.createElement("div");
-      div.className = "item";
-      div.onclick = () => playMovie(item.stream_id, item.container_extension);
-      const img = document.createElement("img");
-      img.src = item.stream_icon || "https://via.placeholder.com/160x220?text=No+Image";
-      const title = document.createElement("div");
-      title.innerText = item.name;
-      div.appendChild(img);
-      div.appendChild(title);
-      content.appendChild(div);
-    });
-  }
+    async function loadCategories() {
+      const res = await fetch(`${serverUrl}/player_api.php?username=${username}&password=${password}&action=get_vod_categories`);
+      const data = await res.json();
+      const catDiv = document.getElementById("categories");
+      catDiv.innerHTML = "";
+      data.forEach(cat => {
+        const div = document.createElement("div");
+        div.className = "category";
+        div.innerText = cat.category_name;
+        div.onclick = () => loadMovies(cat.category_id);
+        catDiv.appendChild(div);
+      });
+    }
 
-  function playMovie(streamId, extension = "mp4") {
-    const url = `${serverUrl}/movie/${username}/${password}/${streamId}.${extension}`;
-    const name = encodeURIComponent("فيلم");
-    window.location.href = `https://play/stream?url=${encodeURIComponent(url)}&name=${name}`;
-  }
+    async function loadMovies(categoryId) {
+      showBackButton();
+      const res = await fetch(`${serverUrl}/player_api.php?username=${username}&password=${password}&action=get_vod_streams&category_id=${categoryId}`);
+      const movies = await res.json();
+      const content = document.getElementById("content");
+      content.innerHTML = "";
+      movies.forEach(item => {
+        const div = document.createElement("div");
+        div.className = "item";
+        div.onclick = () => playMovie(item.stream_id, item.container_extension);
+        const img = document.createElement("img");
+        img.src = item.stream_icon || "https://via.placeholder.com/160x220?text=No+Image";
+        const title = document.createElement("div");
+        title.innerText = item.name;
+        div.appendChild(img);
+        div.appendChild(title);
+        content.appendChild(div);
+      });
+    }
 
-  function showBackButton() {
-    document.getElementById("backButton").style.display = "block";
-  }
+    function playMovie(streamId, extension = "mp4") {
+      const url = `${serverUrl}/movie/${username}/${password}/${streamId}.${extension}`;
+      const name = encodeURIComponent("فيلم");
+      window.location.href = `https://play/stream?url=${encodeURIComponent(url)}&name=${name}`;
+    }
 
-  function goBack() {
-    document.getElementById("backButton").style.display = "none";
-    document.getElementById("content").innerHTML = "";
-    loadCategories();
-  }
+    function showBackButton() {
+      document.getElementById("backButton").style.display = "block";
+    }
 
-  document.addEventListener("DOMContentLoaded", loadCategories);
-</script>
+    function goBack() {
+      document.getElementById("backButton").style.display = "none";
+      document.getElementById("content").innerHTML = "";
+      loadCategories();
+    }
+
+    document.addEventListener("DOMContentLoaded", loadCategories);
+  </script>
 </head>
 <body>
-    <div class="sidebar" id="categories"></div>
-    <button id="backButton" class="back-button" onclick="goBack()">
-        <img src="https://cdn-icons-png.flaticon.com/512/271/271220.png" alt="رجوع">
-    </button>
-    <div class="content-container" id="content"></div>
+  <div class="sidebar" id="categories"></div>
+  <button class="back-button" id="backButton" onclick="goBack()">رجوع</button>
+  <div class="content-container" id="content"></div>
 </body>
 </html>
