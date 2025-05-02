@@ -172,21 +172,18 @@
         }
 
         // ✅ التعديل هنا لفتح الرابط بـ xmtv:// لتشغيله في PlayerActivity
-        function openItem(streamId) {
-    // الحصول على بيانات البث باستخدام streamId
-    const streamUrlBase = `${serverUrl}/live/${username}/${password}/${streamId}`;
-
-    // التحقق إذا كانت البيانات تحتوي على container_extension لتحديد الامتداد الصحيح
-    const containerExtension = items.find(item => item.stream_id === streamId)?.container_extension || 'm3u8';
+        function openItem(streamId, containerExtension = 'm3u8') {
+    // إذا لم يكن هناك containerExtension، نستخدم m3u8 كامتداد افتراضي
+    const extension = containerExtension || 'm3u8';
     
-    // بناء الرابط النهائي مع الامتداد الصحيح
-    const streamUrl = `${streamUrlBase}.${containerExtension}`;
-
-    // اسم القناة
+    // بناء رابط البث باستخدام streamId وامتداد مناسب
+    const streamUrl = `${serverUrl}/live/${username}/${password}/${streamId}.${extension}`;
+    
+    // اسم القناة (يمكن تغييره بناءً على بيانات الـ API)
     const channelName = encodeURIComponent("Live Channel");
-
-    // فتح البث في مشغل خارجي (مثل VLC) أو مشغل PlayerActivity
-    window.location.href = `xmtv://stream?url=${encodeURIComponent(streamUrl)}&name=${channelName}`;
+    
+    // فتح الرابط باستخدام مشغل البث
+    window.location.href = `https://play/stream?url=${encodeURIComponent(streamUrl)}&name=${channelName}`;
 }
 
         document.addEventListener("DOMContentLoaded", loadCategories);
