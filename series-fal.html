@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html lang="ar">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>مسلسلات</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      direction: rtl;
+      background: #111;
+      color: white;
+      margin: 0;
+      display: flex;
+      height: 100vh;
+      overflow: hidden;
+    }
+    .sidebar {
+      width: 300px;
+      background: #222;
+      overflow-y: auto;
+      padding: 15px;
+      border-left: 3px solid #444;
+    }
+    .category {
+      background: #009688;
+      padding: 10px;
+      margin: 5px 0;
+      border-radius: 6px;
+      cursor: pointer;
+      text-align: center;
+    }
+    .content-container {
+      flex: 1;
+      overflow-y: auto;
+      padding: 20px;
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+      gap: 15px;
+    }
+    .item {
+      background: #333;
+      padding: 10px;
+      border-radius: 10px;
+      cursor: pointer;
+      text-align: center;
+    }
+    .item img {
+      width: 100%;
+      height: 160px;
+      object-fit: cover;
+      border-radius: 8px;
+    }
+    .back-button {
+      position: fixed;
+      top: 10px;
+      left: 10px;
+      background: #f44336;
+      color: white;
+      padding: 10px 15px;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+      display: none;
+      z-index: 1000;
+    }
+  </style>
+  <script>
+    const serverUrl = "http://faiv5.biz"; // ← ضع رابط السيرفر الخاص بك هنا
+    const username = "MOSTAFA";
+    const password = "MOSTAFA";
+
+    async function loadCategories() {
+      const res = await fetch(`${serverUrl}/player_api.php?username=${username}&password=${password}&action=get_series_categories`);
+      const data = await res.json();
+      const catDiv = document.getElementById("categories");
+      catDiv.innerHTML = "";
+      data.forEach(cat => {
+        const div = document.createElement("div");
+        div.className = "category";
+        div.innerText = cat.category_name;
+        div.onclick = () => loadSeries(cat.category_id);
+        catDiv.appendChild(div);
+      });
+    }
+
+    async function loadSeries(categoryId) {
+      showBackButton();
+      const res = await fetch(`${serverUrl}/player_api.php?username=${username}&password=${password}&action=get_series&category_id=${categoryId}`);
+      const series = await res.json();
+      const content = document.getElementById("content");
+      content.innerHTML = "";
+      series.forEach(item => {
+        const div = document.createElement("div");
+        div.className = "item";
+        div.onclick = () => loadEpisodes(item.series_id);
+        const img = document.createElement("img");
+        img.src = item.cover || "https://via.placeholder.com/160x220?text=No+Image";
+        const title = document.createElement("div");
+        title.innerText = item.name;
+        div.appendChild(img);
+        div.appendChild(title);
+        content.appendChild(div);
+      });
+    }
+
+    async function loadEpisodes(seriesId) {
+      showBackButton();
+      const res = await fetch(`${serverUrl}/player_api.php?username=${username}&password=${password}&action=get_series_info&series_id=${seriesId}`);
+      const data = await res.json();
+      const episodes = data.episodes;
+      const content = document.getElementById("content");
+      content.innerHTML = "";
+
+      for (const season in episodes) {
+        const seasonHeader = document.createElement("h2");
+        seasonHeader.innerText = `الموسم ${season}`;
+        content.appendChild(seasonHeader);
+
+        episodes[season].forEach(ep => {
+          const div = document.createElement("div");
+          div.className = "item";
+          div.innerText = ep.title;
+          div.onclick = () => playEpisode(ep.id, ep.container_extension);
+          content.appendChild(div);
+        });
+      }
+    }
+
+    function playEpisode(episodeId, extension = "m3u8") {
+      const url = `${serverUrl}/series/${username}/${password}/${episodeId}.${extension}`;
+      const name = encodeURIComponent("مسلسل");
+      window.location.href = `https://play/stream?url=${encodeURIComponent(url)}&name=${name}`;
+    }
+
+    function showBackButton() {
+      document.getElementById("backButton").style.display = "block";
+    }
+
+    function goBack() {
+      document.getElementById("backButton").style.display = "none";
+      document.getElementById("content").innerHTML = "";
+      loadCategories();
+    }
+
+    document.addEventListener("DOMContentLoaded", loadCategories);
+  </script>
+</head>
+<body>
+  <div class="sidebar" id="categories"></div>
+  <button class="back-button" id="backButton" onclick="goBack()">رجوع</button>
+  <div class="content-container" id="content"></div>
+</body>
+</html>
