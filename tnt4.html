@@ -103,7 +103,8 @@
         const username = "N9eSp8k95MieWyC";
         const password = "9sr8aO4rJUZ";
         let categories = [];
-        
+        let currentStream = null;  // لحفظ معرف الفيلم الذي يتم مشاهدته
+
         async function loadCategories() {
             try {
                 let vodCategories = await fetch(`${serverUrl}/player_api.php?username=${username}&password=${password}&action=get_vod_categories`).then(res => res.json());
@@ -163,16 +164,27 @@
         }
 
         function goBack() {
-            document.getElementById("categories").style.display = "block";
-            document.getElementById("backButton").style.display = "none";
-            document.getElementById("content").innerHTML = "";
+            if (currentStream) {
+                // إخفاء مشغل الفيديو فقط
+                document.getElementById("content").innerHTML = "";
+                currentStream = null;
+            } else {
+                // العودة إلى صفحة الفئات
+                document.getElementById("categories").style.display = "block";
+                document.getElementById("backButton").style.display = "none";
+                document.getElementById("content").innerHTML = "";
 
-            setTimeout(() => {
-                document.querySelector(".category")?.focus(); // إعادة التركيز على أول باقة
-            }, 100);
+                setTimeout(() => {
+                    document.querySelector(".category")?.focus(); // إعادة التركيز على أول باقة
+                }, 100);
+            }
         }
 
         function openItem(streamId) {
+            // حفظ معرف الفيلم الحالي لتمكين الرجوع بشكل صحيح
+            currentStream = streamId;
+
+            // فتح الفيلم في نافذة جديدة أو استخدام Webview (يمكنك تعديل ذلك حسب احتياجك)
             const streamUrl = `${serverUrl}/movie/${username}/${password}/${streamId}.mp4`;
             window.open(streamUrl, '_blank');
         }
