@@ -3,144 +3,217 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>مسلسلات</title>
+  <title>مشغل المسلسلات</title>
   <style>
     body {
       font-family: Arial, sans-serif;
       direction: rtl;
-      background: #111;
+      background: linear-gradient(-45deg, #1e3c72, #2a5298, #000000, #3b1d56);
+      background-size: 400% 400%;
+      animation: gradientAnimation 10s ease infinite;
       color: white;
       margin: 0;
       display: flex;
       height: 100vh;
       overflow: hidden;
     }
+    @keyframes gradientAnimation {
+      0% { background-position: 0% 50%; }
+      50% { background-position: 100% 50%; }
+      100% { background-position: 0% 50%; }
+    }
     .sidebar {
       width: 300px;
-      background: #222;
-      overflow-y: auto;
+      background: rgba(30, 30, 30, 0.9);
       padding: 15px;
-      border-left: 3px solid #444;
+      overflow-y: auto;
+      border-right: 3px solid #333;
     }
     .category {
-      background: #009688;
-      padding: 10px;
-      margin: 5px 0;
-      border-radius: 6px;
-      cursor: pointer;
+      background: #ff5722;
+      padding: 15px;
+      margin: 8px 0;
+      border-radius: 8px;
       text-align: center;
+      font-size: 18px;
+      font-weight: bold;
+      cursor: pointer;
+      transition: 0.3s;
+    }
+    .category:focus, .category.active {
+      background: #e64a19;
+      outline: 3px solid yellow;
+      transform: scale(1.1);
     }
     .content-container {
       flex: 1;
-      overflow-y: auto;
-      padding: 20px;
       display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
-      gap: 15px;
+      grid-template-columns: repeat(5, 1fr);
+      gap: 12px;
+      padding: 20px;
+      overflow-y: auto;
+      justify-content: center;
+      position: relative;
     }
     .item {
-      background: #333;
-      padding: 10px;
-      border-radius: 10px;
+      background: rgba(255, 255, 255, 0.1);
+      width: 100%;
+      height: 180px;
+      border-radius: 12px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
       cursor: pointer;
+      transition: 0.3s;
       text-align: center;
     }
     .item img {
-      width: 100%;
-      height: 160px;
-      object-fit: cover;
+      width: 80%;
+      height: 80%;
+      object-fit: contain;
       border-radius: 8px;
+    }
+    .item:focus {
+      background: rgba(255, 255, 255, 0.2);
+      transform: scale(1.1);
+      outline: 3px solid yellow;
     }
     .back-button {
       position: fixed;
       top: 10px;
       left: 10px;
-      background: #f44336;
-      color: white;
-      padding: 10px 15px;
+      background: none;
       border: none;
-      border-radius: 6px;
       cursor: pointer;
+      outline: none;
       display: none;
       z-index: 1000;
     }
+    .back-button img {
+      width: 50px;
+      height: 50px;
+    }
   </style>
   <script>
-    const serverUrl = "http://faiv5.biz"; // ← ضع رابط السيرفر الخاص بك هنا
+    const serverUrl = "http://faiv5.biz";
     const username = "MOSTAFA";
     const password = "MOSTAFA";
+    let categories = [];
+    let seriesInfo = null;
+    let selectedSeries = null;
 
     async function loadCategories() {
-      const res = await fetch(`${serverUrl}/player_api.php?username=${username}&password=${password}&action=get_series_categories`);
-      const data = await res.json();
-      const catDiv = document.getElementById("categories");
-      catDiv.innerHTML = "";
-      data.forEach(cat => {
-        const div = document.createElement("div");
-        div.className = "category";
-        div.innerText = cat.category_name;
-        div.onclick = () => loadSeries(cat.category_id);
-        catDiv.appendChild(div);
-      });
-    }
-
-    async function loadSeries(categoryId) {
-      showBackButton();
-      const res = await fetch(`${serverUrl}/player_api.php?username=${username}&password=${password}&action=get_series&category_id=${categoryId}`);
-      const series = await res.json();
-      const content = document.getElementById("content");
-      content.innerHTML = "";
-      series.forEach(item => {
-        const div = document.createElement("div");
-        div.className = "item";
-        div.onclick = () => loadEpisodes(item.series_id);
-        const img = document.createElement("img");
-        img.src = item.cover || "https://via.placeholder.com/160x220?text=No+Image";
-        const title = document.createElement("div");
-        title.innerText = item.name;
-        div.appendChild(img);
-        div.appendChild(title);
-        content.appendChild(div);
-      });
-    }
-
-    async function loadEpisodes(seriesId) {
-      showBackButton();
-      const res = await fetch(`${serverUrl}/player_api.php?username=${username}&password=${password}&action=get_series_info&series_id=${seriesId}`);
-      const data = await res.json();
-      const episodes = data.episodes;
-      const content = document.getElementById("content");
-      content.innerHTML = "";
-
-      for (const season in episodes) {
-        const seasonHeader = document.createElement("h2");
-        seasonHeader.innerText = `الموسم ${season}`;
-        content.appendChild(seasonHeader);
-
-        episodes[season].forEach(ep => {
-          const div = document.createElement("div");
-          div.className = "item";
-          div.innerText = ep.title;
-          div.onclick = () => playEpisode(ep.id, ep.container_extension);
-          content.appendChild(div);
-        });
+      try {
+        let seriesCategories = await fetch(`${serverUrl}/player_api.php?username=${username}&password=${password}&action=get_series_categories`).then(res => res.json());
+        categories = seriesCategories;
+        displayCategories();
+      } catch {
+        document.getElementById("categories").innerHTML = "⚠️ خطأ في تحميل فئات المسلسلات";
       }
     }
 
-    function playEpisode(episodeId, extension = "m3u8") {
-      const url = `${serverUrl}/series/${username}/${password}/${episodeId}.${extension}`;
-      const name = encodeURIComponent("مسلسل");
-      window.location.href = `https://play/stream?url=${encodeURIComponent(url)}&name=${name}`;
+    function displayCategories() {
+      let container = document.getElementById("categories");
+      container.innerHTML = "";
+      categories.forEach(category => {
+        let div = document.createElement("div");
+        div.className = "category";
+        div.innerText = category.category_name;
+        div.tabIndex = 0;
+        div.onclick = () => selectCategory(category);
+        container.appendChild(div);
+      });
+      setTimeout(() => {
+        container.firstChild?.focus();
+      }, 100);
     }
 
-    function showBackButton() {
+    async function selectCategory(category) {
+      document.getElementById("categories").style.display = "none";
       document.getElementById("backButton").style.display = "block";
+
+      try {
+        let response = await fetch(`${serverUrl}/player_api.php?username=${username}&password=${password}&action=get_series&category_id=${category.category_id}`);
+        let items = await response.json();
+        displaySeries(items);
+      } catch {
+        document.getElementById("content").innerHTML = "⚠️ خطأ في تحميل المسلسلات";
+      }
+    }
+
+    function displaySeries(items) {
+      let container = document.getElementById("content");
+      container.innerHTML = "";
+
+      items.forEach(item => {
+        let div = document.createElement("div");
+        div.className = "item";
+        div.tabIndex = 0;
+        div.onclick = () => loadSeriesInfo(item.series_id);
+        let img = document.createElement("img");
+        img.src = item.cover || "https://via.placeholder.com/100";
+        img.alt = "مسلسل";
+        div.appendChild(img);
+        container.appendChild(div);
+      });
+
+      container.firstChild?.focus();
+    }
+
+    async function loadSeriesInfo(seriesId) {
+      selectedSeries = seriesId;
+      try {
+        let res = await fetch(`${serverUrl}/player_api.php?username=${username}&password=${password}&action=get_series_info&series_id=${seriesId}`);
+        seriesInfo = await res.json();
+        displaySeasons(seriesInfo.episodes);
+      } catch {
+        document.getElementById("content").innerHTML = "⚠️ خطأ في تحميل المواسم";
+      }
+    }
+
+    function displaySeasons(episodes) {
+      let container = document.getElementById("content");
+      container.innerHTML = "";
+
+      for (let season in episodes) {
+        let div = document.createElement("div");
+        div.className = "item";
+        div.tabIndex = 0;
+        div.innerText = `الموسم ${season}`;
+        div.onclick = () => displayEpisodes(season);
+        container.appendChild(div);
+      }
+    }
+
+    function displayEpisodes(season) {
+      let container = document.getElementById("content");
+      container.innerHTML = "";
+
+      let episodes = seriesInfo.episodes[season];
+      episodes.forEach(ep => {
+        let div = document.createElement("div");
+        div.className = "item";
+        div.tabIndex = 0;
+        div.innerText = ep.title;
+        div.onclick = () => playEpisode(ep.id, ep.container_extension);
+        container.appendChild(div);
+      });
     }
 
     function goBack() {
+      document.getElementById("categories").style.display = "block";
       document.getElementById("backButton").style.display = "none";
       document.getElementById("content").innerHTML = "";
-      loadCategories();
+      setTimeout(() => {
+        document.querySelector(".category")?.focus();
+      }, 100);
+    }
+
+    function playEpisode(episodeId, ext = "m3u8") {
+      const streamUrl = `${serverUrl}/series/${username}/${password}/${episodeId}.${ext}`;
+      const name = encodeURIComponent("حلقة مسلسل");
+      window.location.href = `https://play/stream?url=${encodeURIComponent(streamUrl)}&name=${name}`;
     }
 
     document.addEventListener("DOMContentLoaded", loadCategories);
@@ -148,7 +221,9 @@
 </head>
 <body>
   <div class="sidebar" id="categories"></div>
-  <button class="back-button" id="backButton" onclick="goBack()">رجوع</button>
+  <button id="backButton" class="back-button" onclick="goBack()">
+    <img src="https://cdn-icons-png.flaticon.com/128/3916/3916837.png" alt="رجوع" />
+  </button>
   <div class="content-container" id="content"></div>
 </body>
 </html>
