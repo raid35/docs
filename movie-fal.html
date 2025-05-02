@@ -98,12 +98,12 @@
         }
     </style>
     <script>
-        const serverUrl = "http://148.251.133.153:8181";
-        const username = "N9eSp8k95MieWyC";
-        const password = "9sr8aO4rJUZ";
-        let categories = [];
-        
-        async function loadCategories() {
+    const serverUrl = "http://faiv5.biz";
+    const username = "MOSTAFA";
+    const password = "MOSTAFA";
+    let categories = [];
+
+    async function loadCategories() {
         try {
             // نحصل على فئات الفيديو حسب الطلب (VOD)
             let vodCategories = await fetch(`${serverUrl}/player_api.php?username=${username}&password=${password}&action=get_vod_categories`).then(res => res.json());
