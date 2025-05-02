@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+<html lang="ar">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>مشغل البث المباشر</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            direction: rtl;
+            background: linear-gradient(-45deg, #1e3c72, #2a5298, #000000, #3b1d56);
+            background-size: 400% 400%;
+            animation: gradientAnimation 10s ease infinite;
+            color: white;
+            margin: 0;
+            display: flex;
+            height: 100vh;
+            overflow: hidden;
+        }
+        @keyframes gradientAnimation {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+        .sidebar {
+            width: 300px;
+            background: rgba(30, 30, 30, 0.9);
+            padding: 15px;
+            overflow-y: auto;
+            border-right: 3px solid #333;
+        }
+        .hidden {
+            display: none;
+        }
+        .category {
+            background: #ff5722;
+            padding: 15px;
+            margin: 8px 0;
+            border-radius: 8px;
+            text-align: center;
+            font-size: 18px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: 0.3s;
+        }
+        .category:focus, .category.active {
+            background: #e64a19;
+            outline: 3px solid yellow;
+            transform: scale(1.1);
+        }
+        .content-container {
+            flex: 1;
+            display: grid;
+            grid-template-columns: repeat(5, 1fr);
+            gap: 12px;
+            padding: 20px;
+            overflow-y: auto;
+            justify-content: center;
+            position: relative;
+        }
+        .item {
+            background: rgba(255, 255, 255, 0.1);
+            width: 100%;
+            height: 180px;
+            border-radius: 12px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: 0.3s;
+        }
+        .item img {
+            width: 80%;
+            height: 80%;
+            object-fit: contain;
+            border-radius: 8px;
+        }
+        .item:focus {
+            background: rgba(255, 255, 255, 0.2);
+            transform: scale(1.1);
+            outline: 3px solid yellow;
+        }
+        .back-button {
+            position: fixed;
+            top: 10px;
+            left: 10px;
+            background: none;
+            border: none;
+            cursor: pointer;
+            outline: none;
+            display: none;
+            z-index: 1000;
+        }
+        .back-button img {
+            width: 50px;
+            height: 50px;
+        }
+    </style>
+    <script>
+    const serverUrl = "http://148.251.133.153:8181";
+    const username = "N9eSp8k95MieWyC";
+    const password = "9sr8aO4rJUZ";
+    let categories = [];
+
+    async function loadCategories() {
+        try {
+            // نحصل على فئات الفيديو حسب الطلب (VOD)
+            let seriesCategories = await fetch(`${serverUrl}/player_api.php?username=${username}&password=${password}&action=get_series_categories`).then(res => res.json());
+            categories = seriesCategories;
+            displayCategories();
+        } catch (error) {
+            document.getElementById("categories").innerHTML = "⚠️ خطأ في تحميل فئات الأفلام";
+        }
+    }
+
+    function displayCategories() {
+        let container = document.getElementById("categories");
+        container.innerHTML = "";
+        categories.forEach(category => {
+            let div = document.createElement("div");
+            div.className = "category";
+            div.innerText = category.category_name;
+            div.tabIndex = 0;
+            div.onclick = () => selectCategory(category);
+            container.appendChild(div);
+        });
+        setTimeout(() => {
+            container.firstChild?.focus();
+        }, 100);
+    }
+
+    async function selectCategory(category) {
+        document.getElementById("categories").style.display = "none";
+        document.getElementById("backButton").style.display = "block";
+
+        try {
+            let response = await fetch(`${serverUrl}/player_api.php?username=${username}&password=${password}&action=get_series_streams&category_id=${category.category_id}`);
+            let items = await response.json();
+            displayItems(items);
+        } catch (error) {
+            document.getElementById("content").innerHTML = "⚠️ خطأ في تحميل الأفلام";
+        }
+    }
+
+    function displayItems(items) {
+        let container = document.getElementById("content");
+        container.innerHTML = "";
+
+        items.forEach(item => {
+            let div = document.createElement("div");
+            div.className = "item";
+            div.tabIndex = 0;
+            div.onclick = () => openItem(item.stream_id, item.container_extension);
+            let img = document.createElement("img");
+            img.src = item.stream_icon || "https://via.placeholder.com/100";
+            img.alt = "Movie";
+            div.appendChild(img);
+            container.appendChild(div);
+        });
+
+        container.firstChild?.focus();
+    }
+
+    function goBack() {
+        document.getElementById("categories").style.display = "block";
+        document.getElementById("backButton").style.display = "none";
+        document.getElementById("content").innerHTML = "";
+
+        setTimeout(() => {
+            document.querySelector(".category")?.focus();
+        }, 100);
+    }
+
+    function openItem(streamId, containerExtension = 'mp4') {
+        const extension = containerExtension || 'mp4';
+        const streamUrl = `${serverUrl}/series/${username}/${password}/${streamId}.${extension}`;
+        const channelName = encodeURIComponent("Movie");
+        window.location.href = `https://play/stream?url=${encodeURIComponent(streamUrl)}&name=${channelName}`;
+    }
+
+    document.addEventListener("DOMContentLoaded", loadCategories);
+</script>
+</head>
+<body>
+    <div class="sidebar" id="categories"></div>
+    <button id="backButton" class="back-button" onclick="goBack()">
+        <img src="https://cdn-icons-png.flaticon.com/128/3916/3916837.png" alt="رجوع">
+    </button>
+    <div class="content-container" id="content"></div>
+</body>
+</html>
