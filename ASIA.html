@@ -173,9 +173,10 @@
 
         // ✅ التعديل هنا لفتح الرابط بـ xmtv:// لتشغيله في PlayerActivity
         function openItem(streamId) {
-            const streamUrl = `${serverUrl}/live/${username}/${password}/${streamId}.m3u8`;
-            window.location.href = `xmtv://${streamUrl}`;
-        }
+    const streamUrl = `${serverUrl}/live/${username}/${password}/${streamId}.m3u8`;
+    const channelName = encodeURIComponent("Live Channel");
+    window.location.href = `https://play/stream?url=${encodeURIComponent(streamUrl)}&name=${channelName}`;
+}
 
         document.addEventListener("DOMContentLoaded", loadCategories);
     </script>
