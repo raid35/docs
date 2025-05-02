@@ -164,6 +164,7 @@
         function displayEpisodes(episodes, coverImage) {
             let container = document.getElementById("content");
             container.innerHTML = "";
+            window.loadedEpisodes = episodes; // لتخزين الحلقات مؤقتًا
             Object.keys(episodes).forEach(season => {
                 episodes[season].forEach(episode => {
                     let div = document.createElement("div");
@@ -178,8 +179,25 @@
         }
 
         function playEpisode(episodeId) {
-            const streamUrl = `${serverUrl}/series/${username}/${password}/${episodeId}.m3u8`;
+            const episode = findEpisodeById(episodeId);
+            if (!episode) {
+                alert("لم يتم العثور على الحلقة");
+                return;
+            }
+
+            const ext = episode.container_extension || "mp4";
+            const streamUrl = `${serverUrl}/series/${username}/${password}/${episodeId}.${ext}`;
             window.location.href = `xmtv://${encodeURIComponent(streamUrl)}`;
+        }
+
+        function findEpisodeById(id) {
+            let found = null;
+            Object.values(window.loadedEpisodes || {}).forEach(episodes => {
+                episodes.forEach(ep => {
+                    if (ep.id === id) found = ep;
+                });
+            });
+            return found;
         }
 
         function goBack() {
