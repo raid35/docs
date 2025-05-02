@@ -1,203 +1,190 @@
 <!DOCTYPE html>
-<html lang="ar" dir="rtl">
+<html lang="ar">
 <head>
-  <meta charset="UTF-8">
-  <title>مشغل فيديو مع DRM</title>
-  <style>
-    body, html {
-      margin: 0;
-      padding: 0;
-      height: 100%;
-      overflow: hidden;
-      background: black;
-    }
-    #videoPlayer {
-      width: 100%;
-      height: 100%;
-      background: black;
-      object-fit: cover;
-    }
-    .controls {
-      position: absolute;
-      bottom: 0;
-      width: 100%;
-      background: rgba(0, 0, 0, 0.6);
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      padding: 10px;
-      opacity: 0;
-      transition: opacity 0.5s ease-in-out;
-    }
-    .controls.show {
-      opacity: 1;
-    }
-    .btn {
-      color: white;
-      background: none;
-      border: none;
-      font-size: 20px;
-      cursor: pointer;
-    }
-    .time {
-      color: white;
-      font-size: 14px;
-    }
-    #seekbar {
-      flex: 1;
-      margin: 0 10px;
-    }
-    #volumeControl {
-      width: 100px;
-    }
-    /* دائرة التحميل */
-    #loadingSpinner {
-      position: absolute;
-      top: 50%;
-      left: 50%;
-      width: 60px;
-      height: 60px;
-      margin: -30px 0 0 -30px;
-      border: 8px solid #00ff00; /* أخضر */
-      border-top: 8px solid transparent;
-      border-radius: 50%;
-      animation: spin 1s linear infinite;
-      z-index: 10000;
-      display: none;
-    }
-    @keyframes spin {
-      0% { transform: rotate(0deg); }
-      100% { transform: rotate(360deg); }
-    }
-  </style>
-  <!-- تضمين ملفات Shaka Player الحديثة -->
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/shaka-player/4.12.6/shaka-player.compiled.min.js"></script>
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/shaka-player/4.12.6/controls.min.css">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>مشغل الأفلام والمسلسلات</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            direction: rtl;
+            background: linear-gradient(-45deg, #1e3c72, #2a5298, #000000, #3b1d56);
+            background-size: 400% 400%;
+            animation: gradientAnimation 10s ease infinite;
+            color: white;
+            margin: 0;
+            display: flex;
+            height: 100vh;
+            overflow: hidden;
+        }
+        @keyframes gradientAnimation {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+        .sidebar {
+            width: 300px;
+            background: rgba(30, 30, 30, 0.9);
+            padding: 15px;
+            overflow-y: auto;
+            border-right: 3px solid #333;
+        }
+        .hidden {
+            display: none;
+        }
+        .category {
+            background: #ff5722;
+            padding: 15px;
+            margin: 8px 0;
+            border-radius: 8px;
+            text-align: center;
+            font-size: 18px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: 0.3s;
+        }
+        .category:focus, .category.active {
+            background: #e64a19;
+            outline: 3px solid yellow;
+            transform: scale(1.1);
+        }
+        .content-container {
+            flex: 1;
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 12px;
+            padding: 20px;
+            overflow-y: auto;
+            justify-content: center;
+            position: relative;
+        }
+        .item {
+            background: rgba(255, 255, 255, 0.1);
+            width: 100%;
+            height: 180px;
+            border-radius: 12px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: 0.3s;
+        }
+        .item img {
+            width: 80%;
+            height: 80%;
+            object-fit: contain;
+            border-radius: 8px;
+        }
+        .item:focus {
+            background: rgba(255, 255, 255, 0.2);
+            transform: scale(1.1);
+            outline: 3px solid yellow;
+        }
+        /* زر الرجوع */
+        .back-button {
+            position: fixed;
+            top: 10px;
+            left: 10px;
+            background: none;
+            border: none;
+            cursor: pointer;
+            outline: none;
+            display: none;
+            z-index: 1000;
+        }
+        .back-button img {
+            width: 50px;
+            height: 50px;
+        }
+    </style>
+    <script>
+        const serverUrl = "http://148.251.133.153:8181";
+        const username = "N9eSp8k95MieWyC";
+        const password = "9sr8aO4rJUZ";
+        let categories = [];
+        
+        async function loadCategories() {
+            try {
+                let vodCategories = await fetch(`${serverUrl}/player_api.php?username=${username}&password=${password}&action=get_vod_categories`).then(res => res.json());
+                categories = vodCategories;
+                displayCategories();
+            } catch (error) {
+                document.getElementById("categories").innerHTML = "⚠️ خطأ في تحميل الفئات";
+            }
+        }
+
+        function displayCategories() {
+            let container = document.getElementById("categories");
+            container.innerHTML = "";
+            categories.forEach(category => {
+                let div = document.createElement("div");
+                div.className = "category";
+                div.innerText = category.category_name;
+                div.tabIndex = 0;
+                div.onclick = () => selectCategory(category);
+                container.appendChild(div);
+            });
+            setTimeout(() => {
+                container.firstChild?.focus(); // تحديد الباقة الأولى ليعمل الريموت
+            }, 100);
+        }
+
+        async function selectCategory(category) {
+            document.getElementById("categories").style.display = "none";
+            document.getElementById("backButton").style.display = "block";
+
+            try {
+                let response = await fetch(`${serverUrl}/player_api.php?username=${username}&password=${password}&action=get_vod_streams&category_id=${category.category_id}`);
+                let items = await response.json();
+                displayItems(items);
+            } catch (error) {
+                document.getElementById("content").innerHTML = "⚠️ خطأ في تحميل المحتوى";
+            }
+        }
+
+        function displayItems(items) {
+            let container = document.getElementById("content");
+            container.innerHTML = "";
+
+            items.forEach(item => {
+                let div = document.createElement("div");
+                div.className = "item";
+                div.tabIndex = 0;
+                div.onclick = () => openItem(item.stream_id);
+                let img = document.createElement("img");
+                img.src = item.stream_icon || "https://via.placeholder.com/100";
+                img.alt = "Logo";
+                div.appendChild(img);
+                container.appendChild(div);
+            });
+
+            container.firstChild?.focus();
+        }
+
+        function goBack() {
+            document.getElementById("categories").style.display = "block";
+            document.getElementById("backButton").style.display = "none";
+            document.getElementById("content").innerHTML = "";
+
+            setTimeout(() => {
+                document.querySelector(".category")?.focus(); // إعادة التركيز على أول باقة
+            }, 100);
+        }
+
+        function openItem(streamId) {
+            const streamUrl = `${serverUrl}/movie/${username}/${password}/${streamId}.mp4`;
+            window.location.href = `xmtv://${encodeURIComponent(streamUrl)}`;
+        }
+
+        document.addEventListener("DOMContentLoaded", loadCategories);
+    </script>
 </head>
 <body>
-
-<!-- دائرة التحميل -->
-<div id="loadingSpinner"></div>
-
-<video id="videoPlayer" autoplay playsinline controls crossorigin="anonymous"></video>
-
-<div id="controls" class="controls">
-  <button id="playPause" class="btn">⏯️</button>
-  <div class="time" id="currentTime">00:00</div>
-  <input type="range" id="seekbar" value="0" min="0" max="100" step="1">
-  <div class="time" id="duration">00:00</div>
-  <button id="mute" class="btn">🔇</button>
-  <input type="range" id="volumeControl" min="0" max="1" step="0.1" value="1" />
-</div>
-
-<script>
-  const video = document.getElementById('videoPlayer');
-  const controls = document.getElementById('controls');
-  const playPause = document.getElementById('playPause');
-  const mute = document.getElementById('mute');
-  const seekbar = document.getElementById('seekbar');
-  const volumeControl = document.getElementById('volumeControl');
-  const currentTime = document.getElementById('currentTime');
-  const duration = document.getElementById('duration');
-  const loadingSpinner = document.getElementById('loadingSpinner');
-
-  const videoUrl = "https://live.ll.ww.aiv-cdn.net/OTTB/lhr-nitro/live/clients/dash/enc/i2pcjr4pe5/out/v1/912e9db56d75403b8a9ac0a719110f36/cenc.mpd";
-
-  const player = new shaka.Player(video);
-
-  player.configure({
-    streaming: {
-      bufferingGoal: 60,  // تحسين التخزين المؤقت لتخزين المزيد من الفيديو مسبقًا
-      rebufferingGoal: 5,  // تقليل المدة التي تنتظر فيها لإعادة التخزين المؤقت
-      preload: 3,  // تحميل جزء أكبر من الفيديو مسبقًا
-      retryParameters: {
-        maxAttempts: 5,  // تحديد عدد المحاولات في حال فشل التحميل
-        baseDelay: 1,  // تأخير أساسي قبل المحاولة الجديدة
-        backoffFactor: 2,  // زيادة التأخير بعد كل محاولة فاشلة
-      }
-    },
-    drm: {
-      clearKeys: {        "e31a5a81caff5d07ea2411a571fc2e59":"96c5ef69479732ae734f962748c19729"
-      }
-    }
-  });
-
-  async function initPlayer() {
-    try {
-      loadingSpinner.style.display = 'block'; // إظهار دائرة التحميل
-      await player.load(videoUrl);
-      console.log("✅ تم تحميل القناة بنجاح!");
-
-      // التحقق من وجود الصوت باللغة العربية وتحديده إذا كان موجودًا
-      const audioTracks = player.getAudioTracks();
-      const arabicAudioTrack = audioTracks.find(track => track.language === 'ar');
-      if (arabicAudioTrack) {
-        player.selectAudioTrack(arabicAudioTrack);
-        console.log("✅ تم تحديد الصوت باللغة العربية");
-      }
-
-      video.muted = false;
-      video.volume = 1.0;
-      await video.play();
-    } catch (error) {
-      console.error("❌ خطأ في تحميل القناة:", error);
-    } finally {
-      loadingSpinner.style.display = 'none'; // إخفاء دائرة التحميل بعد التحميل أو الخطأ
-    }
-  }
-
-  document.addEventListener('DOMContentLoaded', initPlayer);
-
-  let hideControlsTimeout;
-
-  function formatTime(sec) {
-    const minutes = Math.floor(sec / 60).toString().padStart(2, '0');
-    const seconds = Math.floor(sec % 60).toString().padStart(2, '0');
-    return `${minutes}:${seconds}`;
-  }
-
-  function showControls() {
-    controls.classList.add('show');
-    clearTimeout(hideControlsTimeout);
-    hideControlsTimeout = setTimeout(() => {
-      controls.classList.remove('show');
-    }, 3000);
-  }
-
-  document.body.addEventListener('mousemove', showControls);
-  document.body.addEventListener('keydown', showControls);
-
-  playPause.addEventListener('click', () => {
-    if (video.paused) {
-      video.play();
-    } else {
-      video.pause();
-    }
-  });
-
-  mute.addEventListener('click', () => {
-    video.muted = !video.muted;
-  });
-
-  volumeControl.addEventListener('input', (event) => {
-    video.volume = event.target.value;
-  });
-
-  seekbar.addEventListener('input', () => {
-    video.currentTime = (seekbar.value / 100) * video.duration;
-  });
-
-  video.addEventListener('timeupdate', () => {
-    seekbar.value = (video.currentTime / video.duration) * 100;
-    currentTime.textContent = formatTime(video.currentTime);
-  });
-
-  video.addEventListener('loadedmetadata', () => {
-    duration.textContent = formatTime(video.duration);
-  });
-
-  showControls();
-</script>
-
+    <div class="sidebar" id="categories"></div>
+    <button id="backButton" class="back-button" onclick="goBack()">
+        <img src="https://cdn-icons-png.flaticon.com/512/271/271220.png" alt="رجوع">
+    </button>
+    <div class="content-container" id="content"></div>
 </body>
 </html>
