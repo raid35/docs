@@ -1,41 +1,190 @@
-
 <!DOCTYPE html>
-<html lang="en">
+<html lang="ar">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Open URL Video in xPola Player</title>
-    <meta name="description" content="Experience seamless video playback with Xpola Player. Our page allows you to effortlessly play video URLs, offering high-quality streaming with minimal buffering. Perfect for viewers seeking an optimized watching experience. Click to enjoy your favorite videos now.">
-    <link rel="shortcut icon" type="image/x-icon" href="/assets/images/favicon.png" />
-	<meta property="og:image" content=""/>
+    <title>مشغل البث المباشر</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            direction: rtl;
+            background: linear-gradient(-45deg, #1e3c72, #2a5298, #000000, #3b1d56);
+            background-size: 400% 400%;
+            animation: gradientAnimation 10s ease infinite;
+            color: white;
+            margin: 0;
+            display: flex;
+            height: 100vh;
+            overflow: hidden;
+        }
+        @keyframes gradientAnimation {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+        .sidebar {
+            width: 300px;
+            background: rgba(30, 30, 30, 0.9);
+            padding: 15px;
+            overflow-y: auto;
+            border-right: 3px solid #333;
+        }
+        .hidden {
+            display: none;
+        }
+        .category {
+            background: #ff5722;
+            padding: 15px;
+            margin: 8px 0;
+            border-radius: 8px;
+            text-align: center;
+            font-size: 18px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: 0.3s;
+        }
+        .category:focus, .category.active {
+            background: #e64a19;
+            outline: 3px solid yellow;
+            transform: scale(1.1);
+        }
+        .content-container {
+            flex: 1;
+            display: grid;
+            grid-template-columns: repeat(5, 1fr); /* تم التعديل هنا ليصبح 5 أعمدة */
+            gap: 12px;
+            padding: 20px;
+            overflow-y: auto;
+            justify-content: center;
+            position: relative;
+        }
+        .item {
+            background: rgba(255, 255, 255, 0.1);
+            width: 100%;
+            height: 180px;
+            border-radius: 12px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: 0.3s;
+        }
+        .item img {
+            width: 80%;
+            height: 80%;
+            object-fit: contain;
+            border-radius: 8px;
+        }
+        .item:focus {
+            background: rgba(255, 255, 255, 0.2);
+            transform: scale(1.1);
+            outline: 3px solid yellow;
+        }
+        /* زر الرجوع */
+        .back-button {
+            position: fixed;
+            top: 10px;
+            left: 10px;
+            background: none;
+            border: none;
+            cursor: pointer;
+            outline: none;
+            display: none;
+            z-index: 1000;
+        }
+        .back-button img {
+            width: 50px;
+            height: 50px;
+        }
+    </style>
+    <script>
+        const serverUrl = "http://148.251.133.153:8181";
+        const username = "N9eSp8k95MieWyC";
+        const password = "9sr8aO4rJUZ";
+        let categories = [];
+        
+        async function loadCategories() {
+            try {
+                let liveCategories = await fetch(`${serverUrl}/player_api.php?username=${username}&password=${password}&action=get_live_categories`).then(res => res.json());
+                categories = liveCategories;
+                displayCategories();
+            } catch (error) {
+                document.getElementById("categories").innerHTML = "⚠️ خطأ في تحميل الفئات";
+            }
+        }
 
-<style> body { display: flex; align-items: center; justify-content: center; height: 100vh; margin: 0; background-color: #000;
-    background-image: url('');
-    background-size: cover;
-    background-repeat: no-repeat; 
-    background-position: center; 
+        function displayCategories() {
+            let container = document.getElementById("categories");
+            container.innerHTML = "";
+            categories.forEach(category => {
+                let div = document.createElement("div");
+                div.className = "category";
+                div.innerText = category.category_name;
+                div.tabIndex = 0;
+                div.onclick = () => selectCategory(category);
+                container.appendChild(div);
+            });
+            setTimeout(() => {
+                container.firstChild?.focus(); // تحديد الباقة الأولى ليعمل الريموت
+            }, 100);
+        }
 
- } .play-button { background-color: #f7f7f7; color: #fff; border: none; padding: 10px; font-size: 24px; cursor: pointer; border-radius: 50%; display: flex; align-items: center; justify-content: center; position: relative; } .play-button:hover { background-color: #999; } .message-box { background-color: #333; border-radius: 8px; padding: 20px; text-align: center; position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); width: 300px; z-index: 1000; } .message-box p { margin: 0 0 20px; color: #ecf0f1; } } .message-box .actions { margin-top: 20px; } .message-box button { background-color: transparent; border: none; color: #f40; font-size: 16px; margin: 0 10px; padding: 6px; cursor: pointer; } .message-box button:hover { text-decoration: underline; } .message-box .checkbox-container { display: flex; align-items: center; justify-content: center; margin-top: 20px; } .message-box .checkbox-container input { margin-right: 10px; } label { color: #9E9E9E; } 
+        async function selectCategory(category) {
+            document.getElementById("categories").style.display = "none";
+            document.getElementById("backButton").style.display = "block";
 
-</style>
+            try {
+                let response = await fetch(`${serverUrl}/player_api.php?username=${username}&password=${password}&action=get_live_streams&category_id=${category.category_id}`);
+                let items = await response.json();
+                displayItems(items);
+            } catch (error) {
+                document.getElementById("content").innerHTML = "⚠️ خطأ في تحميل المحتوى";
+            }
+        }
+
+        function displayItems(items) {
+            let container = document.getElementById("content");
+            container.innerHTML = "";
+
+            items.forEach(item => {
+                let div = document.createElement("div");
+                div.className = "item";
+                div.tabIndex = 0;
+                div.onclick = () => openItem(item.stream_id);
+                let img = document.createElement("img");
+                img.src = item.stream_icon || "https://via.placeholder.com/100";
+                img.alt = "Logo";
+                div.appendChild(img);
+                container.appendChild(div);
+            });
+
+            container.firstChild?.focus();
+        }
+
+        function goBack() {
+            document.getElementById("categories").style.display = "block";
+            document.getElementById("backButton").style.display = "none";
+            document.getElementById("content").innerHTML = "";
+
+            setTimeout(() => {
+                document.querySelector(".category")?.focus(); // إعادة التركيز على أول باقة
+            }, 100);
+        }
+
+        function openItem(streamId) {
+            const streamUrl = `${serverUrl}/live/${username}/${password}/${streamId}.m3u8`;
+            window.open(streamUrl, '_blank');
+        }
+
+        document.addEventListener("DOMContentLoaded", loadCategories);
+    </script>
 </head>
 <body>
-
-<button onClick="location.href='intent://XPOLA808eGRkYCo/P3Vxd3x1IiAiJD5oaWoqKCA/YHxxaT98eWZ1PmB4YC99cXMtICAqIVEqJykqcnYqJCcqIyU2Y2RidXF9LSMiKCEmNnVoZHV+Y3l/fi1kYzZgfHFpT2R/e3V+LXZFakhCVlx8fEM=#Intent;scheme=xmtv;package=com.xpola.player;end'" class="play-button">
-<svg fill="#000000" height="80px" width="80px" version="1.1" id="Capa_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0 0 60 60" xml:space="preserve">
-    <g>
-        <path d="M45.563,29.174l-22-15c-0.307-0.208-0.703-0.231-1.031-0.058C22.205,14.289,22,14.629,22,15v30 c0,0.371,0.205,0.711,0.533,0.884C22.679,45.962,22.84,46,23,46c0.197,0,0.394-0.059,0.563-0.174l22-15 C45.836,30.64,46,30.331,46,30S45.836,29.36,45.563,29.174z M24,43.107V16.893L43.225,30L24,43.107z"/>
-        <path d="M30,0C13.458,0,0,13.458,0,30s13.458,30,30,30s30-13.458,30-30S46.542,0,30,0z M30,58C14.561,58,2,45.439,2,30 S14.561,2,30,2s28,12.561,28,28S45.439,58,30,58z"/>
-    </g>
-</svg>
-</button>
-
+    <div class="sidebar" id="categories"></div>
+    <button id="backButton" class="back-button" onclick="goBack()">
+        <img src="https://cdn-icons-png.flaticon.com/512/271/271220.png" alt="رجوع">
+    </button>
+    <div class="content-container" id="content"></div>
 </body>
-
-		    <script>
-        window.onload = function() {
-            document.querySelector('.play-button').click();
-        }
-    </script>
-	
 </html>
