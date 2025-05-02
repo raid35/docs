@@ -173,8 +173,19 @@
 
         // ✅ التعديل هنا لفتح الرابط بـ xmtv:// لتشغيله في PlayerActivity
         function openItem(streamId) {
-    const streamUrl = `${serverUrl}/live/${username}/${password}/${streamId}.m3u8`;
+    // الحصول على بيانات البث باستخدام streamId
+    const streamUrlBase = `${serverUrl}/live/${username}/${password}/${streamId}`;
+    
+    // التحقق إذا كانت البيانات تحتوي على container_extension لتحديد الامتداد الصحيح
+    const containerExtension = items.find(item => item.stream_id === streamId)?.container_extension || 'm3u8';
+    
+    // بناء الرابط النهائي مع الامتداد الصحيح
+    const streamUrl = `${streamUrlBase}.${containerExtension}`;
+    
+    // اسم القناة
     const channelName = encodeURIComponent("Live Channel");
+    
+    // إعادة توجيه المتصفح إلى الرابط النهائي
     window.location.href = `https://play/stream?url=${encodeURIComponent(streamUrl)}&name=${channelName}`;
 }
 
