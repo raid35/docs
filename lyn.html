@@ -1,0 +1,186 @@
+<!DOCTYPE html>
+<html lang="ar">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>مشغل البث المباشر</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      direction: rtl;
+      background: linear-gradient(-45deg, #1e3c72, #2a5298, #000000, #3b1d56);
+      background-size: 400% 400%;
+      animation: gradientAnimation 10s ease infinite;
+      color: white;
+      margin: 0;
+      display: flex;
+      height: 100vh;
+      overflow: hidden;
+    }
+    @keyframes gradientAnimation {
+      0% { background-position: 0% 50%; }
+      50% { background-position: 100% 50%; }
+      100% { background-position: 0% 50%; }
+    }
+    .sidebar {
+      width: 300px;
+      background: rgba(30, 30, 30, 0.9);
+      padding: 15px;
+      overflow-y: auto;
+      border-right: 3px solid #333;
+    }
+    .category {
+      background: #ff5722;
+      padding: 15px;
+      margin: 8px 0;
+      border-radius: 8px;
+      text-align: center;
+      font-size: 18px;
+      font-weight: bold;
+      cursor: pointer;
+      transition: 0.3s;
+    }
+    .category.active, .category:focus {
+      background: #e64a19;
+      outline: 3px solid yellow;
+      transform: scale(1.1);
+    }
+    .content-container {
+      flex: 1;
+      display: grid;
+      grid-template-columns: repeat(5, 1fr);
+      gap: 12px;
+      padding: 20px;
+      overflow-y: auto;
+      justify-content: center;
+      position: relative;
+    }
+    .item {
+      background: rgba(255, 255, 255, 0.1);
+      height: 180px;
+      border-radius: 12px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      transition: 0.3s;
+    }
+    .item img {
+      width: 80%;
+      height: 80%;
+      object-fit: contain;
+      border-radius: 8px;
+    }
+    .item:focus {
+      background: rgba(255, 255, 255, 0.2);
+      transform: scale(1.1);
+      outline: 3px solid yellow;
+    }
+  </style>
+
+  <script>
+    const m3uUrl = "http://live.lynxiptv.xyz:80/get.php?username=122841940227&password=Df3vwa0F7K&type=m3u_plus&output=hls&lang=en&view_category=yes";
+    let allChannels = [];
+
+    async function loadM3U() {
+      try {
+        const res = await fetch(m3uUrl);
+        const text = await res.text();
+        allChannels = parseM3U(text);
+        const groups = getGroups(allChannels);
+        displayGroups(groups);
+      } catch (err) {
+        document.getElementById("content").innerHTML = "⚠️ خطأ في تحميل القنوات";
+      }
+    }
+
+    function parseM3U(data) {
+      const lines = data.split('\n');
+      const channels = [];
+      let current = {};
+
+      for (let i = 0; i < lines.length; i++) {
+        if (lines[i].startsWith('#EXTINF')) {
+          const name = lines[i].match(/,(.*)$/);
+          const logo = lines[i].match(/tvg-logo="(.*?)"/);
+          const group = lines[i].match(/group-title="(.*?)"/);
+
+          current.name = name ? name[1].trim() : 'قناة غير معروفة';
+          current.logo = logo ? logo[1] : "https://via.placeholder.com/150";
+          current.group = group ? group[1] : "غير مصنفة";
+
+        } else if (lines[i].startsWith('http')) {
+          current.url = lines[i].trim();
+          channels.push({ ...current });
+        }
+      }
+      return channels;
+    }
+
+    function getGroups(channels) {
+      const groupSet = new Set();
+      channels.forEach(c => groupSet.add(c.group));
+      return Array.from(groupSet).sort();
+    }
+
+    function displayGroups(groups) {
+      const sidebar = document.getElementById("categories");
+      sidebar.innerHTML = "";
+
+      groups.forEach(group => {
+        const div = document.createElement("div");
+        div.className = "category";
+        div.textContent = group;
+        div.onclick = () => selectGroup(group);
+        sidebar.appendChild(div);
+      });
+
+      // بدء تلقائي بأول فئة
+      selectGroup(groups[0]);
+    }
+
+    function selectGroup(groupName) {
+      document.querySelectorAll(".category").forEach(cat => {
+        cat.classList.toggle("active", cat.textContent === groupName);
+      });
+
+      const filtered = allChannels.filter(c => c.group === groupName);
+      displayChannels(filtered);
+    }
+
+    function displayChannels(channels) {
+      const container = document.getElementById("content");
+      container.innerHTML = "";
+
+      channels.forEach(ch => {
+        const div = document.createElement("div");
+        div.className = "item";
+        div.tabIndex = 0;
+        div.onclick = () => playChannel(ch.url, ch.name);
+
+        const img = document.createElement("img");
+        img.src = ch.logo;
+        img.alt = ch.name;
+
+        div.appendChild(img);
+        container.appendChild(div);
+      });
+
+      container.firstChild?.focus();
+    }
+
+    function playChannel(url, name) {
+      const encodedUrl = encodeURIComponent(url);
+      const encodedName = encodeURIComponent(name);
+      window.location.href = `https://play/stream?url=${encodedUrl}&name=${encodedName}`;
+    }
+
+    document.addEventListener("DOMContentLoaded", loadM3U);
+  </script>
+</head>
+<body>
+  <div class="sidebar" id="categories"></div>
+  <div class="content-container" id="content"></div>
+</body>
+</html>
