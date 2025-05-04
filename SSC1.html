@@ -50,7 +50,6 @@
     #volumeControl {
       width: 100px;
     }
-    /* دائرة التحميل */
     #loadingSpinner {
       position: absolute;
       top: 50%;
@@ -58,7 +57,7 @@
       width: 60px;
       height: 60px;
       margin: -30px 0 0 -30px;
-      border: 8px solid #00ff00; /* أخضر */
+      border: 8px solid #00ff00;
       border-top: 8px solid transparent;
       border-radius: 50%;
       animation: spin 1s linear infinite;
@@ -70,13 +69,11 @@
       100% { transform: rotate(360deg); }
     }
   </style>
-  <!-- تضمين ملفات Shaka Player الحديثة -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/shaka-player/4.12.6/shaka-player.compiled.min.js"></script>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/shaka-player/4.12.6/controls.min.css">
 </head>
 <body>
 
-<!-- دائرة التحميل -->
 <div id="loadingSpinner"></div>
 
 <video id="videoPlayer" autoplay playsinline controls crossorigin="anonymous"></video>
@@ -107,13 +104,13 @@
 
   player.configure({
     streaming: {
-      bufferingGoal: 60,  // تحسين التخزين المؤقت لتخزين المزيد من الفيديو مسبقًا
-      rebufferingGoal: 5,  // تقليل المدة التي تنتظر فيها لإعادة التخزين المؤقت
-      preload: 3,  // تحميل جزء أكبر من الفيديو مسبقًا
+      bufferingGoal: 60,
+      rebufferingGoal: 5,
+      preload: 3,
       retryParameters: {
-        maxAttempts: 5,  // تحديد عدد المحاولات في حال فشل التحميل
-        baseDelay: 1,  // تأخير أساسي قبل المحاولة الجديدة
-        backoffFactor: 2,  // زيادة التأخير بعد كل محاولة فاشلة
+        maxAttempts: 5,
+        baseDelay: 1,
+        backoffFactor: 2,
       }
     },
     drm: {
@@ -125,25 +122,22 @@
 
   async function initPlayer() {
     try {
-      loadingSpinner.style.display = 'block'; // إظهار دائرة التحميل
+      loadingSpinner.style.display = 'block';
       await player.load(videoUrl);
-      console.log("✅ تم تحميل القناة بنجاح!");
-
-      // التحقق من وجود الصوت باللغة العربية وتحديده إذا كان موجودًا
+      console.log("✅ تم تحميل الفيديو بنجاح!");
       const audioTracks = player.getAudioTracks();
       const arabicAudioTrack = audioTracks.find(track => track.language === 'ar');
       if (arabicAudioTrack) {
         player.selectAudioTrack(arabicAudioTrack);
         console.log("✅ تم تحديد الصوت باللغة العربية");
       }
-
       video.muted = false;
       video.volume = 1.0;
       await video.play();
     } catch (error) {
-      console.error("❌ خطأ في تحميل القناة:", error);
+      console.error("❌ خطأ في تحميل الفيديو:", error);
     } finally {
-      loadingSpinner.style.display = 'none'; // إخفاء دائرة التحميل بعد التحميل أو الخطأ
+      loadingSpinner.style.display = 'none';
     }
   }
 
