@@ -178,7 +178,7 @@
         }
 
         function playEpisode(episodeId, episodeName = "حلقة") {
-    const streamUrl = `${serverUrl}/series/${username}/${password}/${episodeId}.mp4`;
+    const streamUrl = `${serverUrl}/series/${username}/${password}/${episodeId}.m3u8`;
     const encodedName = encodeURIComponent(episodeName);
     window.location.href = `https://play/stream?url=${encodeURIComponent(streamUrl)}&name=${encodedName}`;
 }
