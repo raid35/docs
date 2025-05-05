@@ -98,96 +98,89 @@
         }
     </style>
     <script>
-        const serverUrl = "http://faiv5.biz";
-        const username = "MOSTAFA";
-        const password = "MOSTAFA";
-        let categories = [];
-        
-        async function loadCategories() {
-            try {
-                let liveCategories = await fetch(`${serverUrl}/player_api.php?username=${username}&password=${password}&action=get_live_categories`).then(res => res.json());
-                categories = liveCategories;
-                displayCategories();
-            } catch (error) {
-                document.getElementById("categories").innerHTML = "⚠️ خطأ في تحميل الفئات";
-            }
+    const serverUrl = "http://148.251.133.153:8181";
+    const username = "N9eSp8k95MieWyC";
+    const password = "9sr8aO4rJUZ";
+    let categories = [];
+
+    async function loadCategories() {
+        try {
+            // نحصل على فئات الفيديو حسب الطلب (VOD)
+            let vodCategories = await fetch(`${serverUrl}/player_api.php?username=${username}&password=${password}&action=get_vod_categories`).then(res => res.json());
+            categories = vodCategories;
+            displayCategories();
+        } catch (error) {
+            document.getElementById("categories").innerHTML = "⚠️ خطأ في تحميل فئات الأفلام";
         }
+    }
 
-        function displayCategories() {
-            let container = document.getElementById("categories");
-            container.innerHTML = "";
-            categories.forEach(category => {
-                let div = document.createElement("div");
-                div.className = "category";
-                div.innerText = category.category_name;
-                div.tabIndex = 0;
-                div.onclick = () => selectCategory(category);
-                container.appendChild(div);
-            });
-            setTimeout(() => {
-                container.firstChild?.focus();
-            }, 100);
-        }
-
-        async function selectCategory(category) {
-            document.getElementById("categories").style.display = "none";
-            document.getElementById("backButton").style.display = "block";
-
-            try {
-                let response = await fetch(`${serverUrl}/player_api.php?username=${username}&password=${password}&action=get_live_streams&category_id=${category.category_id}`);
-                let items = await response.json();
-                displayItems(items);
-            } catch (error) {
-                document.getElementById("content").innerHTML = "⚠️ خطأ في تحميل المحتوى";
-            }
-        }
-
-        function displayItems(items) {
-            let container = document.getElementById("content");
-            container.innerHTML = "";
-
-            items.forEach(item => {
-                let div = document.createElement("div");
-                div.className = "item";
-                div.tabIndex = 0;
-                div.onclick = () => openItem(item.stream_id);
-                let img = document.createElement("img");
-                img.src = item.stream_icon || "https://via.placeholder.com/100";
-                img.alt = "Logo";
-                div.appendChild(img);
-                container.appendChild(div);
-            });
-
+    function displayCategories() {
+        let container = document.getElementById("categories");
+        container.innerHTML = "";
+        categories.forEach(category => {
+            let div = document.createElement("div");
+            div.className = "category";
+            div.innerText = category.category_name;
+            div.tabIndex = 0;
+            div.onclick = () => selectCategory(category);
+            container.appendChild(div);
+        });
+        setTimeout(() => {
             container.firstChild?.focus();
+        }, 100);
+    }
+
+    async function selectCategory(category) {
+        document.getElementById("categories").style.display = "none";
+        document.getElementById("backButton").style.display = "block";
+
+        try {
+            let response = await fetch(`${serverUrl}/player_api.php?username=${username}&password=${password}&action=get_vod_streams&category_id=${category.category_id}`);
+            let items = await response.json();
+            displayItems(items);
+        } catch (error) {
+            document.getElementById("content").innerHTML = "⚠️ خطأ في تحميل الأفلام";
         }
+    }
 
-        function goBack() {
-            document.getElementById("categories").style.display = "block";
-            document.getElementById("backButton").style.display = "none";
-            document.getElementById("content").innerHTML = "";
+    function displayItems(items) {
+        let container = document.getElementById("content");
+        container.innerHTML = "";
 
-            setTimeout(() => {
-                document.querySelector(".category")?.focus();
-            }, 100);
-        }
+        items.forEach(item => {
+            let div = document.createElement("div");
+            div.className = "item";
+            div.tabIndex = 0;
+            div.onclick = () => openItem(item.stream_id, item.container_extension);
+            let img = document.createElement("img");
+            img.src = item.stream_icon || "https://via.placeholder.com/100";
+            img.alt = "Movie";
+            div.appendChild(img);
+            container.appendChild(div);
+        });
 
-        // ✅ التعديل هنا لفتح الرابط بـ xmtv:// لتشغيله في PlayerActivity
-        function openItem(streamId, containerExtension = 'm3u8') {
-    // إذا لم يكن هناك containerExtension، نستخدم m3u8 كامتداد افتراضي
-    const extension = containerExtension || 'm3u8';
-    
-    // بناء رابط البث باستخدام streamId وامتداد مناسب
-    const streamUrl = `${serverUrl}/live/${username}/${password}/${streamId}.${extension}`;
-    
-    // اسم القناة (يمكن تغييره بناءً على بيانات الـ API)
-    const channelName = encodeURIComponent("Live Channel");
-    
-    // فتح الرابط باستخدام مشغل البث
-    window.location.href = `https://play/stream?url=${encodeURIComponent(streamUrl)}&name=${channelName}`;
-}
+        container.firstChild?.focus();
+    }
 
-        document.addEventListener("DOMContentLoaded", loadCategories);
-    </script>
+    function goBack() {
+        document.getElementById("categories").style.display = "block";
+        document.getElementById("backButton").style.display = "none";
+        document.getElementById("content").innerHTML = "";
+
+        setTimeout(() => {
+            document.querySelector(".category")?.focus();
+        }, 100);
+    }
+
+    function openItem(streamId, containerExtension = 'mp4') {
+        const extension = containerExtension || 'mp4';
+        const streamUrl = `${serverUrl}/movie/${username}/${password}/${streamId}.${extension}`;
+        const channelName = encodeURIComponent("Movie");
+        window.location.href = `https://play/stream?url=${encodeURIComponent(streamUrl)}&name=${channelName}`;
+    }
+
+    document.addEventListener("DOMContentLoaded", loadCategories);
+</script>
 </head>
 <body>
     <div class="sidebar" id="categories"></div>
