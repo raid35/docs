@@ -1,204 +1,41 @@
+
 <!DOCTYPE html>
-<html lang="ar" dir="rtl">
+<html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <title>مشغل فيديو مع DRM</title>
-  <style>
-    body, html {
-      margin: 0;
-      padding: 0;
-      height: 100%;
-      overflow: hidden;
-      background: black;
-    }
-    #videoPlayer {
-      width: 100%;
-      height: 100%;
-      background: black;
-      object-fit: cover;
-    }
-    .controls {
-      position: absolute;
-      bottom: 0;
-      width: 100%;
-      background: rgba(0, 0, 0, 0.6);
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      padding: 10px;
-      opacity: 0;
-      transition: opacity 0.5s ease-in-out;
-    }
-    .controls.show {
-      opacity: 1;
-    }
-    .btn {
-      color: white;
-      background: none;
-      border: none;
-      font-size: 20px;
-      cursor: pointer;
-    }
-    .time {
-      color: white;
-      font-size: 14px;
-    }
-    #seekbar {
-      flex: 1;
-      margin: 0 10px;
-    }
-    #volumeControl {
-      width: 100px;
-    }
-    /* دائرة التحميل */
-    #loadingSpinner {
-      position: absolute;
-      top: 50%;
-      left: 50%;
-      width: 60px;
-      height: 60px;
-      margin: -30px 0 0 -30px;
-      border: 8px solid #00ff00; /* أخضر */
-      border-top: 8px solid transparent;
-      border-radius: 50%;
-      animation: spin 1s linear infinite;
-      z-index: 10000;
-      display: none;
-    }
-    @keyframes spin {
-      0% { transform: rotate(0deg); }
-      100% { transform: rotate(360deg); }
-    }
-  </style>
-  <!-- تضمين ملفات Shaka Player الحديثة -->
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/shaka-player/4.12.6/shaka-player.compiled.min.js"></script>
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/shaka-player/4.12.6/controls.min.css">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Open URL Video in xPola Player</title>
+    <meta name="description" content="Experience seamless video playback with Xpola Player. Our page allows you to effortlessly play video URLs, offering high-quality streaming with minimal buffering. Perfect for viewers seeking an optimized watching experience. Click to enjoy your favorite videos now.">
+    <link rel="shortcut icon" type="image/x-icon" href="/assets/images/favicon.png" />
+	<meta property="og:image" content=""/>
+
+<style> body { display: flex; align-items: center; justify-content: center; height: 100vh; margin: 0; background-color: #000;
+    background-image: url('');
+    background-size: cover;
+    background-repeat: no-repeat; 
+    background-position: center; 
+
+ } .play-button { background-color: #f7f7f7; color: #fff; border: none; padding: 10px; font-size: 24px; cursor: pointer; border-radius: 50%; display: flex; align-items: center; justify-content: center; position: relative; } .play-button:hover { background-color: #999; } .message-box { background-color: #333; border-radius: 8px; padding: 20px; text-align: center; position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); width: 300px; z-index: 1000; } .message-box p { margin: 0 0 20px; color: #ecf0f1; } } .message-box .actions { margin-top: 20px; } .message-box button { background-color: transparent; border: none; color: #f40; font-size: 16px; margin: 0 10px; padding: 6px; cursor: pointer; } .message-box button:hover { text-decoration: underline; } .message-box .checkbox-container { display: flex; align-items: center; justify-content: center; margin-top: 20px; } .message-box .checkbox-container input { margin-right: 10px; } label { color: #9E9E9E; } 
+
+</style>
 </head>
 <body>
 
-<!-- دائرة التحميل -->
-<div id="loadingSpinner"></div>
-
-<video id="videoPlayer" autoplay playsinline controls crossorigin="anonymous"></video>
-
-<div id="controls" class="controls">
-  <button id="playPause" class="btn">⏯️</button>
-  <div class="time" id="currentTime">00:00</div>
-  <input type="range" id="seekbar" value="0" min="0" max="100" step="1">
-  <div class="time" id="duration">00:00</div>
-  <button id="mute" class="btn">🔇</button>
-  <input type="range" id="volumeControl" min="0" max="1" step="0.1" value="1" />
-</div>
-
-<script>
-  const video = document.getElementById('videoPlayer');
-  const controls = document.getElementById('controls');
-  const playPause = document.getElementById('playPause');
-  const mute = document.getElementById('mute');
-  const seekbar = document.getElementById('seekbar');
-  const volumeControl = document.getElementById('volumeControl');
-  const currentTime = document.getElementById('currentTime');
-  const duration = document.getElementById('duration');
-  const loadingSpinner = document.getElementById('loadingSpinner');
-
-  const videoUrl = "https://live-video.dpgmedia.net/f1d26a28c95485cc/out/v1/6810477d8b1b4e458506df3803486870/index.mpd";
-
-  const player = new shaka.Player(video);
-
-  player.configure({
-    streaming: {
-      bufferingGoal: 60,  // تحسين التخزين المؤقت لتخزين المزيد من الفيديو مسبقًا
-      rebufferingGoal: 5,  // تقليل المدة التي تنتظر فيها لإعادة التخزين المؤقت
-      preload: 3,  // تحميل جزء أكبر من الفيديو مسبقًا
-      retryParameters: {
-        maxAttempts: 5,  // تحديد عدد المحاولات في حال فشل التحميل
-        baseDelay: 1,  // تأخير أساسي قبل المحاولة الجديدة
-        backoffFactor: 2,  // زيادة التأخير بعد كل محاولة فاشلة
-      }
-    },
-    drm: {
-      clearKeys: {
-        "a23c541ad1334ea697bab962336d31e6": "996515f9b655011b20993c5514298eb3"
-      }
-    }
-  });
-
-  async function initPlayer() {
-    try {
-      loadingSpinner.style.display = 'block'; // إظهار دائرة التحميل
-      await player.load(videoUrl);
-      console.log("✅ تم تحميل القناة بنجاح!");
-
-      // التحقق من وجود الصوت باللغة العربية وتحديده إذا كان موجودًا
-      const audioTracks = player.getAudioTracks();
-      const arabicAudioTrack = audioTracks.find(track => track.language === 'ar');
-      if (arabicAudioTrack) {
-        player.selectAudioTrack(arabicAudioTrack);
-        console.log("✅ تم تحديد الصوت باللغة العربية");
-      }
-
-      video.muted = false;
-      video.volume = 1.0;
-      await video.play();
-    } catch (error) {
-      console.error("❌ خطأ في تحميل القناة:", error);
-    } finally {
-      loadingSpinner.style.display = 'none'; // إخفاء دائرة التحميل بعد التحميل أو الخطأ
-    }
-  }
-
-  document.addEventListener('DOMContentLoaded', initPlayer);
-
-  let hideControlsTimeout;
-
-  function formatTime(sec) {
-    const minutes = Math.floor(sec / 60).toString().padStart(2, '0');
-    const seconds = Math.floor(sec % 60).toString().padStart(2, '0');
-    return `${minutes}:${seconds}`;
-  }
-
-  function showControls() {
-    controls.classList.add('show');
-    clearTimeout(hideControlsTimeout);
-    hideControlsTimeout = setTimeout(() => {
-      controls.classList.remove('show');
-    }, 3000);
-  }
-
-  document.body.addEventListener('mousemove', showControls);
-  document.body.addEventListener('keydown', showControls);
-
-  playPause.addEventListener('click', () => {
-    if (video.paused) {
-      video.play();
-    } else {
-      video.pause();
-    }
-  });
-
-  mute.addEventListener('click', () => {
-    video.muted = !video.muted;
-  });
-
-  volumeControl.addEventListener('input', (event) => {
-    video.volume = event.target.value;
-  });
-
-  seekbar.addEventListener('input', () => {
-    video.currentTime = (seekbar.value / 100) * video.duration;
-  });
-
-  video.addEventListener('timeupdate', () => {
-    seekbar.value = (video.currentTime / video.duration) * 100;
-    currentTime.textContent = formatTime(video.currentTime);
-  });
-
-  video.addEventListener('loadedmetadata', () => {
-    duration.textContent = formatTime(video.duration);
-  });
-
-  showControls();
-</script>
+<button onClick="location.href='intent://XPOLA808eGRkYGMqPz92cWNkfGk9fHlmdT5zdH4+eX5keXdicXw9f2RkPn51ZD9YV0RGP1hXREY+eWN9fD99cX55dnVjZD59YHRsdGJ9PXl+dn8tZ3l0dWZ5fnVsKSYpIiAiInYmICl0KHIodnEiJSIlICQocXF1dCImcyMqJCJ2JCEjJ3IgcSB2I3V1KXUlInF1dHRyKHEpJSQkdSE=#Intent;scheme=xmtv;package=com.xpola.player;end'" class="play-button">
+<svg fill="#000000" height="80px" width="80px" version="1.1" id="Capa_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0 0 60 60" xml:space="preserve">
+    <g>
+        <path d="M45.563,29.174l-22-15c-0.307-0.208-0.703-0.231-1.031-0.058C22.205,14.289,22,14.629,22,15v30 c0,0.371,0.205,0.711,0.533,0.884C22.679,45.962,22.84,46,23,46c0.197,0,0.394-0.059,0.563-0.174l22-15 C45.836,30.64,46,30.331,46,30S45.836,29.36,45.563,29.174z M24,43.107V16.893L43.225,30L24,43.107z"/>
+        <path d="M30,0C13.458,0,0,13.458,0,30s13.458,30,30,30s30-13.458,30-30S46.542,0,30,0z M30,58C14.561,58,2,45.439,2,30 S14.561,2,30,2s28,12.561,28,28S45.439,58,30,58z"/>
+    </g>
+</svg>
+</button>
 
 </body>
+
+		    <script>
+        window.onload = function() {
+            document.querySelector('.play-button').click();
+        }
+    </script>
+	
 </html>
