@@ -1,191 +1,521 @@
-<!DOCTYPE html>
-<html lang="ar">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>مشغل البث المباشر</title>
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            direction: rtl;
-            background: linear-gradient(-45deg, #1e3c72, #2a5298, #000000, #3b1d56);
-            background-size: 400% 400%;
-            animation: gradientAnimation 10s ease infinite;
-            color: white;
-            margin: 0;
-            display: flex;
-            height: 100vh;
-            overflow: hidden;
-        }
-        @keyframes gradientAnimation {
-            0% { background-position: 0% 50%; }
-            50% { background-position: 100% 50%; }
-            100% { background-position: 0% 50%; }
-        }
-        .sidebar {
-            width: 300px;
-            background: rgba(30, 30, 30, 0.9);
-            padding: 15px;
-            overflow-y: auto;
-            border-right: 3px solid #333;
-        }
-        .hidden {
-            display: none;
-        }
-        .category {
-            background: #ff5722;
-            padding: 15px;
-            margin: 8px 0;
-            border-radius: 8px;
-            text-align: center;
-            font-size: 18px;
-            font-weight: bold;
-            cursor: pointer;
-            transition: 0.3s;
-        }
-        .category:focus, .category.active {
-            background: #e64a19;
-            outline: 3px solid yellow;
-            transform: scale(1.1);
-        }
-        .content-container {
-            flex: 1;
-            display: grid;
-            grid-template-columns: repeat(5, 1fr);
-            gap: 12px;
-            padding: 20px;
-            overflow-y: auto;
-            justify-content: center;
-            position: relative;
-        }
-        .item {
-            background: rgba(255, 255, 255, 0.1);
-            width: 100%;
-            height: 180px;
-            border-radius: 12px;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            cursor: pointer;
-            transition: 0.3s;
-        }
-        .item img {
-            width: 80%;
-            height: 80%;
-            object-fit: contain;
-            border-radius: 8px;
-        }
-        .item:focus {
-            background: rgba(255, 255, 255, 0.2);
-            transform: scale(1.1);
-            outline: 3px solid yellow;
-        }
-        .back-button {
-            position: fixed;
-            top: 10px;
-            left: 10px;
-            background: none;
-            border: none;
-            cursor: pointer;
-            outline: none;
-            display: none;
-            z-index: 1000;
-        }
-        .back-button img {
-            width: 50px;
-            height: 50px;
-        }
-    </style>
-    <script>
-        const serverUrl = "http://line.porschetv.net:80";
-        const username = "PBIEHEC4VZ";
-        const password = "8J4A9VGVWM";
-        let categories = [];
-        
-        async function loadCategories() {
-            try {
-                let liveCategories = await fetch(`${serverUrl}/player_api.php?username=${username}&password=${password}&action=get_live_categories`).then(res => res.json());
-                categories = liveCategories;
-                displayCategories();
-            } catch (error) {
-                document.getElementById("categories").innerHTML = "⚠️ خطأ في تحميل الفئات";
-            }
-        }
+"use client"
 
-        function displayCategories() {
-            let container = document.getElementById("categories");
-            container.innerHTML = "";
-            categories.forEach(category => {
-                let div = document.createElement("div");
-                div.className = "category";
-                div.innerText = category.category_name;
-                div.tabIndex = 0;
-                div.onclick = () => selectCategory(category);
-                container.appendChild(div);
-            });
-            setTimeout(() => {
-                container.firstChild?.focus();
-            }, 100);
-        }
+import { useState, useEffect } from "react"
 
-        async function selectCategory(category) {
-            document.getElementById("categories").style.display = "none";
-            document.getElementById("backButton").style.display = "block";
-
-            try {
-                let response = await fetch(`${serverUrl}/player_api.php?username=${username}&password=${password}&action=get_live_streams&category_id=${category.category_id}`);
-                let items = await response.json();
-                displayItems(items);
-            } catch (error) {
-                document.getElementById("content").innerHTML = "⚠️ خطأ في تحميل المحتوى";
-            }
-        }
-
-        function displayItems(items) {
-            let container = document.getElementById("content");
-            container.innerHTML = "";
-
-            items.forEach(item => {
-                let div = document.createElement("div");
-                div.className = "item";
-                div.tabIndex = 0;
-                div.onclick = () => openItem(item.stream_id);
-                let img = document.createElement("img");
-                img.src = item.stream_icon || "https://via.placeholder.com/100";
-                img.alt = "Logo";
-                div.appendChild(img);
-                container.appendChild(div);
-            });
-
-            container.firstChild?.focus();
-        }
-
-        function goBack() {
-            document.getElementById("categories").style.display = "block";
-            document.getElementById("backButton").style.display = "none";
-            document.getElementById("content").innerHTML = "";
-
-            setTimeout(() => {
-                document.querySelector(".category")?.focus();
-            }, 100);
-        }
-
-        // ✅ التعديل هنا لفتح الرابط بـ xmtv:// لتشغيله في PlayerActivity
-        function openItem(streamId) {
-    const streamUrl = `${serverUrl}/live/${username}/${password}/${streamId}.m3u8`;
-    const channelName = encodeURIComponent("Live Channel");
-    window.location.href = `https://play/stream?url=${encodeURIComponent(streamUrl)}&name=${channelName}`;
+interface Server {
+  id: string
+  name: string
+  url: string
+  macAddress: string
 }
 
-        document.addEventListener("DOMContentLoaded", loadCategories);
-    </script>
-</head>
-<body>
-    <div class="sidebar" id="categories"></div>
-    <button id="backButton" class="back-button" onclick="goBack()">
-        <img src="https://cdn-icons-png.flaticon.com/512/271/271220.png" alt="رجوع">
-    </button>
-    <div class="content-container" id="content"></div>
-</body>
-</html>
+interface Category {
+  category_id: string
+  category_name: string
+}
+
+interface Stream {
+  stream_id: string
+  name: string
+  stream_icon: string
+}
+
+export default function IPTVMacLoader() {
+  const [servers, setServers] = useState<Server[]>([])
+  const [currentServer, setCurrentServer] = useState<Server | null>(null)
+  const [categories, setCategories] = useState<Category[]>([])
+  const [streams, setStreams] = useState<Stream[]>([])
+  const [currentView, setCurrentView] = useState<"servers" | "categories" | "streams">("servers")
+  const [selectedCategory, setSelectedCategory] = useState<Category | null>(null)
+  const [showAddForm, setShowAddForm] = useState(false)
+  const [loading, setLoading] = useState(false)
+
+  // تحميل السيرفرات المحفوظة
+  useEffect(() => {
+    const savedServers = localStorage.getItem("mac-servers")
+    if (savedServers) {
+      setServers(JSON.parse(savedServers))
+    } else {
+      // إضافة السيرفر المثال
+      const exampleServer: Server = {
+        id: "example",
+        name: "سيرفر المثال",
+        url: "http://star4k.me:80",
+        macAddress: "00:1A:79:ae:1b:b4",
+      }
+      setServers([exampleServer])
+      localStorage.setItem("mac-servers", JSON.stringify([exampleServer]))
+    }
+  }, [])
+
+  const addServer = (name: string, url: string, macAddress: string) => {
+    const newServer: Server = {
+      id: Date.now().toString(),
+      name,
+      url,
+      macAddress,
+    }
+    const updatedServers = [...servers, newServer]
+    setServers(updatedServers)
+    localStorage.setItem("mac-servers", JSON.stringify(updatedServers))
+    setShowAddForm(false)
+  }
+
+  const deleteServer = (serverId: string) => {
+    const updatedServers = servers.filter((s) => s.id !== serverId)
+    setServers(updatedServers)
+    localStorage.setItem("mac-servers", JSON.stringify(updatedServers))
+  }
+
+  const loadCategories = async (server: Server) => {
+    setLoading(true)
+    setCurrentServer(server)
+    try {
+      const response = await fetch(`${server.url}/player_api.php?action=get_live_categories&mac=${server.macAddress}`)
+      const data = await response.json()
+      setCategories(data)
+      setCurrentView("categories")
+    } catch (error) {
+      alert("خطأ في تحميل الفئات")
+    }
+    setLoading(false)
+  }
+
+  const loadStreams = async (category: Category) => {
+    if (!currentServer) return
+
+    setLoading(true)
+    setSelectedCategory(category)
+    try {
+      const response = await fetch(
+        `${currentServer.url}/player_api.php?action=get_live_streams&category_id=${category.category_id}&mac=${currentServer.macAddress}`,
+      )
+      const data = await response.json()
+      setStreams(data)
+      setCurrentView("streams")
+    } catch (error) {
+      alert("خطأ في تحميل القنوات")
+    }
+    setLoading(false)
+  }
+
+  const playStream = (streamId: string) => {
+    if (!currentServer) return
+
+    const streamUrl = `${currentServer.url}/live/${currentServer.macAddress}/${streamId}.m3u8`
+    const channelName = encodeURIComponent("Live Channel")
+    window.location.href = `https://play/stream?url=${encodeURIComponent(streamUrl)}&name=${channelName}`
+  }
+
+  const goBack = () => {
+    if (currentView === "streams") {
+      setCurrentView("categories")
+    } else if (currentView === "categories") {
+      setCurrentView("servers")
+      setCurrentServer(null)
+    }
+  }
+
+  return (
+    <div
+      style={{
+        fontFamily: "Arial, sans-serif",
+        direction: "rtl",
+        background: "linear-gradient(-45deg, #1e3c72, #2a5298, #000000, #3b1d56)",
+        backgroundSize: "400% 400%",
+        animation: "gradientAnimation 10s ease infinite",
+        color: "white",
+        margin: 0,
+        minHeight: "100vh",
+        overflow: "hidden",
+      }}
+    >
+      {/* عرض قائمة السيرفرات */}
+      {currentView === "servers" && (
+        <div style={{ padding: "20px" }}>
+          <div
+            style={{
+              display: "flex",
+              justifyContent: "space-between",
+              alignItems: "center",
+              marginBottom: "30px",
+            }}
+          >
+            <h1 style={{ fontSize: "28px", margin: 0 }}>🔥 مشغل البث المباشر</h1>
+            <button
+              onClick={() => setShowAddForm(!showAddForm)}
+              style={{
+                background: "#ff5722",
+                border: "none",
+                padding: "12px 20px",
+                borderRadius: "8px",
+                color: "white",
+                fontSize: "16px",
+                cursor: "pointer",
+                fontWeight: "bold",
+              }}
+            >
+              {showAddForm ? "إلغاء" : "➕ إضافة سيرفر"}
+            </button>
+          </div>
+
+          {/* نموذج إضافة سيرفر */}
+          {showAddForm && (
+            <div
+              style={{
+                background: "rgba(30, 30, 30, 0.9)",
+                padding: "20px",
+                borderRadius: "12px",
+                marginBottom: "20px",
+                border: "2px solid #ff5722",
+              }}
+            >
+              <h3 style={{ marginTop: 0, color: "#ff5722" }}>إضافة سيرفر جديد</h3>
+              <form
+                onSubmit={(e) => {
+                  e.preventDefault()
+                  const formData = new FormData(e.target as HTMLFormElement)
+                  addServer(
+                    formData.get("name") as string,
+                    formData.get("url") as string,
+                    formData.get("mac") as string,
+                  )
+                }}
+              >
+                <div style={{ marginBottom: "15px" }}>
+                  <label style={{ display: "block", marginBottom: "5px" }}>اسم السيرفر:</label>
+                  <input
+                    name="name"
+                    required
+                    style={{
+                      width: "100%",
+                      padding: "10px",
+                      borderRadius: "6px",
+                      border: "1px solid #555",
+                      background: "#333",
+                      color: "white",
+                      fontSize: "16px",
+                    }}
+                    placeholder="مثال: سيرفر الرياضة"
+                  />
+                </div>
+                <div style={{ marginBottom: "15px" }}>
+                  <label style={{ display: "block", marginBottom: "5px" }}>رابط السيرفر:</label>
+                  <input
+                    name="url"
+                    required
+                    style={{
+                      width: "100%",
+                      padding: "10px",
+                      borderRadius: "6px",
+                      border: "1px solid #555",
+                      background: "#333",
+                      color: "white",
+                      fontSize: "16px",
+                    }}
+                    placeholder="http://example.com:80"
+                  />
+                </div>
+                <div style={{ marginBottom: "15px" }}>
+                  <label style={{ display: "block", marginBottom: "5px" }}>MAC Address:</label>
+                  <input
+                    name="mac"
+                    required
+                    style={{
+                      width: "100%",
+                      padding: "10px",
+                      borderRadius: "6px",
+                      border: "1px solid #555",
+                      background: "#333",
+                      color: "white",
+                      fontSize: "16px",
+                    }}
+                    placeholder="00:1A:79:ae:1b:b4"
+                  />
+                </div>
+                <button
+                  type="submit"
+                  style={{
+                    background: "#4CAF50",
+                    border: "none",
+                    padding: "12px 24px",
+                    borderRadius: "6px",
+                    color: "white",
+                    fontSize: "16px",
+                    cursor: "pointer",
+                    fontWeight: "bold",
+                  }}
+                >
+                  ✅ إضافة السيرفر
+                </button>
+              </form>
+            </div>
+          )}
+
+          {/* قائمة السيرفرات */}
+          <div
+            style={{
+              display: "grid",
+              gridTemplateColumns: "repeat(auto-fit, minmax(300px, 1fr))",
+              gap: "20px",
+            }}
+          >
+            {servers.map((server) => (
+              <div
+                key={server.id}
+                style={{
+                  background: "rgba(255, 255, 255, 0.1)",
+                  padding: "20px",
+                  borderRadius: "12px",
+                  border: "2px solid transparent",
+                  transition: "0.3s",
+                  cursor: "pointer",
+                }}
+                onMouseEnter={(e) => {
+                  e.currentTarget.style.border = "2px solid #ff5722"
+                  e.currentTarget.style.transform = "scale(1.05)"
+                }}
+                onMouseLeave={(e) => {
+                  e.currentTarget.style.border = "2px solid transparent"
+                  e.currentTarget.style.transform = "scale(1)"
+                }}
+              >
+                <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start" }}>
+                  <div>
+                    <h3 style={{ margin: "0 0 10px 0", color: "#ff5722", fontSize: "20px" }}>📡 {server.name}</h3>
+                    <p style={{ margin: "5px 0", fontSize: "14px", opacity: 0.8 }}>🌐 {server.url}</p>
+                    <p style={{ margin: "5px 0", fontSize: "14px", opacity: 0.8 }}>🔧 {server.macAddress}</p>
+                  </div>
+                  <button
+                    onClick={(e) => {
+                      e.stopPropagation()
+                      deleteServer(server.id)
+                    }}
+                    style={{
+                      background: "#f44336",
+                      border: "none",
+                      padding: "8px 12px",
+                      borderRadius: "6px",
+                      color: "white",
+                      fontSize: "12px",
+                      cursor: "pointer",
+                    }}
+                  >
+                    🗑️ حذف
+                  </button>
+                </div>
+                <button
+                  onClick={() => loadCategories(server)}
+                  disabled={loading}
+                  style={{
+                    background: "#ff5722",
+                    border: "none",
+                    padding: "12px 20px",
+                    borderRadius: "8px",
+                    color: "white",
+                    fontSize: "16px",
+                    cursor: "pointer",
+                    fontWeight: "bold",
+                    width: "100%",
+                    marginTop: "15px",
+                    opacity: loading ? 0.6 : 1,
+                  }}
+                >
+                  {loading ? "⏳ جاري الاتصال..." : "🚀 الاتصال بالسيرفر"}
+                </button>
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
+
+      {/* عرض الفئات */}
+      {currentView === "categories" && (
+        <div style={{ display: "flex", height: "100vh" }}>
+          <div
+            style={{
+              width: "300px",
+              background: "rgba(30, 30, 30, 0.9)",
+              padding: "15px",
+              overflowY: "auto",
+              borderRight: "3px solid #333",
+            }}
+          >
+            <div style={{ marginBottom: "20px" }}>
+              <button
+                onClick={goBack}
+                style={{
+                  background: "#666",
+                  border: "none",
+                  padding: "10px 15px",
+                  borderRadius: "6px",
+                  color: "white",
+                  cursor: "pointer",
+                  marginBottom: "15px",
+                }}
+              >
+                ← رجوع للسيرفرات
+              </button>
+              <h2 style={{ margin: 0, color: "#ff5722" }}>📂 فئات {currentServer?.name}</h2>
+            </div>
+
+            {categories.map((category) => (
+              <div
+                key={category.category_id}
+                className="category"
+                style={{
+                  background: "#ff5722",
+                  padding: "15px",
+                  margin: "8px 0",
+                  borderRadius: "8px",
+                  textAlign: "center",
+                  fontSize: "18px",
+                  fontWeight: "bold",
+                  cursor: "pointer",
+                  transition: "0.3s",
+                }}
+                onClick={() => loadStreams(category)}
+                onMouseEnter={(e) => {
+                  e.currentTarget.style.background = "#e64a19"
+                  e.currentTarget.style.transform = "scale(1.05)"
+                }}
+                onMouseLeave={(e) => {
+                  e.currentTarget.style.background = "#ff5722"
+                  e.currentTarget.style.transform = "scale(1)"
+                }}
+              >
+                {category.category_name}
+              </div>
+            ))}
+          </div>
+
+          <div
+            style={{
+              flex: 1,
+              display: "grid",
+              gridTemplateColumns: "repeat(5, 1fr)",
+              gap: "12px",
+              padding: "20px",
+              overflowY: "auto",
+              justifyContent: "center",
+            }}
+            id="content"
+          >
+            {loading && (
+              <div
+                style={{
+                  gridColumn: "1 / -1",
+                  textAlign: "center",
+                  padding: "50px",
+                  fontSize: "20px",
+                }}
+              >
+                ⏳ جاري تحميل القنوات...
+              </div>
+            )}
+          </div>
+        </div>
+      )}
+
+      {/* عرض القنوات */}
+      {currentView === "streams" && (
+        <div style={{ display: "flex", height: "100vh" }}>
+          <div
+            style={{
+              width: "300px",
+              background: "rgba(30, 30, 30, 0.9)",
+              padding: "15px",
+              borderRight: "3px solid #333",
+            }}
+          >
+            <button
+              onClick={goBack}
+              style={{
+                background: "#666",
+                border: "none",
+                padding: "10px 15px",
+                borderRadius: "6px",
+                color: "white",
+                cursor: "pointer",
+                marginBottom: "15px",
+              }}
+            >
+              ← رجوع للفئات
+            </button>
+            <h2 style={{ margin: 0, color: "#ff5722" }}>📺 {selectedCategory?.category_name}</h2>
+            <p style={{ fontSize: "14px", opacity: 0.8, margin: "10px 0" }}>عدد القنوات: {streams.length}</p>
+          </div>
+
+          <div
+            style={{
+              flex: 1,
+              display: "grid",
+              gridTemplateColumns: "repeat(5, 1fr)",
+              gap: "12px",
+              padding: "20px",
+              overflowY: "auto",
+            }}
+          >
+            {streams.map((stream) => (
+              <div
+                key={stream.stream_id}
+                className="item"
+                style={{
+                  background: "rgba(255, 255, 255, 0.1)",
+                  width: "100%",
+                  height: "180px",
+                  borderRadius: "12px",
+                  display: "flex",
+                  flexDirection: "column",
+                  alignItems: "center",
+                  justifyContent: "center",
+                  cursor: "pointer",
+                  transition: "0.3s",
+                  padding: "10px",
+                }}
+                onClick={() => playStream(stream.stream_id)}
+                onMouseEnter={(e) => {
+                  e.currentTarget.style.background = "rgba(255, 255, 255, 0.2)"
+                  e.currentTarget.style.transform = "scale(1.05)"
+                }}
+                onMouseLeave={(e) => {
+                  e.currentTarget.style.background = "rgba(255, 255, 255, 0.1)"
+                  e.currentTarget.style.transform = "scale(1)"
+                }}
+              >
+                <img
+                  src={stream.stream_icon || "https://via.placeholder.com/100"}
+                  alt="Logo"
+                  style={{
+                    width: "80%",
+                    height: "70%",
+                    objectFit: "contain",
+                    borderRadius: "8px",
+                  }}
+                />
+                <div
+                  style={{
+                    fontSize: "12px",
+                    textAlign: "center",
+                    marginTop: "8px",
+                    wordBreak: "break-word",
+                  }}
+                >
+                  {stream.name}
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
+
+      <style jsx>{`
+        @keyframes gradientAnimation {
+          0% { background-position: 0% 50%; }
+          50% { background-position: 100% 50%; }
+          100% { background-position: 0% 50%; }
+        }
+      `}</style>
+    </div>
+  )
+}
