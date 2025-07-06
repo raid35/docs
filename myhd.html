@@ -212,6 +212,22 @@
             text-align: center;
             z-index: 8888;
             border: 2px solid #f44336;
+            max-width: 80%;
+            word-wrap: break-word;
+        }
+
+        /* Debug info */
+        .debug-info {
+            position: fixed;
+            top: 10px;
+            right: 10px;
+            background: rgba(0, 0, 0, 0.8);
+            padding: 10px;
+            border-radius: 5px;
+            font-size: 12px;
+            max-width: 300px;
+            z-index: 7777;
+            display: none;
         }
 
         /* تحسينات للشاشات الكبيرة */
@@ -262,6 +278,9 @@
         </div>
     </div>
 
+    <!-- معلومات التشخيص -->
+    <div id="debugInfo" class="debug-info"></div>
+
     <!-- العنوان الرئيسي -->
     <div class="header">
         <h1>📺 مشغل البث المباشر</h1>
@@ -280,7 +299,7 @@
     <div class="info-bar">
         <div class="current-category" id="currentCategoryName">الفئات المتاحة</div>
         <div class="controls-hint">
-            استخدم أزرار الاتجاهات للتنقل • ENTER للاختيار • BACK للرجوع
+            استخدم أزرار الاتجاهات للتنقل • ENTER للاختيار • BACK للرجوع • F1 للتشخيص
         </div>
     </div>
 
@@ -288,20 +307,20 @@
         // ⚙️ إعدادات السيرفر المخفية - قم بتغيير هذه البيانات
         const HIDDEN_SERVER = {
             url: "http://line.porschetv.net:80",
-            mac: "",
-            // أو استخدم username/password بدلاً من mac
+            mac: "00:1A:79:ae:1b:b4", // ضع MAC Address هنا إذا كان السيرفر يعمل بـ MAC
             username: "PBIEHEC4VZ",
             password: "8J4A9VGVWM",
-            type: "mac" // "mac" أو "user"
+            type: "user" // غيرت من "mac" إلى "user" لأن لديك username/password
         };
 
         // متغيرات التطبيق
         let categories = [];
         let currentStreams = [];
-        let currentView = "categories"; // "categories" أو "streams"
+        let currentView = "categories";
         let focusedIndex = 0;
         let currentCategory = null;
         let isLoading = false;
+        let debugMode = false;
 
         // عناصر DOM
         const loadingScreen = document.getElementById("loadingScreen");
@@ -309,71 +328,165 @@
         const categoriesContainer = document.getElementById("categoriesContainer");
         const streamsContainer = document.getElementById("streamsContainer");
         const currentCategoryName = document.getElementById("currentCategoryName");
+        const debugInfo = document.getElementById("debugInfo");
+
+        // وظائف التشخيص
+        function debugLog(message, data = null) {
+            console.log(`[DEBUG] ${message}`, data || '');
+            if (debugMode) {
+                const time = new Date().toLocaleTimeString();
+                debugInfo.innerHTML += `<div>[${time}] ${message}</div>`;
+                if (data) {
+                    debugInfo.innerHTML += `<div style="margin-left: 10px; opacity: 0.7;">${JSON.stringify(data, null, 2)}</div>`;
+                }
+                debugInfo.scrollTop = debugInfo.scrollHeight;
+            }
+        }
+
+        function toggleDebug() {
+            debugMode = !debugMode;
+            debugInfo.style.display = debugMode ? 'block' : 'none';
+            if (debugMode) {
+                debugInfo.innerHTML = '<div><strong>🔍 وضع التشخيص مفعل</strong></div>';
+                debugLog('Server Config', HIDDEN_SERVER);
+            }
+        }
 
         // وظائف التحميل
         function showLoading(status = "جاري التحميل...") {
             loadingScreen.classList.remove("hidden");
             loadingStatus.textContent = status;
             isLoading = true;
+            debugLog(`Loading: ${status}`);
         }
 
         function hideLoading() {
             loadingScreen.classList.add("hidden");
             isLoading = false;
+            debugLog('Loading hidden');
         }
 
-        function showError(message) {
+        function showError(message, details = null) {
             const errorDiv = document.createElement("div");
             errorDiv.className = "error-message";
-            errorDiv.textContent = `⚠️ ${message}`;
+            errorDiv.innerHTML = `⚠️ ${message}`;
+            if (details && debugMode) {
+                errorDiv.innerHTML += `<br><small style="opacity: 0.8;">${details}</small>`;
+            }
             document.body.appendChild(errorDiv);
+            
+            debugLog(`Error: ${message}`, details);
             
             setTimeout(() => {
                 if (document.body.contains(errorDiv)) {
                     document.body.removeChild(errorDiv);
                 }
-            }, 4000);
+            }, 6000);
         }
 
         // بناء رابط API
         function buildApiUrl(action, params = "") {
             let url = `${HIDDEN_SERVER.url}/player_api.php?action=${action}`;
             
-            if (HIDDEN_SERVER.type === "mac") {
+            if (HIDDEN_SERVER.type === "mac" && HIDDEN_SERVER.mac) {
                 url += `&mac=${HIDDEN_SERVER.mac}`;
-            } else {
+            } else if (HIDDEN_SERVER.type === "user" && HIDDEN_SERVER.username && HIDDEN_SERVER.password) {
                 url += `&username=${HIDDEN_SERVER.username}&password=${HIDDEN_SERVER.password}`;
+            } else {
+                throw new Error("إعدادات السيرفر غير صحيحة - تحقق من النوع والبيانات");
             }
             
             if (params) url += `&${params}`;
+            
+            debugLog(`API URL built: ${url}`);
             return url;
         }
 
-        // تحميل الفئات
+        // تحميل الفئات مع معالجة أفضل للأخطاء
         async function loadCategories() {
             showLoading("تحميل الفئات...");
             
             try {
-                const response = await fetch(buildApiUrl("get_live_categories"));
+                // التحقق من إعدادات السيرفر أولاً
+                if (!HIDDEN_SERVER.url) {
+                    throw new Error("رابط السيرفر غير محدد");
+                }
+
+                if (HIDDEN_SERVER.type === "mac" && !HIDDEN_SERVER.mac) {
+                    throw new Error("MAC Address غير محدد");
+                }
+
+                if (HIDDEN_SERVER.type === "user" && (!HIDDEN_SERVER.username || !HIDDEN_SERVER.password)) {
+                    throw new Error("اسم المستخدم أو كلمة المرور غير محددة");
+                }
+
+                const apiUrl = buildApiUrl("get_live_categories");
+                debugLog("Fetching categories from", apiUrl);
+                
+                // إضافة timeout للطلب
+                const controller = new AbortController();
+                const timeoutId = setTimeout(() => controller.abort(), 15000); // 15 ثانية timeout
+                
+                const response = await fetch(apiUrl, {
+                    method: 'GET',
+                    signal: controller.signal,
+                    headers: {
+                        'Accept': 'application/json',
+                        'Cache-Control': 'no-cache'
+                    }
+                });
+                
+                clearTimeout(timeoutId);
+                
+                debugLog(`Response status: ${response.status}`);
+                debugLog(`Response headers:`, Object.fromEntries(response.headers.entries()));
                 
                 if (!response.ok) {
-                    throw new Error(`خطأ في الشبكة: ${response.status}`);
+                    const errorText = await response.text();
+                    debugLog(`Response error text:`, errorText);
+                    throw new Error(`خطأ HTTP ${response.status}: ${response.statusText}`);
                 }
                 
-                const data = await response.json();
+                const responseText = await response.text();
+                debugLog(`Raw response:`, responseText.substring(0, 500) + '...');
                 
-                if (!Array.isArray(data) || data.length === 0) {
-                    throw new Error("لا توجد فئات متاحة");
+                let data;
+                try {
+                    data = JSON.parse(responseText);
+                } catch (parseError) {
+                    debugLog(`JSON parse error:`, parseError);
+                    throw new Error(`خطأ في تحليل البيانات: ${parseError.message}`);
+                }
+                
+                debugLog(`Parsed data:`, data);
+                
+                if (!Array.isArray(data)) {
+                    if (data && data.error) {
+                        throw new Error(`خطأ من السيرفر: ${data.error}`);
+                    }
+                    throw new Error("تنسيق البيانات غير صحيح - البيانات ليست مصفوفة");
+                }
+                
+                if (data.length === 0) {
+                    throw new Error("لا توجد فئات متاحة في هذا السيرفر");
                 }
                 
                 categories = data;
+                debugLog(`Categories loaded successfully: ${categories.length} categories`);
                 displayCategories();
                 hideLoading();
                 
             } catch (error) {
-                console.error("Error loading categories:", error);
+                debugLog("Error in loadCategories:", error);
                 hideLoading();
-                showError(`فشل تحميل الفئات: ${error.message}`);
+                
+                if (error.name === 'AbortError') {
+                    showError("انتهت مهلة الاتصال بالسيرفر", "تحقق من اتصال الإنترنت أو حالة السيرفر");
+                } else if (error.message.includes('Failed to fetch')) {
+                    showError("فشل الاتصال بالسيرفر", "تحقق من رابط السيرفر أو إعدادات CORS");
+                } else {
+                    showError(`فشل تحميل الفئات: ${error.message}`, error.stack);
+                }
             }
         }
 
@@ -395,6 +508,7 @@
             focusedIndex = 0;
             updateFocus();
             currentCategoryName.textContent = "الفئات المتاحة";
+            debugLog(`Categories displayed: ${categories.length} items`);
         }
 
         // تحميل القنوات
@@ -403,26 +517,60 @@
             currentCategory = category;
             
             try {
-                const response = await fetch(buildApiUrl("get_live_streams", `category_id=${category.category_id}`));
+                const apiUrl = buildApiUrl("get_live_streams", `category_id=${category.category_id}`);
+                debugLog("Fetching streams from", apiUrl);
+                
+                const controller = new AbortController();
+                const timeoutId = setTimeout(() => controller.abort(), 15000);
+                
+                const response = await fetch(apiUrl, {
+                    method: 'GET',
+                    signal: controller.signal,
+                    headers: {
+                        'Accept': 'application/json',
+                        'Cache-Control': 'no-cache'
+                    }
+                });
+                
+                clearTimeout(timeoutId);
                 
                 if (!response.ok) {
-                    throw new Error(`خطأ في الشبكة: ${response.status}`);
+                    const errorText = await response.text();
+                    debugLog(`Streams response error:`, errorText);
+                    throw new Error(`خطأ HTTP ${response.status}: ${response.statusText}`);
                 }
                 
-                const data = await response.json();
+                const responseText = await response.text();
+                debugLog(`Streams raw response:`, responseText.substring(0, 500) + '...');
+                
+                let data;
+                try {
+                    data = JSON.parse(responseText);
+                } catch (parseError) {
+                    throw new Error(`خطأ في تحليل بيانات القنوات: ${parseError.message}`);
+                }
                 
                 if (!Array.isArray(data)) {
-                    throw new Error("تنسيق البيانات غير صحيح");
+                    if (data && data.error) {
+                        throw new Error(`خطأ من السيرفر: ${data.error}`);
+                    }
+                    throw new Error("تنسيق بيانات القنوات غير صحيح");
                 }
                 
                 currentStreams = data;
+                debugLog(`Streams loaded: ${currentStreams.length} streams`);
                 displayStreams();
                 hideLoading();
                 
             } catch (error) {
-                console.error("Error loading streams:", error);
+                debugLog("Error in loadStreams:", error);
                 hideLoading();
-                showError(`فشل تحميل القنوات: ${error.message}`);
+                
+                if (error.name === 'AbortError') {
+                    showError("انتهت مهلة تحميل القنوات");
+                } else {
+                    showError(`فشل تحميل القنوات: ${error.message}`);
+                }
             }
         }
 
@@ -466,6 +614,7 @@
             focusedIndex = 0;
             updateFocus();
             currentCategoryName.textContent = currentCategory.category_name;
+            debugLog(`Streams displayed: ${currentStreams.length} items`);
         }
 
         // تحديث التركيز
@@ -473,10 +622,8 @@
             const container = currentView === "categories" ? categoriesContainer : streamsContainer;
             const items = container.children;
             
-            // إزالة التركيز من جميع العناصر
             Array.from(items).forEach(item => item.classList.remove("focused"));
             
-            // إضافة التركيز للعنصر الحالي
             if (items[focusedIndex]) {
                 items[focusedIndex].classList.add("focused");
                 items[focusedIndex].scrollIntoView({ 
@@ -501,11 +648,11 @@
                 const channelName = encodeURIComponent(stream.name || "Live Channel");
                 const playUrl = `https://play/stream?url=${encodeURIComponent(streamUrl)}&name=${channelName}`;
                 
-                console.log("Playing stream:", playUrl);
+                debugLog("Playing stream:", { streamUrl, playUrl });
                 window.location.href = playUrl;
                 
             } catch (error) {
-                console.error("Error playing stream:", error);
+                debugLog("Error playing stream:", error);
                 showError("خطأ في تشغيل القناة");
             }
         }
@@ -525,15 +672,23 @@
             const items = container.children;
             const totalItems = items.length;
             
-            if (totalItems === 0) return;
+            if (totalItems === 0 && event.key !== "F1") return;
             
             // حساب عدد الأعمدة
-            const containerWidth = container.offsetWidth;
-            const itemWidth = items[0].offsetWidth;
-            const gap = 20; // المسافة بين العناصر
-            const columnsCount = Math.floor((containerWidth + gap) / (itemWidth + gap));
+            let columnsCount = 4; // افتراضي
+            if (items.length > 0) {
+                const containerWidth = container.offsetWidth;
+                const itemWidth = items[0].offsetWidth;
+                const gap = 20;
+                columnsCount = Math.floor((containerWidth + gap) / (itemWidth + gap));
+            }
             
             switch(event.key) {
+                case "F1":
+                    event.preventDefault();
+                    toggleDebug();
+                    break;
+                    
                 case "ArrowRight":
                     event.preventDefault();
                     focusedIndex = Math.max(0, focusedIndex - 1);
@@ -587,7 +742,6 @@
                     location.reload();
                     break;
                     
-                // مفاتيح إضافية للريموت
                 case "Home":
                     event.preventDefault();
                     focusedIndex = 0;
@@ -604,25 +758,25 @@
 
         // بدء التطبيق
         document.addEventListener("DOMContentLoaded", () => {
-            console.log("🚀 Starting Remote Control IPTV Player...");
+            debugLog("🚀 Starting Remote Control IPTV Player...");
+            debugLog("Server configuration", HIDDEN_SERVER);
             
-            // تأخير بسيط ثم بدء التحميل
             setTimeout(() => {
                 loadCategories();
             }, 1000);
         });
 
-        // معالجة الأخطاء
+        // معالجة الأخطاء العامة
         window.addEventListener('error', (event) => {
-            console.error('Global error:', event.error);
+            debugLog('Global error:', event.error);
             hideLoading();
-            showError("حدث خطأ غير متوقع");
+            showError("حدث خطأ غير متوقع", event.error?.message);
         });
 
         window.addEventListener('unhandledrejection', (event) => {
-            console.error('Unhandled promise rejection:', event.reason);
+            debugLog('Unhandled promise rejection:', event.reason);
             hideLoading();
-            showError("خطأ في الاتصال");
+            showError("خطأ في الاتصال", event.reason?.message);
         });
     </script>
 </body>
