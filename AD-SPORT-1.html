@@ -10,7 +10,20 @@
       height: 100%;
       overflow: hidden;
       background: black;
+      display: flex; /* لضمان أن main-container يملأ الشاشة */
+      justify-content: center;
+      align-items: center;
     }
+    
+    /* حاوية رئيسية لتحديد الموضع النسبي */
+    #main-container {
+      position: relative;
+      width: 100%;
+      height: 100%;
+      overflow: hidden;
+      background: black;
+    }
+
     #videoPlayer {
       width: 100%;
       height: 100%;
@@ -28,6 +41,7 @@
       padding: 10px;
       opacity: 0;
       transition: opacity 0.5s ease-in-out;
+      z-index: 100; /* تأكد من أنها فوق الفيديو */
     }
     .controls.show {
       opacity: 1;
@@ -51,11 +65,31 @@
       width: 100px;
     }
     
+    /* دائرة التحميل */
+    #loadingSpinner {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%); /* لتوسيطها تمامًا */
+      width: 60px;
+      height: 60px;
+      border: 8px solid #00ff00; /* أخضر */
+      border-top: 8px solid transparent;
+      border-radius: 50%;
+      animation: spin 1s linear infinite;
+      z-index: 10000;
+      display: none;
+    }
+    @keyframes spin {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
+    }
+
     /* أيقونة الصوت PNG في الأسفل */
     .sound-icon-container {
-      position: absolute;
-      bottom: 80px;
-      right: 20px;
+      position: absolute; /* الآن بالنسبة لـ #main-container */
+      bottom: 80px; /* مسافة من الأسفل */
+      right: 20px; /* مسافة من اليمين */
       z-index: 1000;
     }
     
@@ -71,12 +105,14 @@
       transition: all 0.3s ease;
       border: 2px solid #00ff00;
       box-shadow: 0 4px 15px rgba(0, 255, 0, 0.3);
+      outline: none; /* إزالة التركيز الافتراضي */
     }
     
-    .sound-icon:hover {
+    .sound-icon:hover, .sound-icon:focus { /* إضافة حالة التركيز */
       transform: scale(1.1);
       box-shadow: 0 6px 20px rgba(0, 255, 0, 0.5);
       background: rgba(0, 255, 0, 0.1);
+      border-color: #00ff00; /* تسليط الضوء على الحدود عند التركيز */
     }
     
     .sound-icon img {
@@ -93,7 +129,7 @@
     /* قائمة اختيار الصوت */
     .audio-menu {
       position: absolute;
-      bottom: 60px;
+      bottom: 60px; /* فوق الأيقونة */
       right: 0;
       background: rgba(0, 0, 0, 0.9);
       border-radius: 10px;
@@ -130,10 +166,12 @@
       display: flex;
       align-items: center;
       gap: 8px;
+      outline: none; /* إزالة التركيز الافتراضي */
     }
     
-    .audio-option:hover {
+    .audio-option:hover, .audio-option:focus { /* إضافة حالة التركيز */
       background: rgba(0, 255, 0, 0.2);
+      border-left: 3px solid #00ff00; /* تسليط الضوء على الحدود عند التركيز */
     }
     
     .audio-option.active {
@@ -152,27 +190,6 @@
     .audio-option.active .audio-indicator {
       display: block;
     }
-
-    /* دائرة التحميل */
-    #loadingSpinner {
-      position: absolute;
-      top: 50%;
-      left: 50%;
-      width: 60px;
-      height: 60px;
-      margin: -30px 0 0 -30px;
-      border: 8px solid #00ff00;
-      border-top: 8px solid transparent;
-      border-radius: 50%;
-      animation: spin 1s linear infinite;
-      z-index: 10000;
-      display: none;
-    }
-    
-    @keyframes spin {
-      0% { transform: rotate(0deg); }
-      100% { transform: rotate(360deg); }
-    }
   </style>
   <!-- تضمين ملفات Shaka Player الحديثة -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/shaka-player/4.12.6/shaka-player.compiled.min.js"></script>
@@ -180,43 +197,31 @@
 </head>
 <body>
 
-<!-- دائرة التحميل -->
-<div id="loadingSpinner"></div>
+<!-- حاوية رئيسية لتحديد الموضع النسبي -->
+<div id="main-container">
+  <!-- دائرة التحميل -->
+  <div id="loadingSpinner"></div>
 
-<video id="videoPlayer" autoplay playsinline controls crossorigin="anonymous"></video>
+  <video id="videoPlayer" autoplay playsinline controls crossorigin="anonymous"></video>
 
-<div id="controls" class="controls">
-  <button id="playPause" class="btn">⏯️</button>
-  <div class="time" id="currentTime">00:00</div>
-  <input type="range" id="seekbar" value="0" min="0" max="100" step="1">
-  <div class="time" id="duration">00:00</div>
-  <button id="mute" class="btn">🔇</button>
-  <input type="range" id="volumeControl" min="0" max="1" step="0.1" value="1" />
-</div>
-
-<!-- أيقونة الصوت PNG في الأسفل -->
-<div class="sound-icon-container">
-  <div id="soundIcon" class="sound-icon">
-    <img src="data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjQiIGhlaWdodD0iMjQiIHZpZXdCb3g9IjAgMCAyNCAyNCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPHBhdGggZD0iTTExIDVMMTMuMDkgNy4wOUwxNSA2TDE3IDhWMTZMMTUgMThMMTMuMDkgMTYuOTFMMTEgMTlWNVoiIGZpbGw9ImN1cnJlbnRDb2xvciIvPgo8cGF0aCBkPSJNMTUuNSA5LjVMMTguNSAxMi41TDE1LjUgMTUuNSIgc3Ryb2tlPSJjdXJyZW50Q29sb3IiIHN0cm9rZS13aWR0aD0iMiIgc3Ryb2tlLWxpbmVjYXA9InJvdW5kIiBzdHJva2UtbGluZWpvaW49InJvdW5kIi8+CjxwYXRoIGQ9Ik0xOS41IDdMMjIuNSAxMEwxOS41IDEzIiBzdHJva2U9ImN1cnJlbnRDb2xvciIgc3Ryb2tlLXdpZHRoPSIyIiBzdHJva2UtbGluZWNhcD0icm91bmQiIHN0cm9rZS1saW5lam9pbj0icm91bmQiLz4KPC9zdmc+Cg==" alt="Sound Control">
+  <div id="controls" class="controls">
+    <button id="playPause" class="btn">⏯️</button>
+    <div class="time" id="currentTime">00:00</div>
+    <input type="range" id="seekbar" value="0" min="0" max="100" step="1">
+    <div class="time" id="duration">00:00</div>
+    <button id="mute" class="btn">🔇</button>
+    <input type="range" id="volumeControl" min="0" max="1" step="0.1" value="1" />
   </div>
-  
-  <!-- قائمة اختيار الصوت -->
-  <div id="audioMenu" class="audio-menu">
-    <div class="audio-option" data-lang="ar">
-      <div class="audio-indicator"></div>
-      <span>العربية</span>
+
+  <!-- أيقونة الصوت PNG في الأسفل -->
+  <div class="sound-icon-container">
+    <div id="soundIcon" class="sound-icon" tabindex="0" role="button" aria-label="التحكم في الصوت">
+      <img src="data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjQiIGhlaWdodD0iMjQiIHZpZXdCb3g9IjAgMCAyNCAyNCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPHBhdGggZD0iTTExIDVMMTMuMDkgNy4wOUwxNSA2TDE3IDhWMTZMMTUgMThMMTMuMDkgMTYuOTFMMTEgMTlWNVoiIGZpbGw9ImN1cnJlbnRDb2xvciIvPgo8cGF0aCBkPSJNMTUuNSA5LjVMMTguNSAxMi41TDE1LjUgMTUuNSIgc3Ryb2tlPSJjdXJyZW50Q29sb3IiIHN0cm9rZS13aWR0aD0iMiIgc3Ryb2tlLWxpbmVjYXA9InJvdW5kIiBzdHJva2UtbGluZWNhcD0icm91bmQiLz4KPHBhdGogZD0iTTE5LjUgN0wyMi41IDEwTDE5LjUgMTMiIHN0cm9rZT0iY3VycmVudENvbG9yIiBzdHJva2Utd2lkdGg9IjIiIHN0cm9rZS1saW5lY2FwPSJyb3VuZCIgc3Ryb2tlLWxpbmVqb2luPSJyb3VuZCIvPgo8L3N2Zz4K" alt="Sound Control">
     </div>
-    <div class="audio-option" data-lang="en">
-      <div class="audio-indicator"></div>
-      <span>English</span>
-    </div>
-    <div class="audio-option" data-lang="fr">
-      <div class="audio-indicator"></div>
-      <span>Français</span>
-    </div>
-    <div class="audio-option" id="muteOption">
-      <div class="audio-indicator"></div>
-      <span>كتم الصوت</span>
+    
+    <!-- قائمة اختيار الصوت -->
+    <div id="audioMenu" class="audio-menu" role="menu">
+      <!-- سيتم ملء الخيارات ديناميكياً بواسطة JavaScript -->
     </div>
   </div>
 </div>
@@ -235,8 +240,6 @@
   // عناصر أيقونة الصوت الجديدة
   const soundIcon = document.getElementById('soundIcon');
   const audioMenu = document.getElementById('audioMenu');
-  const audioOptions = document.querySelectorAll('.audio-option');
-  const muteOption = document.getElementById('muteOption');
 
   const videoUrl = "https://uselector.cdn.intigral-ott.net/ADSP1/ADSP1.isml/manifest.mpd";
   const player = new shaka.Player(video);
@@ -265,14 +268,16 @@
       await player.load(videoUrl);
       console.log("✅ تم تحميل القناة بنجاح!");
       
+      populateAudioTracks(); // ملء خيارات الصوت ديناميكياً
+      
       // التحقق من وجود الصوت باللغة العربية وتحديده إذا كان موجودًا
       const audioTracks = player.getAudioTracks();
       const arabicAudioTrack = audioTracks.find(track => track.language === 'ar');
       if (arabicAudioTrack) {
         player.selectAudioTrack(arabicAudioTrack);
         console.log("✅ تم تحديد الصوت باللغة العربية");
-        updateActiveAudioOption('ar');
       }
+      updateActiveAudioOption(); // تحديث الخيار النشط بعد التحميل الأولي
       
       video.muted = false;
       video.volume = 1.0;
@@ -302,23 +307,115 @@
     }, 3000);
   }
 
-  // وظائف أيقونة الصوت الجديدة
-  function updateActiveAudioOption(language) {
-    audioOptions.forEach(option => {
+  // وظائف أيقونة الصوت الجديدة والتحكم عن بعد
+  function populateAudioTracks() {
+    const audioTracks = player.getAudioTracks();
+    audioMenu.innerHTML = ''; // مسح الخيارات الموجودة
+
+    audioTracks.forEach(track => {
+      const option = document.createElement('div');
+      option.classList.add('audio-option');
+      option.setAttribute('tabindex', '0'); // لجعلها قابلة للتركيز
+      option.setAttribute('role', 'menuitem'); // دور ARIA
+      option.dataset.id = track.id; // استخدام معرف المسار للاختيار
+      option.dataset.lang = track.language; // للغة العرض
+
+      const indicator = document.createElement('div');
+      indicator.classList.add('audio-indicator');
+      option.appendChild(indicator);
+
+      const span = document.createElement('span');
+      span.textContent = track.label || track.language || `Track ${track.id}`;
+      option.appendChild(span);
+
+      option.addEventListener('click', () => selectAudioTrack(track.id));
+      option.addEventListener('keydown', (e) => {
+        if (e.key === 'Enter' || e.key === ' ') {
+          e.preventDefault(); // منع السلوك الافتراضي للمسافة
+          selectAudioTrack(track.id);
+          audioMenu.classList.remove('show');
+          soundIcon.focus(); // إعادة التركيز إلى الأيقونة الرئيسية
+        } else if (e.key === 'ArrowDown') {
+          e.preventDefault();
+          const next = option.nextElementSibling;
+          if (next) next.focus();
+        } else if (e.key === 'ArrowUp') {
+          e.preventDefault();
+          const prev = option.previousElementSibling;
+          if (prev) prev.focus();
+        }
+      });
+      audioMenu.appendChild(option);
+    });
+
+    // إضافة خيار كتم الصوت
+    const muteOption = document.createElement('div');
+    muteOption.id = 'muteOption';
+    muteOption.classList.add('audio-option');
+    muteOption.setAttribute('tabindex', '0');
+    muteOption.setAttribute('role', 'menuitem');
+    const muteIndicator = document.createElement('div');
+    muteIndicator.classList.add('audio-indicator');
+    muteOption.appendChild(muteIndicator);
+    const muteSpan = document.createElement('span');
+    muteSpan.textContent = 'كتم الصوت';
+    muteOption.appendChild(muteSpan);
+    muteOption.addEventListener('click', toggleMuteFromMenu);
+    muteOption.addEventListener('keydown', (e) => {
+      if (e.key === 'Enter' || e.key === ' ') {
+        e.preventDefault();
+        toggleMuteFromMenu();
+        audioMenu.classList.remove('show');
+        soundIcon.focus();
+      } else if (e.key === 'ArrowDown') {
+        e.preventDefault();
+        // إذا كان هذا هو الخيار الأخير، يمكن العودة إلى الأول
+        const firstOption = audioMenu.querySelector('.audio-option:first-of-type');
+        if (firstOption) firstOption.focus();
+      } else if (e.key === 'ArrowUp') {
+        e.preventDefault();
+        const prev = muteOption.previousElementSibling;
+        if (prev) prev.focus();
+      }
+    });
+    audioMenu.appendChild(muteOption);
+  }
+
+  function selectAudioTrack(trackId) {
+    player.selectAudioTrack(trackId);
+    updateActiveAudioOption();
+    video.muted = false; // إلغاء الكتم عند تغيير المسار
+    updateSoundIconState();
+  }
+
+  function updateActiveAudioOption() {
+    const currentTrack = player.getAudioTracks().find(t => t.active);
+    document.querySelectorAll('.audio-option').forEach(option => {
       option.classList.remove('active');
-      if (option.dataset.lang === language) {
+      if (currentTrack && option.dataset.id == currentTrack.id) {
         option.classList.add('active');
       }
     });
   }
 
+  function toggleMuteFromMenu() {
+    video.muted = !video.muted;
+    updateSoundIconState();
+  }
+
   function updateSoundIconState() {
+    const soundIconImg = soundIcon.querySelector('img');
+    const muteOptionElement = document.getElementById('muteOption');
+
     if (video.muted) {
       soundIcon.classList.add('muted');
-      muteOption.classList.add('active');
+      if (muteOptionElement) muteOptionElement.classList.add('active');
+      // يمكنك تغيير src الصورة هنا إذا كان لديك أيقونة كتم صوت مختلفة
+      // soundIconImg.src = "مسار_أيقونة_الكتم.png";
     } else {
       soundIcon.classList.remove('muted');
-      muteOption.classList.remove('active');
+      if (muteOptionElement) muteOptionElement.classList.remove('active');
+      // soundIconImg.src = "مسار_أيقونة_الصوت_العادية.png";
     }
   }
 
@@ -326,42 +423,51 @@
   soundIcon.addEventListener('click', (e) => {
     e.stopPropagation();
     audioMenu.classList.toggle('show');
+    if (audioMenu.classList.contains('show')) {
+      // التركيز على الخيار النشط أو الأول عند فتح القائمة
+      const activeOption = audioMenu.querySelector('.audio-option.active');
+      if (activeOption) {
+        activeOption.focus();
+      } else {
+        const firstOption = audioMenu.querySelector('.audio-option');
+        if (firstOption) firstOption.focus();
+      }
+    }
   });
 
-  // إخفاء القائمة عند النقر خارجها
+  soundIcon.addEventListener('keydown', (e) => {
+    if (e.key === 'Enter' || e.key === ' ') {
+      e.preventDefault(); // منع السلوك الافتراضي للمسافة
+      audioMenu.classList.toggle('show');
+      if (audioMenu.classList.contains('show')) {
+        const activeOption = audioMenu.querySelector('.audio-option.active');
+        if (activeOption) {
+          activeOption.focus();
+        } else {
+          const firstOption = audioMenu.querySelector('.audio-option');
+          if (firstOption) firstOption.focus();
+        }
+      }
+    }
+  });
+
+  // إخفاء القائمة عند النقر خارجها أو الضغط على Escape
   document.addEventListener('click', (e) => {
     if (!soundIcon.contains(e.target) && !audioMenu.contains(e.target)) {
       audioMenu.classList.remove('show');
     }
   });
 
-  // أحداث خيارات الصوت
-  audioOptions.forEach(option => {
-    option.addEventListener('click', () => {
-      const language = option.dataset.lang;
-      if (language) {
-        const audioTracks = player.getAudioTracks();
-        const selectedTrack = audioTracks.find(track => track.language === language);
-        if (selectedTrack) {
-          player.selectAudioTrack(selectedTrack);
-          updateActiveAudioOption(language);
-          console.log(`✅ تم تحديد الصوت: ${language}`);
-        }
-      }
+  document.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape' && audioMenu.classList.contains('show')) {
       audioMenu.classList.remove('show');
-    });
-  });
-
-  // خيار كتم الصوت
-  muteOption.addEventListener('click', () => {
-    video.muted = !video.muted;
-    updateSoundIconState();
-    audioMenu.classList.remove('show');
+      soundIcon.focus(); // إعادة التركيز إلى أيقونة الصوت
+    }
   });
 
   // الأحداث الأصلية
   document.body.addEventListener('mousemove', showControls);
-  document.body.addEventListener('keydown', showControls);
+  document.body.addEventListener('keydown', showControls); // هذا سيضمن ظهور عناصر التحكم عند أي ضغطة مفتاح
 
   playPause.addEventListener('click', () => {
     if (video.paused) {
