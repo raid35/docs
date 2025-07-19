@@ -2,7 +2,7 @@
 <html lang="ar" dir="rtl">
 <head>
   <meta charset="UTF-8">
-  <title>مشغل فيديو احترافي مع DRM</title>
+  <title>مشغل فيديو مع DRM</title>
   <style>
     body, html {
       margin: 0;
@@ -10,20 +10,7 @@
       height: 100%;
       overflow: hidden;
       background: black;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
     }
-    
-    #main-container {
-      position: relative;
-      width: 100%;
-      height: 100%;
-      overflow: hidden;
-      background: black;
-    }
-
     #videoPlayer {
       width: 100%;
       height: 100%;
@@ -34,242 +21,53 @@
       position: absolute;
       bottom: 0;
       width: 100%;
-      background: rgba(0, 0, 0, 0.8);
-      backdrop-filter: blur(5px);
-      display: none; /* مخفية افتراضياً */
+      background: rgba(0, 0, 0, 0.6);
+      display: flex;
       align-items: center;
       justify-content: space-between;
-      padding: 15px 20px;
+      padding: 10px;
       opacity: 0;
-      transition: opacity 0.3s ease-in-out;
-      z-index: 100;
-      outline: none;
-      box-sizing: border-box;
+      transition: opacity 0.5s ease-in-out;
     }
     .controls.show {
-      display: flex; /* تظهر كـ flex */
       opacity: 1;
     }
     .btn {
       color: white;
       background: none;
       border: none;
-      font-size: 24px;
+      font-size: 20px;
       cursor: pointer;
-      padding: 8px;
-      border-radius: 8px;
-      transition: background 0.2s ease;
-      outline: none;
-    }
-    .btn:hover {
-      background: rgba(255, 255, 255, 0.1);
-    }
-    .btn:focus, .audio-option:focus, .sound-icon:focus, #seekbar:focus, #volumeControl:focus {
-      box-shadow: 0 0 0 3px #00ff00, 0 0 0 6px rgba(0, 255, 0, 0.5);
-      border-radius: 8px;
     }
     .time {
       color: white;
-      font-size: 16px;
-      margin: 0 10px;
-      min-width: 60px;
-      text-align: center;
+      font-size: 14px;
     }
     #seekbar {
       flex: 1;
-      margin: 0 15px;
-      height: 8px;
-      background: rgba(255, 255, 255, 0.3);
-      border-radius: 5px;
-      -webkit-appearance: none;
-      appearance: none;
-      outline: none;
-      cursor: pointer;
-    }
-    #seekbar::-webkit-slider-thumb {
-      -webkit-appearance: none;
-      appearance: none;
-      width: 20px;
-      height: 20px;
-      background: #00ff00;
-      border-radius: 50%;
-      cursor: pointer;
-      border: 2px solid white;
-      box-shadow: 0 0 5px rgba(0, 255, 0, 0.7);
-    }
-    #seekbar::-moz-range-thumb {
-      width: 20px;
-      height: 20px;
-      background: #00ff00;
-      border-radius: 50%;
-      cursor: pointer;
-      border: 2px solid white;
-      box-shadow: 0 0 5px rgba(0, 255, 0, 0.7);
+      margin: 0 10px;
     }
     #volumeControl {
-      width: 120px;
-      height: 6px;
-      background: rgba(255, 255, 255, 0.3);
-      border-radius: 3px;
-      -webkit-appearance: none;
-      appearance: none;
-      outline: none;
-      cursor: pointer;
+      width: 100px;
     }
-    #volumeControl::-webkit-slider-thumb {
-      -webkit-appearance: none;
-      appearance: none;
-      width: 16px;
-      height: 16px;
-      background: #00ff00;
-      border-radius: 50%;
-      cursor: pointer;
-      border: 2px solid white;
-      box-shadow: 0 0 4px rgba(0, 255, 0, 0.7);
-    }
-    #volumeControl::-moz-range-thumb {
-      width: 16px;
-      height: 16px;
-      background: #00ff00;
-      border-radius: 50%;
-      cursor: pointer;
-      border: 2px solid white;
-      box-shadow: 0 0 4px rgba(0, 255, 0, 0.7);
-    }
-    
     /* دائرة التحميل */
     #loadingSpinner {
       position: absolute;
       top: 50%;
       left: 50%;
-      transform: translate(-50%, -50%);
       width: 60px;
       height: 60px;
-      border: 8px solid #00ff00;
+      margin: -30px 0 0 -30px;
+      border: 8px solid #00ff00; /* أخضر */
       border-top: 8px solid transparent;
       border-radius: 50%;
       animation: spin 1s linear infinite;
       z-index: 10000;
-      display: none; /* مخفية افتراضياً */
+      display: none;
     }
     @keyframes spin {
       0% { transform: rotate(0deg); }
       100% { transform: rotate(360deg); }
-    }
-
-    /* أيقونة الصوت PNG في الأسفل */
-    .sound-icon-container {
-      position: absolute;
-      bottom: 90px;
-      right: 30px;
-      z-index: 1000;
-      display: none; /* مخفية افتراضياً */
-      opacity: 0;
-      transition: opacity 0.3s ease-in-out;
-    }
-    
-    .sound-icon-container.show {
-      display: block; /* تظهر كـ block */
-      opacity: 1;
-    }
-
-    .sound-icon {
-      width: 60px;
-      height: 60px;
-      background: rgba(0, 0, 0, 0.8);
-      border-radius: 50%;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      cursor: pointer;
-      transition: all 0.3s ease;
-      border: 3px solid #00ff00;
-      box-shadow: 0 5px 20px rgba(0, 255, 0, 0.4);
-      outline: none;
-    }
-    
-    .sound-icon:hover {
-      transform: scale(1.1);
-      box-shadow: 0 8px 25px rgba(0, 255, 0, 0.6);
-      background: rgba(0, 255, 0, 0.15);
-      border-color: #00ff00;
-    }
-    
-    .sound-icon img {
-      width: 35px;
-      height: 35px;
-      filter: brightness(0) invert(1);
-      transition: filter 0.3s ease;
-    }
-    
-    .sound-icon.muted img {
-      filter: brightness(0) saturate(100%) invert(27%) sepia(51%) saturate(2878%) hue-rotate(346deg) brightness(104%) contrast(97%);
-    }
-    
-    /* قائمة اختيار الصوت */
-    .audio-menu {
-      position: absolute;
-      bottom: 70px;
-      right: 0;
-      background: rgba(0, 0, 0, 0.95);
-      border-radius: 12px;
-      padding: 15px;
-      min-width: 220px;
-      display: none;
-      border: 1px solid #00ff00;
-      box-shadow: 0 6px 25px rgba(0, 0, 0, 0.9);
-    }
-    
-    .audio-menu.show {
-      display: block;
-      animation: slideUp 0.3s ease;
-    }
-    
-    @keyframes slideUp {
-      from {
-        opacity: 0;
-        transform: translateY(20px);
-      }
-      to {
-        opacity: 1;
-        transform: translateY(0);
-      }
-    }
-    
-    .audio-option {
-      color: white;
-      padding: 10px 15px;
-      cursor: pointer;
-      border-radius: 8px;
-      transition: background 0.2s ease;
-      font-size: 16px;
-      display: flex;
-      align-items: center;
-      gap: 10px;
-      outline: none;
-    }
-    
-    .audio-option:hover {
-      background: rgba(0, 255, 0, 0.25);
-      border-left: 4px solid #00ff00;
-    }
-    
-    .audio-option.active {
-      background: rgba(0, 255, 0, 0.4);
-      border-left: 4px solid #00ff00;
-      font-weight: bold;
-    }
-    
-    .audio-indicator {
-      width: 10px;
-      height: 10px;
-      border-radius: 50%;
-      background: #00ff00;
-      display: none;
-    }
-    
-    .audio-option.active .audio-indicator {
-      display: block;
     }
   </style>
   <!-- تضمين ملفات Shaka Player الحديثة -->
@@ -278,29 +76,18 @@
 </head>
 <body>
 
-<div id="main-container">
-  <div id="loadingSpinner"></div>
+<!-- دائرة التحميل -->
+<div id="loadingSpinner"></div>
 
-  <video id="videoPlayer" autoplay playsinline controls crossorigin="anonymous"></video>
+<video id="videoPlayer" autoplay playsinline controls crossorigin="anonymous"></video>
 
-  <div id="controls" class="controls" tabindex="-1" role="toolbar" aria-label="عناصر التحكم في الفيديو">
-    <button id="playPause" class="btn" tabindex="0">⏯️</button>
-    <div class="time" id="currentTime">00:00</div>
-    <input type="range" id="seekbar" value="0" min="0" max="100" step="1" tabindex="0" aria-label="شريط التقدم">
-    <div class="time" id="duration">00:00</div>
-    <button id="mute" class="btn" tabindex="0">🔇</button>
-    <input type="range" id="volumeControl" min="0" max="1" step="0.1" value="1" tabindex="0" aria-label="التحكم في مستوى الصوت" />
-  </div>
-
-  <div id="soundIconContainer" class="sound-icon-container">
-    <div id="soundIcon" class="sound-icon" tabindex="0" role="button" aria-label="التحكم في الصوت" aria-haspopup="true" aria-expanded="false">
-      <img src="data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjQiIGhlaWdodD0iMjQiIHZpZXdCb3g9IjAgMCAyNCAyNCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPHBhdGggZD0iTTExIDVMMTMuMDkgNy4wOUwxNSA2TDE3IDhWMTZMMTUgMThMMTMuMDkgMTYuOTFMMTEgMTlWNVoiIGZpbGw9ImN1cnJlbnRDb2xvciIvPgo8cGF0aCBkPSJNMTUuNSA5LjVMMTguNSAxMi41TDE1LjUgMTUuNSIgc3Ryb2tlPSJjdXJyZW50Q29sb3IiIHN0cm9rZS13aWR0aD0iMiIgc3Ryb2tlLWxpbmVjYXA9InJvdW5kIiBzdHJva2UtbGluZWpvaW49InJvdW5kIi8+CjxwYXRoIGQ9Ik0xOS41IDdMMjIuNSAxMEwxOS41IDEzIiBzdHJva2U9ImN1cnJlbnRDb2xvciIgc3Ryb2tlLXdpZHRoPSIyIiBzdHJva2UtbGluZWNhcD0icm91bmQiIHN0cm9rZS1saW5lbm9pbiI9InJvdW5kIi8+Cjwvc3ZnPgo=" alt="Sound Control">
-    </div>
-    
-    <div id="audioMenu" class="audio-menu" role="menu">
-      <!-- سيتم ملء الخيارات دينامياً بواسطة JavaScript -->
-    </div>
-  </div>
+<div id="controls" class="controls">
+  <button id="playPause" class="btn">⏯️</button>
+  <div class="time" id="currentTime">00:00</div>
+  <input type="range" id="seekbar" value="0" min="0" max="100" step="1">
+  <div class="time" id="duration">00:00</div>
+  <button id="mute" class="btn">🔇</button>
+  <input type="range" id="volumeControl" min="0" max="1" step="0.1" value="1" />
 </div>
 
 <script>
@@ -313,86 +100,55 @@
   const currentTime = document.getElementById('currentTime');
   const duration = document.getElementById('duration');
   const loadingSpinner = document.getElementById('loadingSpinner');
-  
-  const soundIconContainer = document.getElementById('soundIconContainer');
-  const soundIcon = document.getElementById('soundIcon');
-  const audioMenu = document.getElementById('audioMenu');
 
   const videoUrl = "https://uselector.cdn.intigral-ott.net/ADSP1/ADSP1.isml/manifest.mpd";
-  let player;
 
-  let mainControlsFocusableElements = [];
-  let currentFocusedElementIndex = -1;
-  let hideControlsTimeout;
-  const CONTROLS_HIDE_DELAY = 5000; // 5 ثوانٍ
+  const player = new shaka.Player(video);
+
+  player.configure({
+    streaming: {
+      bufferingGoal: 60,  // تحسين التخزين المؤقت لتخزين المزيد من الفيديو مسبقًا
+      rebufferingGoal: 5,  // تقليل المدة التي تنتظر فيها لإعادة التخزين المؤقت
+      preload: 3,  // تحميل جزء أكبر من الفيديو مسبقًا
+      retryParameters: {
+        maxAttempts: 5,  // تحديد عدد المحاولات في حال فشل التحميل
+        baseDelay: 1,  // تأخير أساسي قبل المحاولة الجديدة
+        backoffFactor: 2,  // زيادة التأخير بعد كل محاولة فاشلة
+      }
+    },
+    drm: {
+      clearKeys: {        "eb5a3a48f3e191a00e3ac1e2d470c491":"2c8b7198563527e524d66628c092ef1f"
+      }
+    }
+  });
 
   async function initPlayer() {
-    console.log("بدء تهيئة المشغل...");
-    if (player) {
-      player.destroy();
-      console.log("تم تدمير المشغل القديم.");
-    }
-    player = new shaka.Player(video);
-
-    player.configure({
-      streaming: {
-        bufferingGoal: 60,
-        rebufferingGoal: 5,
-        preload: 3,
-        retryParameters: {
-          maxAttempts: 5,
-          baseDelay: 1,
-          backoffFactor: 2,
-        }
-      },
-      drm: {
-        clearKeys: {
-          "eb5a3a48f3e191a00e3ac1e2d470c491":"2c8b7198563527e524d66628c092ef1f"
-        }
-      }
-    });
-
     try {
-      loadingSpinner.style.display = 'block';
-      console.log("جاري تحميل الفيديو...");
+      loadingSpinner.style.display = 'block'; // إظهار دائرة التحميل
       await player.load(videoUrl);
       console.log("✅ تم تحميل القناة بنجاح!");
-      
-      // استمع لحدث trackschanged لملء المسارات الصوتية
-      player.addEventListener('trackschanged', populateAudioTracks);
-      // استدعاء أولي في حال كانت المسارات متاحة فورًا
-      populateAudioTracks(); 
 
+      // التحقق من وجود الصوت باللغة العربية وتحديده إذا كان موجودًا
       const audioTracks = player.getAudioTracks();
-      console.log("المسارات الصوتية المتاحة بعد التحميل:", audioTracks);
       const arabicAudioTrack = audioTracks.find(track => track.language === 'ar');
       if (arabicAudioTrack) {
-        player.selectAudioTrack(arabicAudioTrack.id);
+        player.selectAudioTrack(arabicAudioTrack);
         console.log("✅ تم تحديد الصوت باللغة العربية");
       }
-      updateActiveAudioOption();
-      
+
       video.muted = false;
       video.volume = 1.0;
       await video.play();
-      
-      initializeFocusableControls();
-      showControls(); // إظهار عناصر التحكم بعد التحميل
-      playPause.focus(); // نقل التركيز إلى زر التشغيل/الإيقاف مؤقتًا
-      currentFocusedElementIndex = mainControlsFocusableElements.indexOf(playPause);
-      console.log("التركيز الأولي على:", document.activeElement);
-      
     } catch (error) {
-      console.error("❌ خطأ فادح في تحميل القناة:", error);
-      // في حالة الخطأ، تأكد من إخفاء دائرة التحميل
-      loadingSpinner.style.display = 'none';
+      console.error("❌ خطأ في تحميل القناة:", error);
     } finally {
-      loadingSpinner.style.display = 'none';
-      console.log("تم إخفاء دائرة التحميل.");
+      loadingSpinner.style.display = 'none'; // إخفاء دائرة التحميل بعد التحميل أو الخطأ
     }
   }
 
   document.addEventListener('DOMContentLoaded', initPlayer);
+
+  let hideControlsTimeout;
 
   function formatTime(sec) {
     const minutes = Math.floor(sec / 60).toString().padStart(2, '0');
@@ -401,276 +157,15 @@
   }
 
   function showControls() {
-    console.log("إظهار عناصر التحكم...");
-    // تعيين display أولاً للسماح بالانتقال
-    controls.style.display = 'flex';
-    soundIconContainer.style.display = 'block';
-    
-    // تأخير بسيط للسماح بتطبيق display قبل تطبيق opacity
-    setTimeout(() => {
-      controls.classList.add('show');
-      soundIconContainer.classList.add('show');
-    }, 10); 
-
+    controls.classList.add('show');
     clearTimeout(hideControlsTimeout);
     hideControlsTimeout = setTimeout(() => {
-      hideControls();
-    }, CONTROLS_HIDE_DELAY);
+      controls.classList.remove('show');
+    }, 3000);
   }
 
-  function hideControls() {
-    console.log("إخفاء عناصر التحكم...");
-    controls.classList.remove('show');
-    soundIconContainer.classList.remove('show');
-    audioMenu.classList.remove('show');
-    soundIcon.setAttribute('aria-expanded', 'false');
-    
-    // إزالة التركيز من أي عنصر داخل عناصر التحكم عند إخفائها
-    if (document.activeElement && (controls.contains(document.activeElement) || soundIconContainer.contains(document.activeElement))) {
-      document.activeElement.blur();
-      console.log("تم إزالة التركيز من عنصر التحكم.");
-    }
-    video.focus(); // إعادة التركيز إلى الفيديو نفسه
-    currentFocusedElementIndex = -1; // إعادة تعيين مؤشر التركيز
-    
-    // تأخير بسيط للسماح بانتقال opacity قبل إخفاء display
-    setTimeout(() => {
-      controls.style.display = 'none';
-      soundIconContainer.style.display = 'none';
-    }, 300); // يجب أن يتطابق مع مدة انتقال CSS
-  }
-
-  function initializeFocusableControls() {
-    mainControlsFocusableElements = [
-      playPause,
-      seekbar,
-      volumeControl,
-      mute,
-      soundIcon
-    ].filter(el => el && el.offsetParent !== null); // تصفية العناصر غير الموجودة في DOM
-    console.log("عناصر التحكم القابلة للتركيز:", mainControlsFocusableElements.map(el => el.id || el.tagName));
-  }
-
-  function populateAudioTracks() {
-    // تأكد من أن المشغل قد تم تحميله وأن المسارات متاحة
-    if (!player || !player.isLoaded()) {
-      console.log("المشغل لم يتم تحميله بعد أو لا توجد مسارات متاحة.");
-      return;
-    }
-
-    const audioTracks = player.getAudioTracks();
-    console.log("المسارات الصوتية التي تم جلبها لملء القائمة:", audioTracks);
-    audioMenu.innerHTML = '';
-
-    if (audioTracks.length === 0) {
-      const noTracksOption = document.createElement('div');
-      noTracksOption.classList.add('audio-option');
-      noTracksOption.textContent = 'لا توجد مسارات صوتية متاحة';
-      audioMenu.appendChild(noTracksOption);
-      console.log("لا توجد مسارات صوتية لملء القائمة.");
-      return;
-    }
-
-    audioTracks.forEach(track => {
-      const option = document.createElement('div');
-      option.classList.add('audio-option');
-      option.setAttribute('tabindex', '0');
-      option.setAttribute('role', 'menuitem');
-      option.dataset.id = track.id;
-      option.dataset.lang = track.language;
-
-      const indicator = document.createElement('div');
-      indicator.classList.add('audio-indicator');
-      option.appendChild(indicator);
-
-      const span = document.createElement('span');
-      span.textContent = track.label || track.language || `Track ${track.id}`;
-      option.appendChild(span);
-
-      option.addEventListener('click', () => selectAudioTrack(track.id));
-      option.addEventListener('keydown', (e) => {
-        if (e.key === 'Enter' || e.key === ' ') {
-          e.preventDefault();
-          selectAudioTrack(track.id);
-          audioMenu.classList.remove('show');
-          soundIcon.setAttribute('aria-expanded', 'false');
-          soundIcon.focus();
-          showControls(); // أعد تشغيل مؤقت الإخفاء
-        } else if (e.key === 'ArrowDown') {
-          e.preventDefault();
-          const next = option.nextElementSibling;
-          if (next) next.focus();
-          else audioMenu.querySelector('.audio-option:first-of-type').focus();
-        } else if (e.key === 'ArrowUp') {
-          e.preventDefault();
-          const prev = option.previousElementSibling;
-          if (prev) prev.focus();
-          else audioMenu.querySelector('.audio-option:last-of-type').focus();
-        }
-      });
-      audioMenu.appendChild(option);
-    });
-
-    const muteOption = document.createElement('div');
-    muteOption.id = 'muteOption';
-    muteOption.classList.add('audio-option');
-    muteOption.setAttribute('tabindex', '0');
-    muteOption.setAttribute('role', 'menuitem');
-    const muteIndicator = document.createElement('div');
-    muteIndicator.classList.add('audio-indicator');
-    muteOption.appendChild(muteIndicator);
-    const muteSpan = document.createElement('span');
-    muteSpan.textContent = 'كتم الصوت';
-    muteOption.appendChild(muteSpan);
-    muteOption.addEventListener('click', toggleMuteFromMenu);
-    muteOption.addEventListener('keydown', (e) => {
-      if (e.key === 'Enter' || e.key === ' ') {
-        e.preventDefault();
-        toggleMuteFromMenu();
-        audioMenu.classList.remove('show');
-        soundIcon.setAttribute('aria-expanded', 'false');
-        soundIcon.focus();
-        showControls(); // أعد تشغيل مؤقت الإخفاء
-      } else if (e.key === 'ArrowDown') {
-        e.preventDefault();
-        const firstOption = audioMenu.querySelector('.audio-option:first-of-type');
-        if (firstOption) firstOption.focus();
-      } else if (e.key === 'ArrowUp') {
-        e.preventDefault();
-        const prev = muteOption.previousElementSibling;
-        if (prev) prev.focus();
-        else audioMenu.querySelector('.audio-option:last-of-type').focus();
-      }
-    });
-    audioMenu.appendChild(muteOption);
-    updateActiveAudioOption();
-    console.log("تم ملء قائمة المسارات الصوتية.");
-  }
-
-  function selectAudioTrack(trackId) {
-    console.log(`محاولة تحديد المسار الصوتي بالمعرف: ${trackId}`);
-    player.selectAudioTrack(trackId);
-    updateActiveAudioOption();
-    video.muted = false;
-    updateSoundIconState();
-    console.log(`✅ تم تحديد المسار الصوتي بالمعرف: ${trackId}`);
-  }
-
-  function updateActiveAudioOption() {
-    const currentTrack = player.getAudioTracks().find(t => t.active);
-    console.log("المسار الصوتي النشط حالياً:", currentTrack);
-    document.querySelectorAll('.audio-option').forEach(option => {
-      option.classList.remove('active');
-      if (currentTrack && option.dataset.id == currentTrack.id) {
-        option.classList.add('active');
-      }
-    });
-    const muteOptionElement = document.getElementById('muteOption');
-    if (muteOptionElement) {
-      if (video.muted) {
-        muteOptionElement.classList.add('active');
-      } else {
-        muteOptionElement.classList.remove('active');
-      }
-    }
-  }
-
-  function toggleMuteFromMenu() {
-    video.muted = !video.muted;
-    updateSoundIconState();
-    updateActiveAudioOption();
-    console.log("تم تبديل كتم الصوت من القائمة. حالة الكتم:", video.muted);
-  }
-
-  function updateSoundIconState() {
-    const soundIconImg = soundIcon.querySelector('img');
-    if (video.muted) {
-      soundIcon.classList.add('muted');
-    } else {
-      soundIcon.classList.remove('muted');
-    }
-  }
-
-  // أحداث أيقونة الصوت
-  soundIcon.addEventListener('click', (e) => {
-    e.stopPropagation();
-    toggleAudioMenu();
-  });
-
-  soundIcon.addEventListener('keydown', (e) => {
-    if (e.key === 'Enter' || e.key === ' ') {
-      e.preventDefault();
-      toggleAudioMenu();
-    }
-  });
-
-  function toggleAudioMenu() {
-    const isShowing = audioMenu.classList.toggle('show');
-    soundIcon.setAttribute('aria-expanded', isShowing);
-    console.log("تبديل قائمة الصوت. الحالة:", isShowing);
-    if (isShowing) {
-      clearTimeout(hideControlsTimeout); // أوقف مؤقت إخفاء عناصر التحكم
-      const activeOption = audioMenu.querySelector('.audio-option.active');
-      if (activeOption) {
-        activeOption.focus();
-      } else {
-        const firstOption = audioMenu.querySelector('.audio-option');
-        if (firstOption) firstOption.focus();
-      }
-    } else {
-      showControls(); // أعد تشغيل مؤقت إخفاء عناصر التحكم
-    }
-  }
-
-  // إخفاء القائمة عند النقر خارجها أو الضغط على Escape
-  document.addEventListener('click', (e) => {
-    if (!soundIcon.contains(e.target) && !audioMenu.contains(e.target)) {
-      audioMenu.classList.remove('show');
-      soundIcon.setAttribute('aria-expanded', 'false');
-      showControls(); // أعد تشغيل مؤقت الإخفاء
-    }
-  });
-
-  document.addEventListener('keydown', (e) => {
-    showControls(); // أي ضغطة مفتاح تظهر عناصر التحكم
-
-    if (e.key === 'Escape' && audioMenu.classList.contains('show')) {
-      audioMenu.classList.remove('show');
-      soundIcon.setAttribute('aria-expanded', 'false');
-      soundIcon.focus();
-      e.preventDefault();
-      showControls(); // أعد تشغيل مؤقت الإخفاء
-    } else if (!audioMenu.classList.contains('show')) { // فقط إذا لم تكن قائمة الصوت مفتوحة
-      const currentElement = document.activeElement;
-      const currentIndex = mainControlsFocusableElements.indexOf(currentElement);
-      let nextIndex = -1;
-
-      if (e.key === 'ArrowRight') {
-        e.preventDefault();
-        if (currentIndex !== -1) {
-          nextIndex = (currentIndex + 1) % mainControlsFocusableElements.length;
-        } else { // إذا لم يكن هناك تركيز، ابدأ من الأول
-          nextIndex = 0;
-        }
-      } else if (e.key === 'ArrowLeft') {
-        e.preventDefault();
-        if (currentIndex !== -1) {
-          nextIndex = (currentIndex - 1 + mainControlsFocusableElements.length) % mainControlsFocusableElements.length;
-        } else { // إذا لم يكن هناك تركيز، ابدأ من الأخير
-          nextIndex = mainControlsFocusableElements.length - 1;
-        }
-      }
-
-      if (nextIndex !== -1 && mainControlsFocusableElements[nextIndex]) {
-        mainControlsFocusableElements[nextIndex].focus();
-        currentFocusedElementIndex = nextIndex;
-        console.log("التركيز على:", mainControlsFocusableElements[nextIndex].id || mainControlsFocusableElements[nextIndex].tagName);
-      }
-    }
-  });
-
-  // أحداث عناصر التحكم الأصلية
   document.body.addEventListener('mousemove', showControls);
+  document.body.addEventListener('keydown', showControls);
 
   playPause.addEventListener('click', () => {
     if (video.paused) {
@@ -682,8 +177,6 @@
 
   mute.addEventListener('click', () => {
     video.muted = !video.muted;
-    updateSoundIconState();
-    updateActiveAudioOption();
   });
 
   volumeControl.addEventListener('input', (event) => {
@@ -691,30 +184,19 @@
   });
 
   seekbar.addEventListener('input', () => {
-    if (!isNaN(video.duration) && video.duration > 0) {
-      video.currentTime = (seekbar.value / 100) * video.duration;
-    }
+    video.currentTime = (seekbar.value / 100) * video.duration;
   });
 
   video.addEventListener('timeupdate', () => {
-    if (!isNaN(video.duration) && video.duration > 0) {
-      seekbar.value = (video.currentTime / video.duration) * 100;
-    }
+    seekbar.value = (video.currentTime / video.duration) * 100;
     currentTime.textContent = formatTime(video.currentTime);
   });
 
   video.addEventListener('loadedmetadata', () => {
     duration.textContent = formatTime(video.duration);
-    populateAudioTracks(); // تأكد من تحديث خيارات الصوت بعد تحميل البيانات الوصفية
-    updateActiveAudioOption();
-    initializeFocusableControls(); // إعادة تهيئة عناصر التركيز بعد تحميل كل شيء
   });
 
-  video.addEventListener('volumechange', updateSoundIconState);
-
-  video.addEventListener('play', showControls);
-  video.addEventListener('pause', showControls);
-
+  showControls();
 </script>
 
 </body>
