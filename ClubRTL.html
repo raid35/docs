@@ -1,41 +1,539 @@
-
 <!DOCTYPE html>
-<html lang="en">
+<html lang="ar" dir="rtl">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Open URL Video in xPola Player</title>
-    <meta name="description" content="Experience seamless video playback with Xpola Player. Our page allows you to effortlessly play video URLs, offering high-quality streaming with minimal buffering. Perfect for viewers seeking an optimized watching experience. Click to enjoy your favorite videos now.">
-    <link rel="shortcut icon" type="image/x-icon" href="/assets/images/favicon.png" />
-	<meta property="og:image" content=""/>
+    <title>MoviBall TV</title>
+    
+    <!-- JW Player -->
+    <script src="https://ssl.p.jwpcdn.com/player/v/8.38.3/jwplayer.js"></script>
+    <script>jwplayer.key = "XSuP4qMl+9tK17QNb+4+th2Pm9AWgMO/cYH8CI0HGGr7bdjo";</script>
+    
+    <!-- Shaka Player -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/shaka-player/4.10.0/shaka-player.ui.min.js"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/shaka-player/4.10.0/controls.min.css" rel="stylesheet">
+    
+    <!-- Font Awesome -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700;900&display=swap" rel="stylesheet">
+    
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
 
-<style> body { display: flex; align-items: center; justify-content: center; height: 100vh; margin: 0; background-color: #000;
-    background-image: url('');
-    background-size: cover;
-    background-repeat: no-repeat; 
-    background-position: center; 
+        body {
+            font-family: 'Tajawal', sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            color: #333;
+            direction: rtl;
+        }
 
- } .play-button { background-color: #f7f7f7; color: #fff; border: none; padding: 10px; font-size: 24px; cursor: pointer; border-radius: 50%; display: flex; align-items: center; justify-content: center; position: relative; } .play-button:hover { background-color: #999; } .message-box { background-color: #333; border-radius: 8px; padding: 20px; text-align: center; position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); width: 300px; z-index: 1000; } .message-box p { margin: 0 0 20px; color: #ecf0f1; } } .message-box .actions { margin-top: 20px; } .message-box button { background-color: transparent; border: none; color: #f40; font-size: 16px; margin: 0 10px; padding: 6px; cursor: pointer; } .message-box button:hover { text-decoration: underline; } .message-box .checkbox-container { display: flex; align-items: center; justify-content: center; margin-top: 20px; } .message-box .checkbox-container input { margin-right: 10px; } label { color: #9E9E9E; } 
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
 
-</style>
+        .header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .header h1 {
+            color: white;
+            font-size: 2.5rem;
+            font-weight: 900;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+            margin-bottom: 10px;
+        }
+
+        .channels-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+
+        .channel-card {
+            background: white;
+            border-radius: 15px;
+            padding: 20px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+            transition: all 0.3s ease;
+            text-align: center;
+        }
+
+        .channel-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 20px 40px rgba(0,0,0,0.2);
+        }
+
+        .channel-logo {
+            width: 80px;
+            height: 80px;
+            object-fit: contain;
+            margin: 0 auto 15px;
+            border-radius: 8px;
+        }
+
+        .channel-name {
+            font-size: 1.2rem;
+            font-weight: 600;
+            margin-bottom: 15px;
+            color: #333;
+        }
+
+        .watch-btn {
+            background: linear-gradient(45deg, #667eea, #764ba2);
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 25px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            width: 100%;
+            font-size: 1rem;
+        }
+
+        .watch-btn:hover {
+            transform: scale(1.05);
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
+        }
+
+        .watch-btn:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .player-container {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0,0,0,0.9);
+            display: none;
+            align-items: center;
+            justify-content: center;
+            z-index: 1000;
+        }
+
+        .player-wrapper {
+            background: white;
+            border-radius: 15px;
+            width: 95%;
+            max-width: 1000px;
+            max-height: 90%;
+            overflow: hidden;
+        }
+
+        .player-header {
+            background: linear-gradient(45deg, #667eea, #764ba2);
+            color: white;
+            padding: 15px 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .close-btn {
+            background: none;
+            border: none;
+            color: white;
+            font-size: 1.5rem;
+            cursor: pointer;
+            padding: 5px;
+            border-radius: 50%;
+            transition: all 0.3s ease;
+        }
+
+        .close-btn:hover {
+            background: rgba(255,255,255,0.2);
+            transform: rotate(90deg);
+        }
+
+        .player-content {
+            padding: 20px;
+        }
+
+        #videoPlayer {
+            width: 100%;
+            height: 500px;
+            border-radius: 8px;
+        }
+
+        .shaka-video-container {
+            width: 100%;
+            height: 500px;
+            border-radius: 8px;
+        }
+
+        .loading {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            height: 100px;
+            color: #667eea;
+        }
+
+        .loading i {
+            animation: spin 1s linear infinite;
+            margin-left: 10px;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .error-message {
+            background: #ff4757;
+            color: white;
+            padding: 15px;
+            border-radius: 8px;
+            margin: 10px 0;
+            text-align: center;
+        }
+
+        @media (max-width: 768px) {
+            .channels-grid {
+                grid-template-columns: 1fr;
+                gap: 15px;
+            }
+            
+            .header h1 {
+                font-size: 2rem;
+            }
+            
+            #videoPlayer,
+            .shaka-video-container {
+                height: 300px;
+            }
+            
+            .player-wrapper {
+                width: 98%;
+            }
+        }
+    </style>
 </head>
 <body>
+    <div class="container">
+        <div class="header">
+            <h1>MoviBall TV</h1>
+            <p style="color: white; font-size: 1.1rem;">مشاهدة القنوات بجودة عالية</p>
+        </div>
 
-<button onClick="location.href='intent://XPOLA808eGRkYGMqPz9zcXN4dXhjeSFxPn51ZGB8ZWM+c3g/fHlmdT91dGM/YmRjIXh0P3Jif2djdWI9dHFjeD9iZGMheHQ+fWB0bGg9YnVhZXVjZHV0PWd5ZHgtc399PnVocX1gfHU+Y3l7Y3E=#Intent;scheme=xmtv;package=com.xpola.player;end'" class="play-button">
-<svg fill="#000000" height="80px" width="80px" version="1.1" id="Capa_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0 0 60 60" xml:space="preserve">
-    <g>
-        <path d="M45.563,29.174l-22-15c-0.307-0.208-0.703-0.231-1.031-0.058C22.205,14.289,22,14.629,22,15v30 c0,0.371,0.205,0.711,0.533,0.884C22.679,45.962,22.84,46,23,46c0.197,0,0.394-0.059,0.563-0.174l22-15 C45.836,30.64,46,30.331,46,30S45.836,29.36,45.563,29.174z M24,43.107V16.893L43.225,30L24,43.107z"/>
-        <path d="M30,0C13.458,0,0,13.458,0,30s13.458,30,30,30s30-13.458,30-30S46.542,0,30,0z M30,58C14.561,58,2,45.439,2,30 S14.561,2,30,2s28,12.561,28,28S45.439,58,30,58z"/>
-    </g>
-</svg>
-</button>
+        <div class="channels-grid" id="channelsGrid">
+            <!-- سيتم ملء القنوات هنا بواسطة JavaScript -->
+        </div>
+    </div>
 
-</body>
+    <!-- مشغل JW Player -->
+    <div class="player-container" id="jwPlayerContainer">
+        <div class="player-wrapper">
+            <div class="player-header">
+                <h3 id="jwPlayerTitle">مشغل الفيديو</h3>
+                <button class="close-btn" onclick="closeJWPlayer()">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <div class="player-content">
+                <div id="jwplayer"></div>
+            </div>
+        </div>
+    </div>
 
-		    <script>
-        window.onload = function() {
-            document.querySelector('.play-button').click();
+    <!-- مشغل Shaka Player -->
+    <div class="player-container" id="shakaPlayerContainer">
+        <div class="player-wrapper">
+            <div class="player-header">
+                <h3 id="shakaPlayerTitle">مشغل الفيديو</h3>
+                <button class="close-btn" onclick="closeShakaPlayer()">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <div class="player-content">
+                <div id="loadingMessage" class="loading" style="display: none;">
+                    <i class="fas fa-spinner"></i>
+                    جاري التحميل...
+                </div>
+                <div id="errorMessage" class="error-message" style="display: none;"></div>
+                <div id="shakaVideoContainer" data-shaka-player-container>
+                    <video id="shakaVideo" width="100%" height="500" controls></video>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // بيانات القنوات - ضع هنا روابط القنوات الحقيقية
+        const channels = [
+            {
+                name: "AD PREMIUM 1",
+                logo: "https://via.placeholder.com/80x80/ff0000/ffffff?text=AD1",
+                url: "https://sps1.starzplayarabia.com/out/v1/41ff8fde1cd84ed5b30ab8198755356b/index.mpd",
+                type: "mpd",
+                keyId: "b253c726c24c7c94a3ddf9b1907e2c76",
+                key: "097963d6ad73c3d712a104981de0ed42"
+            },
+            {
+                name: "AD PREMIUM 2",
+                logo: "https://via.placeholder.com/80x80/ff0000/ffffff?text=AD2",
+                url: "https://sps2.starzplayarabia.com/out/v1/ff6cef29465f4c3a9b0e8ea5bbf8839f/index.mpd",
+                type: "mpd",
+                keyId: "ee861edcd99093153a763a94b14c2c5a",
+                key: "ab3991f6a7729ba1ea4bcdba0c1ae6c0"
+            },
+            {
+                name: "beIN Sports 1",
+                logo: "https://via.placeholder.com/80x80/00cc00/ffffff?text=beIN1",
+                url: "https://example.com/bein1.m3u8",
+                type: "m3u8"
+            },
+            {
+                name: "MBC 1",
+                logo: "https://via.placeholder.com/80x80/0066cc/ffffff?text=MBC1",
+                url: "https://example.com/mbc1.m3u8",
+                type: "m3u8"
+            }
+        ];
+
+        // متغيرات المشغلات
+        let jwPlayerInstance = null;
+        let shakaPlayer = null;
+
+        // عرض القنوات
+        function displayChannels() {
+            const grid = document.getElementById('channelsGrid');
+            grid.innerHTML = '';
+
+            channels.forEach((channel, index) => {
+                const channelCard = document.createElement('div');
+                channelCard.className = 'channel-card';
+                channelCard.innerHTML = `
+                    <img src="${channel.logo}" alt="${channel.name}" class="channel-logo" onerror="this.src='https://via.placeholder.com/80x80/cccccc/ffffff?text=TV'">
+                    <div class="channel-name">${channel.name}</div>
+                    <button class="watch-btn" onclick="playChannel(${index})" id="btn-${index}">
+                        <i class="fas fa-play"></i> مشاهدة
+                    </button>
+                `;
+                grid.appendChild(channelCard);
+            });
         }
+
+        // تشغيل القناة
+        function playChannel(index) {
+            const channel = channels[index];
+            const btn = document.getElementById(`btn-${index}`);
+            
+            // تعطيل الزر أثناء التحميل
+            btn.disabled = true;
+            btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> جاري التحميل...';
+            
+            setTimeout(() => {
+                btn.disabled = false;
+                btn.innerHTML = '<i class="fas fa-play"></i> مشاهدة';
+            }, 3000);
+            
+            if (channel.type === 'm3u8') {
+                playWithJWPlayer(channel);
+            } else if (channel.type === 'mpd') {
+                playWithShakaPlayer(channel);
+            }
+        }
+
+        // تشغيل بـ JW Player
+        function playWithJWPlayer(channel) {
+            document.getElementById('jwPlayerTitle').textContent = channel.name;
+            document.getElementById('jwPlayerContainer').style.display = 'flex';
+
+            if (jwPlayerInstance) {
+                jwPlayerInstance.remove();
+            }
+
+            const config = {
+                file: channel.url,
+                width: '100%',
+                height: '500',
+                autostart: true,
+                controls: true,
+                stretching: 'fill',
+                preload: 'auto'
+            };
+
+            // إضافة إعدادات إضافية للـ M3U8
+            if (channel.type === 'm3u8') {
+                config.hlshtml = true;
+                config.androidhls = true;
+            }
+
+            jwPlayerInstance = jwplayer('jwplayer').setup(config);
+
+            jwPlayerInstance.on('error', function(e) {
+                console.error('JW Player Error:', e);
+                alert('حدث خطأ في تشغيل القناة. تأكد من صحة الرابط.');
+            });
+
+            jwPlayerInstance.on('ready', function() {
+                console.log('JW Player جاهز للتشغيل');
+            });
+        }
+
+        // تشغيل بـ Shaka Player
+        async function playWithShakaPlayer(channel) {
+            document.getElementById('shakaPlayerTitle').textContent = channel.name;
+            document.getElementById('shakaPlayerContainer').style.display = 'flex';
+            
+            const loadingMsg = document.getElementById('loadingMessage');
+            const errorMsg = document.getElementById('errorMessage');
+            const video = document.getElementById('shakaVideo');
+            
+            // إظهار رسالة التحميل
+            loadingMsg.style.display = 'flex';
+            errorMsg.style.display = 'none';
+            
+            try {
+                // تنظيف المشغل السابق
+                if (shakaPlayer) {
+                    await shakaPlayer.destroy();
+                }
+
+                // إنشاء مشغل جديد
+                shakaPlayer = new shaka.Player(video);
+
+                // إعداد معالج الأخطاء
+                shakaPlayer.addEventListener('error', (event) => {
+                    console.error('Shaka Player Error:', event.detail);
+                    showError('حدث خطأ في تشغيل القناة: ' + event.detail.message);
+                });
+
+                // إعداد مفاتيح DRM إذا كانت متوفرة
+                if (channel.keyId && channel.key) {
+                    const clearKeys = {};
+                    clearKeys[channel.keyId] = channel.key;
+                    
+                    shakaPlayer.configure({
+                        drm: {
+                            clearKeys: clearKeys,
+                            retryParameters: {
+                                timeout: 30000,
+                                maxAttempts: 3,
+                                baseDelay: 1000,
+                                backoffFactor: 2,
+                                fuzzFactor: 0.5
+                            }
+                        },
+                        streaming: {
+                            retryParameters: {
+                                timeout: 30000,
+                                maxAttempts: 3,
+                                baseDelay: 1000,
+                                backoffFactor: 2,
+                                fuzzFactor: 0.5
+                            }
+                        }
+                    });
+                    
+                    console.log('تم إعداد مفاتيح DRM:', {
+                        keyId: channel.keyId,
+                        key: channel.key.substring(0, 8) + '...'
+                    });
+                }
+
+                // تحميل الفيديو
+                await shakaPlayer.load(channel.url);
+                
+                // إخفاء رسالة التحميل
+                loadingMsg.style.display = 'none';
+                
+                // بدء التشغيل
+                video.play().catch(e => {
+                    console.warn('تشغيل تلقائي غير مسموح:', e);
+                });
+                
+                console.log('تم تحميل القناة بنجاح');
+                
+            } catch (error) {
+                console.error('خطأ في تحميل القناة:', error);
+                loadingMsg.style.display = 'none';
+                showError('فشل في تحميل القناة: ' + error.message);
+            }
+        }
+
+        // عرض رسالة خطأ
+        function showError(message) {
+            const errorMsg = document.getElementById('errorMessage');
+            errorMsg.textContent = message;
+            errorMsg.style.display = 'block';
+        }
+
+        // إغلاق JW Player
+        function closeJWPlayer() {
+            document.getElementById('jwPlayerContainer').style.display = 'none';
+            if (jwPlayerInstance) {
+                jwPlayerInstance.pause();
+            }
+        }
+
+        // إغلاق Shaka Player
+        function closeShakaPlayer() {
+            document.getElementById('shakaPlayerContainer').style.display = 'none';
+            const video = document.getElementById('shakaVideo');
+            video.pause();
+            
+            // إخفاء الرسائل
+            document.getElementById('loadingMessage').style.display = 'none';
+            document.getElementById('errorMessage').style.display = 'none';
+        }
+
+        // إغلاق المشغل عند النقر خارجه
+        document.addEventListener('click', (e) => {
+            if (e.target.classList.contains('player-container')) {
+                closeJWPlayer();
+                closeShakaPlayer();
+            }
+        });
+
+        // إغلاق المشغل بمفتاح Escape
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape') {
+                closeJWPlayer();
+                closeShakaPlayer();
+            }
+        });
+
+        // تهيئة الصفحة
+        document.addEventListener('DOMContentLoaded', async () => {
+            displayChannels();
+            
+            // تهيئة Shaka Player
+            shaka.polyfill.installAll();
+            
+            if (shaka.Player.isBrowserSupported()) {
+                console.log('Shaka Player مدعوم في هذا المتصفح');
+            } else {
+                console.error('Shaka Player غير مدعوم في هذا المتصفح');
+                alert('متصفحك لا يدعم تشغيل بعض القنوات');
+            }
+        });
+
+        // معالجة الأخطاء العامة
+        window.addEventListener('error', (e) => {
+            console.error('خطأ في التطبيق:', e.error);
+        });
+
+        // منع النقر بالزر الأيمن (اختياري)
+        document.addEventListener('contextmenu', (e) => {
+            e.preventDefault();
+        });
     </script>
-	
+</body>
 </html>
