@@ -295,6 +295,36 @@
             box-shadow: 0 8px 25px rgba(255, 0, 0, 0.4);
         }
 
+        .center-close-btn {
+            position: absolute;
+            bottom: 50%;
+            left: 50%;
+            transform: translate(-50%, 50%);
+            background: rgba(255, 0, 0, 0.9);
+            color: white;
+            border: none;
+            padding: 20px;
+            border-radius: 50%;
+            font-size: 2rem;
+            cursor: pointer;
+            z-index: 10001;
+            opacity: 0;
+            transition: all 0.3s ease;
+            box-shadow: 0 5px 20px rgba(255, 0, 0, 0.4);
+            backdrop-filter: blur(10px);
+        }
+
+        .center-close-btn.show {
+            opacity: 1;
+        }
+
+        .center-close-btn:hover,
+        .center-close-btn.focused {
+            background: rgba(255, 0, 0, 1);
+            transform: translate(-50%, 50%) scale(1.1);
+            box-shadow: 0 8px 30px rgba(255, 0, 0, 0.6);
+        }
+
         /* Loading Animation */
         .loading {
             position: fixed;
@@ -434,6 +464,9 @@
         <button class="close-btn" id="closePlayer">
             <i class="fas fa-times"></i> إغلاق
         </button>
+        <button class="center-close-btn" id="centerCloseBtn">
+            <i class="fas fa-times"></i>
+        </button>
         <div class="loading" id="loading">
             <div class="spinner"></div>
             <div class="loading-text">جاري تحميل القناة...</div>
@@ -444,9 +477,6 @@
         <div class="video-controls" id="videoControls">
             <button class="control-btn" id="playPauseBtn">
                 <i class="fas fa-play"></i>
-            </button>
-            <button class="control-btn" id="volumeBtn">
-                <i class="fas fa-volume-up"></i>
             </button>
             <button class="control-btn" id="fullscreenBtn">
                 <i class="fas fa-expand"></i>
@@ -517,6 +547,7 @@
         let focusedIndex = 0;
         let currentPlayer = null;
         let controlsTimeout = null;
+        let centerCloseTimeout = null;
 
         // Initialize App
         document.addEventListener('DOMContentLoaded', function() {
@@ -687,9 +718,11 @@
             // Close Player
             document.getElementById('closePlayer').addEventListener('click', closePlayer);
 
+            // Center Close Button
+            document.getElementById('centerCloseBtn').addEventListener('click', closePlayer);
+
             // Video Controls
             document.getElementById('playPauseBtn').addEventListener('click', togglePlayPause);
-            document.getElementById('volumeBtn').addEventListener('click', toggleMute);
             document.getElementById('fullscreenBtn').addEventListener('click', toggleFullscreen);
 
             // Mouse movement on video player
@@ -698,6 +731,8 @@
 
         // Close Player
         function closePlayer() {
+            document.getElementById('centerCloseBtn').classList.remove('show');
+
             if (currentPlayer) {
                 try {
                     if (currentPlayer.destroy) {
@@ -732,21 +767,6 @@
                 } else {
                     video.pause();
                     document.getElementById('playPauseBtn').innerHTML = '<i class="fas fa-play"></i>';
-                }
-            }
-            showVideoControls();
-        }
-
-        // Toggle Mute
-        function toggleMute() {
-            const video = document.getElementById('dash-video');
-            if (video) {
-                video.muted = !video.muted;
-                const volumeBtn = document.getElementById('volumeBtn');
-                if (video.muted) {
-                    volumeBtn.innerHTML = '<i class="fas fa-volume-mute"></i>';
-                } else {
-                    volumeBtn.innerHTML = '<i class="fas fa-volume-up"></i>';
                 }
             }
             showVideoControls();
@@ -832,7 +852,7 @@
                     
                 case ' ':
                 case 'Enter':
-                    togglePlayPause();
+                    showCenterCloseBtn();
                     break;
                     
                 case 'ArrowUp':
@@ -855,7 +875,6 @@
                     
                 case 'm':
                 case 'M':
-                    toggleMute();
                     break;
                     
                 case 'f':
@@ -863,6 +882,20 @@
                     toggleFullscreen();
                     break;
             }
+        }
+
+        // Show Center Close Button
+        function showCenterCloseBtn() {
+            const centerCloseBtn = document.getElementById('centerCloseBtn');
+            centerCloseBtn.classList.add('show');
+            
+            if (centerCloseTimeout) {
+                clearTimeout(centerCloseTimeout);
+            }
+            
+            centerCloseTimeout = setTimeout(() => {
+                centerCloseBtn.classList.remove('show');
+            }, 3000);
         }
 
         // Initialize focus on first load
