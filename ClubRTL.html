@@ -244,7 +244,7 @@
             border-radius: 50px;
             display: flex;
             align-items: center;
-            gap: 25px;
+            justify-content: center;
             opacity: 0;
             transition: opacity 0.3s ease;
             backdrop-filter: blur(10px);
@@ -254,75 +254,26 @@
             opacity: 1;
         }
 
-        .control-btn {
-            background: none;
-            border: none;
-            color: white;
-            font-size: 1.8rem;
-            cursor: pointer;
-            padding: 12px;
-            border-radius: 50%;
-            transition: all 0.3s ease;
-        }
-
-        .control-btn:hover,
-        .control-btn.focused {
-            background: rgba(255, 107, 53, 0.3);
-            transform: scale(1.2);
-        }
-
-        .close-btn {
-            position: absolute;
-            top: 40px;
-            right: 40px;
+        .close-control-btn {
             background: rgba(255, 0, 0, 0.9);
             color: white;
             border: none;
-            padding: 20px 30px;
-            border-radius: 50px;
-            font-size: 1.4rem;
-            font-weight: 600;
-            cursor: pointer;
-            z-index: 10000;
-            transition: all 0.3s ease;
-            box-shadow: 0 5px 15px rgba(255, 0, 0, 0.3);
-        }
-
-        .close-btn:hover,
-        .close-btn.focused {
-            background: rgba(255, 0, 0, 1);
-            transform: scale(1.1);
-            box-shadow: 0 8px 25px rgba(255, 0, 0, 0.4);
-        }
-
-        .center-close-btn {
-            position: absolute;
-            bottom: 50%;
-            left: 50%;
-            transform: translate(-50%, 50%);
-            background: rgba(255, 0, 0, 0.9);
-            color: white;
-            border: none;
-            padding: 20px;
-            border-radius: 50%;
             font-size: 2rem;
+            padding: 15px;
+            border-radius: 50%;
             cursor: pointer;
-            z-index: 10001;
-            opacity: 0;
             transition: all 0.3s ease;
             box-shadow: 0 5px 20px rgba(255, 0, 0, 0.4);
-            backdrop-filter: blur(10px);
+            outline: none;
         }
 
-        .center-close-btn.show {
-            opacity: 1;
-        }
-
-        .center-close-btn:hover,
-        .center-close-btn.focused {
+        .close-control-btn:hover,
+        .close-control-btn.focused {
             background: rgba(255, 0, 0, 1);
-            transform: translate(-50%, 50%) scale(1.1);
+            transform: scale(1.2);
             box-shadow: 0 8px 30px rgba(255, 0, 0, 0.6);
+            outline: 4px solid #ffffff;
+            outline-offset: 4px;
         }
 
         /* Loading Animation */
@@ -461,12 +412,6 @@
 
     <!-- Video Player -->
     <div class="video-player" id="videoPlayer">
-        <button class="close-btn" id="closePlayer">
-            <i class="fas fa-times"></i> إغلاق
-        </button>
-        <button class="center-close-btn" id="centerCloseBtn">
-            <i class="fas fa-times"></i>
-        </button>
         <div class="loading" id="loading">
             <div class="spinner"></div>
             <div class="loading-text">جاري تحميل القناة...</div>
@@ -475,11 +420,8 @@
             <!-- Video player will be inserted here -->
         </div>
         <div class="video-controls" id="videoControls">
-            <button class="control-btn" id="playPauseBtn">
-                <i class="fas fa-play"></i>
-            </button>
-            <button class="control-btn" id="fullscreenBtn">
-                <i class="fas fa-expand"></i>
+            <button class="close-control-btn" id="closeControlBtn">
+                <i class="fas fa-times"></i>
             </button>
         </div>
     </div>
@@ -547,7 +489,7 @@
         let focusedIndex = 0;
         let currentPlayer = null;
         let controlsTimeout = null;
-        let centerCloseTimeout = null;
+        let isCloseButtonFocused = false;
 
         // Initialize App
         document.addEventListener('DOMContentLoaded', function() {
@@ -611,6 +553,7 @@
             
             videoPlayer.style.display = 'block';
             loading.style.display = 'block';
+            isCloseButtonFocused = false;
             
             // Clear previous player
             if (currentPlayer) {
@@ -668,7 +611,6 @@
 
                 player.load(channel.url).then(() => {
                     loading.style.display = 'none';
-                    showVideoControls();
                     
                     // Auto enter fullscreen
                     setTimeout(() => {
@@ -702,7 +644,16 @@
         // Show Video Controls
         function showVideoControls() {
             const controls = document.getElementById('videoControls');
+            const closeBtn = document.getElementById('closeControlBtn');
+            
             controls.classList.add('show');
+            
+            // Update close button focus state
+            if (isCloseButtonFocused) {
+                closeBtn.classList.add('focused');
+            } else {
+                closeBtn.classList.remove('focused');
+            }
             
             if (controlsTimeout) {
                 clearTimeout(controlsTimeout);
@@ -710,29 +661,21 @@
             
             controlsTimeout = setTimeout(() => {
                 controls.classList.remove('show');
+                closeBtn.classList.remove('focused');
+                isCloseButtonFocused = false;
             }, 4000);
         }
 
         // Setup Event Listeners
         function setupEventListeners() {
-            // Close Player
-            document.getElementById('closePlayer').addEventListener('click', closePlayer);
-
-            // Center Close Button
-            document.getElementById('centerCloseBtn').addEventListener('click', closePlayer);
-
-            // Video Controls
-            document.getElementById('playPauseBtn').addEventListener('click', togglePlayPause);
-            document.getElementById('fullscreenBtn').addEventListener('click', toggleFullscreen);
-
-            // Mouse movement on video player
-            document.getElementById('videoPlayer').addEventListener('mousemove', showVideoControls);
+            // Close Control Button
+            document.getElementById('closeControlBtn').addEventListener('click', closePlayer);
         }
 
         // Close Player
         function closePlayer() {
-            document.getElementById('centerCloseBtn').classList.remove('show');
-
+            isCloseButtonFocused = false;
+            
             if (currentPlayer) {
                 try {
                     if (currentPlayer.destroy) {
@@ -755,21 +698,6 @@
             
             document.getElementById('videoPlayer').style.display = 'none';
             document.getElementById('videoContainer').innerHTML = '';
-        }
-
-        // Toggle Play/Pause
-        function togglePlayPause() {
-            const video = document.getElementById('dash-video');
-            if (video) {
-                if (video.paused) {
-                    video.play();
-                    document.getElementById('playPauseBtn').innerHTML = '<i class="fas fa-pause"></i>';
-                } else {
-                    video.pause();
-                    document.getElementById('playPauseBtn').innerHTML = '<i class="fas fa-play"></i>';
-                }
-            }
-            showVideoControls();
         }
 
         // Toggle Fullscreen
@@ -852,7 +780,15 @@
                     
                 case ' ':
                 case 'Enter':
-                    showCenterCloseBtn();
+                    const controls = document.getElementById('videoControls');
+                    if (controls.classList.contains('show') && isCloseButtonFocused) {
+                        // If controls are visible and close button is focused, close the player
+                        closePlayer();
+                    } else {
+                        // Show controls and focus the close button
+                        isCloseButtonFocused = true;
+                        showVideoControls();
+                    }
                     break;
                     
                 case 'ArrowUp':
@@ -861,7 +797,6 @@
                     if (video) {
                         video.volume = Math.min(1, video.volume + 0.1);
                     }
-                    showVideoControls();
                     break;
                     
                 case 'ArrowDown':
@@ -870,11 +805,6 @@
                     if (videoDown) {
                         videoDown.volume = Math.max(0, videoDown.volume - 0.1);
                     }
-                    showVideoControls();
-                    break;
-                    
-                case 'm':
-                case 'M':
                     break;
                     
                 case 'f':
@@ -882,20 +812,6 @@
                     toggleFullscreen();
                     break;
             }
-        }
-
-        // Show Center Close Button
-        function showCenterCloseBtn() {
-            const centerCloseBtn = document.getElementById('centerCloseBtn');
-            centerCloseBtn.classList.add('show');
-            
-            if (centerCloseTimeout) {
-                clearTimeout(centerCloseTimeout);
-            }
-            
-            centerCloseTimeout = setTimeout(() => {
-                centerCloseBtn.classList.remove('show');
-            }, 3000);
         }
 
         // Initialize focus on first load
