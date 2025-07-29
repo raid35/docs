@@ -47,116 +47,122 @@
             object-fit: cover;
         }
 
-        /* Channel Info Overlay */
-        .channel-info-overlay {
+        /* Watermark - More Transparent */
+        .watermark {
             position: absolute;
             top: 30px;
             left: 30px;
-            background: rgba(0, 0, 0, 0.8);
-            padding: 20px 30px;
-            border-radius: 15px;
-            backdrop-filter: blur(10px);
-            opacity: 0;
-            transition: opacity 0.3s ease;
-            z-index: 2000;
-        }
-
-        .channel-info-overlay.show {
-            opacity: 1;
-        }
-
-        .channel-logo-info {
-            width: 60px;
-            height: 60px;
-            border-radius: 10px;
-            margin-bottom: 10px;
-            background: rgba(255, 255, 255, 0.9);
-            padding: 8px;
-        }
-
-        .channel-name-info {
-            font-size: 1.5rem;
+            font-size: 2.5rem;
             font-weight: 700;
-            color: #ff6b35;
-            margin-bottom: 5px;
-        }
-
-        .channel-status-info {
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            color: #00ff88;
-            font-size: 1rem;
-        }
-
-        .live-dot {
-            width: 10px;
-            height: 10px;
-            background: #00ff88;
-            border-radius: 50%;
-            animation: pulse 2s infinite;
-        }
-
-        @keyframes pulse {
-            0% { box-shadow: 0 0 0 0 rgba(0, 255, 136, 0.7); }
-            70% { box-shadow: 0 0 0 8px rgba(0, 255, 136, 0); }
-            100% { box-shadow: 0 0 0 0 rgba(0, 255, 136, 0); }
-        }
-
-        /* Time Display */
-        .time-overlay {
-            position: absolute;
-            top: 30px;
-            right: 30px;
-            background: rgba(0, 0, 0, 0.8);
-            padding: 15px 25px;
-            border-radius: 15px;
-            backdrop-filter: blur(10px);
-            opacity: 0;
-            transition: opacity 0.3s ease;
+            color: rgba(255, 255, 255, 0.3);
+            text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.5);
             z-index: 2000;
+            pointer-events: none;
+            font-family: 'Cairo', sans-serif;
+            opacity: 0.4;
         }
 
-        .time-overlay.show {
-            opacity: 1;
-        }
-
-        .current-time {
-            font-size: 1.8rem;
-            font-weight: 600;
-            color: #ffffff;
-        }
-
-        /* Close Button */
-        .close-btn {
+        /* Control Bar - Without Close Button */
+        .control-bar {
             position: absolute;
-            bottom: 50px;
+            bottom: 30px;
             left: 50%;
             transform: translateX(-50%);
-            background: rgba(255, 0, 0, 0.9);
-            color: white;
-            border: none;
-            padding: 20px;
-            border-radius: 50%;
-            font-size: 2.5rem;
-            cursor: pointer;
+            background: rgba(0, 0, 0, 0.8);
+            padding: 20px 40px;
+            border-radius: 50px;
+            display: flex;
+            align-items: center;
+            gap: 25px;
             opacity: 0;
-            transition: all 0.3s ease;
-            z-index: 2000;
-            box-shadow: 0 5px 25px rgba(255, 0, 0, 0.4);
+            transition: opacity 0.3s ease;
             backdrop-filter: blur(10px);
+            z-index: 2000;
         }
 
-        .close-btn.show {
+        .control-bar.show {
             opacity: 1;
         }
 
-        .close-btn.focused {
-            background: rgba(255, 0, 0, 1);
-            transform: translateX(-50%) scale(1.2);
-            box-shadow: 0 8px 35px rgba(255, 0, 0, 0.6);
-            outline: 4px solid #ffffff;
-            outline-offset: 5px;
+        .control-btn {
+            background: none;
+            border: none;
+            color: white;
+            font-size: 1.8rem;
+            cursor: pointer;
+            padding: 12px;
+            border-radius: 50%;
+            transition: all 0.3s ease;
+            position: relative;
+        }
+
+        .control-btn:hover,
+        .control-btn.focused {
+            background: rgba(255, 255, 255, 0.2);
+            transform: scale(1.2);
+        }
+
+        /* Audio/Subtitle Menu */
+        .audio-subtitle-menu {
+            position: absolute;
+            bottom: 120px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: rgba(0, 0, 0, 0.9);
+            border-radius: 15px;
+            padding: 20px;
+            min-width: 300px;
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.3s ease;
+            backdrop-filter: blur(15px);
+            z-index: 2500;
+        }
+
+        .audio-subtitle-menu.show {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        .menu-section {
+            margin-bottom: 20px;
+        }
+
+        .menu-section:last-child {
+            margin-bottom: 0;
+        }
+
+        .menu-title {
+            font-size: 1.3rem;
+            font-weight: 600;
+            color: #ff6b35;
+            margin-bottom: 10px;
+            text-align: center;
+        }
+
+        .menu-item {
+            background: rgba(255, 255, 255, 0.1);
+            color: white;
+            border: none;
+            padding: 12px 20px;
+            margin: 5px 0;
+            border-radius: 25px;
+            font-size: 1.1rem;
+            cursor: pointer;
+            width: 100%;
+            transition: all 0.3s ease;
+            text-align: center;
+        }
+
+        .menu-item:hover,
+        .menu-item.focused {
+            background: rgba(255, 107, 53, 0.8);
+            transform: scale(1.05);
+        }
+
+        .menu-item.active {
+            background: rgba(0, 255, 136, 0.8);
+            font-weight: 600;
         }
 
         /* Loading Animation */
@@ -246,12 +252,12 @@
         /* Volume Indicator */
         .volume-indicator {
             position: absolute;
-            bottom: 150px;
+            top: 50%;
             left: 50%;
-            transform: translateX(-50%);
+            transform: translate(-50%, -50%);
             background: rgba(0, 0, 0, 0.8);
-            padding: 15px 30px;
-            border-radius: 50px;
+            padding: 20px 40px;
+            border-radius: 15px;
             opacity: 0;
             transition: opacity 0.3s ease;
             z-index: 2000;
@@ -264,39 +270,34 @@
 
         .volume-text {
             color: #ffffff;
-            font-size: 1.5rem;
+            font-size: 1.8rem;
             font-weight: 600;
             text-align: center;
         }
 
         /* Responsive Design */
         @media (max-width: 768px) {
-            .channel-info-overlay,
-            .time-overlay {
+            .watermark {
                 top: 20px;
-                padding: 15px 20px;
-            }
-
-            .channel-info-overlay {
                 left: 20px;
-            }
-
-            .time-overlay {
-                right: 20px;
-            }
-
-            .current-time {
-                font-size: 1.5rem;
-            }
-
-            .channel-name-info {
-                font-size: 1.3rem;
-            }
-
-            .close-btn {
-                bottom: 30px;
-                padding: 15px;
                 font-size: 2rem;
+                opacity: 0.3;
+            }
+
+            .control-bar {
+                bottom: 20px;
+                padding: 15px 25px;
+                gap: 20px;
+            }
+
+            .control-btn {
+                font-size: 1.5rem;
+                padding: 10px;
+            }
+
+            .audio-subtitle-menu {
+                min-width: 250px;
+                bottom: 100px;
             }
         }
     </style>
@@ -304,6 +305,9 @@
 <body>
     <!-- Video Player -->
     <div class="video-player" id="videoPlayer">
+        <!-- Watermark - More Transparent -->
+        <div class="watermark">SIKSA</div>
+
         <!-- Loading Animation -->
         <div class="loading" id="loading">
             <div class="spinner"></div>
@@ -323,22 +327,20 @@
             <!-- Video will be inserted here -->
         </div>
 
-        <!-- Channel Info Overlay -->
-        <div class="channel-info-overlay" id="channelInfo">
-            <img src="https://www.ziggosport.nl/images/logos/logo-ziggosport.svg" 
-                 alt="ZIGGO Sports 1" 
-                 class="channel-logo-info"
-                 onerror="this.src='data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNjAiIGhlaWdodD0iNjAiIHZpZXdCb3g9IjAgMCA2MCA2MCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPHJlY3Qgd2lkdGg9IjYwIiBoZWlnaHQ9IjYwIiBmaWxsPSIjZmY2YjM1IiByeD0iMTAiLz4KPHR4dCB4PSIzMCIgeT0iMzUiIGZvbnQtZmFtaWx5PSJBcmlhbCIgZm9udC1zaXplPSIxMCIgZmlsbD0id2hpdGUiIHRleHQtYW5jaG9yPSJtaWRkbGUiPlpJR0dPPC90ZXh0Pgo8L3N2Zz4='">
-            <div class="channel-name-info">ZIGGO SPORTS 1 HD</div>
-            <div class="channel-status-info">
-                <div class="live-dot"></div>
-                مباشر الآن
+        <!-- Audio/Subtitle Menu -->
+        <div class="audio-subtitle-menu" id="audioSubtitleMenu">
+            <div class="menu-section" id="audioSection">
+                <div class="menu-title">مسارات الصوت</div>
+                <div id="audioTracks">
+                    <!-- Audio tracks will be populated here -->
+                </div>
             </div>
-        </div>
-
-        <!-- Time Overlay -->
-        <div class="time-overlay" id="timeOverlay">
-            <div class="current-time" id="currentTime"></div>
+            <div class="menu-section" id="subtitleSection">
+                <div class="menu-title">الترجمة</div>
+                <div id="subtitleTracks">
+                    <!-- Subtitle tracks will be populated here -->
+                </div>
+            </div>
         </div>
 
         <!-- Volume Indicator -->
@@ -346,10 +348,15 @@
             <div class="volume-text" id="volumeText">الصوت: 100%</div>
         </div>
 
-        <!-- Close Button -->
-        <button class="close-btn" id="closeBtn">
-            <i class="fas fa-times"></i>
-        </button>
+        <!-- Control Bar - Only Audio and Subtitle Controls -->
+        <div class="control-bar" id="controlBar">
+            <button class="control-btn" id="audioBtn" title="مسارات الصوت">
+                <i class="fas fa-volume-up"></i>
+            </button>
+            <button class="control-btn" id="subtitleBtn" title="الترجمة">
+                <i class="fas fa-closed-captioning"></i>
+            </button>
+        </div>
     </div>
 
     <script>
@@ -364,14 +371,16 @@
 
         // Global Variables
         let currentPlayer = null;
-        let overlayTimeout = null;
+        let controlsTimeout = null;
         let volumeTimeout = null;
-        let isCloseBtnFocused = false;
+        let focusedControlIndex = 0;
+        let isMenuOpen = false;
+        let menuFocusIndex = 0;
+        let audioTracks = [];
+        let subtitleTracks = [];
 
         // Initialize App
         document.addEventListener('DOMContentLoaded', function() {
-            updateTime();
-            setInterval(updateTime, 1000);
             setupEventListeners();
             setupRemoteControl();
             
@@ -381,17 +390,6 @@
             }, 1000);
         });
 
-        // Update Time Display
-        function updateTime() {
-            const now = new Date();
-            const timeString = now.toLocaleTimeString('ar-SA', {
-                hour: '2-digit',
-                minute: '2-digit',
-                second: '2-digit'
-            });
-            document.getElementById('currentTime').textContent = timeString;
-        }
-
         // Play Channel
         function playChannel() {
             const loading = document.getElementById('loading');
@@ -400,7 +398,7 @@
             
             loading.style.display = 'block';
             errorMessage.style.display = 'none';
-            isCloseBtnFocused = false;
+            focusedControlIndex = 0;
             
             // Clear previous player
             if (currentPlayer) {
@@ -431,7 +429,7 @@
             video.style.objectFit = 'cover';
             video.autoplay = true;
             video.muted = false;
-            video.controls = false; // Hide default controls for cleaner look
+            video.controls = false;
             videoContainer.appendChild(video);
 
             if (shaka && shaka.Player.isBrowserSupported()) {
@@ -450,7 +448,7 @@
                     });
                 }
 
-                // Configure player settings for better performance
+                // Configure player settings
                 player.configure({
                     streaming: {
                         bufferingGoal: 30,
@@ -473,7 +471,8 @@
                 // Load the stream
                 player.load(channel.url).then(() => {
                     loading.style.display = 'none';
-                    showOverlays();
+                    showControls();
+                    loadAudioAndSubtitleTracks();
                     
                     // Auto enter fullscreen
                     setTimeout(() => {
@@ -505,11 +504,7 @@
 
                 video.addEventListener('playing', () => {
                     console.log('Video is playing');
-                    showOverlays();
-                });
-
-                video.addEventListener('waiting', () => {
-                    console.log('Video is buffering');
+                    showControls();
                 });
 
                 video.addEventListener('error', () => {
@@ -524,6 +519,107 @@
             }
         }
 
+        // Load Audio and Subtitle Tracks
+        function loadAudioAndSubtitleTracks() {
+            if (!currentPlayer) return;
+
+            try {
+                // Get audio tracks
+                audioTracks = currentPlayer.getVariantTracks().map(track => ({
+                    id: track.id,
+                    language: track.language || 'غير محدد',
+                    label: track.label || `صوت ${track.language || 'افتراضي'}`,
+                    active: track.active
+                }));
+
+                // Get subtitle tracks
+                subtitleTracks = currentPlayer.getTextTracks().map(track => ({
+                    id: track.id,
+                    language: track.language || 'غير محدد',
+                    label: track.label || `ترجمة ${track.language || 'افتراضي'}`,
+                    active: track.active
+                }));
+
+                // Add "no subtitles" option
+                subtitleTracks.unshift({
+                    id: -1,
+                    language: 'none',
+                    label: 'بدون ترجمة',
+                    active: !subtitleTracks.some(track => track.active)
+                });
+
+                populateAudioSubtitleMenu();
+            } catch (error) {
+                console.error('Error loading tracks:', error);
+            }
+        }
+
+        // Populate Audio/Subtitle Menu
+        function populateAudioSubtitleMenu() {
+            const audioTracksContainer = document.getElementById('audioTracks');
+            const subtitleTracksContainer = document.getElementById('subtitleTracks');
+
+            // Clear existing content
+            audioTracksContainer.innerHTML = '';
+            subtitleTracksContainer.innerHTML = '';
+
+            // Populate audio tracks
+            audioTracks.forEach((track, index) => {
+                const button = document.createElement('button');
+                button.className = `menu-item ${track.active ? 'active' : ''}`;
+                button.textContent = track.label;
+                button.onclick = () => selectAudioTrack(track.id);
+                audioTracksContainer.appendChild(button);
+            });
+
+            // Populate subtitle tracks
+            subtitleTracks.forEach((track, index) => {
+                const button = document.createElement('button');
+                button.className = `menu-item ${track.active ? 'active' : ''}`;
+                button.textContent = track.label;
+                button.onclick = () => selectSubtitleTrack(track.id);
+                subtitleTracksContainer.appendChild(button);
+            });
+        }
+
+        // Select Audio Track
+        function selectAudioTrack(trackId) {
+            if (!currentPlayer) return;
+
+            try {
+                const variants = currentPlayer.getVariantTracks();
+                const selectedVariant = variants.find(v => v.id === trackId);
+                if (selectedVariant) {
+                    currentPlayer.selectVariantTrack(selectedVariant, true);
+                    loadAudioAndSubtitleTracks(); // Refresh the menu
+                }
+            } catch (error) {
+                console.error('Error selecting audio track:', error);
+            }
+        }
+
+        // Select Subtitle Track
+        function selectSubtitleTrack(trackId) {
+            if (!currentPlayer) return;
+
+            try {
+                if (trackId === -1) {
+                    // Disable subtitles
+                    currentPlayer.setTextTrackVisibility(false);
+                } else {
+                    const textTracks = currentPlayer.getTextTracks();
+                    const selectedTrack = textTracks.find(t => t.id === trackId);
+                    if (selectedTrack) {
+                        currentPlayer.selectTextTrack(selectedTrack);
+                        currentPlayer.setTextTrackVisibility(true);
+                    }
+                }
+                loadAudioAndSubtitleTracks(); // Refresh the menu
+            } catch (error) {
+                console.error('Error selecting subtitle track:', error);
+            }
+        }
+
         // Show Error
         function showError(message = 'لا يمكن تشغيل القناة حالياً') {
             const errorMessage = document.getElementById('errorMessage');
@@ -531,42 +627,77 @@
             errorMessage.style.display = 'block';
         }
 
-        // Show Overlays
-        function showOverlays() {
-            const channelInfo = document.getElementById('channelInfo');
-            const timeOverlay = document.getElementById('timeOverlay');
+        // Show Controls
+        function showControls() {
+            const controlBar = document.getElementById('controlBar');
+            controlBar.classList.add('show');
+            updateControlFocus();
             
-            channelInfo.classList.add('show');
-            timeOverlay.classList.add('show');
-            
-            if (overlayTimeout) {
-                clearTimeout(overlayTimeout);
+            if (controlsTimeout) {
+                clearTimeout(controlsTimeout);
             }
             
-            overlayTimeout = setTimeout(() => {
-                channelInfo.classList.remove('show');
-                timeOverlay.classList.remove('show');
-            }, 5000);
+            controlsTimeout = setTimeout(() => {
+                if (!isMenuOpen) {
+                    controlBar.classList.remove('show');
+                    clearControlFocus();
+                }
+            }, 4000);
         }
 
-        // Show Close Button
-        function showCloseButton() {
-            const closeBtn = document.getElementById('closeBtn');
-            closeBtn.classList.add('show');
-            
-            if (isCloseBtnFocused) {
-                closeBtn.classList.add('focused');
-            }
-            
-            if (overlayTimeout) {
-                clearTimeout(overlayTimeout);
-            }
-            
-            overlayTimeout = setTimeout(() => {
-                closeBtn.classList.remove('show');
-                closeBtn.classList.remove('focused');
-                isCloseBtnFocused = false;
-            }, 4000);
+        // Show Audio/Subtitle Menu
+        function showAudioSubtitleMenu() {
+            const menu = document.getElementById('audioSubtitleMenu');
+            menu.classList.add('show');
+            isMenuOpen = true;
+            menuFocusIndex = 0;
+            updateMenuFocus();
+        }
+
+        // Hide Audio/Subtitle Menu
+        function hideAudioSubtitleMenu() {
+            const menu = document.getElementById('audioSubtitleMenu');
+            menu.classList.remove('show');
+            isMenuOpen = false;
+            clearMenuFocus();
+        }
+
+        // Update Control Focus
+        function updateControlFocus() {
+            const controls = document.querySelectorAll('.control-btn');
+            controls.forEach((btn, index) => {
+                if (index === focusedControlIndex) {
+                    btn.classList.add('focused');
+                } else {
+                    btn.classList.remove('focused');
+                }
+            });
+        }
+
+        // Clear Control Focus
+        function clearControlFocus() {
+            document.querySelectorAll('.control-btn').forEach(btn => {
+                btn.classList.remove('focused');
+            });
+        }
+
+        // Update Menu Focus
+        function updateMenuFocus() {
+            const menuItems = document.querySelectorAll('.menu-item');
+            menuItems.forEach((item, index) => {
+                if (index === menuFocusIndex) {
+                    item.classList.add('focused');
+                } else {
+                    item.classList.remove('focused');
+                }
+            });
+        }
+
+        // Clear Menu Focus
+        function clearMenuFocus() {
+            document.querySelectorAll('.menu-item').forEach(item => {
+                item.classList.remove('focused');
+            });
         }
 
         // Show Volume Indicator
@@ -598,41 +729,17 @@
             }
         }
 
-        // Exit Application
-        function exitApp() {
-            if (currentPlayer) {
-                try {
-                    if (currentPlayer.destroy) {
-                        currentPlayer.destroy();
-                    }
-                } catch (e) {
-                    console.log('Error destroying player:', e);
-                }
-            }
-            
-            // Exit fullscreen
-            if (document.fullscreenElement) {
-                document.exitFullscreen();
-            }
-            
-            // Close window or go back
-            if (window.history.length > 1) {
-                window.history.back();
-            } else {
-                window.close();
-            }
-        }
-
         // Setup Event Listeners
         function setupEventListeners() {
-            // Close Button
-            document.getElementById('closeBtn').addEventListener('click', exitApp);
+            // Control buttons
+            document.getElementById('audioBtn').addEventListener('click', showAudioSubtitleMenu);
+            document.getElementById('subtitleBtn').addEventListener('click', showAudioSubtitleMenu);
             
             // Retry Button
             document.getElementById('retryBtn').addEventListener('click', playChannel);
             
             // Mouse movement
-            document.addEventListener('mousemove', showOverlays);
+            document.addEventListener('mousemove', showControls);
         }
 
         // Remote Control Setup
@@ -647,20 +754,48 @@
         function handleRemoteKeys(key) {
             const video = document.getElementById('dash-video');
             
+            if (isMenuOpen) {
+                handleMenuKeys(key);
+                return;
+            }
+            
             switch (key) {
                 case 'Backspace':
                 case 'Escape':
-                    exitApp();
+                    // Exit fullscreen instead of closing app
+                    if (document.fullscreenElement) {
+                        document.exitFullscreen();
+                    }
                     break;
                     
                 case ' ':
                 case 'Enter':
-                    const closeBtn = document.getElementById('closeBtn');
-                    if (closeBtn.classList.contains('show') && isCloseBtnFocused) {
-                        exitApp();
+                    const controlBar = document.getElementById('controlBar');
+                    if (controlBar.classList.contains('show')) {
+                        // Execute focused control
+                        const controls = document.querySelectorAll('.control-btn');
+                        if (controls[focusedControlIndex]) {
+                            controls[focusedControlIndex].click();
+                        }
                     } else {
-                        isCloseBtnFocused = true;
-                        showCloseButton();
+                        showControls();
+                    }
+                    break;
+                    
+                case 'ArrowLeft':
+                    if (document.getElementById('controlBar').classList.contains('show')) {
+                        focusedControlIndex = Math.max(0, focusedControlIndex - 1);
+                        updateControlFocus();
+                        showControls();
+                    }
+                    break;
+                    
+                case 'ArrowRight':
+                    if (document.getElementById('controlBar').classList.contains('show')) {
+                        const maxIndex = document.querySelectorAll('.control-btn').length - 1;
+                        focusedControlIndex = Math.min(maxIndex, focusedControlIndex + 1);
+                        updateControlFocus();
+                        showControls();
                     }
                     break;
                     
@@ -680,11 +815,6 @@
                         video.volume = newVolume;
                         showVolumeIndicator(newVolume);
                     }
-                    break;
-                    
-                case 'ArrowLeft':
-                case 'ArrowRight':
-                    showOverlays();
                     break;
                     
                 case 'p':
@@ -707,8 +837,38 @@
                     
                 case 'i':
                 case 'I':
-                    // Show info
-                    showOverlays();
+                    // Show controls
+                    showControls();
+                    break;
+            }
+        }
+
+        // Handle Menu Keys
+        function handleMenuKeys(key) {
+            const menuItems = document.querySelectorAll('.menu-item');
+            const maxIndex = menuItems.length - 1;
+            
+            switch (key) {
+                case 'ArrowUp':
+                    menuFocusIndex = Math.max(0, menuFocusIndex - 1);
+                    updateMenuFocus();
+                    break;
+                    
+                case 'ArrowDown':
+                    menuFocusIndex = Math.min(maxIndex, menuFocusIndex + 1);
+                    updateMenuFocus();
+                    break;
+                    
+                case 'Enter':
+                    if (menuItems[menuFocusIndex]) {
+                        menuItems[menuFocusIndex].click();
+                        hideAudioSubtitleMenu();
+                    }
+                    break;
+                    
+                case 'Backspace':
+                case 'Escape':
+                    hideAudioSubtitleMenu();
                     break;
             }
         }
