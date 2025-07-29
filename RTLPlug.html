@@ -271,58 +271,20 @@
             transform: scale(1.2);
         }
 
-        .close-btn {
-            position: absolute;
-            top: 40px;
-            right: 40px;
-            background: rgba(255, 0, 0, 0.9);
-            color: white;
-            border: none;
-            padding: 20px 30px;
-            border-radius: 50px;
-            font-size: 1.4rem;
-            font-weight: 600;
-            cursor: pointer;
-            z-index: 10000;
-            transition: all 0.3s ease;
-            box-shadow: 0 5px 15px rgba(255, 0, 0, 0.3);
+        .close-control-btn {
+            background: rgba(255, 0, 0, 0.9) !important;
+            color: white !important;
+            font-size: 2rem !important;
+            padding: 15px !important;
+            border-radius: 50% !important;
+            box-shadow: 0 5px 20px rgba(255, 0, 0, 0.4) !important;
         }
 
-        .close-btn:hover,
-        .close-btn.focused {
-            background: rgba(255, 0, 0, 1);
-            transform: scale(1.1);
-            box-shadow: 0 8px 25px rgba(255, 0, 0, 0.4);
-        }
-
-        .center-close-btn {
-            position: absolute;
-            bottom: 50%;
-            left: 50%;
-            transform: translate(-50%, 50%);
-            background: rgba(255, 0, 0, 0.9);
-            color: white;
-            border: none;
-            padding: 20px;
-            border-radius: 50%;
-            font-size: 2rem;
-            cursor: pointer;
-            z-index: 10001;
-            opacity: 0;
-            transition: all 0.3s ease;
-            box-shadow: 0 5px 20px rgba(255, 0, 0, 0.4);
-            backdrop-filter: blur(10px);
-        }
-
-        .center-close-btn.show {
-            opacity: 1;
-        }
-
-        .center-close-btn:hover,
-        .center-close-btn.focused {
-            background: rgba(255, 0, 0, 1);
-            transform: translate(-50%, 50%) scale(1.1);
-            box-shadow: 0 8px 30px rgba(255, 0, 0, 0.6);
+        .close-control-btn:hover,
+        .close-control-btn.focused {
+            background: rgba(255, 0, 0, 1) !important;
+            transform: scale(1.2) !important;
+            box-shadow: 0 8px 30px rgba(255, 0, 0, 0.6) !important;
         }
 
         /* Loading Animation */
@@ -461,12 +423,6 @@
 
     <!-- Video Player -->
     <div class="video-player" id="videoPlayer">
-        <button class="close-btn" id="closePlayer">
-            <i class="fas fa-times"></i> إغلاق
-        </button>
-        <button class="center-close-btn" id="centerCloseBtn">
-            <i class="fas fa-times"></i>
-        </button>
         <div class="loading" id="loading">
             <div class="spinner"></div>
             <div class="loading-text">جاري تحميل القناة...</div>
@@ -475,11 +431,8 @@
             <!-- Video player will be inserted here -->
         </div>
         <div class="video-controls" id="videoControls">
-            <button class="control-btn" id="playPauseBtn">
-                <i class="fas fa-play"></i>
-            </button>
-            <button class="control-btn" id="fullscreenBtn">
-                <i class="fas fa-expand"></i>
+            <button class="control-btn close-control-btn" id="closeControlBtn">
+                <i class="fas fa-times"></i>
             </button>
         </div>
     </div>
@@ -547,7 +500,6 @@
         let focusedIndex = 0;
         let currentPlayer = null;
         let controlsTimeout = null;
-        let centerCloseTimeout = null;
 
         // Initialize App
         document.addEventListener('DOMContentLoaded', function() {
@@ -715,24 +667,12 @@
 
         // Setup Event Listeners
         function setupEventListeners() {
-            // Close Player
-            document.getElementById('closePlayer').addEventListener('click', closePlayer);
-
-            // Center Close Button
-            document.getElementById('centerCloseBtn').addEventListener('click', closePlayer);
-
-            // Video Controls
-            document.getElementById('playPauseBtn').addEventListener('click', togglePlayPause);
-            document.getElementById('fullscreenBtn').addEventListener('click', toggleFullscreen);
-
-            // Mouse movement on video player
-            document.getElementById('videoPlayer').addEventListener('mousemove', showVideoControls);
+            // Close Control Button
+            document.getElementById('closeControlBtn').addEventListener('click', closePlayer);
         }
 
         // Close Player
         function closePlayer() {
-            document.getElementById('centerCloseBtn').classList.remove('show');
-
             if (currentPlayer) {
                 try {
                     if (currentPlayer.destroy) {
@@ -755,21 +695,6 @@
             
             document.getElementById('videoPlayer').style.display = 'none';
             document.getElementById('videoContainer').innerHTML = '';
-        }
-
-        // Toggle Play/Pause
-        function togglePlayPause() {
-            const video = document.getElementById('dash-video');
-            if (video) {
-                if (video.paused) {
-                    video.play();
-                    document.getElementById('playPauseBtn').innerHTML = '<i class="fas fa-pause"></i>';
-                } else {
-                    video.pause();
-                    document.getElementById('playPauseBtn').innerHTML = '<i class="fas fa-play"></i>';
-                }
-            }
-            showVideoControls();
         }
 
         // Toggle Fullscreen
@@ -852,7 +777,7 @@
                     
                 case ' ':
                 case 'Enter':
-                    showCenterCloseBtn();
+                    showVideoControls();
                     break;
                     
                 case 'ArrowUp':
@@ -882,20 +807,6 @@
                     toggleFullscreen();
                     break;
             }
-        }
-
-        // Show Center Close Button
-        function showCenterCloseBtn() {
-            const centerCloseBtn = document.getElementById('centerCloseBtn');
-            centerCloseBtn.classList.add('show');
-            
-            if (centerCloseTimeout) {
-                clearTimeout(centerCloseTimeout);
-            }
-            
-            centerCloseTimeout = setTimeout(() => {
-                centerCloseBtn.classList.remove('show');
-            }, 3000);
         }
 
         // Initialize focus on first load
