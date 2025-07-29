@@ -3,13 +3,11 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>MoviBall TV - قنوات مباشرة</title>
+    <title>ZIGGO Sports - قنوات رياضية مباشرة</title>
     <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700&display=swap" rel="stylesheet">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/shaka-player/4.10.0/shaka-player.ui.min.js"></script>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/shaka-player/4.10.0/controls.min.css" rel="stylesheet">
-    <script src="https://ssl.p.jwpcdn.com/player/v/8.38.3/jwplayer.js"></script>
-    <script>jwplayer.key = "XSuP4qMl+9tK17QNb+4+th2Pm9AWgMO/cYH8CI0HGGr7bdjo";</script>
     
     <style>
         * {
@@ -20,7 +18,7 @@
 
         body {
             font-family: 'Cairo', sans-serif;
-            background: linear-gradient(135deg, #0f0f23 0%, #1a1a2e 50%, #16213e 100%);
+            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f0f23 100%);
             color: #ffffff;
             overflow-x: hidden;
             min-height: 100vh;
@@ -28,177 +26,194 @@
 
         /* Header */
         .header {
-            background: rgba(0, 0, 0, 0.8);
-            padding: 20px 40px;
+            background: linear-gradient(90deg, #ff6b35, #f7931e);
+            padding: 25px 40px;
             display: flex;
             justify-content: space-between;
             align-items: center;
-            backdrop-filter: blur(10px);
-            border-bottom: 2px solid #00d4ff;
-        }
-
-        .logo {
-            font-size: 2.5rem;
-            font-weight: 700;
-            color: #00d4ff;
-            text-shadow: 0 0 20px rgba(0, 212, 255, 0.5);
-        }
-
-        .time-display {
-            font-size: 1.5rem;
-            color: #ffffff;
-        }
-
-        /* Main Container */
-        .main-container {
-            padding: 40px;
-            max-width: 1920px;
-            margin: 0 auto;
-        }
-
-        /* Groups Grid */
-        .groups-container {
-            display: block;
-        }
-
-        .groups-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-            gap: 30px;
-            margin-top: 30px;
-        }
-
-        .group-card {
-            background: linear-gradient(145deg, rgba(255, 255, 255, 0.1), rgba(255, 255, 255, 0.05));
-            border-radius: 20px;
-            padding: 30px;
-            text-align: center;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            border: 2px solid transparent;
-            backdrop-filter: blur(10px);
+            box-shadow: 0 5px 20px rgba(255, 107, 53, 0.3);
             position: relative;
             overflow: hidden;
         }
 
-        .group-card:hover,
-        .group-card.focused {
-            transform: translateY(-10px) scale(1.05);
-            border-color: #00d4ff;
-            box-shadow: 0 20px 40px rgba(0, 212, 255, 0.3);
-        }
-
-        .group-card::before {
+        .header::before {
             content: '';
             position: absolute;
             top: 0;
             left: 0;
             right: 0;
             bottom: 0;
-            background: linear-gradient(45deg, transparent, rgba(0, 212, 255, 0.1), transparent);
-            opacity: 0;
-            transition: opacity 0.3s ease;
+            background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><defs><pattern id="zigzag" patternUnits="userSpaceOnUse" width="20" height="20"><path d="M0,10 L10,0 L20,10 L10,20 Z" fill="none" stroke="rgba(255,255,255,0.1)" stroke-width="1"/></pattern></defs><rect width="100" height="100" fill="url(%23zigzag)"/></svg>');
+            opacity: 0.3;
         }
 
-        .group-card:hover::before,
-        .group-card.focused::before {
-            opacity: 1;
-        }
-
-        .group-icon {
-            font-size: 4rem;
-            color: #00d4ff;
-            margin-bottom: 20px;
-            text-shadow: 0 0 20px rgba(0, 212, 255, 0.5);
-        }
-
-        .group-name {
-            font-size: 1.8rem;
-            font-weight: 600;
-            margin-bottom: 10px;
+        .logo {
+            font-size: 3rem;
+            font-weight: 700;
             color: #ffffff;
+            text-shadow: 0 0 20px rgba(255, 255, 255, 0.5);
+            position: relative;
+            z-index: 2;
         }
 
-        .group-count {
-            font-size: 1.2rem;
-            color: #cccccc;
+        .ziggo-logo {
+            width: 120px;
+            height: auto;
+            filter: brightness(0) invert(1);
+            position: relative;
+            z-index: 2;
         }
 
-        /* Channels Container */
-        .channels-container {
-            display: none;
-        }
-
-        .back-btn {
-            background: linear-gradient(45deg, #ff6b6b, #ee5a24);
-            color: white;
-            border: none;
-            padding: 15px 30px;
-            border-radius: 50px;
-            font-size: 1.3rem;
+        .time-display {
+            font-size: 1.8rem;
+            color: #ffffff;
             font-weight: 600;
-            cursor: pointer;
-            margin-bottom: 30px;
-            transition: all 0.3s ease;
-            box-shadow: 0 10px 20px rgba(255, 107, 107, 0.3);
+            position: relative;
+            z-index: 2;
         }
 
-        .back-btn:hover,
-        .back-btn.focused {
-            transform: translateY(-3px);
-            box-shadow: 0 15px 30px rgba(255, 107, 107, 0.4);
+        /* Main Container */
+        .main-container {
+            padding: 50px 40px;
+            max-width: 1920px;
+            margin: 0 auto;
         }
 
+        .page-title {
+            text-align: center;
+            font-size: 3.5rem;
+            font-weight: 700;
+            color: #ff6b35;
+            margin-bottom: 20px;
+            text-shadow: 0 0 30px rgba(255, 107, 53, 0.5);
+        }
+
+        .page-subtitle {
+            text-align: center;
+            font-size: 1.5rem;
+            color: #cccccc;
+            margin-bottom: 50px;
+        }
+
+        /* Channels Grid */
         .channels-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
-            gap: 25px;
-            margin-top: 30px;
+            grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+            gap: 30px;
+            margin-top: 40px;
         }
 
         .channel-card {
             background: linear-gradient(145deg, rgba(255, 255, 255, 0.1), rgba(255, 255, 255, 0.05));
-            border-radius: 15px;
-            padding: 25px;
+            border-radius: 20px;
+            padding: 30px;
             display: flex;
             align-items: center;
             cursor: pointer;
-            transition: all 0.3s ease;
-            border: 2px solid transparent;
-            backdrop-filter: blur(10px);
+            transition: all 0.4s ease;
+            border: 3px solid transparent;
+            backdrop-filter: blur(15px);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .channel-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 107, 53, 0.2), transparent);
+            transition: left 0.5s ease;
+        }
+
+        .channel-card:hover::before,
+        .channel-card.focused::before {
+            left: 100%;
         }
 
         .channel-card:hover,
         .channel-card.focused {
-            transform: translateX(10px);
-            border-color: #00d4ff;
-            box-shadow: 0 10px 30px rgba(0, 212, 255, 0.2);
+            transform: translateY(-10px) scale(1.02);
+            border-color: #ff6b35;
+            box-shadow: 0 20px 40px rgba(255, 107, 53, 0.3);
+            background: linear-gradient(145deg, rgba(255, 107, 53, 0.2), rgba(255, 107, 53, 0.1));
         }
 
         .channel-logo {
-            width: 80px;
-            height: 80px;
-            border-radius: 10px;
-            margin-left: 20px;
+            width: 100px;
+            height: 100px;
+            border-radius: 15px;
+            margin-left: 25px;
             object-fit: contain;
-            background: rgba(255, 255, 255, 0.1);
-            padding: 10px;
+            background: rgba(255, 255, 255, 0.9);
+            padding: 15px;
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
         }
 
         .channel-info {
             flex: 1;
+            position: relative;
+            z-index: 2;
         }
 
         .channel-name {
-            font-size: 1.5rem;
-            font-weight: 600;
+            font-size: 2rem;
+            font-weight: 700;
             color: #ffffff;
             margin-bottom: 10px;
+            text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+        }
+
+        .channel-number {
+            font-size: 1.2rem;
+            color: #ff6b35;
+            font-weight: 600;
+            margin-bottom: 8px;
         }
 
         .channel-status {
+            display: flex;
+            align-items: center;
+            gap: 10px;
             color: #00ff88;
-            font-size: 1rem;
+            font-size: 1.1rem;
+            font-weight: 500;
+        }
+
+        .live-indicator {
+            width: 12px;
+            height: 12px;
+            background: #00ff88;
+            border-radius: 50%;
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0% { box-shadow: 0 0 0 0 rgba(0, 255, 136, 0.7); }
+            70% { box-shadow: 0 0 0 10px rgba(0, 255, 136, 0); }
+            100% { box-shadow: 0 0 0 0 rgba(0, 255, 136, 0); }
+        }
+
+        .play-button {
+            background: linear-gradient(45deg, #ff6b35, #f7931e);
+            color: white;
+            border: none;
+            padding: 15px 25px;
+            border-radius: 50px;
+            font-size: 1.2rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 5px 15px rgba(255, 107, 53, 0.3);
+            margin-top: 15px;
+        }
+
+        .play-button:hover,
+        .play-button.focused {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(255, 107, 53, 0.4);
         }
 
         /* Video Player */
@@ -221,17 +236,18 @@
 
         .video-controls {
             position: absolute;
-            bottom: 20px;
+            bottom: 30px;
             left: 50%;
             transform: translateX(-50%);
             background: rgba(0, 0, 0, 0.8);
-            padding: 15px 30px;
+            padding: 20px 40px;
             border-radius: 50px;
             display: flex;
             align-items: center;
-            gap: 20px;
+            gap: 25px;
             opacity: 0;
             transition: opacity 0.3s ease;
+            backdrop-filter: blur(10px);
         }
 
         .video-controls.show {
@@ -242,38 +258,41 @@
             background: none;
             border: none;
             color: white;
-            font-size: 1.5rem;
+            font-size: 1.8rem;
             cursor: pointer;
-            padding: 10px;
+            padding: 12px;
             border-radius: 50%;
             transition: all 0.3s ease;
         }
 
         .control-btn:hover,
         .control-btn.focused {
-            background: rgba(255, 255, 255, 0.2);
+            background: rgba(255, 107, 53, 0.3);
             transform: scale(1.2);
         }
 
         .close-btn {
             position: absolute;
-            top: 30px;
-            right: 30px;
-            background: rgba(255, 0, 0, 0.8);
+            top: 40px;
+            right: 40px;
+            background: rgba(255, 0, 0, 0.9);
             color: white;
             border: none;
-            padding: 15px 20px;
+            padding: 20px 30px;
             border-radius: 50px;
-            font-size: 1.2rem;
+            font-size: 1.4rem;
+            font-weight: 600;
             cursor: pointer;
             z-index: 10000;
             transition: all 0.3s ease;
+            box-shadow: 0 5px 15px rgba(255, 0, 0, 0.3);
         }
 
         .close-btn:hover,
         .close-btn.focused {
             background: rgba(255, 0, 0, 1);
             transform: scale(1.1);
+            box-shadow: 0 8px 25px rgba(255, 0, 0, 0.4);
         }
 
         /* Loading Animation */
@@ -283,15 +302,23 @@
             left: 50%;
             transform: translate(-50%, -50%);
             z-index: 10001;
+            text-align: center;
         }
 
         .spinner {
-            width: 60px;
-            height: 60px;
-            border: 4px solid rgba(0, 212, 255, 0.3);
-            border-top: 4px solid #00d4ff;
+            width: 80px;
+            height: 80px;
+            border: 5px solid rgba(255, 107, 53, 0.3);
+            border-top: 5px solid #ff6b35;
             border-radius: 50%;
             animation: spin 1s linear infinite;
+            margin-bottom: 20px;
+        }
+
+        .loading-text {
+            color: #ffffff;
+            font-size: 1.5rem;
+            font-weight: 600;
         }
 
         @keyframes spin {
@@ -301,53 +328,85 @@
 
         /* Focus Indicator */
         .focused {
-            outline: 3px solid #00d4ff !important;
-            outline-offset: 5px;
+            outline: 4px solid #ff6b35 !important;
+            outline-offset: 8px;
+        }
+
+        /* Channel Quality Indicator */
+        .quality-badge {
+            position: absolute;
+            top: 15px;
+            right: 15px;
+            background: linear-gradient(45deg, #ff6b35, #f7931e);
+            color: white;
+            padding: 5px 12px;
+            border-radius: 20px;
+            font-size: 0.9rem;
+            font-weight: 600;
+            box-shadow: 0 2px 8px rgba(255, 107, 53, 0.3);
         }
 
         /* Responsive Design */
         @media (max-width: 1200px) {
-            .groups-grid {
-                grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-                gap: 20px;
+            .channels-grid {
+                grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+                gap: 25px;
             }
             
-            .channels-grid {
-                grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-                gap: 20px;
+            .channel-name {
+                font-size: 1.8rem;
             }
         }
 
         @media (max-width: 768px) {
             .main-container {
-                padding: 20px;
+                padding: 30px 20px;
             }
             
             .header {
-                padding: 15px 20px;
+                padding: 20px;
             }
             
             .logo {
-                font-size: 2rem;
+                font-size: 2.5rem;
+            }
+            
+            .page-title {
+                font-size: 2.5rem;
+            }
+            
+            .channels-grid {
+                grid-template-columns: 1fr;
+                gap: 20px;
+            }
+            
+            .channel-card {
+                padding: 25px;
+            }
+            
+            .channel-logo {
+                width: 80px;
+                height: 80px;
             }
         }
 
         /* Hide scrollbars but keep functionality */
         ::-webkit-scrollbar {
-            width: 8px;
+            width: 10px;
         }
 
         ::-webkit-scrollbar-track {
             background: rgba(255, 255, 255, 0.1);
+            border-radius: 5px;
         }
 
         ::-webkit-scrollbar-thumb {
-            background: rgba(0, 212, 255, 0.5);
-            border-radius: 4px;
+            background: linear-gradient(45deg, #ff6b35, #f7931e);
+            border-radius: 5px;
         }
 
         ::-webkit-scrollbar-thumb:hover {
-            background: rgba(0, 212, 255, 0.8);
+            background: linear-gradient(45deg, #f7931e, #ff6b35);
         }
     </style>
 </head>
@@ -355,30 +414,18 @@
     <!-- Header -->
     <div class="header">
         <div class="logo">
-            <i class="fas fa-tv"></i> MoviBall TV
+            <i class="fas fa-tv"></i> ZIGGO Sports
         </div>
         <div class="time-display" id="currentTime"></div>
     </div>
 
     <!-- Main Container -->
     <div class="main-container">
-        <!-- Groups Container -->
-        <div class="groups-container" id="groupsContainer">
-            <h2 style="font-size: 2.5rem; margin-bottom: 20px; text-align: center; color: #00d4ff;">اختر المجموعة</h2>
-            <div class="groups-grid" id="groupsGrid">
-                <!-- Groups will be populated by JavaScript -->
-            </div>
-        </div>
-
-        <!-- Channels Container -->
-        <div class="channels-container" id="channelsContainer">
-            <button class="back-btn" id="backBtn">
-                <i class="fas fa-arrow-right"></i> العودة للمجموعات
-            </button>
-            <h2 id="channelsTitle" style="font-size: 2.5rem; margin-bottom: 20px; text-align: center; color: #00d4ff;"></h2>
-            <div class="channels-grid" id="channelsGrid">
-                <!-- Channels will be populated by JavaScript -->
-            </div>
+        <h1 class="page-title">قنوات ZIGGO الرياضية</h1>
+        <p class="page-subtitle">استمتع بأفضل المباريات والأحداث الرياضية بجودة عالية</p>
+        
+        <div class="channels-grid" id="channelsGrid">
+            <!-- Channels will be populated by JavaScript -->
         </div>
     </div>
 
@@ -389,6 +436,7 @@
         </button>
         <div class="loading" id="loading">
             <div class="spinner"></div>
+            <div class="loading-text">جاري تحميل القناة...</div>
         </div>
         <div class="video-container" id="videoContainer">
             <!-- Video player will be inserted here -->
@@ -407,95 +455,65 @@
     </div>
 
     <script>
-        // Channel Groups Data
-        const channelGroups = {
-            "sports": {
-                name: "القنوات الرياضية",
-                icon: "fas fa-futbol",
-                channels: [
-                    {
-                        name: "beIN Sports 1 HD",
-                        logo: "https://i.servimg.com/u/f62/20/15/89/97/tod10.png",
-                        url: "https://mag04.tvx.prd.tv.odido.nl/wh7f454c46tw75168188_-627298088/PLTV/86/224/3221241590/3221241590.mpd?accountinfo=~~V2.0~qbcsJh_jU5C9BcZc959e_wae44b4867b3417aa76b5db2da20fe46c~KZzTWjB8qD1zdgbJjRPVLJX-tV0qiN9RBHC_iseGrsmTSRjj06oGDtGlpSCRGOwF3626cf085c08d024c7e4aafc18c32440:UTC,",
-                        type: "mpd",
-                        key: "ef34ae91b4f2415e8439b2ad105e7488:243248d8de1ff8c7c587ee2057317523"
-                    },
-                    {
-                        name: "beIN Sports 2 HD",
-                        logo: "https://i.servimg.com/u/f62/20/15/89/97/tod10.png",
-                        url: "https://mag03.tvx.prd.tv.odido.nl/wh7f454c46tw266117884_-1972819316/PLTV/86/224/3221241560/3221241560.mpd?accountinfo=~~V2.0~OhA1DF4svOZppKxb-t-Ngw144cce44121c63284a33d5453493e5c8~1_Fmlu5PevHMYnEi9Z_HX2goKAd0VHSuxZMoIcAXcawYvG1meqGp2eQ2Ibhjvh7e59e7f6df3d57f23a32024ad67f0f19dc:UTC,",
-                        type: "mpd",
-                        key: "3cfa8625f650406ebf6a4d1ea737f572:0534e747c70b364aa7210e1bf3191df0"
-                    },
-                    {
-                        name: "SSC Sports 1",
-                        logo: "https://new.almajardh.com/wp-content/uploads/2024/04/227490329_109153861466410_1774597698132928445_n.jpg",
-                        url: "https://mag02.tvx.prd.tv.odido.nl/wh7f454c46tw407556707_-381738111/PLTV/86/224/3221241511/3221241511.mpd?accountinfo=~~V2.0~yVi0dMX4icO5Ka9e92EQfg8812e1c1044f7d357066472e3ee99ef4~2dRB9E-vDtoAbYl169LbcJpxUgWVJtbeU_PlhGfNUflphvljOb5VaEhxruETYG9qcccaf5c5b655bf7504ed7ec5a1dd798f:UTC,",
-                        type: "mpd",
-                        key: "4dbea4b5713a4aa1ae3a2544cd522fc7:a8323ea99b2d6200a48e1bc27322d548"
-                    },
-                    {
-                        name: "ZIGGO Sports 1",
-                        logo: "https://www.ziggosport.nl/images/logos/logo-ziggosport.svg",
-                        url: "https://mag04.tvx.prd.tv.odido.nl/wh7f454c46tw75168188_-627298088/PLTV/86/224/3221241590/3221241590.mpd?accountinfo=~~V2.0~qbcsJh_jU5C9BcZc959e_wae44b4867b3417aa76b5db2da20fe46c~KZzTWjB8qD1zdgbJjRPVLJX-tV0qiN9RBHC_iseGrsmTSRjj06oGDtGlpSCRGOwF3626cf085c08d024c7e4aafc18c32440:UTC,",
-                        type: "mpd",
-                        key: "ef34ae91b4f2415e8439b2ad105e7488:243248d8de1ff8c7c587ee2057317523"
-                    }
-                ]
+        // ZIGGO Sports Channels Data
+        const ziggoChannels = [
+            {
+                id: 1,
+                name: "ZIGGO SPORTS 1",
+                logo: "https://www.ziggosport.nl/images/logos/logo-ziggosport.svg",
+                url: "https://mag04.tvx.prd.tv.odido.nl/wh7f454c46tw75168188_-627298088/PLTV/86/224/3221241590/3221241590.mpd?accountinfo=~~V2.0~qbcsJh_jU5C9BcZc959e_wae44b4867b3417aa76b5db2da20fe46c~KZzTWjB8qD1zdgbJjRPVLJX-tV0qiN9RBHC_iseGrsmTSRjj06oGDtGlpSCRGOwF3626cf085c08d024c7e4aafc18c32440:UTC,",
+                key: "ef34ae91b4f2415e8439b2ad105e7488:243248d8de1ff8c7c587ee2057317523",
+                type: "mpd",
+                quality: "HD"
             },
-            "entertainment": {
-                name: "قنوات الترفيه",
-                icon: "fas fa-film",
-                channels: [
-                    {
-                        name: "MBC 1",
-                        logo: "https://pbs.twimg.com/media/Gne0DjdXYAAdII4.jpg",
-                        url: "https://example.com/mbc1.m3u8",
-                        type: "hls"
-                    },
-                    {
-                        name: "MBC 2",
-                        logo: "https://pbs.twimg.com/media/Gne0DjdXYAAdII4.jpg",
-                        url: "https://example.com/mbc2.m3u8",
-                        type: "hls"
-                    }
-                ]
+            {
+                id: 2,
+                name: "ZIGGO SPORTS 2",
+                logo: "https://www.ziggosport.nl/images/logos/logo-ziggosport2.svg",
+                url: "https://mag03.tvx.prd.tv.odido.nl/wh7f454c46tw266117884_-1972819316/PLTV/86/224/3221241560/3221241560.mpd?accountinfo=~~V2.0~OhA1DF4svOZppKxb-t-Ngw144cce44121c63284a33d5453493e5c8~1_Fmlu5PevHMYnEi9Z_HX2goKAd0VHSuxZMoIcAXcawYvG1meqGp2eQ2Ibhjvh7e59e7f6df3d57f23a32024ad67f0f19dc:UTC,",
+                key: "3cfa8625f650406ebf6a4d1ea737f572:0534e747c70b364aa7210e1bf3191df0",
+                type: "mpd",
+                quality: "HD"
             },
-            "news": {
-                name: "القنوات الإخبارية",
-                icon: "fas fa-newspaper",
-                channels: [
-                    {
-                        name: "Al Jazeera",
-                        logo: "https://i.servimg.com/u/f62/20/15/89/97/news10.png",
-                        url: "https://example.com/aljazeera.m3u8",
-                        type: "hls"
-                    },
-                    {
-                        name: "Al Arabiya",
-                        logo: "https://i.servimg.com/u/f62/20/15/89/97/news10.png",
-                        url: "https://example.com/alarabiya.m3u8",
-                        type: "hls"
-                    }
-                ]
+            {
+                id: 3,
+                name: "ZIGGO SPORTS 3",
+                logo: "https://www.ziggosport.nl/images/logos/logo-ziggosport3.svg",
+                url: "https://mag02.tvx.prd.tv.odido.nl/wh7f454c46tw407556707_-381738111/PLTV/86/224/3221241511/3221241511.mpd?accountinfo=~~V2.0~yVi0dMX4icO5Ka9e92EQfg8812e1c1044f7d357066472e3ee99ef4~2dRB9E-vDtoAbYl169LbcJpxUgWVJtbeU_PlhGfNUflphvljOb5VaEhxruETYG9qcccaf5c5b655bf7504ed7ec5a1dd798f:UTC,",
+                key: "4dbea4b5713a4aa1ae3a2544cd522fc7:a8323ea99b2d6200a48e1bc27322d548",
+                type: "mpd",
+                quality: "HD"
             },
-            "kids": {
-                name: "قنوات الأطفال",
-                icon: "fas fa-child",
-                channels: [
-                    {
-                        name: "Cartoon Network",
-                        logo: "https://imgs.search.brave.com/wXbCyNdxb2ujEFvmPX5Dy21oS8yshiarsdKp8l_Y6lg/rs:fit:860:0:0:0/g:ce/aHR0cHM6Ly9tZWRp/YS5pc3RvY2twaG90/by5jb20vaWQvMTY1/OTcyNTAzL3ZlY3Rv/ci9ib3lzLWFuZC1n/aXJscy5qcGc_cz02/MTJ4NjEyJnc9MCZr/PTIwJmM9X1M1N0Zw/ZXJJbTFnOGFQOWNR/dUdJYkhBcmRyOWox/bTloN0poTzBHR1p3/bz0",
-                        url: "https://example.com/cartoon.m3u8",
-                        type: "hls"
-                    }
-                ]
+            {
+                id: 4,
+                name: "ZIGGO SPORTS 4",
+                logo: "https://www.ziggosport.nl/images/logos/logo-ziggosport4.svg",
+                url: "https://mag02.tvx.prd.tv.odido.nl/wh7f454c46tw407556707_-381738111/PLTV/86/224/3221241511/3221241511.mpd?accountinfo=~~V2.0~yVi0dMX4icO5Ka9e92EQfg8812e1c1044f7d357066472e3ee99ef4~2dRB9E-vDtoAbYl169LbcJpxUgWVJtbeU_PlhGfNUflphvljOb5VaEhxruETYG9qcccaf5c5b655bf7504ed7ec5a1dd798f:UTC,",
+                key: "4dbea4b5713a4aa1ae3a2544cd522fc7:a8323ea99b2d6200a48e1bc27322d548",
+                type: "mpd",
+                quality: "HD"
+            },
+            {
+                id: 5,
+                name: "ZIGGO SPORTS 5",
+                logo: "https://www.ziggosport.nl/images/logos/logo-ziggosport5.svg",
+                url: "https://mag02.tvx.prd.tv.odido.nl/wh7f454c46tw407556707_-381738111/PLTV/86/224/3221241511/3221241511.mpd?accountinfo=~~V2.0~yVi0dMX4icO5Ka9e92EQfg8812e1c1044f7d357066472e3ee99ef4~2dRB9E-vDtoAbYl169LbcJpxUgWVJtbeU_PlhGfNUflphvljOb5VaEhxruETYG9qcccaf5c5b655bf7504ed7ec5a1dd798f:UTC,",
+                key: "3fb40d85724942f994d86943f48021db:a6da8742502c8a2153067f5f2a70fb02",
+                type: "mpd",
+                quality: "HD"
+            },
+            {
+                id: 6,
+                name: "ZIGGO SPORTS 6",
+                logo: "https://www.ziggosport.nl/images/logos/logo-ziggosport6.svg",
+                url: "https://mag03.tvx.prd.tv.odido.nl/wh7f454c46tw1024019879_757686866/PLTV/86/224/3221241521/3221241521.mpd?accountinfo=~~V2.0~URnD_afuosWHfY5OEqRXOwfa01c8ac56cf4511de39c2c4a3cab278~iVxKjbtf2gx_dYFqI-vt5C4Cu3COYDjZaw6C_kO2T2wm30fwo1ctD1gr_e2PrgTh48867c3177f3c34842031623cb2e06c9:UTC,",
+                key: "1a0ffa532aa2498490826e2f6a37f7c9:a8cec27bc7d47909c5b0d8f473b43e8d",
+                type: "mpd",
+                quality: "HD"
             }
-        };
+        ];
 
         // Navigation State
-        let currentView = 'groups';
-        let currentGroup = null;
         let focusedIndex = 0;
         let currentPlayer = null;
         let controlsTimeout = null;
@@ -504,7 +522,7 @@
         document.addEventListener('DOMContentLoaded', function() {
             updateTime();
             setInterval(updateTime, 1000);
-            renderGroups();
+            renderChannels();
             setupEventListeners();
             setupRemoteControl();
         });
@@ -520,58 +538,30 @@
             document.getElementById('currentTime').textContent = timeString;
         }
 
-        // Render Groups
-        function renderGroups() {
-            const groupsGrid = document.getElementById('groupsGrid');
-            groupsGrid.innerHTML = '';
-
-            Object.keys(channelGroups).forEach((groupId, index) => {
-                const group = channelGroups[groupId];
-                const groupCard = document.createElement('div');
-                groupCard.className = 'group-card';
-                groupCard.dataset.groupId = groupId;
-                groupCard.dataset.index = index;
-                
-                groupCard.innerHTML = `
-                    <div class="group-icon">
-                        <i class="${group.icon}"></i>
-                    </div>
-                    <div class="group-name">${group.name}</div>
-                    <div class="group-count">${group.channels.length} قناة</div>
-                `;
-
-                groupCard.addEventListener('click', () => showChannels(groupId));
-                groupsGrid.appendChild(groupCard);
-            });
-
-            updateFocus();
-        }
-
-        // Show Channels
-        function showChannels(groupId) {
-            currentGroup = groupId;
-            currentView = 'channels';
-            focusedIndex = 0;
-
-            const group = channelGroups[groupId];
-            document.getElementById('channelsTitle').textContent = group.name;
-            
+        // Render Channels
+        function renderChannels() {
             const channelsGrid = document.getElementById('channelsGrid');
             channelsGrid.innerHTML = '';
 
-            group.channels.forEach((channel, index) => {
+            ziggoChannels.forEach((channel, index) => {
                 const channelCard = document.createElement('div');
                 channelCard.className = 'channel-card';
                 channelCard.dataset.index = index;
                 
                 channelCard.innerHTML = `
-                    <img src="${channel.logo}" alt="${channel.name}" class="channel-logo" onerror="this.src='data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iODAiIGhlaWdodD0iODAiIHZpZXdCb3g9IjAgMCA4MCA4MCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPHJlY3Qgd2lkdGg9IjgwIiBoZWlnaHQ9IjgwIiBmaWxsPSIjMzMzIiByeD0iMTAiLz4KPHN2ZyB4PSIyMCIgeT0iMjAiIHdpZHRoPSI0MCIgaGVpZ2h0PSI0MCIgdmlld0JveD0iMCAwIDI0IDI0IiBmaWxsPSIjNjY2Ij4KPHA+VFY8L3A+Cjwvc3ZnPgo8L3N2Zz4K'">
+                    <div class="quality-badge">${channel.quality}</div>
+                    <img src="${channel.logo}" alt="${channel.name}" class="channel-logo" 
+                         onerror="this.src='data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTAwIiBoZWlnaHQ9IjEwMCIgdmlld0JveD0iMCAwIDEwMCAxMDAiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+CjxyZWN0IHdpZHRoPSIxMDAiIGhlaWdodD0iMTAwIiBmaWxsPSIjZmY2YjM1IiByeD0iMTUiLz4KPHRleHQgeD0iNTAiIHk9IjU1IiBmb250LWZhbWlseT0iQXJpYWwiIGZvbnQtc2l6ZT0iMTQiIGZpbGw9IndoaXRlIiB0ZXh0LWFuY2hvcj0ibWlkZGxlIj5aSUdHTzwvdGV4dD4KPC9zdmc+'">
                     <div class="channel-info">
+                        <div class="channel-number">القناة ${channel.id}</div>
                         <div class="channel-name">${channel.name}</div>
                         <div class="channel-status">
-                            <i class="fas fa-circle" style="color: #00ff88; font-size: 0.8rem;"></i>
-                            مباشر
+                            <div class="live-indicator"></div>
+                            مباشر الآن
                         </div>
+                        <button class="play-button">
+                            <i class="fas fa-play"></i> مشاهدة
+                        </button>
                     </div>
                 `;
 
@@ -579,8 +569,6 @@
                 channelsGrid.appendChild(channelCard);
             });
 
-            document.getElementById('groupsContainer').style.display = 'none';
-            document.getElementById('channelsContainer').style.display = 'block';
             updateFocus();
         }
 
@@ -608,14 +596,7 @@
             }
             
             videoContainer.innerHTML = '';
-
-            if (channel.type === 'mpd') {
-                playDashStream(channel, videoContainer, loading);
-            } else if (channel.type === 'hls') {
-                playHlsStream(channel, videoContainer, loading);
-            } else {
-                playJwPlayer(channel, videoContainer, loading);
-            }
+            playDashStream(channel, videoContainer, loading);
         }
 
         // Play DASH Stream
@@ -626,12 +607,14 @@
             video.style.height = '100%';
             video.controls = true;
             video.autoplay = true;
+            video.muted = false;
             container.appendChild(video);
 
             if (shaka && shaka.Player.isBrowserSupported()) {
                 const player = new shaka.Player(video);
                 currentPlayer = player;
 
+                // Configure DRM if key is provided
                 if (channel.key) {
                     const [keyId, key] = channel.key.split(':');
                     player.configure({
@@ -643,72 +626,46 @@
                     });
                 }
 
+                // Configure player settings
+                player.configure({
+                    streaming: {
+                        bufferingGoal: 30,
+                        rebufferingGoal: 5,
+                        bufferBehind: 30
+                    }
+                });
+
                 player.load(channel.url).then(() => {
                     loading.style.display = 'none';
                     showVideoControls();
+                    
+                    // Auto enter fullscreen
+                    setTimeout(() => {
+                        if (video.requestFullscreen) {
+                            video.requestFullscreen();
+                        }
+                    }, 500);
+                    
                 }).catch((error) => {
                     console.error('Error loading DASH stream:', error);
                     loading.style.display = 'none';
-                    alert('خطأ في تشغيل القناة');
+                    alert(`خطأ في تشغيل ${channel.name}\nالرجاء المحاولة مرة أخرى`);
+                    closePlayer();
                 });
+
+                // Handle player events
+                player.addEventListener('error', (event) => {
+                    console.error('Player error:', event.detail);
+                    loading.style.display = 'none';
+                    alert(`خطأ في تشغيل ${channel.name}`);
+                    closePlayer();
+                });
+
             } else {
                 loading.style.display = 'none';
                 alert('المتصفح لا يدعم تشغيل هذا النوع من الفيديو');
+                closePlayer();
             }
-        }
-
-        // Play HLS Stream
-        function playHlsStream(channel, container, loading) {
-            const video = document.createElement('video');
-            video.id = 'hls-video';
-            video.style.width = '100%';
-            video.style.height = '100%';
-            video.controls = true;
-            video.autoplay = true;
-            video.src = channel.url;
-            container.appendChild(video);
-
-            video.addEventListener('loadstart', () => {
-                loading.style.display = 'none';
-                showVideoControls();
-            });
-
-            video.addEventListener('error', () => {
-                loading.style.display = 'none';
-                alert('خطأ في تشغيل القناة');
-            });
-
-            currentPlayer = video;
-        }
-
-        // Play with JW Player
-        function playJwPlayer(channel, container, loading) {
-            const playerDiv = document.createElement('div');
-            playerDiv.id = 'jwplayer-container';
-            playerDiv.style.width = '100%';
-            playerDiv.style.height = '100%';
-            container.appendChild(playerDiv);
-
-            const player = jwplayer('jwplayer-container').setup({
-                file: channel.url,
-                width: '100%',
-                height: '100%',
-                autostart: true,
-                controls: true,
-                stretching: 'fill'
-            });
-
-            player.on('ready', () => {
-                loading.style.display = 'none';
-                showVideoControls();
-            });
-
-            player.on('error', () => {
-                loading.style.display = 'none';
-                alert('خطأ في تشغيل القناة');
-            });
-
-            currentPlayer = player;
         }
 
         // Show Video Controls
@@ -722,20 +679,11 @@
             
             controlsTimeout = setTimeout(() => {
                 controls.classList.remove('show');
-            }, 3000);
+            }, 4000);
         }
 
         // Setup Event Listeners
         function setupEventListeners() {
-            // Back Button
-            document.getElementById('backBtn').addEventListener('click', () => {
-                currentView = 'groups';
-                focusedIndex = 0;
-                document.getElementById('channelsContainer').style.display = 'none';
-                document.getElementById('groupsContainer').style.display = 'block';
-                updateFocus();
-            });
-
             // Close Player
             document.getElementById('closePlayer').addEventListener('click', closePlayer);
 
@@ -765,23 +713,25 @@
                 currentPlayer = null;
             }
             
+            // Exit fullscreen if active
+            if (document.fullscreenElement) {
+                document.exitFullscreen();
+            }
+            
             document.getElementById('videoPlayer').style.display = 'none';
             document.getElementById('videoContainer').innerHTML = '';
         }
 
         // Toggle Play/Pause
         function togglePlayPause() {
-            if (currentPlayer) {
-                if (currentPlayer.getState && currentPlayer.getState() === 'playing') {
-                    currentPlayer.pause();
-                } else if (currentPlayer.play) {
-                    currentPlayer.play();
-                } else if (currentPlayer.paused !== undefined) {
-                    if (currentPlayer.paused) {
-                        currentPlayer.play();
-                    } else {
-                        currentPlayer.pause();
-                    }
+            const video = document.getElementById('dash-video');
+            if (video) {
+                if (video.paused) {
+                    video.play();
+                    document.getElementById('playPauseBtn').innerHTML = '<i class="fas fa-pause"></i>';
+                } else {
+                    video.pause();
+                    document.getElementById('playPauseBtn').innerHTML = '<i class="fas fa-play"></i>';
                 }
             }
             showVideoControls();
@@ -789,11 +739,14 @@
 
         // Toggle Mute
         function toggleMute() {
-            if (currentPlayer) {
-                if (currentPlayer.setMute) {
-                    currentPlayer.setMute(!currentPlayer.getMute());
-                } else if (currentPlayer.muted !== undefined) {
-                    currentPlayer.muted = !currentPlayer.muted;
+            const video = document.getElementById('dash-video');
+            if (video) {
+                video.muted = !video.muted;
+                const volumeBtn = document.getElementById('volumeBtn');
+                if (video.muted) {
+                    volumeBtn.innerHTML = '<i class="fas fa-volume-mute"></i>';
+                } else {
+                    volumeBtn.innerHTML = '<i class="fas fa-volume-up"></i>';
                 }
             }
             showVideoControls();
@@ -817,18 +770,7 @@
                 el.classList.remove('focused');
             });
 
-            let items;
-            if (currentView === 'groups') {
-                items = document.querySelectorAll('.group-card');
-            } else if (currentView === 'channels') {
-                items = document.querySelectorAll('.channel-card');
-                // Also check back button
-                if (focusedIndex === -1) {
-                    document.getElementById('backBtn').classList.add('focused');
-                    return;
-                }
-            }
-
+            const items = document.querySelectorAll('.channel-card');
             if (items && items[focusedIndex]) {
                 items[focusedIndex].classList.add('focused');
                 items[focusedIndex].scrollIntoView({ behavior: 'smooth', block: 'center' });
@@ -850,78 +792,29 @@
 
         // Handle Navigation Keys
         function handleNavigationKeys(key) {
-            let items;
-            let maxIndex;
-
-            if (currentView === 'groups') {
-                items = document.querySelectorAll('.group-card');
-                maxIndex = items.length - 1;
-            } else if (currentView === 'channels') {
-                items = document.querySelectorAll('.channel-card');
-                maxIndex = items.length - 1;
-            }
+            const maxIndex = ziggoChannels.length - 1;
 
             switch (key) {
                 case 'ArrowUp':
-                    if (currentView === 'groups') {
-                        focusedIndex = Math.max(0, focusedIndex - 3);
-                    } else if (currentView === 'channels') {
-                        if (focusedIndex <= 1) {
-                            focusedIndex = -1; // Focus back button
-                        } else {
-                            focusedIndex = Math.max(0, focusedIndex - 2);
-                        }
-                    }
+                    focusedIndex = Math.max(0, focusedIndex - 2);
                     break;
                     
                 case 'ArrowDown':
-                    if (currentView === 'groups') {
-                        focusedIndex = Math.min(maxIndex, focusedIndex + 3);
-                    } else if (currentView === 'channels') {
-                        if (focusedIndex === -1) {
-                            focusedIndex = 0;
-                        } else {
-                            focusedIndex = Math.min(maxIndex, focusedIndex + 2);
-                        }
-                    }
+                    focusedIndex = Math.min(maxIndex, focusedIndex + 2);
                     break;
                     
                 case 'ArrowLeft':
-                    if (currentView === 'channels' && focusedIndex >= 0) {
-                        focusedIndex = Math.max(0, focusedIndex - 1);
-                    } else if (currentView === 'groups') {
-                        focusedIndex = Math.max(0, focusedIndex - 1);
-                    }
+                    focusedIndex = Math.max(0, focusedIndex - 1);
                     break;
                     
                 case 'ArrowRight':
-                    if (currentView === 'channels' && focusedIndex >= 0) {
-                        focusedIndex = Math.min(maxIndex, focusedIndex + 1);
-                    } else if (currentView === 'groups') {
-                        focusedIndex = Math.min(maxIndex, focusedIndex + 1);
-                    }
+                    focusedIndex = Math.min(maxIndex, focusedIndex + 1);
                     break;
                     
                 case 'Enter':
-                    if (currentView === 'groups' && items[focusedIndex]) {
-                        const groupId = items[focusedIndex].dataset.groupId;
-                        showChannels(groupId);
-                    } else if (currentView === 'channels') {
-                        if (focusedIndex === -1) {
-                            // Back button
-                            document.getElementById('backBtn').click();
-                        } else if (items[focusedIndex]) {
-                            const channelIndex = parseInt(items[focusedIndex].dataset.index);
-                            const channel = channelGroups[currentGroup].channels[channelIndex];
-                            playChannel(channel);
-                        }
-                    }
-                    break;
-                    
-                case 'Backspace':
-                case 'Escape':
-                    if (currentView === 'channels') {
-                        document.getElementById('backBtn').click();
+                    const channel = ziggoChannels[focusedIndex];
+                    if (channel) {
+                        playChannel(channel);
                     }
                     break;
             }
@@ -944,18 +837,18 @@
                     
                 case 'ArrowUp':
                     // Volume up
-                    if (currentPlayer && currentPlayer.setVolume) {
-                        const currentVolume = currentPlayer.getVolume();
-                        currentPlayer.setVolume(Math.min(100, currentVolume + 10));
+                    const video = document.getElementById('dash-video');
+                    if (video) {
+                        video.volume = Math.min(1, video.volume + 0.1);
                     }
                     showVideoControls();
                     break;
                     
                 case 'ArrowDown':
                     // Volume down
-                    if (currentPlayer && currentPlayer.setVolume) {
-                        const currentVolume = currentPlayer.getVolume();
-                        currentPlayer.setVolume(Math.max(0, currentVolume - 10));
+                    const videoDown = document.getElementById('dash-video');
+                    if (videoDown) {
+                        videoDown.volume = Math.max(0, videoDown.volume - 0.1);
                     }
                     showVideoControls();
                     break;
