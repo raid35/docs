@@ -1,379 +1,981 @@
-
 <!DOCTYPE html>
-<html dir='rtl' lang='ar'>
+<html lang="ar" dir="rtl">
 <head>
-    <meta charset='UTF-8'>
-    <meta content='upgrade-insecure-requests' http-equiv='Content-Security-Policy'>
-    <meta content='width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no' name='viewport'>
-    <meta content='no-cache, no-store, must-revalidate' http-equiv='Cache-Control'>
-    <meta content='no-cache' http-equiv='Pragma'>
-    <meta content='0' http-equiv='Expires'>
-    <meta content='MoviBall | بث مباشر للمباريات والقنوات الرياضية بجودة عالية' name='title'>
-    <meta content='مشاهدة مباريات اليوم بث مباشر بدون تقطيع على موقع MoviBall.' name='description'>
-    <meta content='بث مباشر, مباريات اليوم, قنوات رياضية' name='keywords'>
-    <meta content='Bassam Samir' name='author'>
-    <meta content='index, follow' name='robots'>
-    <meta content='MoviBall | بث مباشر للمباريات والقنوات الرياضية بجودة عالية' property='og:title'>
-    <meta content='تابع المباريات والقنوات الرياضية مباشرة بجودة عالية وبدون تقطيع.' property='og:description'>
-    <meta content='https://tv.moviball.com/Home/logo.png' property='og:image'>
-    <meta content='https://tv.moviball.com/Home/index.com' property='og:url'>
-    <meta content='website' property='og:type'>
-    <meta content='summary_large_image' name='twitter:card'>
-    <meta content='MoviBall | بث مباشر للمباريات والقنوات الرياضية بجودة عالية' name='twitter:title'>
-    <meta content='مشاهدة المباريات بث مباشر بدون تقطيع على MoviBall.' name='twitter:description'>
-    <meta content='https://tv.moviball.com/Home/logo.png' name='twitter:image'>
-    <meta content='ca-pub-2874048009597115' name='google-adsense-account'>
-    <title>MoviBall Connect</title>
-    <script async='async' crossorigin='anonymous' src='https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-2874048009597115'></script>
-    <link href='https://up6.cc/2025/03/174283843150571.png' rel='icon' type='image/png'>
-    <link href='https://up6.cc/2025/03/174283843150571.png' rel='shortcut icon' type='image/png'>
-    <link href='https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700;900&display=swap' rel='stylesheet'>
-    <link href='https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css' rel='stylesheet'>
-    <link href='https://moviball.wuaze.com/style.css' rel='stylesheet'>
-    <script src='https://cdnjs.cloudflare.com/ajax/libs/shaka-player/4.10.0/shaka-player.ui.min.js'></script>
-    <link href='https://cdnjs.cloudflare.com/ajax/libs/shaka-player/4.10.0/controls.min.css' rel='stylesheet'>
-    <script src='https://ssl.p.jwpcdn.com/player/v/8.38.3/jwplayer.js'></script>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MoviBall TV - قنوات مباشرة</title>
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700&display=swap" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/shaka-player/4.10.0/shaka-player.ui.min.js"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/shaka-player/4.10.0/controls.min.css" rel="stylesheet">
+    <script src="https://ssl.p.jwpcdn.com/player/v/8.38.3/jwplayer.js"></script>
     <script>jwplayer.key = "XSuP4qMl+9tK17QNb+4+th2Pm9AWgMO/cYH8CI0HGGr7bdjo";</script>
-    <link href='https://fonts.googleapis.com/css2?family=Cairo&display=swap' rel='stylesheet'>
-    <link href='https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.2.1/css/all.min.css' rel='stylesheet'>
-    <link href='https://akomov.com/todapi/jw_ako.css' rel='stylesheet'>
-
+    
     <style>
-        /* جعل الفيديو يملأ المشغل بالكامل */
-        .jw-video {
-            object-fit: fill !important;
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
         }
-        .jw-logo {
-            width: 7% !important;
-            height: auto;
-            position: absolute; /* أو fixed */
-            bottom: 0.8% !important; /* غير القيمة حسب ما تحتاجه */
-            left: 1% !important;
+
+        body {
+            font-family: 'Cairo', sans-serif;
+            background: linear-gradient(135deg, #0f0f23 0%, #1a1a2e 50%, #16213e 100%);
+            color: #ffffff;
+            overflow-x: hidden;
+            min-height: 100vh;
         }
-        /* تنسيق الديالوج */
-        .telegram-dialog {
-            position: fixed;
+
+        /* Header */
+        .header {
+            background: rgba(0, 0, 0, 0.8);
+            padding: 20px 40px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            backdrop-filter: blur(10px);
+            border-bottom: 2px solid #00d4ff;
+        }
+
+        .logo {
+            font-size: 2.5rem;
+            font-weight: 700;
+            color: #00d4ff;
+            text-shadow: 0 0 20px rgba(0, 212, 255, 0.5);
+        }
+
+        .time-display {
+            font-size: 1.5rem;
+            color: #ffffff;
+        }
+
+        /* Main Container */
+        .main-container {
+            padding: 40px;
+            max-width: 1920px;
+            margin: 0 auto;
+        }
+
+        /* Groups Grid */
+        .groups-container {
+            display: block;
+        }
+
+        .groups-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 30px;
+            margin-top: 30px;
+        }
+
+        .group-card {
+            background: linear-gradient(145deg, rgba(255, 255, 255, 0.1), rgba(255, 255, 255, 0.05));
+            border-radius: 20px;
+            padding: 30px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            border: 2px solid transparent;
+            backdrop-filter: blur(10px);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .group-card:hover,
+        .group-card.focused {
+            transform: translateY(-10px) scale(1.05);
+            border-color: #00d4ff;
+            box-shadow: 0 20px 40px rgba(0, 212, 255, 0.3);
+        }
+
+        .group-card::before {
+            content: '';
+            position: absolute;
             top: 0;
             left: 0;
             right: 0;
             bottom: 0;
-            background-color: rgba(0, 0, 0, 0.7);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            z-index: 9999;
-            font-family: 'Tajawal', sans-serif;
+            background: linear-gradient(45deg, transparent, rgba(0, 212, 255, 0.1), transparent);
+            opacity: 0;
+            transition: opacity 0.3s ease;
         }
-        
-        .dialog-content {
-            background-color: #fff;
-            border-radius: 10px;
-            width: 90%;
-            max-width: 500px;
-            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
-            overflow: hidden;
+
+        .group-card:hover::before,
+        .group-card.focused::before {
+            opacity: 1;
         }
-        
-        .dialog-header {
-            background-color: #0088cc;
+
+        .group-icon {
+            font-size: 4rem;
+            color: #00d4ff;
+            margin-bottom: 20px;
+            text-shadow: 0 0 20px rgba(0, 212, 255, 0.5);
+        }
+
+        .group-name {
+            font-size: 1.8rem;
+            font-weight: 600;
+            margin-bottom: 10px;
+            color: #ffffff;
+        }
+
+        .group-count {
+            font-size: 1.2rem;
+            color: #cccccc;
+        }
+
+        /* Channels Container */
+        .channels-container {
+            display: none;
+        }
+
+        .back-btn {
+            background: linear-gradient(45deg, #ff6b6b, #ee5a24);
             color: white;
-            padding: 15px;
+            border: none;
+            padding: 15px 30px;
+            border-radius: 50px;
+            font-size: 1.3rem;
+            font-weight: 600;
+            cursor: pointer;
+            margin-bottom: 30px;
+            transition: all 0.3s ease;
+            box-shadow: 0 10px 20px rgba(255, 107, 107, 0.3);
+        }
+
+        .back-btn:hover,
+        .back-btn.focused {
+            transform: translateY(-3px);
+            box-shadow: 0 15px 30px rgba(255, 107, 107, 0.4);
+        }
+
+        .channels-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 25px;
+            margin-top: 30px;
+        }
+
+        .channel-card {
+            background: linear-gradient(145deg, rgba(255, 255, 255, 0.1), rgba(255, 255, 255, 0.05));
+            border-radius: 15px;
+            padding: 25px;
             display: flex;
-            justify-content: space-between;
             align-items: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            border: 2px solid transparent;
+            backdrop-filter: blur(10px);
         }
-        
-        .dialog-header h3 {
-            margin: 0;
-            font-size: 18px;
+
+        .channel-card:hover,
+        .channel-card.focused {
+            transform: translateX(10px);
+            border-color: #00d4ff;
+            box-shadow: 0 10px 30px rgba(0, 212, 255, 0.2);
         }
-        
-        .close-dialog {
+
+        .channel-logo {
+            width: 80px;
+            height: 80px;
+            border-radius: 10px;
+            margin-left: 20px;
+            object-fit: contain;
+            background: rgba(255, 255, 255, 0.1);
+            padding: 10px;
+        }
+
+        .channel-info {
+            flex: 1;
+        }
+
+        .channel-name {
+            font-size: 1.5rem;
+            font-weight: 600;
+            color: #ffffff;
+            margin-bottom: 10px;
+        }
+
+        .channel-status {
+            color: #00ff88;
+            font-size: 1rem;
+        }
+
+        /* Video Player */
+        .video-player {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            background: #000;
+            z-index: 9999;
+            display: none;
+        }
+
+        .video-container {
+            width: 100%;
+            height: 100%;
+            position: relative;
+        }
+
+        .video-controls {
+            position: absolute;
+            bottom: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: rgba(0, 0, 0, 0.8);
+            padding: 15px 30px;
+            border-radius: 50px;
+            display: flex;
+            align-items: center;
+            gap: 20px;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+
+        .video-controls.show {
+            opacity: 1;
+        }
+
+        .control-btn {
             background: none;
             border: none;
             color: white;
-            font-size: 18px;
+            font-size: 1.5rem;
             cursor: pointer;
+            padding: 10px;
+            border-radius: 50%;
+            transition: all 0.3s ease;
         }
-        
-        .dialog-body {
-            padding: 20px;
-            text-align: center;
+
+        .control-btn:hover,
+        .control-btn.focused {
+            background: rgba(255, 255, 255, 0.2);
+            transform: scale(1.2);
         }
-        
-        .dialog-body p {
-            margin-bottom: 20px;
-            font-size: 16px;
-            color: #333;
-        }
-        
-        .dialog-buttons {
-            display: flex;
-            flex-direction: column;
-            gap: 10px;
-        }
-        
-        .telegram-btn {
-            background-color: #0088cc;
+
+        .close-btn {
+            position: absolute;
+            top: 30px;
+            right: 30px;
+            background: rgba(255, 0, 0, 0.8);
             color: white;
             border: none;
-            padding: 12px;
-            border-radius: 5px;
-            font-size: 16px;
+            padding: 15px 20px;
+            border-radius: 50px;
+            font-size: 1.2rem;
             cursor: pointer;
-            text-decoration: none;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 8px;
+            z-index: 10000;
+            transition: all 0.3s ease;
         }
-        
-        .close-btn {
-            background-color: #f1f1f1;
-            color: #333;
-            border: none;
-            padding: 12px;
-            border-radius: 5px;
-            font-size: 16px;
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 8px;
+
+        .close-btn:hover,
+        .close-btn.focused {
+            background: rgba(255, 0, 0, 1);
+            transform: scale(1.1);
         }
-        
-        @media (max-width: 480px) {
-            .dialog-content {
-                width: 95%;
+
+        /* Loading Animation */
+        .loading {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            z-index: 10001;
+        }
+
+        .spinner {
+            width: 60px;
+            height: 60px;
+            border: 4px solid rgba(0, 212, 255, 0.3);
+            border-top: 4px solid #00d4ff;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        /* Focus Indicator */
+        .focused {
+            outline: 3px solid #00d4ff !important;
+            outline-offset: 5px;
+        }
+
+        /* Responsive Design */
+        @media (max-width: 1200px) {
+            .groups-grid {
+                grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+                gap: 20px;
             }
             
-            .dialog-body p {
-                font-size: 14px;
+            .channels-grid {
+                grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+                gap: 20px;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .main-container {
+                padding: 20px;
             }
             
-            .telegram-btn, .close-btn {
-                padding: 10px;
-                font-size: 14px;
+            .header {
+                padding: 15px 20px;
             }
+            
+            .logo {
+                font-size: 2rem;
+            }
+        }
+
+        /* Hide scrollbars but keep functionality */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: rgba(255, 255, 255, 0.1);
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: rgba(0, 212, 255, 0.5);
+            border-radius: 4px;
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background: rgba(0, 212, 255, 0.8);
         }
     </style>
 </head>
 <body>
-    <header>
-        <div class='logo' id='logo'>MoviBall Connect</div>
-        <button class='nav-toggle' cursor='pointer' id='navToggle'>
-            <i class='fas fa-bars'></i>
+    <!-- Header -->
+    <div class="header">
+        <div class="logo">
+            <i class="fas fa-tv"></i> MoviBall TV
+        </div>
+        <div class="time-display" id="currentTime"></div>
+    </div>
+
+    <!-- Main Container -->
+    <div class="main-container">
+        <!-- Groups Container -->
+        <div class="groups-container" id="groupsContainer">
+            <h2 style="font-size: 2.5rem; margin-bottom: 20px; text-align: center; color: #00d4ff;">اختر المجموعة</h2>
+            <div class="groups-grid" id="groupsGrid">
+                <!-- Groups will be populated by JavaScript -->
+            </div>
+        </div>
+
+        <!-- Channels Container -->
+        <div class="channels-container" id="channelsContainer">
+            <button class="back-btn" id="backBtn">
+                <i class="fas fa-arrow-right"></i> العودة للمجموعات
+            </button>
+            <h2 id="channelsTitle" style="font-size: 2.5rem; margin-bottom: 20px; text-align: center; color: #00d4ff;"></h2>
+            <div class="channels-grid" id="channelsGrid">
+                <!-- Channels will be populated by JavaScript -->
+            </div>
+        </div>
+    </div>
+
+    <!-- Video Player -->
+    <div class="video-player" id="videoPlayer">
+        <button class="close-btn" id="closePlayer">
+            <i class="fas fa-times"></i> إغلاق
         </button>
-    </header>
-    
-    <div class='drawer' id='drawer'>
-        <div class='drawer-header'>
-            <div class='drawer-title'>القائمة الجانبية</div>
-            <button class='drawer-close' id='drawerClose'>
-                <i class='fas fa-times'></i>
+        <div class="loading" id="loading">
+            <div class="spinner"></div>
+        </div>
+        <div class="video-container" id="videoContainer">
+            <!-- Video player will be inserted here -->
+        </div>
+        <div class="video-controls" id="videoControls">
+            <button class="control-btn" id="playPauseBtn">
+                <i class="fas fa-play"></i>
+            </button>
+            <button class="control-btn" id="volumeBtn">
+                <i class="fas fa-volume-up"></i>
+            </button>
+            <button class="control-btn" id="fullscreenBtn">
+                <i class="fas fa-expand"></i>
             </button>
         </div>
-        
-        <div class='drawer-content'>
-            <div class='social-section'>
-                <h3 class='section-title'>
-                    <i class='fas fa-share-alt'></i>
-                    وسائل التواصل
-                </h3>
-                <div class='social-links'>
-                    <a class='social-link facebook' href='https://facebook.com/Eng.Bassam.Samier' target='_blank'>
-                        <div class='social-icon'>
-                            <i class='fab fa-facebook-f'></i>
-                        </div>
-                        <span class='social-text'>فيسبوك</span>
-                        <i class='fas fa-external-link-alt'></i>
-                    </a>
-                    <a class='social-link instagram' href='https://instagram.com/bassam_samier_' target='_blank'>
-                        <div class='social-icon'>
-                            <i class='fab fa-instagram'></i>
-                        </div>
-                        <span class='social-text'>إنستغرام</span>
-                        <i class='fas fa-external-link-alt'></i>
-                    </a>
-                    <a class='social-link youtube' href='https://youtube.com/@MoviBall_TV' target='_blank'>
-                        <div class='social-icon'>
-                            <i class='fab fa-youtube'></i>
-                        </div>
-                        <span class='social-text'>يوتيوب</span>
-                        <i class='fas fa-external-link-alt'></i>
-                    </a>
-                    <a class='social-link whatsapp' href='https://wa.me/201067690853' target='_blank'>
-                        <div class='social-icon'>
-                            <i class='fab fa-whatsapp'></i>
-                        </div>
-                        <span class='social-text'>واتساب</span>
-                        <i class='fas fa-external-link-alt'></i>
-                    </a>
-                    <a class='social-link telegram' href='https://t.me/+mm7WzPLhGf83YTQ0' target='_blank'>
-                        <div class='social-icon'>
-                            <i class='fab fa-telegram'></i>
-                        </div>
-                        <span class='social-text'>تلغرام</span>
-                        <i class='fas fa-external-link-alt'></i>
-                    </a>
-                  <a class='social-link telegram' href='https://www.mediafire.com/file/yg4o4lpm9w9gc7h/MoviBall_Connect_%25281%2529.apk/file' target='_blank'>
-    <div class='social-icon'>
-        <i class='fas fa-mobile-alt'></i> </div>
-    <span class='social-text'>تحميل تطبيقنا</span>
-    <i class='fas fa-external-link-alt'></i>
-</a>
-
-                </div>
-            </div>
-            
-            <div class='settings-section'>
-                <h3 class='section-title'>
-                    <i class='fas fa-cog'></i>
-                    الإعدادات
-                </h3>
-                
-                <div class='setting-item'>
-                    <label class='setting-label'>
-                        <i class='fas fa-moon'></i>
-                        الوضع الليلي
-                    </label>
-                    <label class='toggle-switch'>
-                        <input checked='checked' type='checkbox'>
-                        <span class='toggle-slider'></span>
-                    </label>
-                </div>
-                
-                <div class='setting-item'>
-                    <label class='setting-label'>
-                        <i class='fas fa-bell'></i>
-                        الإشعارات
-                    </label>
-                    <label class='toggle-switch'>
-                        <input checked='checked' type='checkbox'>
-                        <span class='toggle-slider'></span>
-                    </label>
-                </div>
-                
-                <div class='setting-item'>
-                    <label class='setting-label'>
-                        <i class='fas fa-volume-up'></i>
-                        صوت التشغيل
-                    </label>
-                    <label class='toggle-switch'>
-                        <input checked='checked' type='checkbox'>
-                        <span class='toggle-slider'></span>
-                    </label>
-                </div>
-            </div>
-        </div>
-    </div>
-  <div class='telegram-dialog' id='telegramDialog' style='display: none;'>
-    <div class='dialog-content'>
-        <div class='dialog-header'>
-            <h3>انضم إلى قناة التلجرام</h3>
-            <button class='close-dialog' id='closeDialog'>
-                <i class='fas fa-times'></i>
-            </button>
-        </div>
-        <div class='dialog-body'>
-            <p>تابع أهم أخبار التطبيق وجديد القنوات عبر قناتنا على التلجرام</p>
-            <div class='dialog-buttons'>
-                <a class='telegram-btn' href='https://t.me/+mm7WzPLhGf83YTQ0' target='_blank'>
-                    <i class='fab fa-telegram'></i> انضم الآن الي القناة الجديدة
-                </a>
-                <button class='close-btn' id='neverShowAgain'>
-                    <i class='fas fa-times'></i> إغلاق ولا تظهر مجدداً
-                </button>
-            </div>
-        </div>
-    </div>
-</div>
-    
-    <div class='overlay' id='overlay'></div>
-
-    <div id='mainSection'>
-  <div id='HTML1'>
-    <div>
-      <div class='main-container'>
-        <div class='groups-container' id='groups-container'>
-          <h2 class='main-title'>المجموعات</h2>
-          <div class='groups-grid' id='groups-grid'></div>
-        </div>
-
-        <div class='channels-container' id='channels-container'>
-          <button class='back-btn' id='backBtn'>
-            <i class='fas fa-arrow-right'></i>
-            العودة للمجموعات
-          </button>
-          <h2 class='main-title' id='channels-title'>القنوات</h2>
-          <div class='channels-grid' id='channels-grid'></div>
-        </div>
-      </div>
-    </div>
-  </div>
-</div>
-
-    <div class='player-container' id='shaka-player-container'>
-        <div class='player-wrapper'>
-            <button class='player-close' id='shakaPlayerClose'>
-                <i class='fas fa-times'></i>
-                إغلاق
-            </button>
-            <div id='shaka-video-container'>
-                <video autoplay='autoplay' height='100%' id='shaka-video' width='100%'></video>
-            </div>
-        </div>
     </div>
 
-    <div class='player-container' id='jwplayer-container'>
-        <div class='player-wrapper'>
-            <button class='player-close' id='jwPlayerClose'>
-                <i class='fas fa-times'></i>
-                إغلاق
-            </button>
-            <div id='jwplayer'></div>
-        </div>
-    </div>
- <div class='player-container' id='iframe-player-container'>
-    <div class='player-wrapper'>
-        <div class='player-header'>
-            <h3 id='iframe-player-title'></h3>
-            <button class='player-close-btn' id='iframePlayerClose'>
-                <i class='fas fa-times'></i>
-            </button>
-        </div>
-        <div class='player-content'>
-            <iframe allowfullscreen='true' id='video-iframe'></iframe>
-        </div>
-    </div>
-</div>
+    <script>
+        // Channel Groups Data
+        const channelGroups = {
+            "sports": {
+                name: "القنوات الرياضية",
+                icon: "fas fa-futbol",
+                channels: [
+                    {
+                        name: "beIN Sports 1 HD",
+                        logo: "https://i.servimg.com/u/f62/20/15/89/97/tod10.png",
+                        url: "https://mag04.tvx.prd.tv.odido.nl/wh7f454c46tw75168188_-627298088/PLTV/86/224/3221241590/3221241590.mpd?accountinfo=~~V2.0~qbcsJh_jU5C9BcZc959e_wae44b4867b3417aa76b5db2da20fe46c~KZzTWjB8qD1zdgbJjRPVLJX-tV0qiN9RBHC_iseGrsmTSRjj06oGDtGlpSCRGOwF3626cf085c08d024c7e4aafc18c32440:UTC,",
+                        type: "mpd",
+                        key: "ef34ae91b4f2415e8439b2ad105e7488:243248d8de1ff8c7c587ee2057317523"
+                    },
+                    {
+                        name: "beIN Sports 2 HD",
+                        logo: "https://i.servimg.com/u/f62/20/15/89/97/tod10.png",
+                        url: "https://mag03.tvx.prd.tv.odido.nl/wh7f454c46tw266117884_-1972819316/PLTV/86/224/3221241560/3221241560.mpd?accountinfo=~~V2.0~OhA1DF4svOZppKxb-t-Ngw144cce44121c63284a33d5453493e5c8~1_Fmlu5PevHMYnEi9Z_HX2goKAd0VHSuxZMoIcAXcawYvG1meqGp2eQ2Ibhjvh7e59e7f6df3d57f23a32024ad67f0f19dc:UTC,",
+                        type: "mpd",
+                        key: "3cfa8625f650406ebf6a4d1ea737f572:0534e747c70b364aa7210e1bf3191df0"
+                    },
+                    {
+                        name: "SSC Sports 1",
+                        logo: "https://new.almajardh.com/wp-content/uploads/2024/04/227490329_109153861466410_1774597698132928445_n.jpg",
+                        url: "https://mag02.tvx.prd.tv.odido.nl/wh7f454c46tw407556707_-381738111/PLTV/86/224/3221241511/3221241511.mpd?accountinfo=~~V2.0~yVi0dMX4icO5Ka9e92EQfg8812e1c1044f7d357066472e3ee99ef4~2dRB9E-vDtoAbYl169LbcJpxUgWVJtbeU_PlhGfNUflphvljOb5VaEhxruETYG9qcccaf5c5b655bf7504ed7ec5a1dd798f:UTC,",
+                        type: "mpd",
+                        key: "4dbea4b5713a4aa1ae3a2544cd522fc7:a8323ea99b2d6200a48e1bc27322d548"
+                    },
+                    {
+                        name: "ZIGGO Sports 1",
+                        logo: "https://www.ziggosport.nl/images/logos/logo-ziggosport.svg",
+                        url: "https://mag04.tvx.prd.tv.odido.nl/wh7f454c46tw75168188_-627298088/PLTV/86/224/3221241590/3221241590.mpd?accountinfo=~~V2.0~qbcsJh_jU5C9BcZc959e_wae44b4867b3417aa76b5db2da20fe46c~KZzTWjB8qD1zdgbJjRPVLJX-tV0qiN9RBHC_iseGrsmTSRjj06oGDtGlpSCRGOwF3626cf085c08d024c7e4aafc18c32440:UTC,",
+                        type: "mpd",
+                        key: "ef34ae91b4f2415e8439b2ad105e7488:243248d8de1ff8c7c587ee2057317523"
+                    }
+                ]
+            },
+            "entertainment": {
+                name: "قنوات الترفيه",
+                icon: "fas fa-film",
+                channels: [
+                    {
+                        name: "MBC 1",
+                        logo: "https://pbs.twimg.com/media/Gne0DjdXYAAdII4.jpg",
+                        url: "https://example.com/mbc1.m3u8",
+                        type: "hls"
+                    },
+                    {
+                        name: "MBC 2",
+                        logo: "https://pbs.twimg.com/media/Gne0DjdXYAAdII4.jpg",
+                        url: "https://example.com/mbc2.m3u8",
+                        type: "hls"
+                    }
+                ]
+            },
+            "news": {
+                name: "القنوات الإخبارية",
+                icon: "fas fa-newspaper",
+                channels: [
+                    {
+                        name: "Al Jazeera",
+                        logo: "https://i.servimg.com/u/f62/20/15/89/97/news10.png",
+                        url: "https://example.com/aljazeera.m3u8",
+                        type: "hls"
+                    },
+                    {
+                        name: "Al Arabiya",
+                        logo: "https://i.servimg.com/u/f62/20/15/89/97/news10.png",
+                        url: "https://example.com/alarabiya.m3u8",
+                        type: "hls"
+                    }
+                ]
+            },
+            "kids": {
+                name: "قنوات الأطفال",
+                icon: "fas fa-child",
+                channels: [
+                    {
+                        name: "Cartoon Network",
+                        logo: "https://imgs.search.brave.com/wXbCyNdxb2ujEFvmPX5Dy21oS8yshiarsdKp8l_Y6lg/rs:fit:860:0:0:0/g:ce/aHR0cHM6Ly9tZWRp/YS5pc3RvY2twaG90/by5jb20vaWQvMTY1/OTcyNTAzL3ZlY3Rv/ci9ib3lzLWFuZC1n/aXJscy5qcGc_cz02/MTJ4NjEyJnc9MCZr/PTIwJmM9X1M1N0Zw/ZXJJbTFnOGFQOWNR/dUdJYkhBcmRyOWox/bTloN0poTzBHR1p3/bz0",
+                        url: "https://example.com/cartoon.m3u8",
+                        type: "hls"
+                    }
+                ]
+            }
+        };
 
+        // Navigation State
+        let currentView = 'groups';
+        let currentGroup = null;
+        let focusedIndex = 0;
+        let currentPlayer = null;
+        let controlsTimeout = null;
 
-    <script src='https://www.gstatic.com/firebasejs/8.6.8/firebase-app.js'></script>
-    <script src='https://www.gstatic.com/firebasejs/8.6.8/firebase-storage.js'></script>
-    <script src='https://www.gstatic.com/firebasejs/8.6.8/firebase-firestore.js'></script>
-    <script src='https://moviball.wuaze.com/script.js'></script>
-<script>
-    // عرض الديالوج بعد تحميل الصفحة
-    document.addEventListener('DOMContentLoaded', function() {
-        // التحقق مما إذا كان المستخدم قد اختار عدم عرض الديالوج مجدداً
-        if (!localStorage.getItem('hideTelegramDialog')) {
-            setTimeout(function() {
-                document.getElementById('telegramDialog').style.display = 'flex';
-            }, 3000); // عرض الديالوج بعد 3 ثواني من تحميل الصفحة
+        // Initialize App
+        document.addEventListener('DOMContentLoaded', function() {
+            updateTime();
+            setInterval(updateTime, 1000);
+            renderGroups();
+            setupEventListeners();
+            setupRemoteControl();
+        });
+
+        // Update Time Display
+        function updateTime() {
+            const now = new Date();
+            const timeString = now.toLocaleTimeString('ar-SA', {
+                hour: '2-digit',
+                minute: '2-digit',
+                second: '2-digit'
+            });
+            document.getElementById('currentTime').textContent = timeString;
         }
-        
-        // إغلاق الديالوج عند النقر على زر الإغلاق
-        document.getElementById('closeDialog').addEventListener('click', function() {
-            document.getElementById('telegramDialog').style.display = 'none';
-        });
-        
-        // إغلاق الديالوج وعدم عرضه مجدداً عند النقر على الخيار
-        document.getElementById('neverShowAgain').addEventListener('click', function() {
-            document.getElementById('telegramDialog').style.display = 'none';
-            localStorage.setItem('hideTelegramDialog', 'true');
-        });
-    });
-</script>
+
+        // Render Groups
+        function renderGroups() {
+            const groupsGrid = document.getElementById('groupsGrid');
+            groupsGrid.innerHTML = '';
+
+            Object.keys(channelGroups).forEach((groupId, index) => {
+                const group = channelGroups[groupId];
+                const groupCard = document.createElement('div');
+                groupCard.className = 'group-card';
+                groupCard.dataset.groupId = groupId;
+                groupCard.dataset.index = index;
+                
+                groupCard.innerHTML = `
+                    <div class="group-icon">
+                        <i class="${group.icon}"></i>
+                    </div>
+                    <div class="group-name">${group.name}</div>
+                    <div class="group-count">${group.channels.length} قناة</div>
+                `;
+
+                groupCard.addEventListener('click', () => showChannels(groupId));
+                groupsGrid.appendChild(groupCard);
+            });
+
+            updateFocus();
+        }
+
+        // Show Channels
+        function showChannels(groupId) {
+            currentGroup = groupId;
+            currentView = 'channels';
+            focusedIndex = 0;
+
+            const group = channelGroups[groupId];
+            document.getElementById('channelsTitle').textContent = group.name;
+            
+            const channelsGrid = document.getElementById('channelsGrid');
+            channelsGrid.innerHTML = '';
+
+            group.channels.forEach((channel, index) => {
+                const channelCard = document.createElement('div');
+                channelCard.className = 'channel-card';
+                channelCard.dataset.index = index;
+                
+                channelCard.innerHTML = `
+                    <img src="${channel.logo}" alt="${channel.name}" class="channel-logo" onerror="this.src='data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iODAiIGhlaWdodD0iODAiIHZpZXdCb3g9IjAgMCA4MCA4MCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPHJlY3Qgd2lkdGg9IjgwIiBoZWlnaHQ9IjgwIiBmaWxsPSIjMzMzIiByeD0iMTAiLz4KPHN2ZyB4PSIyMCIgeT0iMjAiIHdpZHRoPSI0MCIgaGVpZ2h0PSI0MCIgdmlld0JveD0iMCAwIDI0IDI0IiBmaWxsPSIjNjY2Ij4KPHA+VFY8L3A+Cjwvc3ZnPgo8L3N2Zz4K'">
+                    <div class="channel-info">
+                        <div class="channel-name">${channel.name}</div>
+                        <div class="channel-status">
+                            <i class="fas fa-circle" style="color: #00ff88; font-size: 0.8rem;"></i>
+                            مباشر
+                        </div>
+                    </div>
+                `;
+
+                channelCard.addEventListener('click', () => playChannel(channel));
+                channelsGrid.appendChild(channelCard);
+            });
+
+            document.getElementById('groupsContainer').style.display = 'none';
+            document.getElementById('channelsContainer').style.display = 'block';
+            updateFocus();
+        }
+
+        // Play Channel
+        function playChannel(channel) {
+            const videoPlayer = document.getElementById('videoPlayer');
+            const videoContainer = document.getElementById('videoContainer');
+            const loading = document.getElementById('loading');
+            
+            videoPlayer.style.display = 'block';
+            loading.style.display = 'block';
+            
+            // Clear previous player
+            if (currentPlayer) {
+                try {
+                    if (currentPlayer.destroy) {
+                        currentPlayer.destroy();
+                    } else if (currentPlayer.remove) {
+                        currentPlayer.remove();
+                    }
+                } catch (e) {
+                    console.log('Error destroying player:', e);
+                }
+                currentPlayer = null;
+            }
+            
+            videoContainer.innerHTML = '';
+
+            if (channel.type === 'mpd') {
+                playDashStream(channel, videoContainer, loading);
+            } else if (channel.type === 'hls') {
+                playHlsStream(channel, videoContainer, loading);
+            } else {
+                playJwPlayer(channel, videoContainer, loading);
+            }
+        }
+
+        // Play DASH Stream
+        function playDashStream(channel, container, loading) {
+            const video = document.createElement('video');
+            video.id = 'dash-video';
+            video.style.width = '100%';
+            video.style.height = '100%';
+            video.controls = true;
+            video.autoplay = true;
+            container.appendChild(video);
+
+            if (shaka && shaka.Player.isBrowserSupported()) {
+                const player = new shaka.Player(video);
+                currentPlayer = player;
+
+                if (channel.key) {
+                    const [keyId, key] = channel.key.split(':');
+                    player.configure({
+                        drm: {
+                            clearKeys: {
+                                [keyId]: key
+                            }
+                        }
+                    });
+                }
+
+                player.load(channel.url).then(() => {
+                    loading.style.display = 'none';
+                    showVideoControls();
+                }).catch((error) => {
+                    console.error('Error loading DASH stream:', error);
+                    loading.style.display = 'none';
+                    alert('خطأ في تشغيل القناة');
+                });
+            } else {
+                loading.style.display = 'none';
+                alert('المتصفح لا يدعم تشغيل هذا النوع من الفيديو');
+            }
+        }
+
+        // Play HLS Stream
+        function playHlsStream(channel, container, loading) {
+            const video = document.createElement('video');
+            video.id = 'hls-video';
+            video.style.width = '100%';
+            video.style.height = '100%';
+            video.controls = true;
+            video.autoplay = true;
+            video.src = channel.url;
+            container.appendChild(video);
+
+            video.addEventListener('loadstart', () => {
+                loading.style.display = 'none';
+                showVideoControls();
+            });
+
+            video.addEventListener('error', () => {
+                loading.style.display = 'none';
+                alert('خطأ في تشغيل القناة');
+            });
+
+            currentPlayer = video;
+        }
+
+        // Play with JW Player
+        function playJwPlayer(channel, container, loading) {
+            const playerDiv = document.createElement('div');
+            playerDiv.id = 'jwplayer-container';
+            playerDiv.style.width = '100%';
+            playerDiv.style.height = '100%';
+            container.appendChild(playerDiv);
+
+            const player = jwplayer('jwplayer-container').setup({
+                file: channel.url,
+                width: '100%',
+                height: '100%',
+                autostart: true,
+                controls: true,
+                stretching: 'fill'
+            });
+
+            player.on('ready', () => {
+                loading.style.display = 'none';
+                showVideoControls();
+            });
+
+            player.on('error', () => {
+                loading.style.display = 'none';
+                alert('خطأ في تشغيل القناة');
+            });
+
+            currentPlayer = player;
+        }
+
+        // Show Video Controls
+        function showVideoControls() {
+            const controls = document.getElementById('videoControls');
+            controls.classList.add('show');
+            
+            if (controlsTimeout) {
+                clearTimeout(controlsTimeout);
+            }
+            
+            controlsTimeout = setTimeout(() => {
+                controls.classList.remove('show');
+            }, 3000);
+        }
+
+        // Setup Event Listeners
+        function setupEventListeners() {
+            // Back Button
+            document.getElementById('backBtn').addEventListener('click', () => {
+                currentView = 'groups';
+                focusedIndex = 0;
+                document.getElementById('channelsContainer').style.display = 'none';
+                document.getElementById('groupsContainer').style.display = 'block';
+                updateFocus();
+            });
+
+            // Close Player
+            document.getElementById('closePlayer').addEventListener('click', closePlayer);
+
+            // Video Controls
+            document.getElementById('playPauseBtn').addEventListener('click', togglePlayPause);
+            document.getElementById('volumeBtn').addEventListener('click', toggleMute);
+            document.getElementById('fullscreenBtn').addEventListener('click', toggleFullscreen);
+
+            // Mouse movement on video player
+            document.getElementById('videoPlayer').addEventListener('mousemove', showVideoControls);
+        }
+
+        // Close Player
+        function closePlayer() {
+            if (currentPlayer) {
+                try {
+                    if (currentPlayer.destroy) {
+                        currentPlayer.destroy();
+                    } else if (currentPlayer.remove) {
+                        currentPlayer.remove();
+                    } else if (currentPlayer.pause) {
+                        currentPlayer.pause();
+                    }
+                } catch (e) {
+                    console.log('Error closing player:', e);
+                }
+                currentPlayer = null;
+            }
+            
+            document.getElementById('videoPlayer').style.display = 'none';
+            document.getElementById('videoContainer').innerHTML = '';
+        }
+
+        // Toggle Play/Pause
+        function togglePlayPause() {
+            if (currentPlayer) {
+                if (currentPlayer.getState && currentPlayer.getState() === 'playing') {
+                    currentPlayer.pause();
+                } else if (currentPlayer.play) {
+                    currentPlayer.play();
+                } else if (currentPlayer.paused !== undefined) {
+                    if (currentPlayer.paused) {
+                        currentPlayer.play();
+                    } else {
+                        currentPlayer.pause();
+                    }
+                }
+            }
+            showVideoControls();
+        }
+
+        // Toggle Mute
+        function toggleMute() {
+            if (currentPlayer) {
+                if (currentPlayer.setMute) {
+                    currentPlayer.setMute(!currentPlayer.getMute());
+                } else if (currentPlayer.muted !== undefined) {
+                    currentPlayer.muted = !currentPlayer.muted;
+                }
+            }
+            showVideoControls();
+        }
+
+        // Toggle Fullscreen
+        function toggleFullscreen() {
+            const videoPlayer = document.getElementById('videoPlayer');
+            if (document.fullscreenElement) {
+                document.exitFullscreen();
+            } else {
+                videoPlayer.requestFullscreen();
+            }
+            showVideoControls();
+        }
+
+        // Update Focus
+        function updateFocus() {
+            // Remove all focus classes
+            document.querySelectorAll('.focused').forEach(el => {
+                el.classList.remove('focused');
+            });
+
+            let items;
+            if (currentView === 'groups') {
+                items = document.querySelectorAll('.group-card');
+            } else if (currentView === 'channels') {
+                items = document.querySelectorAll('.channel-card');
+                // Also check back button
+                if (focusedIndex === -1) {
+                    document.getElementById('backBtn').classList.add('focused');
+                    return;
+                }
+            }
+
+            if (items && items[focusedIndex]) {
+                items[focusedIndex].classList.add('focused');
+                items[focusedIndex].scrollIntoView({ behavior: 'smooth', block: 'center' });
+            }
+        }
+
+        // Remote Control Setup
+        function setupRemoteControl() {
+            document.addEventListener('keydown', (e) => {
+                e.preventDefault();
+                
+                if (document.getElementById('videoPlayer').style.display === 'block') {
+                    handleVideoPlayerKeys(e.key);
+                } else {
+                    handleNavigationKeys(e.key);
+                }
+            });
+        }
+
+        // Handle Navigation Keys
+        function handleNavigationKeys(key) {
+            let items;
+            let maxIndex;
+
+            if (currentView === 'groups') {
+                items = document.querySelectorAll('.group-card');
+                maxIndex = items.length - 1;
+            } else if (currentView === 'channels') {
+                items = document.querySelectorAll('.channel-card');
+                maxIndex = items.length - 1;
+            }
+
+            switch (key) {
+                case 'ArrowUp':
+                    if (currentView === 'groups') {
+                        focusedIndex = Math.max(0, focusedIndex - 3);
+                    } else if (currentView === 'channels') {
+                        if (focusedIndex <= 1) {
+                            focusedIndex = -1; // Focus back button
+                        } else {
+                            focusedIndex = Math.max(0, focusedIndex - 2);
+                        }
+                    }
+                    break;
+                    
+                case 'ArrowDown':
+                    if (currentView === 'groups') {
+                        focusedIndex = Math.min(maxIndex, focusedIndex + 3);
+                    } else if (currentView === 'channels') {
+                        if (focusedIndex === -1) {
+                            focusedIndex = 0;
+                        } else {
+                            focusedIndex = Math.min(maxIndex, focusedIndex + 2);
+                        }
+                    }
+                    break;
+                    
+                case 'ArrowLeft':
+                    if (currentView === 'channels' && focusedIndex >= 0) {
+                        focusedIndex = Math.max(0, focusedIndex - 1);
+                    } else if (currentView === 'groups') {
+                        focusedIndex = Math.max(0, focusedIndex - 1);
+                    }
+                    break;
+                    
+                case 'ArrowRight':
+                    if (currentView === 'channels' && focusedIndex >= 0) {
+                        focusedIndex = Math.min(maxIndex, focusedIndex + 1);
+                    } else if (currentView === 'groups') {
+                        focusedIndex = Math.min(maxIndex, focusedIndex + 1);
+                    }
+                    break;
+                    
+                case 'Enter':
+                    if (currentView === 'groups' && items[focusedIndex]) {
+                        const groupId = items[focusedIndex].dataset.groupId;
+                        showChannels(groupId);
+                    } else if (currentView === 'channels') {
+                        if (focusedIndex === -1) {
+                            // Back button
+                            document.getElementById('backBtn').click();
+                        } else if (items[focusedIndex]) {
+                            const channelIndex = parseInt(items[focusedIndex].dataset.index);
+                            const channel = channelGroups[currentGroup].channels[channelIndex];
+                            playChannel(channel);
+                        }
+                    }
+                    break;
+                    
+                case 'Backspace':
+                case 'Escape':
+                    if (currentView === 'channels') {
+                        document.getElementById('backBtn').click();
+                    }
+                    break;
+            }
+
+            updateFocus();
+        }
+
+        // Handle Video Player Keys
+        function handleVideoPlayerKeys(key) {
+            switch (key) {
+                case 'Backspace':
+                case 'Escape':
+                    closePlayer();
+                    break;
+                    
+                case ' ':
+                case 'Enter':
+                    togglePlayPause();
+                    break;
+                    
+                case 'ArrowUp':
+                    // Volume up
+                    if (currentPlayer && currentPlayer.setVolume) {
+                        const currentVolume = currentPlayer.getVolume();
+                        currentPlayer.setVolume(Math.min(100, currentVolume + 10));
+                    }
+                    showVideoControls();
+                    break;
+                    
+                case 'ArrowDown':
+                    // Volume down
+                    if (currentPlayer && currentPlayer.setVolume) {
+                        const currentVolume = currentPlayer.getVolume();
+                        currentPlayer.setVolume(Math.max(0, currentVolume - 10));
+                    }
+                    showVideoControls();
+                    break;
+                    
+                case 'm':
+                case 'M':
+                    toggleMute();
+                    break;
+                    
+                case 'f':
+                case 'F':
+                    toggleFullscreen();
+                    break;
+            }
+        }
+
+        // Initialize focus on first load
+        setTimeout(() => {
+            updateFocus();
+        }, 100);
+    </script>
 </body>
 </html>
