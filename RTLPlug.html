@@ -102,30 +102,33 @@
             transform: scale(1.2);
         }
 
-        /* Audio/Subtitle Menu */
+        /* Audio/Subtitle Menu - Smaller and Slide Up Animation */
         .audio-subtitle-menu {
             position: absolute;
             bottom: 120px;
             left: 50%;
-            transform: translateX(-50%);
+            transform: translateX(-50%) translateY(100px);
             background: rgba(0, 0, 0, 0.9);
-            border-radius: 15px;
-            padding: 20px;
-            min-width: 300px;
+            border-radius: 12px;
+            padding: 15px;
+            min-width: 250px;
+            max-width: 280px;
             opacity: 0;
             visibility: hidden;
-            transition: all 0.3s ease;
+            transition: all 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
             backdrop-filter: blur(15px);
             z-index: 2500;
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.6);
         }
 
         .audio-subtitle-menu.show {
             opacity: 1;
             visibility: visible;
+            transform: translateX(-50%) translateY(0);
         }
 
         .menu-section {
-            margin-bottom: 20px;
+            margin-bottom: 15px;
         }
 
         .menu-section:last-child {
@@ -133,10 +136,10 @@
         }
 
         .menu-title {
-            font-size: 1.3rem;
+            font-size: 1.1rem;
             font-weight: 600;
             color: #ff6b35;
-            margin-bottom: 10px;
+            margin-bottom: 8px;
             text-align: center;
         }
 
@@ -144,10 +147,10 @@
             background: rgba(255, 255, 255, 0.1);
             color: white;
             border: none;
-            padding: 12px 20px;
-            margin: 5px 0;
-            border-radius: 25px;
-            font-size: 1.1rem;
+            padding: 8px 15px;
+            margin: 3px 0;
+            border-radius: 20px;
+            font-size: 0.95rem;
             cursor: pointer;
             width: 100%;
             transition: all 0.3s ease;
@@ -157,7 +160,7 @@
         .menu-item:hover,
         .menu-item.focused {
             background: rgba(255, 107, 53, 0.8);
-            transform: scale(1.05);
+            transform: scale(1.03);
         }
 
         .menu-item.active {
@@ -296,8 +299,19 @@
             }
 
             .audio-subtitle-menu {
-                min-width: 250px;
+                min-width: 220px;
+                max-width: 250px;
                 bottom: 100px;
+                padding: 12px;
+            }
+
+            .menu-title {
+                font-size: 1rem;
+            }
+
+            .menu-item {
+                font-size: 0.9rem;
+                padding: 7px 12px;
             }
         }
     </style>
@@ -312,7 +326,7 @@
         <div class="loading" id="loading">
             <div class="spinner"></div>
             <div class="loading-text">جاري تحميل القناة</div>
-            <div class="loading-channel">ZIGGO SPORTS 1 HD</div>
+            <div class="loading-channel">ADSP1 HD</div>
         </div>
 
         <!-- Error Message -->
@@ -327,7 +341,7 @@
             <!-- Video will be inserted here -->
         </div>
 
-        <!-- Audio/Subtitle Menu -->
+        <!-- Audio/Subtitle Menu - Smaller with Slide Up Animation -->
         <div class="audio-subtitle-menu" id="audioSubtitleMenu">
             <div class="menu-section" id="audioSection">
                 <div class="menu-title">مسارات الصوت</div>
@@ -362,7 +376,7 @@
     <script>
         // Channel Data
         const channel = {
-            name: "ZIGGO SPORTS 1 HD",
+            name: "ADSP1 HD",
             logo: "https://www.ziggosport.nl/images/logos/logo-ziggosport.svg",
             url: "https://uselector.cdn.intigral-ott.net/ADSP1/ADSP1.isml/manifest.mpd",
             key: "eb5a3a48f3e191a00e3ac1e2d470c491:2c8b7198563527e524d66628c092ef1f",
@@ -645,7 +659,7 @@
             }, 4000);
         }
 
-        // Show Audio/Subtitle Menu
+        // Show Audio/Subtitle Menu with Slide Up Animation
         function showAudioSubtitleMenu() {
             const menu = document.getElementById('audioSubtitleMenu');
             menu.classList.add('show');
@@ -875,3 +889,4 @@
     </script>
 </body>
 </html>
+
