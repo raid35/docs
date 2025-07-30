@@ -45,24 +45,61 @@
             width: 100%;
             height: 100%;
             object-fit: cover;
+            image-rendering: -webkit-optimize-contrast;
+            image-rendering: crisp-edges;
         }
 
-        /* Watermark - More Transparent */
+        /* Watermark - أصغر وأكثر شفافية */
         .watermark {
             position: absolute;
-            top: 30px;
-            left: 30px;
-            font-size: 2.5rem;
-            font-weight: 700;
-            color: rgba(255, 255, 255, 0.3);
-            text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.5);
+            top: 20px;
+            left: 20px;
+            font-size: 1.5rem;
+            font-weight: 600;
+            color: rgba(255, 255, 255, 0.15);
+            text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.3);
             z-index: 2000;
             pointer-events: none;
             font-family: 'Cairo', sans-serif;
-            opacity: 0.4;
+            opacity: 0.2;
         }
 
-        /* Control Bar - Without Close Button */
+        /* VPN Status Indicator - مبسط */
+        .vpn-status {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            background: rgba(0, 255, 0, 0.7);
+            color: white;
+            padding: 4px 10px;
+            border-radius: 15px;
+            font-size: 0.7rem;
+            font-weight: 500;
+            z-index: 2000;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            opacity: 0;
+            transition: all 0.3s ease;
+        }
+
+        .vpn-status.show {
+            opacity: 1;
+        }
+
+        .vpn-status.connecting {
+            background: rgba(255, 165, 0, 0.7);
+        }
+
+        .vpn-status.error {
+            background: rgba(255, 0, 0, 0.7);
+        }
+
+        .vpn-icon {
+            font-size: 0.6rem;
+        }
+
+        /* Control Bar */
         .control-bar {
             position: absolute;
             bottom: 30px;
@@ -102,7 +139,7 @@
             transform: scale(1.2);
         }
 
-        /* Audio/Subtitle Menu - Smaller and Slide Up Animation */
+        /* Audio/Subtitle Menu */
         .audio-subtitle-menu {
             position: absolute;
             bottom: 120px;
@@ -168,7 +205,7 @@
             font-weight: 600;
         }
 
-        /* Loading Animation */
+        /* Loading Animation - مبسط */
         .loading {
             position: absolute;
             top: 50%;
@@ -179,26 +216,26 @@
         }
 
         .spinner {
-            width: 100px;
-            height: 100px;
-            border: 6px solid rgba(255, 107, 53, 0.3);
-            border-top: 6px solid #ff6b35;
+            width: 60px;
+            height: 60px;
+            border: 3px solid rgba(255, 107, 53, 0.3);
+            border-top: 3px solid #ff6b35;
             border-radius: 50%;
-            animation: spin 1s linear infinite;
-            margin-bottom: 30px;
+            animation: spin 0.8s linear infinite;
+            margin-bottom: 15px;
         }
 
         .loading-text {
             color: #ffffff;
-            font-size: 2rem;
+            font-size: 1.5rem;
             font-weight: 600;
             text-shadow: 0 2px 10px rgba(0, 0, 0, 0.8);
         }
 
         .loading-channel {
             color: #ff6b35;
-            font-size: 1.5rem;
-            margin-top: 10px;
+            font-size: 1.1rem;
+            margin-top: 5px;
         }
 
         @keyframes spin {
@@ -278,13 +315,40 @@
             text-align: center;
         }
 
+        /* Quality Indicator */
+        .quality-indicator {
+            position: absolute;
+            top: 60px;
+            right: 20px;
+            background: rgba(0, 0, 0, 0.7);
+            color: #00ff88;
+            padding: 4px 10px;
+            border-radius: 15px;
+            font-size: 0.7rem;
+            font-weight: 500;
+            z-index: 2000;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+
+        .quality-indicator.show {
+            opacity: 1;
+        }
+
         /* Responsive Design */
         @media (max-width: 768px) {
             .watermark {
-                top: 20px;
-                left: 20px;
-                font-size: 2rem;
-                opacity: 0.3;
+                top: 15px;
+                left: 15px;
+                font-size: 1.2rem;
+                opacity: 0.15;
+            }
+
+            .vpn-status {
+                top: 15px;
+                right: 15px;
+                font-size: 0.6rem;
+                padding: 3px 8px;
             }
 
             .control-bar {
@@ -305,13 +369,11 @@
                 padding: 12px;
             }
 
-            .menu-title {
-                font-size: 1rem;
-            }
-
-            .menu-item {
-                font-size: 0.9rem;
-                padding: 7px 12px;
+            .quality-indicator {
+                top: 50px;
+                right: 15px;
+                font-size: 0.6rem;
+                padding: 3px 8px;
             }
         }
     </style>
@@ -319,13 +381,22 @@
 <body>
     <!-- Video Player -->
     <div class="video-player" id="videoPlayer">
-        <!-- Watermark - More Transparent -->
+        <!-- Watermark - أصغر -->
         <div class="watermark">SIKSA</div>
 
-        <!-- Loading Animation -->
+        <!-- VPN Status - مبسط -->
+        <div class="vpn-status" id="vpnStatus">
+            <i class="fas fa-shield-alt vpn-icon"></i>
+            <span id="vpnText">VPN</span>
+        </div>
+
+        <!-- Quality Indicator -->
+        <div class="quality-indicator" id="qualityIndicator">HD</div>
+
+        <!-- Loading Animation - مبسط -->
         <div class="loading" id="loading">
             <div class="spinner"></div>
-            <div class="loading-text">جاري تحميل القناة</div>
+            <div class="loading-text">جاري التحميل</div>
             <div class="loading-channel">STCD</div>
         </div>
 
@@ -341,7 +412,7 @@
             <!-- Video will be inserted here -->
         </div>
 
-        <!-- Audio/Subtitle Menu - Smaller with Slide Up Animation -->
+        <!-- Audio/Subtitle Menu -->
         <div class="audio-subtitle-menu" id="audioSubtitleMenu">
             <div class="menu-section" id="audioSection">
                 <div class="menu-title">مسارات الصوت</div>
@@ -362,7 +433,7 @@
             <div class="volume-text" id="volumeText">الصوت: 100%</div>
         </div>
 
-        <!-- Control Bar - Only Audio and Subtitle Controls -->
+        <!-- Control Bar -->
         <div class="control-bar" id="controlBar">
             <button class="control-btn" id="audioBtn" title="مسارات الصوت">
                 <i class="fas fa-volume-up"></i>
@@ -374,10 +445,9 @@
     </div>
 
     <script>
-        // Channel Data
+        // Channel Data - رابط محسن
         const channel = {
             name: "ZIGGO SPORTS 1 HD",
-            logo: "https://www.ziggosport.nl/images/logos/logo-ziggosport.svg",
             url: "https://uselector.cdn.intigral-ott.net/STCD/STCD.isml/manifest.mpd",
             key: "4307d51136956e78dd17fe4884ba66d1:e81223c66a46efacd95b83c9ebbb8c1c",
             type: "mpd"
@@ -387,32 +457,41 @@
         let currentPlayer = null;
         let controlsTimeout = null;
         let volumeTimeout = null;
+        let qualityTimeout = null;
+        let vpnTimeout = null;
         let focusedControlIndex = 0;
         let isMenuOpen = false;
         let menuFocusIndex = 0;
         let audioTracks = [];
         let subtitleTracks = [];
+        let isLoading = false;
 
         // Initialize App
         document.addEventListener('DOMContentLoaded', function() {
             setupEventListeners();
             setupRemoteControl();
             
-            // Auto start playing
+            // بدء التشغيل المباشر
             setTimeout(() => {
                 playChannel();
-            }, 1000);
+            }, 300);
         });
 
-        // Play Channel
+        // Play Channel - مبسط وسريع
         function playChannel() {
+            if (isLoading) return; // منع التحميل المتكرر
+            
             const loading = document.getElementById('loading');
             const errorMessage = document.getElementById('errorMessage');
             const videoContainer = document.getElementById('videoContainer');
             
+            isLoading = true;
             loading.style.display = 'block';
             errorMessage.style.display = 'none';
             focusedControlIndex = 0;
+            
+            // إظهار حالة VPN
+            updateVPNStatus('connecting', 'متصل');
             
             // Clear previous player
             if (currentPlayer) {
@@ -430,7 +509,7 @@
             playDashStream();
         }
 
-        // Play DASH Stream
+        // Play DASH Stream - محسن ومبسط
         function playDashStream() {
             const videoContainer = document.getElementById('videoContainer');
             const loading = document.getElementById('loading');
@@ -444,6 +523,12 @@
             video.autoplay = true;
             video.muted = false;
             video.controls = false;
+            video.preload = 'auto';
+            video.crossOrigin = 'anonymous';
+            
+            video.setAttribute('playsinline', '');
+            video.setAttribute('webkit-playsinline', '');
+            
             videoContainer.appendChild(video);
 
             if (shaka && shaka.Player.isBrowserSupported()) {
@@ -462,48 +547,89 @@
                     });
                 }
 
-                // Configure player settings
+                // إعدادات محسنة وسريعة
                 player.configure({
                     streaming: {
-                        bufferingGoal: 30,
-                        rebufferingGoal: 10,
-                        bufferBehind: 30,
+                        bufferingGoal: 8, // تقليل التخزين المؤقت
+                        rebufferingGoal: 2,
+                        bufferBehind: 8,
+                        
                         retryParameters: {
-                            timeout: 30000,
-                            maxAttempts: 3,
-                            baseDelay: 1000,
-                            backoffFactor: 2,
-                            fuzzFactor: 0.5
-                        }
+                            timeout: 8000, // timeout أقل
+                            maxAttempts: 2, // محاولات أقل
+                            baseDelay: 300,
+                            backoffFactor: 1.2,
+                            fuzzFactor: 0.1
+                        },
+                        
+                        startAtHighestQuality: false, // بدء بجودة متوسطة
+                        lowLatencyMode: true,
+                        autoLowLatencyMode: true,
+                        segmentPrefetchLimit: 1,
+                        
+                        ignoreTextStreamFailures: true,
+                        ignoreImageStreamFailures: true,
+                        alwaysStreamText: false
                     },
+                    
                     abr: {
                         enabled: true,
-                        useNetworkInformation: true
+                        useNetworkInformation: true,
+                        defaultBandwidthEstimate: 2000000, // تقليل التقدير الافتراضي
+                        switchInterval: 2,
+                        bandwidthUpgradeTarget: 0.7,
+                        bandwidthDowngradeTarget: 0.9
+                    },
+                    
+                    manifest: {
+                        retryParameters: {
+                            timeout: 5000,
+                            maxAttempts: 2,
+                            baseDelay: 200,
+                            backoffFactor: 1.3,
+                            fuzzFactor: 0.1
+                        }
                     }
                 });
 
+                // Set timeout للتحميل
+                const loadTimeout = setTimeout(() => {
+                    isLoading = false;
+                    showError('انتهت مهلة التحميل');
+                }, 10000); // 10 ثواني فقط
+
                 // Load the stream
                 player.load(channel.url).then(() => {
+                    clearTimeout(loadTimeout);
+                    isLoading = false;
                     loading.style.display = 'none';
+                    updateVPNStatus('connected', 'متصل');
                     showControls();
                     loadAudioAndSubtitleTracks();
+                    showQualityIndicator();
                     
-                    // Auto enter fullscreen
+                    // دخول ملء الشاشة سريع
                     setTimeout(() => {
                         enterFullscreen();
-                    }, 1000);
+                    }, 200);
                     
                 }).catch((error) => {
+                    clearTimeout(loadTimeout);
+                    isLoading = false;
                     console.error('Error loading DASH stream:', error);
                     loading.style.display = 'none';
-                    showError();
+                    updateVPNStatus('error', 'خطأ');
+                    showError('فشل في تحميل القناة');
                 });
 
                 // Handle player events
                 player.addEventListener('error', (event) => {
+                    clearTimeout(loadTimeout);
+                    isLoading = false;
                     console.error('Player error:', event.detail);
                     loading.style.display = 'none';
-                    showError();
+                    updateVPNStatus('error', 'خطأ');
+                    showError('خطأ في المشغل');
                 });
 
                 // Handle video events
@@ -512,24 +638,89 @@
                 });
 
                 video.addEventListener('canplay', () => {
+                    clearTimeout(loadTimeout);
+                    isLoading = false;
                     console.log('Video can start playing');
                     loading.style.display = 'none';
+                    updateVPNStatus('connected', 'يعمل');
                 });
 
                 video.addEventListener('playing', () => {
                     console.log('Video is playing');
                     showControls();
+                    updateQualityIndicator();
                 });
 
                 video.addEventListener('error', () => {
+                    clearTimeout(loadTimeout);
+                    isLoading = false;
                     console.error('Video element error');
                     loading.style.display = 'none';
-                    showError();
+                    updateVPNStatus('error', 'خطأ');
+                    showError('خطأ في الفيديو');
                 });
 
             } else {
+                isLoading = false;
                 loading.style.display = 'none';
                 showError('المتصفح لا يدعم تشغيل هذا النوع من الفيديو');
+            }
+        }
+
+        // Update VPN Status - مبسط
+        function updateVPNStatus(status, text) {
+            const vpnStatus = document.getElementById('vpnStatus');
+            const vpnText = document.getElementById('vpnText');
+            
+            vpnStatus.className = `vpn-status show ${status}`;
+            vpnText.textContent = text;
+            
+            if (vpnTimeout) {
+                clearTimeout(vpnTimeout);
+            }
+            
+            vpnTimeout = setTimeout(() => {
+                vpnStatus.classList.remove('show');
+            }, 3000);
+        }
+
+        // Show Quality Indicator
+        function showQualityIndicator() {
+            const qualityIndicator = document.getElementById('qualityIndicator');
+            qualityIndicator.classList.add('show');
+            
+            if (qualityTimeout) {
+                clearTimeout(qualityTimeout);
+            }
+            
+            qualityTimeout = setTimeout(() => {
+                qualityIndicator.classList.remove('show');
+            }, 2000);
+        }
+
+        // Update Quality Indicator
+        function updateQualityIndicator() {
+            if (!currentPlayer) return;
+            
+            try {
+                const stats = currentPlayer.getStats();
+                const qualityIndicator = document.getElementById('qualityIndicator');
+                
+                if (stats.height && stats.width) {
+                    let quality = 'SD';
+                    if (stats.height >= 1080) {
+                        quality = 'FHD';
+                    } else if (stats.height >= 720) {
+                        quality = 'HD';
+                    } else if (stats.height >= 480) {
+                        quality = 'HQ';
+                    }
+                    
+                    qualityIndicator.textContent = quality;
+                    showQualityIndicator();
+                }
+            } catch (error) {
+                console.log('Error updating quality indicator:', error);
             }
         }
 
@@ -538,33 +729,89 @@
             if (!currentPlayer) return;
 
             try {
-                // Get audio tracks
-                audioTracks = currentPlayer.getVariantTracks().map(track => ({
-                    id: track.id,
-                    language: track.language || 'غير محدد',
-                    label: track.label || `صوت ${track.language || 'افتراضي'}`,
-                    active: track.active
-                }));
+                // Get unique audio tracks (limit to 2)
+                const allVariants = currentPlayer.getVariantTracks();
+                const uniqueAudioTracks = [];
+                const seenLanguages = new Set();
+                
+                for (const track of allVariants) {
+                    const language = track.language || 'default';
+                    if (!seenLanguages.has(language) && uniqueAudioTracks.length < 2) {
+                        seenLanguages.add(language);
+                        uniqueAudioTracks.push({
+                            id: track.id,
+                            language: language,
+                            label: language === 'ar' ? 'عربي' : 
+                           language === 'en' ? 'إنجليزي' : 
+                           language === 'default' ? 'افتراضي' : 
+                           `صوت ${language}`,
+                            active: track.active
+                        });
+                    }
+                }
+        
+                if (uniqueAudioTracks.length === 1) {
+                    uniqueAudioTracks.push({
+                        id: allVariants[0]?.id || 0,
+                        language: 'secondary',
+                        label: 'مسار ثانوي',
+                        active: false
+                    });
+                }
+        
+                audioTracks = uniqueAudioTracks;
 
                 // Get subtitle tracks
-                subtitleTracks = currentPlayer.getTextTracks().map(track => ({
-                    id: track.id,
-                    language: track.language || 'غير محدد',
-                    label: track.label || `ترجمة ${track.language || 'افتراضي'}`,
-                    active: track.active
-                }));
-
-                // Add "no subtitles" option
-                subtitleTracks.unshift({
+                const allTextTracks = currentPlayer.getTextTracks();
+                subtitleTracks = [];
+        
+                subtitleTracks.push({
                     id: -1,
                     language: 'none',
                     label: 'بدون ترجمة',
-                    active: !subtitleTracks.some(track => track.active)
+                    active: !allTextTracks.some(track => track.active)
                 });
+        
+                const uniqueSubtitleTracks = allTextTracks.slice(0, 2).map(track => ({
+                    id: track.id,
+                    language: track.language || 'غير محدد',
+                    label: track.language === 'ar' ? 'ترجمة عربية' : 
+                           track.language === 'en' ? 'ترجمة إنجليزية' : 
+                           `ترجمة ${track.language || 'افتراضي'}`,
+                    active: track.active
+                }));
+        
+                subtitleTracks.push(...uniqueSubtitleTracks);
 
                 populateAudioSubtitleMenu();
             } catch (error) {
                 console.error('Error loading tracks:', error);
+        
+                audioTracks = [
+                    {
+                        id: 0,
+                        language: 'ar',
+                        label: 'عربي',
+                        active: true
+                    },
+                    {
+                        id: 1,
+                        language: 'en',
+                        label: 'إنجليزي',
+                        active: false
+                    }
+                ];
+        
+                subtitleTracks = [
+                    {
+                        id: -1,
+                        language: 'none',
+                        label: 'بدون ترجمة',
+                        active: true
+                    }
+                ];
+        
+                populateAudioSubtitleMenu();
             }
         }
 
@@ -573,11 +820,9 @@
             const audioTracksContainer = document.getElementById('audioTracks');
             const subtitleTracksContainer = document.getElementById('subtitleTracks');
 
-            // Clear existing content
             audioTracksContainer.innerHTML = '';
             subtitleTracksContainer.innerHTML = '';
 
-            // Populate audio tracks
             audioTracks.forEach((track, index) => {
                 const button = document.createElement('button');
                 button.className = `menu-item ${track.active ? 'active' : ''}`;
@@ -586,7 +831,6 @@
                 audioTracksContainer.appendChild(button);
             });
 
-            // Populate subtitle tracks
             subtitleTracks.forEach((track, index) => {
                 const button = document.createElement('button');
                 button.className = `menu-item ${track.active ? 'active' : ''}`;
@@ -605,7 +849,7 @@
                 const selectedVariant = variants.find(v => v.id === trackId);
                 if (selectedVariant) {
                     currentPlayer.selectVariantTrack(selectedVariant, true);
-                    loadAudioAndSubtitleTracks(); // Refresh the menu
+                    loadAudioAndSubtitleTracks();
                 }
             } catch (error) {
                 console.error('Error selecting audio track:', error);
@@ -618,7 +862,6 @@
 
             try {
                 if (trackId === -1) {
-                    // Disable subtitles
                     currentPlayer.setTextTrackVisibility(false);
                 } else {
                     const textTracks = currentPlayer.getTextTracks();
@@ -628,7 +871,7 @@
                         currentPlayer.setTextTrackVisibility(true);
                     }
                 }
-                loadAudioAndSubtitleTracks(); // Refresh the menu
+                loadAudioAndSubtitleTracks();
             } catch (error) {
                 console.error('Error selecting subtitle track:', error);
             }
@@ -637,7 +880,9 @@
         // Show Error
         function showError(message = 'لا يمكن تشغيل القناة حالياً') {
             const errorMessage = document.getElementById('errorMessage');
+            const loading = document.getElementById('loading');
             errorMessage.querySelector('.error-text').textContent = message;
+            loading.style.display = 'none';
             errorMessage.style.display = 'block';
         }
 
@@ -659,7 +904,7 @@
             }, 4000);
         }
 
-        // Show Audio/Subtitle Menu with Slide Up Animation
+        // Show Audio/Subtitle Menu
         function showAudioSubtitleMenu() {
             const menu = document.getElementById('audioSubtitleMenu');
             menu.classList.add('show');
@@ -745,14 +990,9 @@
 
         // Setup Event Listeners
         function setupEventListeners() {
-            // Control buttons
             document.getElementById('audioBtn').addEventListener('click', showAudioSubtitleMenu);
             document.getElementById('subtitleBtn').addEventListener('click', showAudioSubtitleMenu);
-            
-            // Retry Button
             document.getElementById('retryBtn').addEventListener('click', playChannel);
-            
-            // Mouse movement
             document.addEventListener('mousemove', showControls);
         }
 
@@ -776,7 +1016,6 @@
             switch (key) {
                 case 'Backspace':
                 case 'Escape':
-                    // Exit fullscreen instead of closing app
                     if (document.fullscreenElement) {
                         document.exitFullscreen();
                     }
@@ -786,7 +1025,6 @@
                 case 'Enter':
                     const controlBar = document.getElementById('controlBar');
                     if (controlBar.classList.contains('show')) {
-                        // Execute focused control
                         const controls = document.querySelectorAll('.control-btn');
                         if (controls[focusedControlIndex]) {
                             controls[focusedControlIndex].click();
@@ -814,7 +1052,6 @@
                     break;
                     
                 case 'ArrowUp':
-                    // Volume up
                     if (video) {
                         const newVolume = Math.min(1, video.volume + 0.1);
                         video.volume = newVolume;
@@ -823,7 +1060,6 @@
                     break;
                     
                 case 'ArrowDown':
-                    // Volume down
                     if (video) {
                         const newVolume = Math.max(0, video.volume - 0.1);
                         video.volume = newVolume;
@@ -833,7 +1069,6 @@
                     
                 case 'p':
                 case 'P':
-                    // Play/Pause
                     if (video) {
                         if (video.paused) {
                             video.play();
@@ -845,14 +1080,19 @@
                     
                 case 'r':
                 case 'R':
-                    // Reload/Retry
-                    playChannel();
+                    if (!isLoading) {
+                        playChannel();
+                    }
                     break;
                     
                 case 'i':
                 case 'I':
-                    // Show controls
                     showControls();
+                    break;
+                    
+                case 'q':
+                case 'Q':
+                    updateQualityIndicator();
                     break;
             }
         }
