@@ -45,9 +45,12 @@
             width: 100%;
             height: 100%;
             object-fit: cover;
+            /* تحسين جودة الصورة */
+            image-rendering: -webkit-optimize-contrast;
+            image-rendering: crisp-edges;
         }
 
-        /* Watermark - More Transparent */
+        /* Watermark */
         .watermark {
             position: absolute;
             top: 30px;
@@ -62,7 +65,7 @@
             opacity: 0.4;
         }
 
-        /* Control Bar - Without Close Button */
+        /* Control Bar */
         .control-bar {
             position: absolute;
             bottom: 30px;
@@ -102,7 +105,7 @@
             transform: scale(1.2);
         }
 
-        /* Audio/Subtitle Menu - Smaller and Slide Up Animation */
+        /* Audio/Subtitle Menu */
         .audio-subtitle-menu {
             position: absolute;
             bottom: 120px;
@@ -168,7 +171,7 @@
             font-weight: 600;
         }
 
-        /* Loading Animation */
+        /* Loading Animation - محسن */
         .loading {
             position: absolute;
             top: 50%;
@@ -179,31 +182,54 @@
         }
 
         .spinner {
-            width: 100px;
-            height: 100px;
-            border: 6px solid rgba(255, 107, 53, 0.3);
-            border-top: 6px solid #ff6b35;
+            width: 80px;
+            height: 80px;
+            border: 4px solid rgba(255, 107, 53, 0.3);
+            border-top: 4px solid #ff6b35;
             border-radius: 50%;
-            animation: spin 1s linear infinite;
-            margin-bottom: 30px;
+            animation: spin 0.8s linear infinite;
+            margin-bottom: 20px;
         }
 
         .loading-text {
             color: #ffffff;
-            font-size: 2rem;
+            font-size: 1.8rem;
             font-weight: 600;
             text-shadow: 0 2px 10px rgba(0, 0, 0, 0.8);
         }
 
         .loading-channel {
             color: #ff6b35;
-            font-size: 1.5rem;
-            margin-top: 10px;
+            font-size: 1.3rem;
+            margin-top: 8px;
+        }
+
+        /* شريط التقدم */
+        .loading-progress {
+            width: 200px;
+            height: 4px;
+            background: rgba(255, 255, 255, 0.2);
+            border-radius: 2px;
+            margin: 15px auto;
+            overflow: hidden;
+        }
+
+        .loading-progress-bar {
+            height: 100%;
+            background: linear-gradient(90deg, #ff6b35, #ff8c42);
+            border-radius: 2px;
+            animation: progress 2s ease-in-out infinite;
         }
 
         @keyframes spin {
             0% { transform: rotate(0deg); }
             100% { transform: rotate(360deg); }
+        }
+
+        @keyframes progress {
+            0% { width: 0%; }
+            50% { width: 70%; }
+            100% { width: 100%; }
         }
 
         /* Error Message */
@@ -278,6 +304,26 @@
             text-align: center;
         }
 
+        /* Quality Indicator */
+        .quality-indicator {
+            position: absolute;
+            top: 30px;
+            right: 30px;
+            background: rgba(0, 0, 0, 0.7);
+            color: #00ff88;
+            padding: 8px 15px;
+            border-radius: 20px;
+            font-size: 0.9rem;
+            font-weight: 600;
+            z-index: 2000;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+
+        .quality-indicator.show {
+            opacity: 1;
+        }
+
         /* Responsive Design */
         @media (max-width: 768px) {
             .watermark {
@@ -305,13 +351,11 @@
                 padding: 12px;
             }
 
-            .menu-title {
-                font-size: 1rem;
-            }
-
-            .menu-item {
-                font-size: 0.9rem;
-                padding: 7px 12px;
+            .quality-indicator {
+                top: 20px;
+                right: 20px;
+                font-size: 0.8rem;
+                padding: 6px 12px;
             }
         }
     </style>
@@ -319,14 +363,20 @@
 <body>
     <!-- Video Player -->
     <div class="video-player" id="videoPlayer">
-        <!-- Watermark - More Transparent -->
+        <!-- Watermark -->
         <div class="watermark">SIKSA</div>
+
+        <!-- Quality Indicator -->
+        <div class="quality-indicator" id="qualityIndicator">HD</div>
 
         <!-- Loading Animation -->
         <div class="loading" id="loading">
             <div class="spinner"></div>
             <div class="loading-text">جاري تحميل القناة</div>
-            <div class="loading-channel">ADSP2</div>
+            <div class="loading-channel">sps2</div>
+            <div class="loading-progress">
+                <div class="loading-progress-bar"></div>
+            </div>
         </div>
 
         <!-- Error Message -->
@@ -341,7 +391,7 @@
             <!-- Video will be inserted here -->
         </div>
 
-        <!-- Audio/Subtitle Menu - Smaller with Slide Up Animation -->
+        <!-- Audio/Subtitle Menu -->
         <div class="audio-subtitle-menu" id="audioSubtitleMenu">
             <div class="menu-section" id="audioSection">
                 <div class="menu-title">مسارات الصوت</div>
@@ -362,7 +412,7 @@
             <div class="volume-text" id="volumeText">الصوت: 100%</div>
         </div>
 
-        <!-- Control Bar - Only Audio and Subtitle Controls -->
+        <!-- Control Bar -->
         <div class="control-bar" id="controlBar">
             <button class="control-btn" id="audioBtn" title="مسارات الصوت">
                 <i class="fas fa-volume-up"></i>
@@ -387,6 +437,7 @@
         let currentPlayer = null;
         let controlsTimeout = null;
         let volumeTimeout = null;
+        let qualityTimeout = null;
         let focusedControlIndex = 0;
         let isMenuOpen = false;
         let menuFocusIndex = 0;
@@ -398,10 +449,10 @@
             setupEventListeners();
             setupRemoteControl();
             
-            // Auto start playing
+            // تسريع بدء التشغيل
             setTimeout(() => {
                 playChannel();
-            }, 1000);
+            }, 500); // تقليل من 1000 إلى 500
         });
 
         // Play Channel
@@ -430,7 +481,7 @@
             playDashStream();
         }
 
-        // Play DASH Stream
+        // Play DASH Stream - محسن للسرعة والجودة
         function playDashStream() {
             const videoContainer = document.getElementById('videoContainer');
             const loading = document.getElementById('loading');
@@ -444,6 +495,13 @@
             video.autoplay = true;
             video.muted = false;
             video.controls = false;
+            video.preload = 'auto'; // تحميل مسبق
+            video.crossOrigin = 'anonymous';
+            
+            // تحسين جودة الفيديو
+            video.setAttribute('playsinline', '');
+            video.setAttribute('webkit-playsinline', '');
+            
             videoContainer.appendChild(video);
 
             if (shaka && shaka.Player.isBrowserSupported()) {
@@ -462,23 +520,74 @@
                     });
                 }
 
-                // Configure player settings
+                // إعدادات محسنة للسرعة والجودة
                 player.configure({
                     streaming: {
-                        bufferingGoal: 30,
-                        rebufferingGoal: 10,
-                        bufferBehind: 30,
+                        // تسريع التحميل
+                        bufferingGoal: 15, // تقليل من 30 إلى 15
+                        rebufferingGoal: 5, // تقليل من 10 إلى 5
+                        bufferBehind: 15, // تقليل من 30 إلى 15
+                        
+                        // تحسين الشبكة
                         retryParameters: {
-                            timeout: 30000,
-                            maxAttempts: 3,
-                            baseDelay: 1000,
-                            backoffFactor: 2,
-                            fuzzFactor: 0.5
-                        }
+                            timeout: 15000, // تقليل من 30000
+                            maxAttempts: 5, // زيادة المحاولات
+                            baseDelay: 500, // تقليل التأخير
+                            backoffFactor: 1.5,
+                            fuzzFactor: 0.3
+                        },
+                        
+                        // تحسين الجودة
+                        alwaysStreamText: false,
+                        startAtHighestQuality: true, // بدء بأعلى جودة
+                        switchHistory: 5,
+                        safeSeekOffset: 5,
+                        stallEnabled: true,
+                        stallThreshold: 1,
+                        useNativeHlsOnSafari: true,
+                        
+                        // تحسين التخزين المؤقت
+                        segmentPrefetchLimit: 2,
+                        prefetchAudioLanguages: ['ar', 'en'],
+                        
+                        // تحسين الأداء
+                        lowLatencyMode: true,
+                        autoLowLatencyMode: true
                     },
+                    
+                    // تحسين ABR للجودة العالية
                     abr: {
                         enabled: true,
-                        useNetworkInformation: true
+                        useNetworkInformation: true,
+                        defaultBandwidthEstimate: 5000000, // 5 Mbps افتراضي
+                        switchInterval: 2, // تقليل فترة التبديل
+                        bandwidthUpgradeTarget: 0.85,
+                        bandwidthDowngradeTarget: 0.95,
+                        
+                        // إعطاء أولوية للجودة العالية
+                        restrictions: {
+                            minWidth: 640,
+                            minHeight: 360,
+                            maxWidth: 1920,
+                            maxHeight: 1080,
+                            minPixels: 230400, // 640x360
+                            maxPixels: 2073600, // 1920x1080
+                            minFrameRate: 24,
+                            maxFrameRate: 60,
+                            minBandwidth: 500000, // 500 Kbps minimum
+                            maxBandwidth: 20000000 // 20 Mbps maximum
+                        }
+                    },
+                    
+                    // تحسين معالجة الأخطاء
+                    manifest: {
+                        retryParameters: {
+                            timeout: 10000,
+                            maxAttempts: 3,
+                            baseDelay: 500,
+                            backoffFactor: 1.5,
+                            fuzzFactor: 0.3
+                        }
                     }
                 });
 
@@ -487,11 +596,12 @@
                     loading.style.display = 'none';
                     showControls();
                     loadAudioAndSubtitleTracks();
+                    showQualityIndicator();
                     
-                    // Auto enter fullscreen
+                    // تسريع دخول ملء الشاشة
                     setTimeout(() => {
                         enterFullscreen();
-                    }, 1000);
+                    }, 300); // تقليل من 1000 إلى 300
                     
                 }).catch((error) => {
                     console.error('Error loading DASH stream:', error);
@@ -506,19 +616,35 @@
                     showError();
                 });
 
+                // مراقبة جودة الفيديو
+                player.addEventListener('adaptation', () => {
+                    updateQualityIndicator();
+                });
+
                 // Handle video events
                 video.addEventListener('loadstart', () => {
                     console.log('Video loading started');
                 });
 
+                video.addEventListener('loadedmetadata', () => {
+                    console.log('Video metadata loaded');
+                    updateQualityIndicator();
+                });
+
                 video.addEventListener('canplay', () => {
                     console.log('Video can start playing');
                     loading.style.display = 'none';
+                    showQualityIndicator();
                 });
 
                 video.addEventListener('playing', () => {
                     console.log('Video is playing');
                     showControls();
+                    updateQualityIndicator();
+                });
+
+                video.addEventListener('waiting', () => {
+                    console.log('Video is buffering');
                 });
 
                 video.addEventListener('error', () => {
@@ -533,38 +659,139 @@
             }
         }
 
+        // Show Quality Indicator
+        function showQualityIndicator() {
+            const qualityIndicator = document.getElementById('qualityIndicator');
+            qualityIndicator.classList.add('show');
+            
+            if (qualityTimeout) {
+                clearTimeout(qualityTimeout);
+            }
+            
+            qualityTimeout = setTimeout(() => {
+                qualityIndicator.classList.remove('show');
+            }, 3000);
+        }
+
+        // Update Quality Indicator
+        function updateQualityIndicator() {
+            if (!currentPlayer) return;
+            
+            try {
+                const stats = currentPlayer.getStats();
+                const qualityIndicator = document.getElementById('qualityIndicator');
+                
+                if (stats.height && stats.width) {
+                    let quality = 'SD';
+                    if (stats.height >= 1080) {
+                        quality = 'FHD';
+                    } else if (stats.height >= 720) {
+                        quality = 'HD';
+                    } else if (stats.height >= 480) {
+                        quality = 'HQ';
+                    }
+                    
+                    qualityIndicator.textContent = `${quality} ${stats.width}x${stats.height}`;
+                    showQualityIndicator();
+                }
+            } catch (error) {
+                console.log('Error updating quality indicator:', error);
+            }
+        }
+
         // Load Audio and Subtitle Tracks
         function loadAudioAndSubtitleTracks() {
             if (!currentPlayer) return;
 
             try {
-                // Get audio tracks
-                audioTracks = currentPlayer.getVariantTracks().map(track => ({
-                    id: track.id,
-                    language: track.language || 'غير محدد',
-                    label: track.label || `صوت ${track.language || 'افتراضي'}`,
-                    active: track.active
-                }));
+                // Get unique audio tracks (limit to 2)
+                const allVariants = currentPlayer.getVariantTracks();
+                const uniqueAudioTracks = [];
+                const seenLanguages = new Set();
+                
+                // Filter unique audio tracks by language
+                for (const track of allVariants) {
+                    const language = track.language || 'default';
+                    if (!seenLanguages.has(language) && uniqueAudioTracks.length < 2) {
+                        seenLanguages.add(language);
+                        uniqueAudioTracks.push({
+                            id: track.id,
+                            language: language,
+                            label: language === 'ar' ? 'عربي' : 
+                           language === 'en' ? 'إنجليزي' : 
+                           language === 'default' ? 'افتراضي' : 
+                           `صوت ${language}`,
+                            active: track.active
+                        });
+                    }
+                }
+        
+                // If we have less than 2 tracks, add a default second track
+                if (uniqueAudioTracks.length === 1) {
+                    uniqueAudioTracks.push({
+                        id: allVariants[0]?.id || 0,
+                        language: 'secondary',
+                        label: 'مسار ثانوي',
+                        active: false
+                    });
+                }
+        
+                audioTracks = uniqueAudioTracks;
 
-                // Get subtitle tracks
-                subtitleTracks = currentPlayer.getTextTracks().map(track => ({
-                    id: track.id,
-                    language: track.language || 'غير محدد',
-                    label: track.label || `ترجمة ${track.language || 'افتراضي'}`,
-                    active: track.active
-                }));
-
-                // Add "no subtitles" option
-                subtitleTracks.unshift({
+                // Get subtitle tracks (limit to 3 including "no subtitles")
+                const allTextTracks = currentPlayer.getTextTracks();
+                subtitleTracks = [];
+        
+                // Add "no subtitles" option first
+                subtitleTracks.push({
                     id: -1,
                     language: 'none',
                     label: 'بدون ترجمة',
-                    active: !subtitleTracks.some(track => track.active)
+                    active: !allTextTracks.some(track => track.active)
                 });
+        
+                // Add up to 2 subtitle tracks
+                const uniqueSubtitleTracks = allTextTracks.slice(0, 2).map(track => ({
+                    id: track.id,
+                    language: track.language || 'غير محدد',
+                    label: track.language === 'ar' ? 'ترجمة عربية' : 
+                           track.language === 'en' ? 'ترجمة إنجليزية' : 
+                           `ترجمة ${track.language || 'افتراضي'}`,
+                    active: track.active
+                }));
+        
+                subtitleTracks.push(...uniqueSubtitleTracks);
 
                 populateAudioSubtitleMenu();
             } catch (error) {
                 console.error('Error loading tracks:', error);
+        
+                // Fallback: Create default tracks if error occurs
+                audioTracks = [
+                    {
+                        id: 0,
+                        language: 'ar',
+                        label: 'عربي',
+                        active: true
+                    },
+                    {
+                        id: 1,
+                        language: 'en',
+                        label: 'إنجليزي',
+                        active: false
+                    }
+                ];
+        
+                subtitleTracks = [
+                    {
+                        id: -1,
+                        language: 'none',
+                        label: 'بدون ترجمة',
+                        active: true
+                    }
+                ];
+        
+                populateAudioSubtitleMenu();
             }
         }
 
@@ -659,7 +886,7 @@
             }, 4000);
         }
 
-        // Show Audio/Subtitle Menu with Slide Up Animation
+        // Show Audio/Subtitle Menu
         function showAudioSubtitleMenu() {
             const menu = document.getElementById('audioSubtitleMenu');
             menu.classList.add('show');
@@ -853,6 +1080,12 @@
                 case 'I':
                     // Show controls
                     showControls();
+                    break;
+                    
+                case 'q':
+                case 'Q':
+                    // Show quality info
+                    updateQualityIndicator();
                     break;
             }
         }
