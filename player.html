@@ -12,120 +12,61 @@
         .ViostreamIframe { overflow: hidden; padding-top: 56.25%; position: relative; }
         .ViostreamIframe iframe { border: 0; height: 100%; left: 0; position: absolute; top: 0; width: 100%; }
         
-        /* أيقونات التحكم - في الأسفل */
-        .control-overlay {
-            position: fixed;
-            bottom: 50px;
+        /* أيقونات بسيطة في الأسفل */
+        #tvControls {
+            position: absolute;
+            bottom: 20px;
             left: 50%;
             transform: translateX(-50%);
-            display: none;
-            z-index: 9999;
-            background: rgba(0, 0, 0, 0.9);
-            border-radius: 15px;
-            padding: 20px 30px;
-            border: 3px solid #fff;
-        }
-        
-        .control-overlay.show {
-            display: flex;
-            align-items: center;
-            gap: 40px;
-        }
-        
-        .control-item {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            color: white;
-            padding: 15px 20px;
+            background: rgba(0,0,0,0.8);
+            padding: 20px;
             border-radius: 10px;
-            min-width: 120px;
-            border: 2px solid transparent;
-            transition: all 0.3s ease;
+            display: none;
+            z-index: 999999;
+            border: 3px solid white;
         }
         
-        .control-item.focused {
-            background: rgba(255, 255, 255, 0.3);
-            border: 2px solid #00ff00;
-            transform: scale(1.1);
+        #tvControls.visible {
+            display: flex;
+            gap: 30px;
         }
         
-        .control-icon {
-            width: 48px;
-            height: 48px;
-            margin-bottom: 10px;
-            fill: currentColor;
-        }
-        
-        .control-label {
-            font-size: 16px;
+        .tv-button {
+            color: white;
             text-align: center;
+            padding: 15px;
+            border: 2px solid transparent;
+            border-radius: 8px;
+            min-width: 100px;
+            font-size: 18px;
             font-weight: bold;
         }
         
-        .track-menu {
-            position: fixed;
-            bottom: 200px;
-            left: 50%;
-            transform: translateX(-50%);
-            background: rgba(0, 0, 0, 0.95);
-            border-radius: 10px;
-            padding: 15px;
-            display: none;
-            min-width: 300px;
-            max-height: 300px;
-            overflow-y: auto;
-            border: 2px solid #fff;
-        }
-        
-        .track-menu.show {
-            display: block;
-        }
-        
-        .track-option {
-            color: white;
-            padding: 12px 15px;
-            border-radius: 8px;
-            font-size: 16px;
-            margin: 5px 0;
-            border: 2px solid transparent;
-            transition: all 0.3s ease;
-        }
-        
-        .track-option.focused {
-            background: rgba(255, 255, 255, 0.3);
+        .tv-button.selected {
             border: 2px solid #00ff00;
+            background: rgba(0,255,0,0.2);
         }
         
-        .track-option.active {
-            background: rgba(0, 255, 0, 0.3);
-            border: 2px solid #00ff00;
+        .tv-icon {
+            font-size: 30px;
+            margin-bottom: 5px;
         }
     </style>
 </head>
 <body>
     <div id="player" class="ViostreamIframe"></div>
     
-    <!-- أيقونات التحكم -->
-    <div id="controlOverlay" class="control-overlay">
-        <div class="control-item" id="audioControl" data-index="0">
-            <svg class="control-icon" viewBox="0 0 24 24">
-                <path d="M3 9v6h4l5 5V4L7 9H3zm13.5 3c0-1.77-1.02-3.29-2.5-4.03v8.05c1.48-.73 2.5-2.25 2.5-4.02zM14 3.23v2.06c2.89.86 5 3.54 5 6.71s-2.11 5.85-5 6.71v2.06c4.01-.91 7-4.49 7-8.77s-2.99-7.86-7-8.77z"/>
-            </svg>
-            <span class="control-label">الصوت</span>
+    <!-- أيقونات التلفاز -->
+    <div id="tvControls">
+        <div class="tv-button" id="audioBtn">
+            <div class="tv-icon">🔊</div>
+            <div>الصوت</div>
         </div>
-        
-        <div class="control-item" id="subtitleControl" data-index="1">
-            <svg class="control-icon" viewBox="0 0 24 24">
-                <path d="M20 4H4c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zM4 12h4v2H4v-2zm10 6H4v-2h10v2zm6 0h-4v-2h4v2zm0-4H10v-2h10v2z"/>
-            </svg>
-            <span class="control-label">الترجمة</span>
+        <div class="tv-button" id="subtitleBtn">
+            <div class="tv-icon">📝</div>
+            <div>الترجمة</div>
         </div>
     </div>
-
-    <!-- قوائم المسارات -->
-    <div id="audioMenu" class="track-menu"></div>
-    <div id="subtitleMenu" class="track-menu"></div>
 
     <script>
         function getParameterByName(name) {
@@ -192,17 +133,65 @@
                 url: "https://ottb.live.cf.ww.aiv-cdn.net/dub-nitro/live/clients/dash/enc/tu06vubgf9/out/v1/7668f47d28e345979c072e361f3d3ce3/cenc.mpd",
                 k1: "6d08b265a6639e32da7c880d5491e3d2",
                 k2: "0c92556ca14b95f367993710e7cfbc94"
+            },
+            "go3extra": {
+                url: "https://cdn9.tvplayhome.lt/live/eds2/VIP2/GO3_LIVE_DASH_AVC/VIP2.mpd",
+                k1: "ad206bf45075406da1ccfd824b4667c9",
+                k2: "05093061005A5947C584AB77035ED678"
+            },
+            "eurosport2": {
+                url: "https://a129aivottlinear-a.akamaihd.net/OTTB/dub-nitro/live/clients/dash/enc/0woud0fpbk/out/v1/19de3da8f2494fc1a1841c41d460b956/cenc.mpd",
+                k1: "05165a7d627cad792decdb1e7a4e18d3",
+                k2: "72122ff50e1fdc072827039b7ca2fac8"
+            },
+            "daznlaliga2": {
+                url: "https://live.ll.ww.aiv-cdn.net/OTTB/dub-nitro/live/clients/dash/enc/wjgklbtvhh/out/v1/659736a1e24c40e4865a80ffd75e7de7/cenc.mpd",
+                k1: "43d1c3b25207ff38b22ccfe17d302367",
+                k2: "7b1f85f6e81059473b114c16a25c829a"
+            },
+            "eurosport1": {
+                url: "https://ottb.live.cf.ww.aiv-cdn.net/dub-nitro/live/clients/dash/enc/zuswgfaia3/out/v1/5816ef436fc446499e169d89a26dfbed/cenc.mpd",
+                k1: "8bea39bc61707784544e6ccd62c9d076",
+                k2: "7139535aafe27b59dff555b7dc99eed0"
+            },
+            "VRT1_BE": {
+                url: "https://live.vrtcdn.be/groupc/live/8edf3bdf-7db3-41c3-a318-72cb7f82de66/live.isml/.mpd?filter=%28%21%28type%3D%3D%22audio%22%26%26FourCC%21%3D%22AACL%22%29%29",
+                k1: "ef4daa3c90333621e4115ff1ca5bfbda",
+                k2: "424c9902fce5a2e7dcbeb37ffc06b906"
+            },
+            "TV4_SE": {
+                url: "https://director.streaming.telia.com/tvm-packager-prod/group2/61a4859b79019af4abf1009d/manifest.mpd?adap=default",
+                k1: "b09d157d18ab51b9923a3d5abdeefd52",
+                k2: "5a29bb3c705edea6941a5b1d575ac316"
+            },
+            "espn4br": {
+                url: "https://castway.ittv.com.br/ESPN_4/index.mpd",
+                k1: "c70b4ceebfff58c3044951165f375d5c",
+                k2: "e4d8870b7ec6a2fc594b42bc301c0f16"
+            },
+            "espnbr": {
+                url: "https://castway.ittv.com.br/ESPN_BRASIL/index.mpd",
+                k1: "d2147ddefd9c9bf13ed6a7b720738013",
+                k2: "528cc2b3fae76240e407260764e1e45d"
+            },
+            "espn3br": {
+                url: "https://castway.ittv.com.br/ESPN_MAIS/index.mpd",
+                k1: "63898a382b1b36a52e8a10d085b12100",
+                k2: "f964e7b204d0b9fb4b3d54b7c41e3872"
+            },
+            "espn2br": {
+                url: "https://castway.ittv.com.br/ESPN_INTERNACIONAL/index.mpd",
+                k1: "af3895f1a5482d19682534c6a4917dbe",
+                k2: "b0bddcea072725faa0c3e83c91f56824"
             }
         };
 
         var id = getParameterByName('id');
         var config = ConfiguracionCanales[id];
-        var controlTimeout;
-        var currentFocusIndex = 0;
-        var menuFocusIndex = 0;
-        var isMenuOpen = false;
-        var currentMenu = '';
         var player;
+        var hideTimeout;
+        var selectedButton = 0;
+        var controlsVisible = false;
 
         if (config) {
             var sources = [];
@@ -219,6 +208,7 @@
                 });
             }
 
+            // إعداد JW Player الأصلي بدون تغيير
             player = jwplayer("player").setup({
                 playlist: [{
                     sources: sources
@@ -232,268 +222,166 @@
                 sharing: {}
             });
 
-            setupRemoteControl();
+            // انتظار تحميل المشغل
+            player.on('ready', function() {
+                setupTVControls();
+            });
         }
 
-        function setupRemoteControl() {
+        function setupTVControls() {
+            // منع الأحداث من الوصول للمشغل
             document.addEventListener('keydown', function(e) {
-                console.log('Key pressed:', e.key, e.keyCode);
-                
-                // زر OK أو Enter - إظهار الأيقونات
-                if (e.key === 'Enter' || e.keyCode === 13 || e.keyCode === 23) {
+                // فقط عندما تكون الأيقونات ظاهرة
+                if (controlsVisible) {
+                    e.stopPropagation();
                     e.preventDefault();
-                    if (!document.getElementById('controlOverlay').classList.contains('show')) {
-                        showControls();
-                    } else if (isMenuOpen) {
-                        selectMenuItem();
-                    } else {
-                        selectControl();
-                    }
-                    return;
+                    handleTVRemote(e);
+                    return false;
                 }
                 
-                // زر الخروج
-                if (e.key === 'Escape' || e.keyCode === 27 || e.keyCode === 4) {
+                // إظهار الأيقونات عند الضغط على أي زر
+                if (e.keyCode === 13 || e.keyCode === 23 || e.keyCode === 66) { // OK, Enter, Space
+                    e.stopPropagation();
                     e.preventDefault();
-                    if (isMenuOpen) {
-                        closeMenu();
-                    } else {
-                        hideControls();
-                    }
-                    return;
+                    showTVControls();
+                    return false;
                 }
-                
-                // الأسهم
-                if (e.key === 'ArrowLeft' || e.keyCode === 37 || e.keyCode === 21) {
-                    e.preventDefault();
-                    if (isMenuOpen) {
-                        // لا نفعل شيء في القائمة
-                    } else {
-                        navigateLeft();
-                    }
-                    return;
-                }
-                
-                if (e.key === 'ArrowRight' || e.keyCode === 39 || e.keyCode === 22) {
-                    e.preventDefault();
-                    if (isMenuOpen) {
-                        // لا نفعل شيء في القائمة
-                    } else {
-                        navigateRight();
-                    }
-                    return;
-                }
-                
-                if (e.key === 'ArrowUp' || e.keyCode === 38 || e.keyCode === 19) {
-                    e.preventDefault();
-                    if (isMenuOpen) {
-                        navigateMenuUp();
-                    }
-                    return;
-                }
-                
-                if (e.key === 'ArrowDown' || e.keyCode === 40 || e.keyCode === 20) {
-                    e.preventDefault();
-                    if (isMenuOpen) {
-                        navigateMenuDown();
-                    }
-                    return;
-                }
-            });
+            }, true); // استخدام capture للحصول على الأحداث أولاً
         }
 
-        function showControls() {
-            document.getElementById('controlOverlay').classList.add('show');
-            currentFocusIndex = 0;
-            updateControlFocus();
+        function handleTVRemote(e) {
+            var keyCode = e.keyCode;
             
-            clearTimeout(controlTimeout);
-            controlTimeout = setTimeout(hideControls, 8000);
+            // زر OK أو Enter
+            if (keyCode === 13 || keyCode === 23 || keyCode === 66) {
+                selectCurrentButton();
+                return;
+            }
+            
+            // زر الخروج
+            if (keyCode === 27 || keyCode === 4 || keyCode === 8) {
+                hideTVControls();
+                return;
+            }
+            
+            // السهم اليسار
+            if (keyCode === 37 || keyCode === 21) {
+                if (selectedButton > 0) {
+                    selectedButton--;
+                    updateButtonSelection();
+                }
+                return;
+            }
+            
+            // السهم اليمين
+            if (keyCode === 39 || keyCode === 22) {
+                if (selectedButton < 1) {
+                    selectedButton++;
+                    updateButtonSelection();
+                }
+                return;
+            }
         }
 
-        function hideControls() {
-            document.getElementById('controlOverlay').classList.remove('show');
-            closeMenu();
-            clearTimeout(controlTimeout);
+        function showTVControls() {
+            document.getElementById('tvControls').classList.add('visible');
+            controlsVisible = true;
+            selectedButton = 0;
+            updateButtonSelection();
+            
+            // إخفاء تلقائي بعد 5 ثوان
+            clearTimeout(hideTimeout);
+            hideTimeout = setTimeout(hideTVControls, 5000);
         }
 
-        function updateControlFocus() {
-            const controls = document.querySelectorAll('.control-item');
-            controls.forEach((control, index) => {
-                if (index === currentFocusIndex) {
-                    control.classList.add('focused');
+        function hideTVControls() {
+            document.getElementById('tvControls').classList.remove('visible');
+            controlsVisible = false;
+            clearTimeout(hideTimeout);
+        }
+
+        function updateButtonSelection() {
+            var buttons = document.querySelectorAll('.tv-button');
+            buttons.forEach(function(btn, index) {
+                if (index === selectedButton) {
+                    btn.classList.add('selected');
                 } else {
-                    control.classList.remove('focused');
+                    btn.classList.remove('selected');
                 }
             });
         }
 
-        function navigateLeft() {
-            if (currentFocusIndex > 0) {
-                currentFocusIndex--;
-                updateControlFocus();
+        function selectCurrentButton() {
+            if (selectedButton === 0) {
+                // تغيير الصوت
+                changeAudioTrack();
+            } else if (selectedButton === 1) {
+                // تغيير الترجمة
+                changeSubtitleTrack();
             }
+            
+            // إخفاء الأيقونات بعد الاختيار
+            setTimeout(hideTVControls, 1000);
         }
 
-        function navigateRight() {
-            const controls = document.querySelectorAll('.control-item');
-            if (currentFocusIndex < controls.length - 1) {
-                currentFocusIndex++;
-                updateControlFocus();
-            }
-        }
-
-        function selectControl() {
-            if (currentFocusIndex === 0) {
-                openAudioMenu();
-            } else if (currentFocusIndex === 1) {
-                openSubtitleMenu();
-            }
-        }
-
-        function openAudioMenu() {
-            closeMenu();
-            currentMenu = 'audio';
-            isMenuOpen = true;
-            menuFocusIndex = 0;
-            updateAudioTracks();
-            document.getElementById('audioMenu').classList.add('show');
-            updateMenuFocus();
-        }
-
-        function openSubtitleMenu() {
-            closeMenu();
-            currentMenu = 'subtitle';
-            isMenuOpen = true;
-            menuFocusIndex = 0;
-            updateSubtitleTracks();
-            document.getElementById('subtitleMenu').classList.add('show');
-            updateMenuFocus();
-        }
-
-        function closeMenu() {
-            document.getElementById('audioMenu').classList.remove('show');
-            document.getElementById('subtitleMenu').classList.remove('show');
-            isMenuOpen = false;
-            currentMenu = '';
-        }
-
-        function navigateMenuUp() {
-            if (menuFocusIndex > 0) {
-                menuFocusIndex--;
-                updateMenuFocus();
-            }
-        }
-
-        function navigateMenuDown() {
-            const menuId = currentMenu === 'audio' ? 'audioMenu' : 'subtitleMenu';
-            const options = document.querySelectorAll(`#${menuId} .track-option`);
-            if (menuFocusIndex < options.length - 1) {
-                menuFocusIndex++;
-                updateMenuFocus();
-            }
-        }
-
-        function updateMenuFocus() {
-            const menuId = currentMenu === 'audio' ? 'audioMenu' : 'subtitleMenu';
-            const options = document.querySelectorAll(`#${menuId} .track-option`);
-            options.forEach((option, index) => {
-                if (index === menuFocusIndex) {
-                    option.classList.add('focused');
+        function changeAudioTrack() {
+            try {
+                var audioTracks = player.getAudioTracks();
+                if (audioTracks && audioTracks.length > 1) {
+                    var currentTrack = player.getCurrentAudioTrack();
+                    var nextTrack = (currentTrack + 1) % audioTracks.length;
+                    player.setCurrentAudioTrack(nextTrack);
+                    
+                    // إظهار رسالة
+                    showMessage('تم تغيير الصوت إلى: ' + (audioTracks[nextTrack].name || 'مسار ' + (nextTrack + 1)));
                 } else {
-                    option.classList.remove('focused');
+                    showMessage('لا توجد مسارات صوتية متعددة');
                 }
-            });
-        }
-
-        function selectMenuItem() {
-            const menuId = currentMenu === 'audio' ? 'audioMenu' : 'subtitleMenu';
-            const options = document.querySelectorAll(`#${menuId} .track-option`);
-            const selectedOption = options[menuFocusIndex];
-            
-            if (selectedOption) {
-                const trackIndex = parseInt(selectedOption.dataset.index);
-                
-                if (currentMenu === 'audio') {
-                    player.setCurrentAudioTrack(trackIndex);
-                    updateAudioTracks();
-                } else if (currentMenu === 'subtitle') {
-                    player.setCurrentCaptions(trackIndex);
-                    updateSubtitleTracks();
-                }
-                
-                closeMenu();
-                
-                // إعادة تعيين مؤقت الإخفاء
-                clearTimeout(controlTimeout);
-                controlTimeout = setTimeout(hideControls, 3000);
+            } catch(e) {
+                showMessage('خطأ في تغيير الصوت');
             }
         }
 
-        function updateAudioTracks() {
-            const audioMenu = document.getElementById('audioMenu');
-            const audioTracks = player.getAudioTracks();
-            
-            audioMenu.innerHTML = '';
-            
-            if (audioTracks && audioTracks.length > 0) {
-                audioTracks.forEach(function(track, index) {
-                    const option = document.createElement('div');
-                    option.className = 'track-option';
-                    option.textContent = track.name || `مسار صوتي ${index + 1}`;
-                    option.dataset.index = index;
-                    
-                    if (index === player.getCurrentAudioTrack()) {
-                        option.classList.add('active');
+        function changeSubtitleTrack() {
+            try {
+                var subtitleTracks = player.getCaptionsList();
+                var currentSub = player.getCurrentCaptions();
+                
+                if (subtitleTracks && subtitleTracks.length > 0) {
+                    var nextSub;
+                    if (currentSub === -1) {
+                        nextSub = 0;
+                    } else if (currentSub >= subtitleTracks.length - 1) {
+                        nextSub = -1;
+                    } else {
+                        nextSub = currentSub + 1;
                     }
                     
-                    audioMenu.appendChild(option);
-                });
-            } else {
-                const noTracks = document.createElement('div');
-                noTracks.className = 'track-option';
-                noTracks.textContent = 'لا توجد مسارات صوتية متاحة';
-                noTracks.dataset.index = -1;
-                audioMenu.appendChild(noTracks);
+                    player.setCurrentCaptions(nextSub);
+                    
+                    if (nextSub === -1) {
+                        showMessage('تم إيقاف الترجمة');
+                    } else {
+                        showMessage('تم تغيير الترجمة إلى: ' + (subtitleTracks[nextSub].label || 'ترجمة ' + (nextSub + 1)));
+                    }
+                } else {
+                    showMessage('لا توجد ترجمات متاحة');
+                }
+            } catch(e) {
+                showMessage('خطأ في تغيير الترجمة');
             }
         }
 
-        function updateSubtitleTracks() {
-            const subtitleMenu = document.getElementById('subtitleMenu');
-            const subtitleTracks = player.getCaptionsList();
+        function showMessage(text) {
+            // إنشاء رسالة مؤقتة
+            var msg = document.createElement('div');
+            msg.style.cssText = 'position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);background:rgba(0,0,0,0.8);color:white;padding:20px;border-radius:10px;font-size:18px;z-index:999999;';
+            msg.textContent = text;
+            document.body.appendChild(msg);
             
-            subtitleMenu.innerHTML = '';
-            
-            // خيار إيقاف الترجمة
-            const offOption = document.createElement('div');
-            offOption.className = 'track-option';
-            offOption.textContent = 'إيقاف الترجمة';
-            offOption.dataset.index = -1;
-            if (player.getCurrentCaptions() === -1) {
-                offOption.classList.add('active');
-            }
-            subtitleMenu.appendChild(offOption);
-            
-            if (subtitleTracks && subtitleTracks.length > 0) {
-                subtitleTracks.forEach(function(track, index) {
-                    const option = document.createElement('div');
-                    option.className = 'track-option';
-                    option.textContent = track.label || `ترجمة ${index + 1}`;
-                    option.dataset.index = index;
-                    
-                    if (index === player.getCurrentCaptions()) {
-                        option.classList.add('active');
-                    }
-                    
-                    subtitleMenu.appendChild(option);
-                });
-            } else {
-                const noTracks = document.createElement('div');
-                noTracks.className = 'track-option';
-                noTracks.textContent = 'لا توجد ترجمات متاحة';
-                noTracks.dataset.index = -2;
-                subtitleMenu.appendChild(noTracks);
-            }
+            setTimeout(function() {
+                document.body.removeChild(msg);
+            }, 2000);
         }
     </script>
 </body>
