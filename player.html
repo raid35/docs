@@ -12,7 +12,39 @@
         .ViostreamIframe { overflow: hidden; padding-top: 56.25%; position: relative; }
         .ViostreamIframe iframe { border: 0; height: 100%; left: 0; position: absolute; top: 0; width: 100%; }
         
-        /* أيقونات بسيطة في الأسفل */
+        /* شاشة التحميل */
+        .loading-screen {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: #000;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            color: white;
+            font-size: 18px;
+            z-index: 1000;
+        }
+        
+        .loading-spinner {
+            width: 50px;
+            height: 50px;
+            border: 5px solid #333;
+            border-top: 5px solid #fff;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin-bottom: 20px;
+        }
+        
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        
+        /* أيقونات التلفاز */
         #tvControls {
             position: absolute;
             bottom: 20px;
@@ -54,7 +86,12 @@
     </style>
 </head>
 <body>
-    <div id="player" class="ViostreamIframe"></div>
+    <div id="player" class="ViostreamIframe">
+        <div id="loadingScreen" class="loading-screen">
+            <div class="loading-spinner"></div>
+            <div id="loadingText">جاري تحميل القناة...</div>
+        </div>
+    </div>
     
     <!-- أيقونات التلفاز -->
     <div id="tvControls">
@@ -69,6 +106,32 @@
     </div>
 
     <script>
+        // إعداد User Agent تلقائي لجميع الطلبات
+        (function() {
+            var originalFetch = window.fetch;
+            var originalXHR = window.XMLHttpRequest;
+            
+            // User Agent محسن للتلفاز والبث المباشر
+            var customUserAgent = "Mozilla/5.0 (Smart-TV; Linux; Tizen 6.0) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/85.0.4183.102 TV Safari/537.36";
+            
+            // تخصيص fetch
+            window.fetch = function(url, options) {
+                options = options || {};
+                options.headers = options.headers || {};
+                options.headers['User-Agent'] = customUserAgent;
+                options.headers['Referer'] = window.location.origin;
+                return originalFetch.call(this, url, options);
+            };
+            
+            // تخصيص XMLHttpRequest
+            var XHROpen = originalXHR.prototype.open;
+            originalXHR.prototype.open = function(method, url, async, user, password) {
+                XHROpen.apply(this, arguments);
+                this.setRequestHeader('User-Agent', customUserAgent);
+                this.setRequestHeader('Referer', window.location.origin);
+            };
+        })();
+
         function getParameterByName(name) {
             name = name.replace(/[\[\]]/g, "\\$&");
             var regex = new RegExp("[?&]" + name + "(=([^&#]*)|&|#|$)"),
@@ -192,46 +255,148 @@
         var hideTimeout;
         var selectedButton = 0;
         var controlsVisible = false;
+        var loadingTimeout;
 
         if (config) {
+            // إظهار شاشة التحميل
+            showLoadingScreen();
+            
             var sources = [];
             if (config.url.includes('.m3u8')) {
                 sources.push({
-                    file: config.url
+                    file: config.url,
+                    hlshtml: true,
+                    preload: "metadata"
                 });
             }
                 
             if (config.url.includes('.mpd') && config.k1 && config.k2) {
                 sources.push({
                     file: config.url,
-                    drm: {"clearkey": {"keyId": config.k1, "key": config.k2}}
+                    drm: {"clearkey": {"keyId": config.k1, "key": config.k2}},
+                    preload: "metadata"
                 });
             }
 
-            // إعداد JW Player الأصلي بدون تغيير
+            // إعداد JW Player مع تحسينات الأداء
             player = jwplayer("player").setup({
                 playlist: [{
                     sources: sources
                 }],
-                autostart: false,
+                autostart: true,
                 width: "100%", 
                 height: "100%",
                 stretching: "exactfit",
                 aspectratio: "16:9",
                 cast: {},                 
-                sharing: {}
+                sharing: {},
+                
+                // إعدادات تحسين الأداء
+                preload: "metadata",
+                hlshtml: true,
+                bandwidthEstimate: 2000000,
+                androidhls: false,
+                liveSyncDuration: 3,
+                liveMaxLatencyDuration: 5,
+                
+                // إعدادات الجودة
+                qualityLabels: {
+                    "144": "144p",
+                    "240": "240p", 
+                    "360": "360p",
+                    "480": "480p",
+                    "720": "720p HD",
+                    "1080": "1080p Full HD",
+                    "1440": "1440p 2K",
+                    "2160": "2160p 4K"
+                }
             });
 
-            // انتظار تحميل المشغل
+            // أحداث المشغل
             player.on('ready', function() {
+                hideLoadingScreen();
                 setupTVControls();
+                optimizeQuality();
             });
+
+            player.on('firstFrame', function() {
+                hideLoadingScreen();
+                console.log('بدء التشغيل بنجاح');
+            });
+
+            player.on('error', function(e) {
+                console.log('خطأ في التشغيل:', e);
+                showError('خطأ في تحميل القناة. جاري المحاولة مرة أخرى...');
+                
+                setTimeout(function() {
+                    player.load();
+                }, 3000);
+            });
+
+            player.on('buffer', function() {
+                document.getElementById('loadingText').textContent = 'جاري التخزين المؤقت...';
+                showLoadingScreen();
+            });
+
+            player.on('idle', function() {
+                hideLoadingScreen();
+            });
+
+            // مهلة زمنية للتحميل
+            loadingTimeout = setTimeout(function() {
+                if (document.getElementById('loadingScreen').style.display !== 'none') {
+                    showError('انتهت مهلة التحميل. جاري إعادة المحاولة...');
+                    player.load();
+                }
+            }, 15000);
+        }
+
+        function showLoadingScreen() {
+            document.getElementById('loadingScreen').style.display = 'flex';
+        }
+
+        function hideLoadingScreen() {
+            document.getElementById('loadingScreen').style.display = 'none';
+            clearTimeout(loadingTimeout);
+        }
+
+        function showError(message) {
+            document.getElementById('loadingText').textContent = message;
+            document.getElementById('loadingScreen').style.display = 'flex';
+        }
+
+        function optimizeQuality() {
+            try {
+                var levels = player.getQualityLevels();
+                
+                if (levels && levels.length > 0) {
+                    var targetQuality = levels.find(function(level) {
+                        return level.height <= 1080 && level.height >= 720;
+                    });
+                    
+                    if (targetQuality) {
+                        player.setCurrentQuality(targetQuality.index);
+                        console.log('تم تعيين الجودة إلى:', targetQuality.height + 'p');
+                    }
+                }
+                
+                var audioTracks = player.getAudioTracks();
+                if (audioTracks && audioTracks.length > 0) {
+                    var bestAudio = audioTracks.find(function(track) {
+                        return track.name && (track.name.includes('Arabic') || track.name.includes('العربية'));
+                    });
+                    
+                    if (bestAudio) {
+                        player.setCurrentAudioTrack(bestAudio.index);
+                    }
+                }
+            } catch(e) {
+                console.log('خطأ في تحسين الجودة:', e);
+            }
         }
 
         function setupTVControls() {
-            // منع الأحداث من الوصول للمشغل
             document.addEventListener('keydown', function(e) {
-                // فقط عندما تكون الأيقونات ظاهرة
                 if (controlsVisible) {
                     e.stopPropagation();
                     e.preventDefault();
@@ -239,32 +404,28 @@
                     return false;
                 }
                 
-                // إظهار الأيقونات عند الضغط على أي زر
-                if (e.keyCode === 13 || e.keyCode === 23 || e.keyCode === 66) { // OK, Enter, Space
+                if (e.keyCode === 13 || e.keyCode === 23 || e.keyCode === 66) {
                     e.stopPropagation();
                     e.preventDefault();
                     showTVControls();
                     return false;
                 }
-            }, true); // استخدام capture للحصول على الأحداث أولاً
+            }, true);
         }
 
         function handleTVRemote(e) {
             var keyCode = e.keyCode;
             
-            // زر OK أو Enter
             if (keyCode === 13 || keyCode === 23 || keyCode === 66) {
                 selectCurrentButton();
                 return;
             }
             
-            // زر الخروج
             if (keyCode === 27 || keyCode === 4 || keyCode === 8) {
                 hideTVControls();
                 return;
             }
             
-            // السهم اليسار
             if (keyCode === 37 || keyCode === 21) {
                 if (selectedButton > 0) {
                     selectedButton--;
@@ -273,7 +434,6 @@
                 return;
             }
             
-            // السهم اليمين
             if (keyCode === 39 || keyCode === 22) {
                 if (selectedButton < 1) {
                     selectedButton++;
@@ -289,7 +449,6 @@
             selectedButton = 0;
             updateButtonSelection();
             
-            // إخفاء تلقائي بعد 5 ثوان
             clearTimeout(hideTimeout);
             hideTimeout = setTimeout(hideTVControls, 5000);
         }
@@ -313,14 +472,11 @@
 
         function selectCurrentButton() {
             if (selectedButton === 0) {
-                // تغيير الصوت
                 changeAudioTrack();
             } else if (selectedButton === 1) {
-                // تغيير الترجمة
                 changeSubtitleTrack();
             }
             
-            // إخفاء الأيقونات بعد الاختيار
             setTimeout(hideTVControls, 1000);
         }
 
@@ -332,7 +488,6 @@
                     var nextTrack = (currentTrack + 1) % audioTracks.length;
                     player.setCurrentAudioTrack(nextTrack);
                     
-                    // إظهار رسالة
                     showMessage('تم تغيير الصوت إلى: ' + (audioTracks[nextTrack].name || 'مسار ' + (nextTrack + 1)));
                 } else {
                     showMessage('لا توجد مسارات صوتية متعددة');
@@ -373,16 +528,24 @@
         }
 
         function showMessage(text) {
-            // إنشاء رسالة مؤقتة
             var msg = document.createElement('div');
-            msg.style.cssText = 'position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);background:rgba(0,0,0,0.8);color:white;padding:20px;border-radius:10px;font-size:18px;z-index:999999;';
+            msg.style.cssText = 'position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);background:rgba(0,0,0,0.8);color:white;padding:20px;border-radius:10px;font-size:18px;z-index:999999;border:2px solid #00ff00;';
             msg.textContent = text;
             document.body.appendChild(msg);
             
             setTimeout(function() {
-                document.body.removeChild(msg);
+                if (document.body.contains(msg)) {
+                    document.body.removeChild(msg);
+                }
             }, 2000);
         }
+
+        // تحسين استخدام الذاكرة
+        window.addEventListener('beforeunload', function() {
+            if (player) {
+                player.remove();
+            }
+        });
     </script>
 </body>
 </html>
