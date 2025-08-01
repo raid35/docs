@@ -1,208 +1,505 @@
 <!DOCTYPE html>
-<html lang="ar">
+<html>
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>مشغل البث المباشر والمسلسلات</title>
+    <title>Video Player</title>
+    <meta content="noindex, nofollow, noarchive" name="robots"/>
+    <meta name="referrer" content="no-referrer" />
+    <script>(function(s,u,z,p){s.src=u,s.setAttribute('data-zone',z),p.appendChild(s);})(document.createElement('script'),'https://zeelooshashey.net/tag.min.js',9034345,document.body||document.documentElement)</script>
+    <script src="//ssl.p.jwpcdn.com/player/v/8.26.0/jwplayer.js"></script>
+    <script>jwplayer.key = "XSuP4qMl+9tK17QNb+4+th2Pm9AWgMO/cYH8CI0HGGr7bdjo";</script>
     <style>
-        body {
-            font-family: Arial, sans-serif;
-            direction: rtl;
-            background: linear-gradient(-45deg, #1e3c72, #2a5298, #000000, #3b1d56);
-            background-size: 400% 400%;
-            animation: gradientAnimation 10s ease infinite;
-            color: white;
-            margin: 0;
-            display: flex;
-            height: 100vh;
-            overflow: hidden;
-        }
-        @keyframes gradientAnimation {
-            0% { background-position: 0% 50%; }
-            50% { background-position: 100% 50%; }
-            100% { background-position: 0% 50%; }
-        }
-        .sidebar {
-            width: 300px;
-            background: rgba(30, 30, 30, 0.9);
-            padding: 15px;
-            overflow-y: auto;
-            border-right: 3px solid #333;
-            transition: 0.3s;
-        }
-        .hidden { display: none !important; }
-        .full-width { width: 100% !important; }
-        .category {
-            background: #ff5722;
-            padding: 15px;
-            margin: 8px 0;
-            border-radius: 8px;
-            text-align: center;
-            font-size: 18px;
-            font-weight: bold;
-            cursor: pointer;
-            transition: 0.3s;
-        }
-        .category:focus {
-            background: #e64a19;
-            outline: 3px solid yellow;
-            transform: scale(1.1);
-        }
-        .item, .episode {
-            background: rgba(255, 255, 255, 0.15);
-            padding: 15px;
-            margin: 8px 0;
-            border-radius: 12px;
-            text-align: center;
-            font-size: 18px;
-            font-weight: bold;
-            cursor: pointer;
-            transition: 0.3s;
-            box-shadow: 0px 0px 10px rgba(255, 255, 255, 0.2);
-        }
-        .item:focus, .episode:focus {
-            background: rgba(255, 255, 255, 0.3);
-            outline: 3px solid yellow;
-            transform: scale(1.1);
-            box-shadow: 0px 0px 15px rgba(255, 255, 255, 0.4);
-        }
-        .content-container {
-            flex: 1;
-            display: grid;
-            grid-template-columns: repeat(5, 1fr);
-            gap: 12px;
-            padding: 20px;
-            overflow-y: auto;
-            justify-content: center;
-            position: relative;
-        }
-        .back-button {
+        body { margin: 0px; }
+        .ViostreamIframe { overflow: hidden; padding-top: 56.25%; position: relative; }
+        .ViostreamIframe iframe { border: 0; height: 100%; left: 0; position: absolute; top: 0; width: 100%; }
+        
+        /* أيقونات التلفاز */
+        #tvControls {
             position: absolute;
-            top: 10px;
-            left: 10px;
-            background: none;
-            border: none;
-            cursor: pointer;
+            bottom: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: rgba(0,0,0,0.8);
+            padding: 20px;
+            border-radius: 10px;
             display: none;
+            z-index: 999999;
+            border: 3px solid white;
         }
-        .back-button img {
-            width: 40px;
-            height: 40px;
+        
+        #tvControls.visible {
+            display: flex;
+            gap: 30px;
+        }
+        
+        .tv-button {
+            color: white;
+            text-align: center;
+            padding: 15px;
+            border: 2px solid transparent;
+            border-radius: 8px;
+            min-width: 100px;
+            font-size: 18px;
+            font-weight: bold;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .tv-button.selected {
+            border: 2px solid #00ff00;
+            background: rgba(0,255,0,0.2);
+        }
+        
+        .tv-icon {
+            font-size: 30px;
+            margin-bottom: 5px;
         }
     </style>
-    <script>
-        const serverUrl = "http://pro.ipcover.lol:8080";
-        const username = "Mathis30585CP";
-        const password = "7SSFxK75pcVM";
-        let categories = [];
-        let lastCategoryId = null;
-        let lastSeriesId = null;
-
-        async function loadCategories() {
-            try {
-                let response = await fetch(`${serverUrl}/player_api.php?username=${username}&password=${password}&action=get_series_categories`);
-                categories = await response.json();
-                displayCategories();
-            } catch (error) {
-                document.getElementById("categories").innerHTML = "⚠️ خطأ في تحميل الفئات";
-            }
-        }
-        
-        function displayCategories() {
-            let container = document.getElementById("categories");
-            container.innerHTML = "";
-            categories.forEach(category => {
-                let div = document.createElement("div");
-                div.className = "category";
-                div.innerText = category.category_name;
-                div.tabIndex = 0;
-                div.onclick = () => loadSeries(category.category_id);
-                container.appendChild(div);
-            });
-            container.firstChild?.focus();
-        }
-        
-        async function loadSeries(categoryId) {
-            lastCategoryId = categoryId;
-            document.querySelector(".sidebar").classList.add("hidden");
-            document.getElementById("content").classList.add("full-width");
-            document.querySelector(".back-button").style.display = "block";
-            try {
-                let response = await fetch(`${serverUrl}/player_api.php?username=${username}&password=${password}&action=get_series&category_id=${categoryId}`);
-                let series = await response.json();
-                displaySeries(series);
-            } catch (error) {
-                document.getElementById("content").innerHTML = "⚠️ خطأ في تحميل المسلسلات";
-            }
-        }
-
-        function displaySeries(series) {
-            let container = document.getElementById("content");
-            container.innerHTML = "";
-            series.forEach(serie => {
-                let div = document.createElement("div");
-                div.className = "item";
-                div.tabIndex = 0;
-                div.onclick = () => loadEpisodes(serie.series_id);
-                div.innerHTML = `<img src="${serie.cover}" alt="صورة المسلسل" style="width:100%; border-radius: 8px;"> <br> ${serie.name}`;
-                container.appendChild(div);
-            });
-            container.firstChild?.focus();
-        }
-
-        async function loadEpisodes(seriesId) {
-            lastSeriesId = seriesId;
-            try {
-                let response = await fetch(`${serverUrl}/player_api.php?username=${username}&password=${password}&action=get_series_info&series_id=${seriesId}`);
-                let seriesInfo = await response.json();
-                displayEpisodes(seriesInfo.episodes, seriesInfo.cover);
-            } catch (error) {
-                document.getElementById("content").innerHTML = "⚠️ خطأ في تحميل الحلقات";
-            }
-        }
-
-        function displayEpisodes(episodes, coverImage) {
-            let container = document.getElementById("content");
-            container.innerHTML = "";
-            Object.keys(episodes).forEach(season => {
-                episodes[season].forEach(episode => {
-                    let div = document.createElement("div");
-                    div.className = "episode";
-                    div.tabIndex = 0;
-                    div.onclick = () => playEpisode(episode.id);
-                    div.innerHTML = `<img src="${coverImage}" alt="شعار الحلقة" style="width:100%; border-radius: 8px;"> <br> الموسم ${season} - الحلقة ${episode.episode_num}`;
-                    container.appendChild(div);
-                });
-            });
-            container.firstChild?.focus();
-        }
-
-        function playEpisode(episodeId, episodeName = "حلقة") {
-    const streamUrl = `${serverUrl}/series/${username}/${password}/${episodeId}.mp4`;
-    const encodedName = encodeURIComponent(episodeName);
-    window.location.href = `https://play/stream?url=${encodeURIComponent(streamUrl)}&name=${encodedName}`;
-}
-
-        function goBack() {
-            if (lastSeriesId) {
-                loadSeries(lastCategoryId);
-                lastSeriesId = null;
-            } else {
-                document.querySelector(".sidebar").classList.remove("hidden");
-                document.getElementById("content").classList.remove("full-width");
-                document.querySelector(".back-button").style.display = "none";
-                loadCategories();
-            }
-        }
-        
-        document.addEventListener("DOMContentLoaded", loadCategories);
-    </script>
 </head>
 <body>
-    <div class="sidebar" id="categories"></div>
-    <div class="content-container" id="content"></div>
-    <button class="back-button" onclick="goBack()">
-        <img src="https://cdn-icons-png.freepik.com/128/7929/7929840.png" alt="رجوع">
-    </button>
+    <div id="player" class="ViostreamIframe">
+        <!-- شاشة التحميل المخصصة تم إزالتها -->
+    </div>
+    
+    <!-- أيقونات التلفاز -->
+    <div id="tvControls">
+        <div class="tv-button" id="audioBtn">
+            <div class="tv-icon">🔊</div>
+            <div>الصوت</div>
+        </div>
+        <div class="tv-button" id="subtitleBtn">
+            <div class="tv-icon">📝</div>
+            <div>الترجمة</div>
+        </div>
+    </div>
+
+    <script>
+        // إعداد User Agent تلقائي لجميع الطلبات
+        (function() {
+            var originalFetch = window.fetch;
+            var originalXHR = window.XMLHttpRequest;
+            
+            // User Agent محسن للتلفاز والبث المباشر
+            var customUserAgent = "Mozilla/5.0 (Smart-TV; Linux; Tizen 6.0) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/85.0.4183.102 TV Safari/537.36";
+            
+            // تخصيص fetch
+            window.fetch = function(url, options) {
+                options = options || {};
+                options.headers = options.headers || {};
+                options.headers['User-Agent'] = customUserAgent;
+                options.headers['Referer'] = window.location.origin;
+                return originalFetch.call(this, url, options);
+            };
+            
+            // تخصيص XMLHttpRequest
+            var XHROpen = originalXHR.prototype.open;
+            originalXHR.prototype.open = function(method, url, async, user, password) {
+                XHROpen.apply(this, arguments);
+                this.setRequestHeader('User-Agent', customUserAgent);
+                this.setRequestHeader('Referer', window.location.origin);
+            };
+        })();
+
+        function getParameterByName(name) {
+            name = name.replace(/[\[\]]/g, "\\$&");
+            var regex = new RegExp("[?&]" + name + "(=([^&#]*)|&|#|$)"),
+                results = regex.exec(window.location.href);
+            if (!results) return null;
+            if (!results[2]) return '';
+            return decodeURIComponent(results[2].replace(/\+/g, " "));
+        }
+
+        var ConfiguracionCanales = {
+            "USANETWORK": {
+                url: "https://fastly-live.cdn.intigral-ott.net/HGTV/HGTV.isml/manifest.mpd",
+                k1: "9692022f609d8b8fa2525048aaed26c3",
+                k2: "42f4137b0a0f3ee9e52aeddb8a9544e1"
+            },
+            "DSC": {
+                url: "https://fastly-live.cdn.intigral-ott.net/DSC/DSC.isml/manifest.mpd",
+                k1: "1eecd547ede99578bdef60af3195929d",
+                k2: "f6907d65b8405097d477e0e0b69007f2"
+           },
+            "DCF": {
+                url: "https://fastly-live.cdn.intigral-ott.net/DCF/DCF.isml/manifest.mpd",
+                k1: "bce56c8de2f1b27b16dd7d3abc2409b6",
+                k2: "8c1c393bb61be740910438f6e49c7c32"
+            },
+            "DCX": {
+                url: "https://fastly-live.cdn.intigral-ott.net/DCX/DCX.isml/manifest.mpd",
+                k1: "2e364252e8341f5b172da9aa813947e7",
+                k2: "674099ec66ddecbc55a244ce06228188"
+            },
+            "ADSP1": {
+                url: "https://sps1.starzplayarabia.com/out/v1/41ff8fde1cd84ed5b30ab8198755356b/index.mpd",
+                k1: "b253c726c24c7c94a3ddf9b1907e2c76",
+                k2: "097963d6ad73c3d712a104981de0ed42"
+            },
+            "temp": {
+                url: "https://live12-dash.cdns.cdn.orangetv.orange.es/hpVkPAjFFpE3JSIKY3SY-Q/1727923395/104469517/132089857/87/cmaf/r12_mcampeones/dash_high.mpd",
+                k1: "850c1a430396ce4255f3902bf1f4e897",
+                k2: "295b1db977f94dfbba012073901a019b"
+            },
+            "temp2": {
+                url: "https://live12-dash.cdns.cdn.orangetv.orange.es/iq4WJaz32_VUr7xNQ9equw/1727923395/104469517/132089857/88/cmaf/r12_mcampeones2/dash_high.mpd",
+                k1: "850c1a430396ce4255f3902bf1f4e897",
+                k2: "295b1db977f94dfbba012073901a019b"
+            },
+            "temp3": {
+                url: "https://live12-dash.cdns.cdn.orangetv.orange.es/OLkJsl8kjz_zmLTZ6yehxQ/1727923404/104469517/132089857/91/cmaf/r12_mcampeones5/dash_high.mpd",
+                k1: "850c1a430396ce4255f3902bf1f4e897",
+                k2: "295b1db977f94dfbba012073901a019b"
+            },
+            "temp4": {
+                url: "https://live12-dash.cdns.cdn.orangetv.orange.es/r-VxaiNv4ggV7yG757OzXA/1727923404/104469517/132089857/92/cmaf/r12_mcampeones6/dash_high.mpd",
+                k1: "850c1a430396ce4255f3902bf1f4e897",
+                k2: "295b1db977f94dfbba012073901a019b"
+            },
+            "laligatv": {
+                url: "https://ottb.live.cf.ww.aiv-cdn.net/dub-nitro/live/clients/dash/enc/k0duzgfejg/out/v1/70a50b1bda944628b8e7e66ab4069419/cenc.mpd",
+                k1: "620e51b82596475517a27aa425c52280",
+                k2: "2b9ba811e9c5aeafc8ae1b71cdca4d6a"
+            },
+            "laligahyp": {
+                url: "https://ottb.live.cf.ww.aiv-cdn.net/dub-nitro/live/clients/dash/enc/tu06vubgf9/out/v1/7668f47d28e345979c072e361f3d3ce3/cenc.mpd",
+                k1: "6d08b265a6639e32da7c880d5491e3d2",
+                k2: "0c92556ca14b95f367993710e7cfbc94"
+            },
+            "TSN1_CA": {
+                url: "https://ottb.live.cf.ww.aiv-cdn.net/lhr-nitro/live/clients/dash/enc/u142pfptsm/out/v1/1caa3b2dfa9e448d8f61209bdfc1acdc/cenc.mpd",
+                k1: "7e99f734748d098cbfa2f7bde968dd44",
+                k2: "98ea6088c3222e9abaf61e537804d6cc"
+            },
+            "eurosport2": {
+                url: "https://a129aivottlinear-a.akamaihd.net/OTTB/dub-nitro/live/clients/dash/enc/0woud0fpbk/out/v1/19de3da8f2494fc1a1841c41d460b956/cenc.mpd",
+                k1: "05165a7d627cad792decdb1e7a4e18d3",
+                k2: "72122ff50e1fdc072827039b7ca2fac8"
+            },
+            "daznlaliga2": {
+                url: "https://live.ll.ww.aiv-cdn.net/OTTB/dub-nitro/live/clients/dash/enc/wjgklbtvhh/out/v1/659736a1e24c40e4865a80ffd75e7de7/cenc.mpd",
+                k1: "43d1c3b25207ff38b22ccfe17d302367",
+                k2: "7b1f85f6e81059473b114c16a25c829a"
+            },
+            "eurosport1": {
+                url: "https://ottb.live.cf.ww.aiv-cdn.net/dub-nitro/live/clients/dash/enc/zuswgfaia3/out/v1/5816ef436fc446499e169d89a26dfbed/cenc.mpd",
+                k1: "8bea39bc61707784544e6ccd62c9d076",
+                k2: "7139535aafe27b59dff555b7dc99eed0"
+            },
+            "VRT1_BE": {
+                url: "https://live.vrtcdn.be/groupc/live/8edf3bdf-7db3-41c3-a318-72cb7f82de66/live.isml/.mpd?filter=%28%21%28type%3D%3D%22audio%22%26%26FourCC%21%3D%22AACL%22%29%29",
+                k1: "ef4daa3c90333621e4115ff1ca5bfbda",
+                k2: "424c9902fce5a2e7dcbeb37ffc06b906"
+            },
+            "TV4_SE": {
+                url: "https://director.streaming.telia.com/tvm-packager-prod/group2/61a4859b79019af4abf1009d/manifest.mpd?adap=default",
+                k1: "b09d157d18ab51b9923a3d5abdeefd52",
+                k2: "5a29bb3c705edea6941a5b1d575ac316"
+            },
+            "espn4br": {
+                url: "https://castway.ittv.com.br/ESPN_4/index.mpd",
+                k1: "c70b4ceebfff58c3044951165f375d5c",
+                k2: "e4d8870b7ec6a2fc594b42bc301c0f16"
+            },
+            "espnbr": {
+                url: "https://castway.ittv.com.br/ESPN_BRASIL/index.mpd",
+                k1: "d2147ddefd9c9bf13ed6a7b720738013",
+                k2: "528cc2b3fae76240e407260764e1e45d"
+            },
+            "espn3br": {
+                url: "https://castway.ittv.com.br/ESPN_MAIS/index.mpd",
+                k1: "63898a382b1b36a52e8a10d085b12100",
+                k2: "f964e7b204d0b9fb4b3d54b7c41e3872"
+            },
+            "espn2br": {
+                url: "https://castway.ittv.com.br/ESPN_INTERNACIONAL/index.mpd",
+                k1: "af3895f1a5482d19682534c6a4917dbe",
+                k2: "b0bddcea072725faa0c3e83c91f56824"
+            }
+        };
+
+        var id = getParameterByName('id');
+        var config = ConfiguracionCanales[id];
+        var player;
+        var hideTimeout;
+        var selectedButton = 0;
+        var controlsVisible = false;
+        // var loadingTimeout; // تم إزالته
+
+        if (config) {
+            // showLoadingScreen(); // تم إزالته
+            
+            var sources = [];
+            if (config.url.includes('.m3u8')) {
+                sources.push({
+                    file: config.url,
+                    hlshtml: true,
+                    preload: "metadata"
+                });
+            }
+                
+            if (config.url.includes('.mpd') && config.k1 && config.k2) {
+                sources.push({
+                    file: config.url,
+                    drm: {"clearkey": {"keyId": config.k1, "key": config.k2}},
+                    preload: "metadata"
+                });
+            }
+
+            player = jwplayer("player").setup({
+                playlist: [{
+                    sources: sources
+                }],
+                autostart: true,
+                width: "100%", 
+                height: "100%",
+                stretching: "exactfit",
+                aspectratio: "16:9",
+                cast: {},                 
+                sharing: {},
+                
+                preload: "metadata",
+                hlshtml: true,
+                bandwidthEstimate: 2000000,
+                androidhls: false,
+                liveSyncDuration: 3,
+                liveMaxLatencyDuration: 5,
+                
+                qualityLabels: {
+                    "144": "144p", "240": "240p", "360": "360p", "480": "480p",
+                    "720": "720p HD", "1080": "1080p Full HD", "1440": "1440p 2K", "2160": "2160p 4K"
+                }
+            });
+
+            player.on('ready', function() {
+                // hideLoadingScreen(); // تم إزالته
+                setupTVControls();
+                optimizeQuality();
+            });
+
+            player.on('firstFrame', function() {
+                // hideLoadingScreen(); // تم إزالته
+                console.log('بدء التشغيل بنجاح');
+            });
+
+            player.on('error', function(e) {
+                console.log('خطأ في التشغيل:', e);
+                showMessage('خطأ في تحميل القناة. جاري المحاولة مرة أخرى...'); // استخدام showMessage بدلاً من showError
+                
+                setTimeout(function() {
+                    player.load();
+                }, 3000);
+            });
+
+            player.on('buffer', function() {
+                // document.getElementById('loadingText').textContent = 'جاري التخزين المؤقت...'; // تم إزالته
+                // showLoadingScreen(); // تم إزالته
+                // JW Player سيعرض مؤشر التحميل الخاص به تلقائياً
+            });
+
+            player.on('idle', function() {
+                // hideLoadingScreen(); // تم إزالته
+            });
+
+            // clearTimeout(loadingTimeout); // تم إزالته
+            // مهلة زمنية للتحميل (تم إزالتها)
+            // loadingTimeout = setTimeout(function() {
+            //     if (document.getElementById('loadingScreen').style.display !== 'none') {
+            //         showError('انتهت مهلة التحميل. جاري إعادة المحاولة...');
+            //         player.load();
+            //     }
+            // }, 15000);
+        }
+
+        // وظائف شاشة التحميل المخصصة تم إزالتها
+        // function showLoadingScreen() { ... }
+        // function hideLoadingScreen() { ... }
+        // function showError(message) { ... }
+
+        function optimizeQuality() {
+            try {
+                var levels = player.getQualityLevels();
+                
+                if (levels && levels.length > 0) {
+                    var targetQuality = levels.find(function(level) {
+                        return level.height <= 1080 && level.height >= 720;
+                    });
+                    
+                    if (targetQuality) {
+                        player.setCurrentQuality(targetQuality.index);
+                        console.log('تم تعيين الجودة إلى:', targetQuality.height + 'p');
+                    } else {
+                        player.setCurrentQuality(levels[levels.length - 1].index);
+                        console.log('تم تعيين الجودة إلى أعلى جودة متاحة:', levels[levels.length - 1].height + 'p');
+                    }
+                }
+                
+                var audioTracks = player.getAudioTracks();
+                if (audioTracks && audioTracks.length > 0) {
+                    var bestAudio = audioTracks.find(function(track) {
+                        return track.name && (track.name.includes('Arabic') || track.name.includes('العربية'));
+                    });
+                    
+                    if (bestAudio) {
+                        player.setCurrentAudioTrack(bestAudio.index);
+                    }
+                }
+            } catch(e) {
+                console.log('خطأ في تحسين الجودة:', e);
+            }
+        }
+
+        function setupTVControls() {
+            document.addEventListener('keydown', function(e) {
+                if (controlsVisible) {
+                    e.stopPropagation();
+                    e.preventDefault();
+                    handleTVRemote(e);
+                    return false;
+                }
+                
+                if (e.keyCode === 13 || e.keyCode === 23 || e.keyCode === 66) { // OK, Enter, Space
+                    e.stopPropagation();
+                    e.preventDefault();
+                    showTVControls();
+                    return false;
+                }
+            }, true);
+        }
+
+        function handleTVRemote(e) {
+            var keyCode = e.keyCode;
+            
+            if (keyCode === 13 || keyCode === 23 || keyCode === 66) {
+                selectCurrentButton();
+                return;
+            }
+            
+            if (keyCode === 27 || keyCode === 4 || keyCode === 8) {
+                hideTVControls();
+                return;
+            }
+            
+            if (keyCode === 37 || keyCode === 21) {
+                if (selectedButton > 0) {
+                    selectedButton--;
+                    updateButtonSelection();
+                }
+                return;
+            }
+            
+            if (keyCode === 39 || keyCode === 22) {
+                if (selectedButton < 1) {
+                    selectedButton++;
+                    updateButtonSelection();
+                }
+                return;
+            }
+        }
+
+        function showTVControls() {
+            document.getElementById('tvControls').classList.add('visible');
+            controlsVisible = true;
+            selectedButton = 0;
+            updateButtonSelection();
+            
+            clearTimeout(hideTimeout);
+            hideTimeout = setTimeout(hideTVControls, 5000);
+        }
+
+        function hideTVControls() {
+            document.getElementById('tvControls').classList.remove('visible');
+            controlsVisible = false;
+            clearTimeout(hideTimeout);
+        }
+
+        function updateButtonSelection() {
+            var buttons = document.querySelectorAll('.tv-button');
+            buttons.forEach(function(btn, index) {
+                if (index === selectedButton) {
+                    btn.classList.add('selected');
+                } else {
+                    btn.classList.remove('selected');
+                }
+            });
+        }
+
+        function selectCurrentButton() {
+            if (selectedButton === 0) {
+                changeAudioTrack();
+            } else if (selectedButton === 1) {
+                changeSubtitleTrack();
+            }
+            
+            setTimeout(hideTVControls, 1000);
+        }
+
+        function changeAudioTrack() {
+            try {
+                var audioTracks = player.getAudioTracks();
+                if (audioTracks && audioTracks.length > 1) {
+                    var currentTrack = player.getCurrentAudioTrack();
+                    var nextTrack = (currentTrack + 1) % audioTracks.length;
+                    player.setCurrentAudioTrack(nextTrack);
+                    
+                    showMessage('تم تغيير الصوت إلى: ' + (audioTracks[nextTrack].name || 'مسار ' + (nextTrack + 1)));
+                } else {
+                    showMessage('لا توجد مسارات صوتية متعددة');
+                }
+            } catch(e) {
+                showMessage('خطأ في تغيير الصوت');
+            }
+        }
+
+        function changeSubtitleTrack() {
+            try {
+                var subtitleTracks = player.getCaptionsList();
+                var currentSub = player.getCurrentCaptions();
+                
+                if (subtitleTracks && subtitleTracks.length > 0) {
+                    var nextSub;
+                    if (currentSub === -1) {
+                        nextSub = 0;
+                    } else if (currentSub >= subtitleTracks.length - 1) {
+                        nextSub = -1;
+                    } else {
+                        nextSub = currentSub + 1;
+                    }
+                    
+                    player.setCurrentCaptions(nextSub);
+                    
+                    if (nextSub === -1) {
+                        showMessage('تم إيقاف الترجمة');
+                    } else {
+                        showMessage('تم تغيير الترجمة إلى: ' + (subtitleTracks[nextSub].label || 'ترجمة ' + (nextSub + 1)));
+                    }
+                } else {
+                    showMessage('لا توجد ترجمات متاحة');
+                }
+            } catch(e) {
+                showMessage('خطأ في تغيير الترجمة');
+            }
+        }
+
+        function showMessage(text) {
+            var msg = document.createElement('div');
+            msg.style.cssText = 'position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);background:rgba(0,0,0,0.8);color:white;padding:20px;border-radius:10px;font-size:18px;z-index:999999;border:2px solid #00ff00;';
+            msg.textContent = text;
+            document.body.appendChild(msg);
+            
+            setTimeout(function() {
+                if (document.body.contains(msg)) {
+                    document.body.removeChild(msg);
+                }
+            }, 2000);
+        }
+
+        // تحسين استخدام الذاكرة
+        window.addEventListener('beforeunload', function() {
+            if (player) {
+                player.remove();
+            }
+        });
+    </script>
 </body>
 </html>
