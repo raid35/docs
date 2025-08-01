@@ -72,6 +72,10 @@
             min-width: 100px;
             font-size: 18px;
             font-weight: bold;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
         }
         
         .tv-button.selected {
@@ -106,31 +110,27 @@
     </div>
 
     <script>
-        // إعداد User Agent تلقائي لجميع الطلبات
-        (function() {
-            var originalFetch = window.fetch;
-            var originalXHR = window.XMLHttpRequest;
+        // **إزالة User Agent التلقائي من هنا**
+        // (function() {
+        //     var originalFetch = window.fetch;
+        //     var originalXHR = window.XMLHttpRequest;
+        //     var customUserAgent = "Mozilla/5.0 (Smart-TV; Linux; Tizen 6.0) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/85.0.4183.102 TV Safari/537.36";
             
-            // User Agent محسن للتلفاز والبث المباشر
-            var customUserAgent = "Mozilla/5.0 (Smart-TV; Linux; Tizen 6.0) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/85.0.4183.102 TV Safari/537.36";
+        //     window.fetch = function(url, options) {
+        //         options = options || {};
+        //         options.headers = options.headers || {};
+        //         options.headers['User-Agent'] = customUserAgent;
+        //         options.headers['Referer'] = window.location.origin;
+        //         return originalFetch.call(this, url, options);
+        //     };
             
-            // تخصيص fetch
-            window.fetch = function(url, options) {
-                options = options || {};
-                options.headers = options.headers || {};
-                options.headers['User-Agent'] = customUserAgent;
-                options.headers['Referer'] = window.location.origin;
-                return originalFetch.call(this, url, options);
-            };
-            
-            // تخصيص XMLHttpRequest
-            var XHROpen = originalXHR.prototype.open;
-            originalXHR.prototype.open = function(method, url, async, user, password) {
-                XHROpen.apply(this, arguments);
-                this.setRequestHeader('User-Agent', customUserAgent);
-                this.setRequestHeader('Referer', window.location.origin);
-            };
-        })();
+        //     var XHROpen = originalXHR.prototype.open;
+        //     originalXHR.prototype.open = function(method, url, async, user, password) {
+        //         XHROpen.apply(this, arguments);
+        //         this.setRequestHeader('User-Agent', customUserAgent);
+        //         this.setRequestHeader('Referer', window.location.origin);
+        //     };
+        // })();
 
         function getParameterByName(name) {
             name = name.replace(/[\[\]]/g, "\\$&");
@@ -258,7 +258,6 @@
         var loadingTimeout;
 
         if (config) {
-            // إظهار شاشة التحميل
             showLoadingScreen();
             
             var sources = [];
@@ -278,7 +277,6 @@
                 });
             }
 
-            // إعداد JW Player مع تحسينات الأداء
             player = jwplayer("player").setup({
                 playlist: [{
                     sources: sources
@@ -291,7 +289,6 @@
                 cast: {},                 
                 sharing: {},
                 
-                // إعدادات تحسين الأداء
                 preload: "metadata",
                 hlshtml: true,
                 bandwidthEstimate: 2000000,
@@ -299,20 +296,12 @@
                 liveSyncDuration: 3,
                 liveMaxLatencyDuration: 5,
                 
-                // إعدادات الجودة
                 qualityLabels: {
-                    "144": "144p",
-                    "240": "240p", 
-                    "360": "360p",
-                    "480": "480p",
-                    "720": "720p HD",
-                    "1080": "1080p Full HD",
-                    "1440": "1440p 2K",
-                    "2160": "2160p 4K"
+                    "144": "144p", "240": "240p", "360": "360p", "480": "480p",
+                    "720": "720p HD", "1080": "1080p Full HD", "1440": "1440p 2K", "2160": "2160p 4K"
                 }
             });
 
-            // أحداث المشغل
             player.on('ready', function() {
                 hideLoadingScreen();
                 setupTVControls();
@@ -342,7 +331,6 @@
                 hideLoadingScreen();
             });
 
-            // مهلة زمنية للتحميل
             loadingTimeout = setTimeout(function() {
                 if (document.getElementById('loadingScreen').style.display !== 'none') {
                     showError('انتهت مهلة التحميل. جاري إعادة المحاولة...');
@@ -504,12 +492,12 @@
                 
                 if (subtitleTracks && subtitleTracks.length > 0) {
                     var nextSub;
-                    if (currentSub === -1) {
-                        nextSub = 0;
-                    } else if (currentSub >= subtitleTracks.length - 1) {
-                        nextSub = -1;
+                    if (currentSub === -1) { // إذا كانت الترجمة متوقفة
+                        nextSub = 0; // ابدأ من الترجمة الأولى
+                    } else if (currentSub >= subtitleTracks.length - 1) { // إذا وصلت لآخر ترجمة
+                        nextSub = -1; // أوقف الترجمة
                     } else {
-                        nextSub = currentSub + 1;
+                        nextSub = currentSub + 1; // انتقل للترجمة التالية
                     }
                     
                     player.setCurrentCaptions(nextSub);
