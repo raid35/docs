@@ -1,0 +1,400 @@
+
+<!DOCTYPE html>
+<html lang="ar">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>STORM Player</title>
+    <meta name="robots" content="noindex, nofollow">
+    <meta name="referrer" content="no-referrer">
+    	<link href="https://fonts.googleapis.com/css2?family=Cairo:wght@700&display=swap" rel="stylesheet">
+    <style>
+        /* التصميم الاحترافي الكامل */
+        body { margin: 0; padding: 0; background-color: black; }
+        #player-container { width: 100vw; height: 100vh; }
+        .error-container { width: 100%; height: 100%; color: white; display: flex; flex-direction: column; justify-content: center; align-items: center; font-family: Arial, sans-serif; text-align: center; }
+        .error-message { background-color: rgba(229, 9, 20, 0.2); padding: 20px; border-radius: 8px; border: 1px solid #e50914; }
+        .jwplayer .jw-controlbar { background-color: rgba(0, 0, 0, 0.8) !important; }
+        .jwplayer .jw-icon { color: #eee !important; }
+        .jwplayer .jw-button-color:hover { color: #e50914 !important; }
+        .jwplayer .jw-progress { background-color: red !important; }
+        .jwplayer .jw-progress .jw-play-progress { background-color: red !important; }
+        .jwplayer .jw-slider-time .jw-knob { background-color: red !important; border: 2px solid red; }
+        .jwplayer .jw-display-icon-container { background-color: rgba(0, 0, 0, 0.6); border-radius: 12px; }
+        .jwplayer .jw-media video { object-fit: fill; }
+        .storm-text-watermark { position: absolute; top: 15px; left: 15px; z-index: 100; color: rgba(255, 255, 255, 0.7); font-family: 'Arial', sans-serif; font-size: 14px; font-weight: bold; text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.8); padding: 5px 10px; background: rgba(0, 0, 0, 0.5); border-radius: 4px; }
+    </style>
+    <script src="https://ssl.p.jwpcdn.com/player/v/8.26.0/jwplayer.js"></script>
+    <script>jwplayer.key = 'XSuP4qMl+9tK17QNb+4+th2Pm9AWgMO/cYH8CI0HGGr7bdjo';</script>
+</head>
+<body>
+
+    <div id="player-container"></div>
+    <div class="storm-text-watermark">STORM CONNECT</div>
+
+<!-- تحميل خط Cairo -->
+<link href="https://fonts.googleapis.com/css2?family=Cairo:wght@700&display=swap" rel="stylesheet">
+
+<!-- شاشة التحميل -->
+<div id="loading-message" style="
+    position: fixed;
+    top: 0; left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.85);
+    color: white;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    z-index: 999;
+    font-family: 'Cairo', sans-serif;
+    font-size: 18px;
+    
+">
+    <div class="spinner" style="
+        width: 50px;
+        height: 50px;
+        border: 6px solid #ffffff33;
+        border-top-color: #e50914; /* أحمر زي مشغل يوتيوب */
+        border-radius: 50%;
+        animation: spin 1s linear infinite;
+        margin-bottom: 15px;
+    "></div>
+جاري تحميل البث الآن
+</div>
+
+<style>
+@keyframes spin {
+    to { transform: rotate(360deg); }
+}
+</style>
+
+<!-- Font & Font Awesome -->
+<link href="https://fonts.googleapis.com/css2?family=Cairo:wght@700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+
+<style>
+    * {
+        font-family: 'Cairo', sans-serif;
+    }
+
+    #info-overlay {
+        position: fixed;
+        top: 0; left: 0;
+        width: 100vw; height: 100vh;
+        background: rgba(0,0,0,0.75);
+        z-index: 9998;
+        display: none;
+    }
+
+    #info-popup {
+        position: fixed;
+        top: 50%; left: 50%;
+        transform: translate(-50%, -50%);
+        width: 80%;
+        max-width: 400px;
+        background-color: #111;
+        color: #fff;
+        padding: 20px;
+        border-radius: 16px;
+        box-shadow: 0 0 20px rgba(0,0,0,0.9);
+        z-index: 9999;
+        display: none;
+        overflow-y: auto;
+        max-height: 85vh;
+        direction: rtl;
+        border: 1px solid #444;
+    }
+
+    #info-popup h3 {
+        margin-top: 0;
+        font-size: 22px;
+        color: #e50914;
+        text-align: center;
+        margin-bottom: 15px;
+        border-bottom: 1px solid #444;
+    }
+
+    .info-item {
+        background: #222;
+        padding: 12px 15px;
+        margin-bottom: 12px;
+        border-radius: 10px;
+        display: flex;
+        align-items: center;
+        font-size: 15px;
+        gap: 10px;
+        border: 1px solid #444;
+        font-weight: bold;
+    }
+
+    .info-item i {
+        color: #e50914;
+        min-width: 20px;
+        text-align: center;
+        font-size:20px
+    }
+
+    #close-info-btn {
+        display: block;
+        width: 100%;
+        padding: 12px;
+        background-color: #e50914;
+        color: #fff;
+        font-size: 16px;
+        font-weight: bold;
+        border: none;
+        border-radius: 10px;
+        cursor: pointer;
+        margin-top: 15px;
+    }
+
+    #close-info-btn:hover {
+        background-color: #e50914;
+    }
+</style>
+
+<!-- Overlay + Popup -->
+<div id="info-overlay"></div>
+<div id="info-popup">
+    <h3>About Storm Player</h3>
+
+    <div class="info-item">
+    <i class="fas fa-user-shield"></i>
+    مطور المشغل : 
+    <strong>
+        <a href="https://t.me/hatemzahran1" target="_blank" style="color: #1da1f2; text-decoration: none;">
+            Hatem Zahran
+        </a>
+    </strong>
+</div>
+
+    <div class="info-item">
+        <i class="fab fa-telegram-plane"></i>
+القناة الخاصة بنا علي التليجرام :
+        <a href="https://t.me/storm_connect" target="_blank" style="color:#1da1f2; text-decoration: none;">@storm_connect</a>
+    </div>
+
+    
+
+    <div class="info-item">
+        <i class="fas fa-ban"></i>
+هذا المشغل خاص بتطبيق (  Storm Connect ) غير مسموح بنشره أو استخدامه في تطبيق آخر
+    </div>
+
+    <div class="info-item">
+        <i class="fas fa-circle-info"></i>
+        يتم استخدام هذا المشغل لأغراض ترفيهية فقط
+    </div>
+
+    <button id="close-info-btn">إغلاق</button>
+</div>
+
+<script>
+    function showInfoPopup() {
+        document.getElementById("info-popup").style.display = "block";
+        document.getElementById("info-overlay").style.display = "block";
+    }
+
+    function closeInfoPopup() {
+        document.getElementById("info-popup").style.display = "none";
+        document.getElementById("info-overlay").style.display = "none";
+    }
+
+    document.addEventListener('DOMContentLoaded', () => {
+        document.getElementById("close-info-btn").addEventListener("click", closeInfoPopup);
+    });
+</script>
+
+    <script>
+    let currentFit = localStorage.getItem("videoFit") || "fill";
+
+    function applyVideoFit() {
+        const video = document.querySelector(".jwplayer video");
+        if (video) video.style.objectFit = currentFit;
+    }
+
+    function toggleAspectRatio() {
+        currentFit = (currentFit === "fill") ? "contain" : "fill";
+        localStorage.setItem("videoFit", currentFit);
+        applyVideoFit();
+    }
+
+    function addAspectButton(playerInstance) {
+        playerInstance.addButton(
+            "https://img.icons8.com/ios-glyphs/24/ffffff/resize.png",
+            "تبديل الأبعاد",
+            toggleAspectRatio,
+            "aspect-toggle"
+        );
+    }
+
+    function addTelegramButton(playerInstance) {
+        playerInstance.addButton(
+            "https://img.icons8.com/ios-filled/25/ffffff/telegram-app.png",
+            "تابعنا على تليجرام",
+            () => {
+                const tgDomain = "storm_connect"; // ← اسم قناتك هنا
+                const telegramAppUrl = `tg://resolve?domain=${tgDomain}`;
+                const telegramWebUrl = `https://t.me/${tgDomain}`;
+
+                try {
+                    const a = document.createElement("a");
+                    a.href = telegramAppUrl;
+                    a.target = "_blank";
+                    a.rel = "noopener noreferrer";
+                    document.body.appendChild(a);
+                    a.click();
+
+                    setTimeout(() => {
+                        window.open(telegramWebUrl, "_blank");
+                    }, 2000);
+                } catch (e) {
+                    window.open(telegramWebUrl, "_blank");
+                }
+            },
+            "telegram-button"
+        );
+    }
+    
+    function addInfoButton(playerInstance) {
+        playerInstance.addButton(
+            "https://img.icons8.com/ios-filled/24/ffffff/info.png",
+            "معلومات عن المشغل",
+            showInfoPopup,
+            "info-button"
+        );
+    }
+
+    function showInfoPopup() {
+        document.getElementById("info-popup").style.display = "block";
+        document.getElementById("info-overlay").style.display = "block";
+    }
+
+    function closeInfoPopup() {
+        document.getElementById("info-popup").style.display = "none";
+        document.getElementById("info-overlay").style.display = "none";
+    }
+
+    function observeVideoChanges() {
+        const observer = new MutationObserver(() => applyVideoFit());
+        observer.observe(document.body, { childList: true, subtree: true });
+    }
+
+    function setupFullscreenFix() {
+        const events = [
+            "fullscreenchange", "webkitfullscreenchange",
+            "mozfullscreenchange", "msfullscreenchange"
+        ];
+        events.forEach(event => {
+            document.addEventListener(event, () => {
+                setTimeout(() => applyVideoFit(), 200);
+            });
+        });
+    }
+
+    function forceFitLoop() {
+        setInterval(applyVideoFit, 1000);
+    }
+
+    document.addEventListener('DOMContentLoaded', () => {
+        const container = document.getElementById('player-container');
+        const loadingMessage = document.getElementById('loading-message');
+
+        const channelId = "https://fastly-live.cdn.intigral-ott.net/DSC/DSC.isml/manifest.mpd";
+        const keyId     = "1eecd547ede99578bdef60af3195929d";
+        const keyValue  = "f6907d65b8405097d477e0e0b69007f2";
+
+        if (!channelId || !keyId || !keyValue) {
+            container.innerHTML = `
+                <div class="error-container">
+                    <div class="error-message">
+                        <h2>⚠️ حدث خطأ</h2>
+                        <p>الرابط غير مكتمل، تأكد من وجود id و key و key2</p>
+                    </div>
+                </div>`;
+            if (loadingMessage) loadingMessage.style.display = 'none';
+            return;
+        }
+
+        function fetchStreamUrl(retry = 0) {
+            fetch(`https://stormconnect.ct.ws/get_mpdd.php?id=${channelId}`)
+                .then(res => res.ok ? res.json() : null)
+                .then(data => {
+                    if (data && data.stream_url) {
+                        setupPlayer(data.stream_url);
+                    } else {
+                        if (retry < 1) {
+                            setTimeout(() => fetchStreamUrl(retry + 1), 1000);
+                        } else {
+                            showError("⚠️ لم يتم العثور على رابط البث، يرجى المحاولة لاحقًا.");
+                        }
+                    }
+                })
+                .catch(err => {
+                    console.error("Fetch Error:", err);
+                    showError("⚠️ تعذر الاتصال بالخادم.");
+                });
+        }
+
+        function setupPlayer(streamUrl) {
+            container.innerHTML = '<div id="player"></div>';
+
+            const playerInstance = jwplayer("player");
+
+            playerInstance.setup({
+                playlist: [{
+                    sources: [{
+                        type: "dash",
+                        file: streamUrl,
+                        drm: {
+                            clearkey: {
+                                keyId: keyId,
+                                key: keyValue
+                            }
+                        }
+                    }]
+                }],
+                width: "100%",
+                height: "100%",
+                autostart: false,
+                mute: false
+            });
+            
+
+            playerInstance.on('ready', function () {
+                applyVideoFit();
+                addAspectButton(playerInstance);
+                addTelegramButton(playerInstance); // ← زر التليجرام شغال
+                addInfoButton(playerInstance); // ← زر المعلومات
+                if (loadingMessage) loadingMessage.style.display = 'none';
+            });
+
+            playerInstance.on('play', function () {
+                applyVideoFit();
+                if (loadingMessage) loadingMessage.style.display = 'none';
+            });
+
+            playerInstance.on('fullscreen', applyVideoFit);
+        }
+
+        function showError(msg) {
+            container.innerHTML = `
+                <div class="error-container">
+                    <div class="error-message">
+                        <h2>⚠️ حدث خطأ</h2>
+                        <p>${msg}</p>
+                    </div>
+                </div>`;
+            if (loadingMessage) loadingMessage.style.display = 'none';
+        }
+
+        fetchStreamUrl();
+        observeVideoChanges();
+        setupFullscreenFix();
+        forceFitLoop();
+    });
+</script>
+</body>
+</html>
