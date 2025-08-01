@@ -165,7 +165,7 @@
             "arenasports4": { url: "https://webtvstream.bhtelecom.ba/hls6/arena4.mpd", k1: "c18b6aa739be4c0b774605fcfb5d6b68", k2: "e41c3a6f7532b2e3a828d9580124c89d" },
             "NRK1_NO": { url: "https://rikstv-live-scalstrm.telenorcdn.net/live/rikstv/64393b4f1dbc891fd41f5242/manifest.mpd", k1: "01010101010101010101010101010101", k2: "01010101010101010101010101010101" },
             "BHT1_BH": { url: "https://webtvstream.bhtelecom.ba/hls19/bht1.mpd", k1: "c18b6aa739be4c0b774605fcfb5d6b68", k2: "e41c3a6f7532b2e3a828d9580124c89d" },
-            "LAUNE_BE": { url: "https://daiconnect.com/live/dash/rtbf/laune-premium-drm-2/.mpd?t=2023-03-28T15%3A15%3A00.000&USrGDPRC=CPpVcwAPpVcwAAHABBENC9CsAP_AAAAAAAIgF5wFAAKgAXABAACoAFoAMgAaABFACYAE8AKUAWwBcADaAIAAQkA_QD-AIGAUgA_YC8wAAAEhIAMAAQSnDQAYAAglOIgAwABBKcVABgACCU4yADAAEEpx0AGAAIJTkIAMAAQSnJQAYAAglOUgAwABBKcA.f_gAAAAAAAAA&UGDPR=1&DAdID=e76997ff-4695-4a78-9bb8-488e1631872a&requestuid=742b0983-cd7c-11ed-961f-a2691158f87a", k1: "1a8315e4b64c4e638dc24d93134b9b2d", k2: "2821b54058fb3adc9c6252c631aef9e5" },
+            "LAUNE_BE": { url: "https://daiconnect.com/live/dash/rtbf/laune-premium-drm-2/.mpd?t=2023-03-28T15%3A15%3A00.000&USrGDPRC=CPpVcwAPpVcwAAHABBENC9CsAP_AAAAAAAIgF5wFAAKgAXABAACoAFoAMgAaABFACYAE8AKUAWwBcADaAIAAQkA_QD-AIGAUgA_YC8wAAAEhIAMAAQSnDQAYAAglOIgAwABBKcVABgACCU4yADAAEEpx0AGAAIJTkIAMAAQSnJQAYAAglOUgAwABBKcA.f_gAAAAAAAAA&UGDPR=1&DAdID=e76997ff-4695-4a78-9bb8-488e163182a&requestuid=742b0983-cd7c-11ed-961f-a2691158f87a", k1: "1a8315e4b64c4e638dc24d93134b9b2d", k2: "2821b54058fb3adc9c6252c631aef9e5" },
             "CHANNEL_4_ENG": { url: "https://wp2-obc1112-live-ch-prod.prod.cdn.dmdsdp.com/dash/SV09211/manifest.mpd", k1: "d56ff9db826b4a41af9dbd0234c31116", k2: "ac6eaee980dff46e15670004663132a9" },
             "TV2_Direkte_NO": { url: "https://aws-appeartv-cdn.rikstv.no/rikstv/1/11/dash/TV2_HD/manifest.mpd?version=1&adap=no_dolby&RikstvAssetId=rikstv_5711", k1: "bfb0134de69d76d25b5b4b202df11431", k2: "025915bd3062c4bde44a13916c5bfefe" },
             "NOVA2_CZ": { url: "https://dash2.antik.sk/stream/nvidia_nova_sport2/playlist_cbcs.mpd", k1: "11223344556677889900112233445566", k2: "11223344556677889900112233445566" },
@@ -374,9 +374,8 @@
             "ZDF_DE": { url: "https://p7s1-live-001-prod.akamaized.net/45371d5a/t_009/zdf-de-hd/cenc-default.mpd", k1: "7757d3fa8cdab673a2dd9f3ed7b41360", k2: "96e498b70eeecfc0164ed4e0a78e36f3" },
         };
 
-        var id = getParameterByName('id');
-        var config = ConfiguracionCanales[id];
-        var player; // This will hold either JW Player or Shaka Player instance
+        var player = null; // This will hold either JW Player or Shaka Player instance
+        var activePlayerType = null; // 'shaka' or 'jw'
         var hideTimeout;
         var selectedButton = 0;
         var controlsVisible = false;
@@ -398,19 +397,41 @@
             }
         }
 
+        function destroyCurrentPlayer() {
+            if (player) {
+                if (activePlayerType === 'shaka') {
+                    console.log('Destroying Shaka Player instance.');
+                    player.destroy();
+                } else if (activePlayerType === 'jw') {
+                    console.log('Removing JW Player instance.');
+                    player.remove();
+                }
+                player = null;
+                activePlayerType = null;
+            }
+            // Ensure both containers are hidden before new setup
+            shakaVideoElement.style.display = 'none';
+            jwplayerContainer.style.display = 'none';
+        }
+
+        var id = getParameterByName('id');
+        var config = ConfiguracionCanales[id];
+
         if (config) {
+            destroyCurrentPlayer(); // Always destroy previous player before initializing a new one
+
             if (config.url.includes('.mpd') && config.k1 && config.k2 && shaka.Player.isSupported()) {
                 // Use Shaka Player for DASH with ClearKey DRM
                 console.log('Initializing Shaka Player for:', id);
                 
-                // Hide JW Player container, show Shaka video element
-                jwplayerContainer.style.display = 'none';
                 shakaVideoElement.style.display = 'block';
                 shakaVideoElement.controls = true; // Enable native controls for Shaka
+                shakaVideoElement.muted = true; // Mute for autoplay compliance (important for some browsers)
 
                 showLoadingOverlay();
 
                 player = new shaka.Player(shakaVideoElement);
+                activePlayerType = 'shaka';
                 
                 // Configure Shaka Player for optimal performance
                 player.configure({
@@ -430,18 +451,17 @@
 
                 player.addEventListener('error', function(event) {
                     console.error('Shaka Player Error:', event.detail);
-                    showMessage('خطأ في تحميل القناة (Shaka). جاري المحاولة مرة أخرى...');
-                    setTimeout(function() {
-                        player.load(config.url); // Retry loading
-                    }, 3000);
+                    showMessage('خطأ في تحميل القناة (Shaka). يرجى المحاولة مرة أخرى.');
+                    // No automatic retry here, as it might loop on persistent errors.
+                    // User can refresh or select another channel.
                 });
 
                 player.load(config.url)
                     .then(function() {
                         console.log('The video has now been loaded by Shaka Player!');
                         hideLoadingOverlay();
-                        shakaVideoElement.play(); // Autoplay after load
-                        setupTVControls(); // Still call this, but functions will be limited
+                        shakaVideoElement.play().catch(e => console.error("Autoplay failed:", e));
+                        setupTVControls(); // Still call this, but functions will be limited for Shaka
                     })
                     .catch(function(error) {
                         console.error('Shaka Player Load Error:', error);
@@ -449,25 +469,12 @@
                         hideLoadingOverlay();
                     });
 
-                // Override JW Player specific functions for Shaka Player
-                window.jwplayer = {
-                    // Mock jwplayer object to prevent errors if other scripts try to access it
-                    // This is a simplification; full compatibility would be much more complex.
-                    key: jwplayer.key, // Keep the key
-                    player: function() { return null; }, // Return null for player instance
-                    setup: function() { console.warn("JW Player setup skipped for Shaka stream."); },
-                    on: function() {},
-                    remove: function() {}
-                };
-
             } else {
                 // Use JW Player for HLS or other streams, or if Shaka is not supported
                 console.log('Initializing JW Player for:', id);
 
-                // Hide Shaka video element, show JW Player container
-                shakaVideoElement.style.display = 'none';
                 jwplayerContainer.style.display = 'block';
-
+                
                 var sources = [];
                 if (config.url.includes('.m3u8')) {
                     sources.push({
@@ -476,8 +483,7 @@
                         preload: "metadata"
                     });
                 }
-                
-                // Original JW Player DRM setup
+                // Only add DRM source for JW Player if it's a .mpd and has k1/k2
                 if (config.url.includes('.mpd') && config.k1 && config.k2) {
                     sources.push({
                         file: config.url,
@@ -508,6 +514,7 @@
                         "720": "720p HD", "1080": "1080p Full HD", "1440": "1440p 2K", "2160": "2160p 4K"
                     }
                 });
+                activePlayerType = 'jw';
 
                 player.on('ready', function() {
                     setupTVControls();
@@ -520,7 +527,7 @@
                     console.log('خطأ في التشغيل (JW Player):', e);
                     showMessage('خطأ في تحميل القناة. جاري المحاولة مرة أخرى...');
                     setTimeout(function() {
-                        player.load();
+                        if (activePlayerType === 'jw') player.load();
                     }, 3000);
                 });
                 player.on('buffer', function() {
@@ -531,34 +538,32 @@
                 });
             }
         } else {
-            showMessage('لم يتم العثور على إعدادات القناة.');
+            showMessage('لم يتم العثور على إعدادات القناة أو المشغل غير مدعوم.');
         }
 
         function optimizeQuality() {
-            // This function is designed for JW Player.
-            // If Shaka Player is active, this will not apply.
-            if (typeof jwplayer !== 'undefined' && jwplayer.player && jwplayer.player().getQualityLevels) {
+            if (activePlayerType === 'jw' && player && typeof player.getQualityLevels === 'function') {
                 try {
-                    var levels = jwplayer.player().getQualityLevels();
+                    var levels = player.getQualityLevels();
                     if (levels && levels.length > 0) {
                         var targetQuality = levels.find(function(level) {
                             return level.height <= 1080 && level.height >= 720;
                         });
                         if (targetQuality) {
-                            jwplayer.player().setCurrentQuality(targetQuality.index);
+                            player.setCurrentQuality(targetQuality.index);
                             console.log('تم تعيين الجودة إلى (JW Player):', targetQuality.height + 'p');
                         } else {
-                            jwplayer.player().setCurrentQuality(levels[levels.length - 1].index);
+                            player.setCurrentQuality(levels[levels.length - 1].index);
                             console.log('تم تعيين الجودة إلى أعلى جودة متاحة (JW Player):', levels[levels.length - 1].height + 'p');
                         }
                     }
-                    var audioTracks = jwplayer.player().getAudioTracks();
+                    var audioTracks = player.getAudioTracks();
                     if (audioTracks && audioTracks.length > 0) {
                         var bestAudio = audioTracks.find(function(track) {
                             return track.name && (track.name.includes('Arabic') || track.name.includes('العربية'));
                         });
                         if (bestAudio) {
-                            jwplayer.player().setCurrentAudioTrack(bestAudio.index);
+                            player.setCurrentAudioTrack(bestAudio.index);
                         }
                     }
                 } catch(e) {
@@ -566,6 +571,7 @@
                 }
             } else {
                 console.log('وظيفة optimizeQuality لا تدعم المشغل الحالي.');
+                showMessage('عناصر التحكم في الجودة غير مدعومة حاليًا مع Shaka Player.');
             }
         }
 
@@ -640,9 +646,9 @@
 
         function selectCurrentButton() {
             // Check which player is active
-            if (shakaVideoElement.style.display === 'block') {
+            if (activePlayerType === 'shaka') {
                 showMessage('عناصر التحكم هذه غير مدعومة حاليًا مع Shaka Player.');
-            } else if (jwplayerContainer.style.display === 'block' && typeof jwplayer !== 'undefined' && jwplayer.player) {
+            } else if (activePlayerType === 'jw' && player) {
                 if (selectedButton === 0) {
                     changeAudioTrack();
                 } else if (selectedButton === 1) {
@@ -655,13 +661,13 @@
         }
 
         function changeAudioTrack() {
-            if (typeof jwplayer !== 'undefined' && jwplayer.player && jwplayer.player().getAudioTracks) {
+            if (activePlayerType === 'jw' && player && typeof player.getAudioTracks === 'function') {
                 try {
-                    var audioTracks = jwplayer.player().getAudioTracks();
+                    var audioTracks = player.getAudioTracks();
                     if (audioTracks && audioTracks.length > 1) {
-                        var currentTrack = jwplayer.player().getCurrentAudioTrack();
+                        var currentTrack = player.getCurrentAudioTrack();
                         var nextTrack = (currentTrack + 1) % audioTracks.length;
-                        jwplayer.player().setCurrentAudioTrack(nextTrack);
+                        player.setCurrentAudioTrack(nextTrack);
                         showMessage('تم تغيير الصوت إلى: ' + (audioTracks[nextTrack].name || 'مسار ' + (nextTrack + 1)));
                     } else {
                         showMessage('لا توجد مسارات صوتية متعددة');
@@ -675,10 +681,10 @@
         }
 
         function changeSubtitleTrack() {
-            if (typeof jwplayer !== 'undefined' && jwplayer.player && jwplayer.player().getCaptionsList) {
+            if (activePlayerType === 'jw' && player && typeof player.getCaptionsList === 'function') {
                 try {
-                    var subtitleTracks = jwplayer.player().getCaptionsList();
-                    var currentSub = jwplayer.player().getCurrentCaptions();
+                    var subtitleTracks = player.getCaptionsList();
+                    var currentSub = player.getCurrentCaptions();
                     if (subtitleTracks && subtitleTracks.length > 0) {
                         var nextSub;
                         if (currentSub === -1) {
@@ -688,7 +694,7 @@
                         } else {
                             nextSub = currentSub + 1;
                         }
-                        jwplayer.player().setCurrentCaptions(nextSub);
+                        player.setCurrentCaptions(nextSub);
                         if (nextSub === -1) {
                             showMessage('تم إيقاف الترجمة');
                         } else {
@@ -719,11 +725,7 @@
 
         // تحسين استخدام الذاكرة
         window.addEventListener('beforeunload', function() {
-            if (player && typeof player.remove === 'function') { // Check if it's JW Player
-                player.remove();
-            } else if (player && typeof player.destroy === 'function') { // Check if it's Shaka Player
-                player.destroy();
-            }
+            destroyCurrentPlayer(); // Use the unified destroy function
         });
     </script>
 </body>
