@@ -12,38 +12,6 @@
         .ViostreamIframe { overflow: hidden; padding-top: 56.25%; position: relative; }
         .ViostreamIframe iframe { border: 0; height: 100%; left: 0; position: absolute; top: 0; width: 100%; }
         
-        /* شاشة التحميل */
-        .loading-screen {
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: #000;
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
-            color: white;
-            font-size: 18px;
-            z-index: 1000;
-        }
-        
-        .loading-spinner {
-            width: 50px;
-            height: 50px;
-            border: 5px solid #333;
-            border-top: 5px solid #fff;
-            border-radius: 50%;
-            animation: spin 1s linear infinite;
-            margin-bottom: 20px;
-        }
-        
-        @keyframes spin {
-            0% { transform: rotate(0deg); }
-            100% { transform: rotate(360deg); }
-        }
-        
         /* أيقونات التلفاز */
         #tvControls {
             position: absolute;
@@ -91,10 +59,7 @@
 </head>
 <body>
     <div id="player" class="ViostreamIframe">
-        <div id="loadingScreen" class="loading-screen">
-            <div class="loading-spinner"></div>
-            <div id="loadingText">جاري تحميل القناة...</div>
-        </div>
+        <!-- شاشة التحميل المخصصة تم إزالتها -->
     </div>
     
     <!-- أيقونات التلفاز -->
@@ -110,27 +75,31 @@
     </div>
 
     <script>
-        // **إزالة User Agent التلقائي من هنا**
-        // (function() {
-        //     var originalFetch = window.fetch;
-        //     var originalXHR = window.XMLHttpRequest;
-        //     var customUserAgent = "Mozilla/5.0 (Smart-TV; Linux; Tizen 6.0) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/85.0.4183.102 TV Safari/537.36";
+        // إعداد User Agent تلقائي لجميع الطلبات
+        (function() {
+            var originalFetch = window.fetch;
+            var originalXHR = window.XMLHttpRequest;
             
-        //     window.fetch = function(url, options) {
-        //         options = options || {};
-        //         options.headers = options.headers || {};
-        //         options.headers['User-Agent'] = customUserAgent;
-        //         options.headers['Referer'] = window.location.origin;
-        //         return originalFetch.call(this, url, options);
-        //     };
+            // User Agent محسن للتلفاز والبث المباشر
+            var customUserAgent = "Mozilla/5.0 (Smart-TV; Linux; Tizen 6.0) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/85.0.4183.102 TV Safari/537.36";
             
-        //     var XHROpen = originalXHR.prototype.open;
-        //     originalXHR.prototype.open = function(method, url, async, user, password) {
-        //         XHROpen.apply(this, arguments);
-        //         this.setRequestHeader('User-Agent', customUserAgent);
-        //         this.setRequestHeader('Referer', window.location.origin);
-        //     };
-        // })();
+            // تخصيص fetch
+            window.fetch = function(url, options) {
+                options = options || {};
+                options.headers = options.headers || {};
+                options.headers['User-Agent'] = customUserAgent;
+                options.headers['Referer'] = window.location.origin;
+                return originalFetch.call(this, url, options);
+            };
+            
+            // تخصيص XMLHttpRequest
+            var XHROpen = originalXHR.prototype.open;
+            originalXHR.prototype.open = function(method, url, async, user, password) {
+                XHROpen.apply(this, arguments);
+                this.setRequestHeader('User-Agent', customUserAgent);
+                this.setRequestHeader('Referer', window.location.origin);
+            };
+        })();
 
         function getParameterByName(name) {
             name = name.replace(/[\[\]]/g, "\\$&");
@@ -166,7 +135,7 @@
                 url: "https://sps1.starzplayarabia.com/out/v1/41ff8fde1cd84ed5b30ab8198755356b/index.mpd",
                 k1: "b253c726c24c7c94a3ddf9b1907e2c76",
                 k2: "097963d6ad73c3d712a104981de0ed42"
-                        },
+            },
             "temp": {
                 url: "https://live12-dash.cdns.cdn.orangetv.orange.es/hpVkPAjFFpE3JSIKY3SY-Q/1727923395/104469517/132089857/87/cmaf/r12_mcampeones/dash_high.mpd",
                 k1: "850c1a430396ce4255f3902bf1f4e897",
@@ -255,10 +224,10 @@
         var hideTimeout;
         var selectedButton = 0;
         var controlsVisible = false;
-        var loadingTimeout;
+        // var loadingTimeout; // تم إزالته
 
         if (config) {
-            showLoadingScreen();
+            // showLoadingScreen(); // تم إزالته
             
             var sources = [];
             if (config.url.includes('.m3u8')) {
@@ -303,19 +272,19 @@
             });
 
             player.on('ready', function() {
-                hideLoadingScreen();
+                // hideLoadingScreen(); // تم إزالته
                 setupTVControls();
                 optimizeQuality();
             });
 
             player.on('firstFrame', function() {
-                hideLoadingScreen();
+                // hideLoadingScreen(); // تم إزالته
                 console.log('بدء التشغيل بنجاح');
             });
 
             player.on('error', function(e) {
                 console.log('خطأ في التشغيل:', e);
-                showError('خطأ في تحميل القناة. جاري المحاولة مرة أخرى...');
+                showMessage('خطأ في تحميل القناة. جاري المحاولة مرة أخرى...'); // استخدام showMessage بدلاً من showError
                 
                 setTimeout(function() {
                     player.load();
@@ -323,35 +292,29 @@
             });
 
             player.on('buffer', function() {
-                document.getElementById('loadingText').textContent = 'جاري التخزين المؤقت...';
-                showLoadingScreen();
+                // document.getElementById('loadingText').textContent = 'جاري التخزين المؤقت...'; // تم إزالته
+                // showLoadingScreen(); // تم إزالته
+                // JW Player سيعرض مؤشر التحميل الخاص به تلقائياً
             });
 
             player.on('idle', function() {
-                hideLoadingScreen();
+                // hideLoadingScreen(); // تم إزالته
             });
 
-            loadingTimeout = setTimeout(function() {
-                if (document.getElementById('loadingScreen').style.display !== 'none') {
-                    showError('انتهت مهلة التحميل. جاري إعادة المحاولة...');
-                    player.load();
-                }
-            }, 15000);
+            // clearTimeout(loadingTimeout); // تم إزالته
+            // مهلة زمنية للتحميل (تم إزالتها)
+            // loadingTimeout = setTimeout(function() {
+            //     if (document.getElementById('loadingScreen').style.display !== 'none') {
+            //         showError('انتهت مهلة التحميل. جاري إعادة المحاولة...');
+            //         player.load();
+            //     }
+            // }, 15000);
         }
 
-        function showLoadingScreen() {
-            document.getElementById('loadingScreen').style.display = 'flex';
-        }
-
-        function hideLoadingScreen() {
-            document.getElementById('loadingScreen').style.display = 'none';
-            clearTimeout(loadingTimeout);
-        }
-
-        function showError(message) {
-            document.getElementById('loadingText').textContent = message;
-            document.getElementById('loadingScreen').style.display = 'flex';
-        }
+        // وظائف شاشة التحميل المخصصة تم إزالتها
+        // function showLoadingScreen() { ... }
+        // function hideLoadingScreen() { ... }
+        // function showError(message) { ... }
 
         function optimizeQuality() {
             try {
@@ -365,6 +328,9 @@
                     if (targetQuality) {
                         player.setCurrentQuality(targetQuality.index);
                         console.log('تم تعيين الجودة إلى:', targetQuality.height + 'p');
+                    } else {
+                        player.setCurrentQuality(levels[levels.length - 1].index);
+                        console.log('تم تعيين الجودة إلى أعلى جودة متاحة:', levels[levels.length - 1].height + 'p');
                     }
                 }
                 
@@ -392,7 +358,7 @@
                     return false;
                 }
                 
-                if (e.keyCode === 13 || e.keyCode === 23 || e.keyCode === 66) {
+                if (e.keyCode === 13 || e.keyCode === 23 || e.keyCode === 66) { // OK, Enter, Space
                     e.stopPropagation();
                     e.preventDefault();
                     showTVControls();
@@ -492,12 +458,12 @@
                 
                 if (subtitleTracks && subtitleTracks.length > 0) {
                     var nextSub;
-                    if (currentSub === -1) { // إذا كانت الترجمة متوقفة
-                        nextSub = 0; // ابدأ من الترجمة الأولى
-                    } else if (currentSub >= subtitleTracks.length - 1) { // إذا وصلت لآخر ترجمة
-                        nextSub = -1; // أوقف الترجمة
+                    if (currentSub === -1) {
+                        nextSub = 0;
+                    } else if (currentSub >= subtitleTracks.length - 1) {
+                        nextSub = -1;
                     } else {
-                        nextSub = currentSub + 1; // انتقل للترجمة التالية
+                        nextSub = currentSub + 1;
                     }
                     
                     player.setCurrentCaptions(nextSub);
