@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -13,13 +12,11 @@
         jwplayer.key = "ITWMv7t88JGzI0xPwW8I0+LveiXX9SWbfdmt0ArUSyc=";
 
         $(document).ready(function() {
-			
-             const streamUrl = "";
 
-            const drmKeyId = "";
-            const drmKeyValue = "";
-
-
+            // ضع رابط البث و مفتاح DRM هنا
+            const streamUrl = "https://sps1.starzplayarabia.com/out/v1/41ff8fde1cd84ed5b30ab8198755356b/index.mpd"; // رابط البث
+            const drmKeyId = "097963d6ad73c3d712a104981de0ed42";      // Key ID
+            const drmKeyValue = "7b79353d7b840390d988d1bd6999302d";   // Key Value
 
             const channelData = {
                 stream_url: streamUrl,
@@ -28,13 +25,10 @@
                 }
             };
 
-            if (channelData.stream_url && channelData.stream_url !== "https://adsp1.starzplayarabia.com/out/v1/bbb3c2aca3eb43138810b3303d932a12/index.mpdد" &&
-                Object.keys(channelData.drm_keys)[0] !== "3abe3e0569181fe9be37769893db4aab:7b79353d7b840390d988d1bd6999302d") {
+            if (channelData.stream_url) {
                 setupJWPlayer(channelData);
             } else {
-                const errorMessage = "يرجى تعديل الكود وإدخال رابط البث والمفاتيح بشكل صحيح!";
-                console.error(errorMessage);
-                alert(errorMessage);
+                alert("أدخل رابط البث والمفاتيح!");
             }
         });
 
@@ -45,11 +39,11 @@
                 controls: true,
                 stretching: "uniform",
                 horizontalVolumeSlider: true,
-                autostart: true,
+                autostart: true, // تشغيل تلقائي
                 preload: "auto",
                 playbackRateControls: true,
-                mute: false,
-                volume: 50,
+                mute: false, // الصوت مفعّل
+                volume: 100, // الصوت على أعلى مستوى
                 logo: {
                     file: "",
                     link: "SIKSA TV",
@@ -85,30 +79,26 @@
                 }]
             });
 
-            player.on("setupError", function(event) {
-                console.error("خطأ في إعداد المشغل:", event.message);
-                alert("حدث خطأ أثناء تحميل المشغل!");
-            });
-
+            // معالجة قيود الصوت في التشغيل التلقائي
             player.on("ready", function() {
-                console.log("تم تحميل المشغل بنجاح!");
+                player.setMute(false);
+                player.setVolume(100);
+
+                player.play().catch(function() {
+                    console.warn("المتصفح منع التشغيل بالصوت، محاولة تشغيل مكتوم أولاً...");
+                    player.setMute(true);
+                    player.play().then(function() {
+                        setTimeout(function() {
+                            player.setMute(false);
+                            player.setVolume(100);
+                            console.log("تم تفعيل الصوت بعد بدء التشغيل ✅");
+                        }, 1000);
+                    });
+                });
+
+                console.log("تم تحميل المشغل ✅");
             });
         }
-    </script>
-    <script>
-        document.addEventListener("DOMContentLoaded", function() {
-            // التأخير لضمان أن JW Player قد قام بإنشاء عنصر الشعار
-            setTimeout(() => {
-                const logoElement = document.querySelector(".jw-logo");
-                if (logoElement) {
-                    logoElement.style.position = "fixed";
-                    logoElement.style.bottom = "11%";
-                    logoElement.style.left = "1%";
-                    logoElement.style.opacity = "1";
-                    logoElement.style.transition = "none";
-                }
-            }, 1000); // تأخير لمدة ثانية واحدة
-        });
     </script>
 
     <style>
