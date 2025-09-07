@@ -147,10 +147,10 @@
                 let div = document.createElement("div");
                 div.className = "item";
                 div.tabIndex = 0;
-                div.onclick = () => openItem(item.stream_id);
+                div.onclick = () => openItem(item);
                 let img = document.createElement("img");
                 img.src = item.stream_icon || "https://via.placeholder.com/100";
-                img.alt = "Logo";
+                img.alt = item.name;
                 div.appendChild(img);
                 container.appendChild(div);
             });
@@ -168,10 +168,12 @@
             }, 100);
         }
 
-        // ✅ التعديل هنا فقط
-        function openItem(streamId) {
-            const streamUrl = `${serverUrl}/movie/${username}/${password}/${streamId}.mp4`;
-            window.location.href = streamUrl; // تطبيقك يلتقط الرابط
+        // ✅ هنا التعديل الأساسي لفتح الفيلم في ExoPlayer
+        function openItem(item) {
+            const streamUrl = `${serverUrl}/movie/${username}/${password}/${item.stream_id}.mp4`;
+            const name = encodeURIComponent(item.name || "Movie");
+            // توجيه الرابط إلى كود WebViewActivity
+            window.location.href = `https://play/stream?url=${encodeURIComponent(streamUrl)}&name=${name}`;
         }
 
         document.addEventListener("DOMContentLoaded", loadCategories);
