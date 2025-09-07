@@ -28,10 +28,7 @@
       padding: 15px;
       overflow-y: auto;
       border-right: 3px solid #333;
-      transition: 0.3s;
     }
-    .hidden { display: none !important; }
-    .full-width { width: 100% !important; }
     .category, .item, .episode {
       background: #ff5722;
       padding: 15px;
@@ -43,7 +40,9 @@
       cursor: pointer;
       transition: 0.3s;
     }
-    .item, .episode { background: rgba(255, 255, 255, 0.15); }
+    .item, .episode {
+      background: rgba(255, 255, 255, 0.15);
+    }
     .category:focus, .item:focus, .episode:focus {
       background: rgba(255, 255, 255, 0.3);
       outline: 3px solid yellow;
@@ -52,7 +51,7 @@
     .content-container {
       flex: 1;
       display: grid;
-      grid-template-columns: repeat(5, 1fr);
+      grid-template-columns: repeat(4, 1fr);
       gap: 12px;
       padding: 20px;
       overflow-y: auto;
@@ -60,17 +59,19 @@
       position: relative;
     }
     .back-button {
-      position: absolute;
+      position: fixed;
       top: 10px;
       left: 10px;
       background: none;
       border: none;
       cursor: pointer;
+      outline: none;
       display: none;
+      z-index: 1000;
     }
     .back-button img {
-      width: 40px;
-      height: 40px;
+      width: 50px;
+      height: 50px;
     }
   </style>
   <script>
@@ -90,7 +91,7 @@
         document.getElementById("categories").innerHTML = "⚠️ خطأ في تحميل الفئات";
       }
     }
-    
+
     function displayCategories() {
       let container = document.getElementById("categories");
       container.innerHTML = "";
@@ -102,14 +103,16 @@
         div.onclick = () => loadSeries(category.category_id);
         container.appendChild(div);
       });
-      container.firstChild?.focus();
+      setTimeout(() => {
+        container.firstChild?.focus();
+      }, 100);
     }
-    
+
     async function loadSeries(categoryId) {
       lastCategoryId = categoryId;
-      document.querySelector(".sidebar").classList.add("hidden");
-      document.getElementById("content").classList.add("full-width");
-      document.querySelector(".back-button").style.display = "block";
+      document.getElementById("categories").style.display = "none";
+      document.getElementById("backButton").style.display = "block";
+
       try {
         let response = await fetch(`${serverUrl}/player_api.php?username=${username}&password=${password}&action=get_series&category_id=${categoryId}`);
         let series = await response.json();
@@ -127,10 +130,13 @@
         div.className = "item";
         div.tabIndex = 0;
         div.onclick = () => loadEpisodes(serie.series_id);
-        div.innerHTML = `<img src="${serie.cover}" alt="صورة المسلسل" style="width:100%; border-radius: 8px;"> <br> ${serie.name}`;
+        div.innerHTML = `<img src="${serie.cover}" alt="صورة المسلسل" style="width:100%; border-radius: 8px;"> 
+                         <br> ${serie.name}`;
         container.appendChild(div);
       });
-      container.firstChild?.focus();
+      setTimeout(() => {
+        container.firstChild?.focus();
+      }, 100);
     }
 
     async function loadEpisodes(seriesId) {
@@ -151,20 +157,23 @@
         episodes[season].forEach(episode => {
           let div = document.createElement("div");
           div.className = "episode";
-          div.tabIndex = 0; // ✅ الريموت
+          div.tabIndex = 0;
           div.onclick = () => playEpisode(episode);
-          div.innerHTML = `<img src="${coverImage}" alt="شعار الحلقة" style="width:100%; border-radius: 8px;"> <br> الموسم ${season} - الحلقة ${episode.episode_num}`;
+          div.innerHTML = `<img src="${coverImage}" alt="شعار الحلقة" style="width:100%; border-radius: 8px;"> 
+                           <br> الموسم ${season} - الحلقة ${episode.episode_num}`;
           container.appendChild(div);
         });
       });
-      container.firstChild?.focus(); // ✅ يركز أول حلقة
+      setTimeout(() => {
+        container.firstChild?.focus();
+      }, 100);
     }
 
     function playEpisode(episode) {
       const streamUrl = `${serverUrl}/series/${username}/${password}/${episode.id}.${episode.container_extension}`;
-      const name = episode.title || `حلقة ${episode.episode_num}`;
-      // ✅ يرسل الرابط لمشغل ExoPlayer في التطبيق
-      window.location.href = `https://play/stream?url=${encodeURIComponent(streamUrl)}&name=${encodeURIComponent(name)}`;
+      const name = encodeURIComponent(episode.title || `حلقة ${episode.episode_num}`);
+      // ✅ يرسل الرابط لمشغل ExoPlayer
+      window.location.href = `https://play/stream?url=${encodeURIComponent(streamUrl)}&name=${name}`;
     }
 
     function goBack() {
@@ -172,21 +181,23 @@
         loadSeries(lastCategoryId);
         lastSeriesId = null;
       } else {
-        document.querySelector(".sidebar").classList.remove("hidden");
-        document.getElementById("content").classList.remove("full-width");
-        document.querySelector(".back-button").style.display = "none";
-        loadCategories();
+        document.getElementById("categories").style.display = "block";
+        document.getElementById("backButton").style.display = "none";
+        document.getElementById("content").innerHTML = "";
+        setTimeout(() => {
+          document.querySelector(".category")?.focus();
+        }, 100);
       }
     }
-    
+
     document.addEventListener("DOMContentLoaded", loadCategories);
   </script>
 </head>
 <body>
   <div class="sidebar" id="categories"></div>
-  <div class="content-container" id="content"></div>
-  <button class="back-button" onclick="goBack()">
+  <button id="backButton" class="back-button" onclick="goBack()">
     <img src="https://cdn-icons-png.flaticon.com/512/271/271220.png" alt="رجوع">
   </button>
+  <div class="content-container" id="content"></div>
 </body>
 </html>
