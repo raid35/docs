@@ -32,7 +32,7 @@
     }
     .hidden { display: none !important; }
     .full-width { width: 100% !important; }
-    .category {
+    .category, .item, .episode {
       background: #ff5722;
       padding: 15px;
       margin: 8px 0;
@@ -43,17 +43,11 @@
       cursor: pointer;
       transition: 0.3s;
     }
-    .item, .episode {
-      background: rgba(255, 255, 255, 0.15);
-      padding: 15px;
-      margin: 8px 0;
-      border-radius: 12px;
-      text-align: center;
-      font-size: 18px;
-      font-weight: bold;
-      cursor: pointer;
-      transition: 0.3s;
-      box-shadow: 0px 0px 10px rgba(255, 255, 255, 0.2);
+    .item, .episode { background: rgba(255, 255, 255, 0.15); }
+    .category:focus, .item:focus, .episode:focus {
+      background: rgba(255, 255, 255, 0.3);
+      outline: 3px solid yellow;
+      transform: scale(1.1);
     }
     .content-container {
       flex: 1;
@@ -104,9 +98,11 @@
         let div = document.createElement("div");
         div.className = "category";
         div.innerText = category.category_name;
+        div.tabIndex = 0;
         div.onclick = () => loadSeries(category.category_id);
         container.appendChild(div);
       });
+      container.firstChild?.focus();
     }
     
     async function loadSeries(categoryId) {
@@ -129,10 +125,12 @@
       series.forEach(serie => {
         let div = document.createElement("div");
         div.className = "item";
+        div.tabIndex = 0;
         div.onclick = () => loadEpisodes(serie.series_id);
         div.innerHTML = `<img src="${serie.cover}" alt="صورة المسلسل" style="width:100%; border-radius: 8px;"> <br> ${serie.name}`;
         container.appendChild(div);
       });
+      container.firstChild?.focus();
     }
 
     async function loadEpisodes(seriesId) {
@@ -153,17 +151,19 @@
         episodes[season].forEach(episode => {
           let div = document.createElement("div");
           div.className = "episode";
+          div.tabIndex = 0; // ✅ الريموت
           div.onclick = () => playEpisode(episode);
           div.innerHTML = `<img src="${coverImage}" alt="شعار الحلقة" style="width:100%; border-radius: 8px;"> <br> الموسم ${season} - الحلقة ${episode.episode_num}`;
           container.appendChild(div);
         });
       });
+      container.firstChild?.focus(); // ✅ يركز أول حلقة
     }
 
-    // ✅ تعديل هنا: نمرر الحلقة كاملة ونستخدم episode.id + container_extension
     function playEpisode(episode) {
       const streamUrl = `${serverUrl}/series/${username}/${password}/${episode.id}.${episode.container_extension}`;
       const name = episode.title || `حلقة ${episode.episode_num}`;
+      // ✅ يرسل الرابط لمشغل ExoPlayer في التطبيق
       window.location.href = `https://play/stream?url=${encodeURIComponent(streamUrl)}&name=${encodeURIComponent(name)}`;
     }
 
@@ -186,7 +186,7 @@
   <div class="sidebar" id="categories"></div>
   <div class="content-container" id="content"></div>
   <button class="back-button" onclick="goBack()">
-    <img src="back-icon.png" alt="رجوع">
+    <img src="https://cdn-icons-png.flaticon.com/512/271/271220.png" alt="رجوع">
   </button>
 </body>
 </html>
