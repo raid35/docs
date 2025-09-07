@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>مشغل البث المباشر والمسلسلات</title>
+  <title>مشغل المسلسلات</title>
   <style>
     body {
       font-family: Arial, sans-serif;
@@ -43,11 +43,6 @@
       cursor: pointer;
       transition: 0.3s;
     }
-    .category:focus {
-      background: #e64a19;
-      outline: 3px solid yellow;
-      transform: scale(1.1);
-    }
     .item, .episode {
       background: rgba(255, 255, 255, 0.15);
       padding: 15px;
@@ -59,12 +54,6 @@
       cursor: pointer;
       transition: 0.3s;
       box-shadow: 0px 0px 10px rgba(255, 255, 255, 0.2);
-    }
-    .item:focus, .episode:focus {
-      background: rgba(255, 255, 255, 0.3);
-      outline: 3px solid yellow;
-      transform: scale(1.1);
-      box-shadow: 0px 0px 15px rgba(255, 255, 255, 0.4);
     }
     .content-container {
       flex: 1;
@@ -115,11 +104,9 @@
         let div = document.createElement("div");
         div.className = "category";
         div.innerText = category.category_name;
-        div.tabIndex = 0;
         div.onclick = () => loadSeries(category.category_id);
         container.appendChild(div);
       });
-      container.firstChild?.focus();
     }
     
     async function loadSeries(categoryId) {
@@ -142,12 +129,10 @@
       series.forEach(serie => {
         let div = document.createElement("div");
         div.className = "item";
-        div.tabIndex = 0;
         div.onclick = () => loadEpisodes(serie.series_id);
         div.innerHTML = `<img src="${serie.cover}" alt="صورة المسلسل" style="width:100%; border-radius: 8px;"> <br> ${serie.name}`;
         container.appendChild(div);
       });
-      container.firstChild?.focus();
     }
 
     async function loadEpisodes(seriesId) {
@@ -168,19 +153,17 @@
         episodes[season].forEach(episode => {
           let div = document.createElement("div");
           div.className = "episode";
-          div.tabIndex = 0;
-          div.onclick = () => playEpisode(episode.id);
+          div.onclick = () => playEpisode(episode);
           div.innerHTML = `<img src="${coverImage}" alt="شعار الحلقة" style="width:100%; border-radius: 8px;"> <br> الموسم ${season} - الحلقة ${episode.episode_num}`;
           container.appendChild(div);
         });
       });
-      container.firstChild?.focus();
     }
 
-    // ✅ تعديل هنا لتشغيل الحلقة في ExoPlayer
-    function playEpisode(episodeId) {
-      const streamUrl = `${serverUrl}/series/${username}/${password}/${episodeId}.mp4`;
-      const name = "حلقة مسلسل";
+    // ✅ تعديل هنا: نمرر الحلقة كاملة ونستخدم episode.id + container_extension
+    function playEpisode(episode) {
+      const streamUrl = `${serverUrl}/series/${username}/${password}/${episode.id}.${episode.container_extension}`;
+      const name = episode.title || `حلقة ${episode.episode_num}`;
       window.location.href = `https://play/stream?url=${encodeURIComponent(streamUrl)}&name=${encodeURIComponent(name)}`;
     }
 
