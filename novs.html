@@ -40,11 +40,6 @@
       cursor: pointer;
       transition: 0.3s;
     }
-    .category:focus, .category.active {
-      background: #e64a19;
-      outline: 3px solid yellow;
-      transform: scale(1.1);
-    }
     .content-container {
       flex: 1;
       display: grid;
@@ -73,11 +68,6 @@
       object-fit: contain;
       border-radius: 8px;
     }
-    .item:focus {
-      background: rgba(255, 255, 255, 0.2);
-      transform: scale(1.1);
-      outline: 3px solid yellow;
-    }
     .back-button {
       position: fixed;
       top: 10px;
@@ -98,6 +88,7 @@
     const serverUrl = "http://lukatv.net:8080";
     const username = "17512157228784";
     const password = "31263913139833";
+
     let categories = [];
 
     async function loadCategories() {
@@ -117,13 +108,9 @@
         let div = document.createElement("div");
         div.className = "category";
         div.innerText = category.category_name;
-        div.tabIndex = 0;
         div.onclick = () => selectCategory(category);
         container.appendChild(div);
       });
-      setTimeout(() => {
-        container.firstChild?.focus();
-      }, 100);
     }
 
     async function selectCategory(category) {
@@ -132,53 +119,69 @@
 
       try {
         let response = await fetch(`${serverUrl}/player_api.php?username=${username}&password=${password}&action=get_series&category_id=${category.category_id}`);
-        let items = await response.json();
-        displayItems(items);
+        let series = await response.json();
+        displaySeries(series);
       } catch (error) {
-        document.getElementById("content").innerHTML = "⚠️ خطأ في تحميل المحتوى";
+        document.getElementById("content").innerHTML = "⚠️ خطأ في تحميل المسلسلات";
       }
     }
 
-    function displayItems(items) {
+    function displaySeries(series) {
       let container = document.getElementById("content");
       container.innerHTML = "";
 
-      items.forEach(item => {
+      series.forEach(item => {
         let div = document.createElement("div");
         div.className = "item";
-        div.tabIndex = 0;
-        div.onclick = () => openItem(item);
+        div.onclick = () => selectSeries(item);
         let img = document.createElement("img");
         img.src = item.cover || "https://via.placeholder.com/100";
         img.alt = item.name;
         div.appendChild(img);
         container.appendChild(div);
       });
+    }
 
-      container.firstChild?.focus();
+    async function selectSeries(series) {
+      try {
+        let response = await fetch(`${serverUrl}/player_api.php?username=${username}&password=${password}&action=get_series_info&series_id=${series.series_id}`);
+        let seriesInfo = await response.json();
+        displayEpisodes(seriesInfo.episodes);
+      } catch (error) {
+        document.getElementById("content").innerHTML = "⚠️ خطأ في تحميل الحلقات";
+      }
+    }
+
+    function displayEpisodes(episodes) {
+      let container = document.getElementById("content");
+      container.innerHTML = "";
+
+      // episodes كائن فيه مواسم → نعرض كل الحلقات
+      Object.keys(episodes).forEach(season => {
+        episodes[season].forEach(ep => {
+          let div = document.createElement("div");
+          div.className = "item";
+          div.onclick = () => openEpisode(ep);
+          let img = document.createElement("img");
+          img.src = ep.info?.movie_image || "https://via.placeholder.com/100";
+          img.alt = ep.title;
+          div.appendChild(img);
+          container.appendChild(div);
+        });
+      });
     }
 
     function goBack() {
       document.getElementById("categories").style.display = "block";
       document.getElementById("backButton").style.display = "none";
       document.getElementById("content").innerHTML = "";
-
-      setTimeout(() => {
-        document.querySelector(".category")?.focus();
-      }, 100);
     }
 
-    // ✅ عند الضغط على مسلسل يفتح في ExoPlayer
-    function openItem(item) {
-      // نأخذ الحلقة الأولى كاختبار
-      if (item.episodes && item.episodes[0] && item.episodes[0].length > 0) {
-        const episode = item.episodes[0][0];
-        const streamUrl = `${serverUrl}/series/${username}/${password}/${episode.id}.${episode.container_extension}`;
-        const name = encodeURIComponent(item.name || "Series");
-        window.location.href = `https://play/stream?url=${encodeURIComponent(streamUrl)}&name=${name}`;
-      } else {
-        alert("لا توجد حلقات متاحة حالياً");
-      }
+    // ✅ تشغيل الحلقة في ExoPlayer
+    function openEpisode(ep) {
+      const streamUrl = `${serverUrl}/series/${username}/${password}/${ep.id}.${ep.container_extension}`;
+      const name = encodeURIComponent(ep.title || "Episode");
+      window.location.href = `https://play/stream?url=${encodeURIComponent(streamUrl)}&name=${name}`;
     }
 
     document.addEventListener("DOMContentLoaded", loadCategories);
