@@ -1,212 +1,193 @@
-<!DOCTYPE html>
-<html lang="ar">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>مشغل الأفلام والمسلسلات</title>
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            direction: rtl;
-            background: linear-gradient(-45deg, #1e3c72, #2a5298, #000000, #3b1d56);
-            background-size: 400% 400%;
-            animation: gradientAnimation 10s ease infinite;
-            color: white;
-            margin: 0;
-            display: flex;
-            height: 100vh;
-            overflow: hidden;
-        }
-        @keyframes gradientAnimation {
-            0% { background-position: 0% 50%; }
-            50% { background-position: 100% 50%; }
-            100% { background-position: 0% 50%; }
-        }
-        .sidebar {
-            width: 300px;
-            background: rgba(30, 30, 30, 0.9);
-            padding: 15px;
-            overflow-y: auto;
-            border-right: 3px solid #333;
-        }
-        .category {
-            background: #ff5722;
-            padding: 15px;
-            margin: 8px 0;
-            border-radius: 8px;
-            text-align: center;
-            font-size: 18px;
-            font-weight: bold;
-            cursor: pointer;
-            transition: 0.3s;
-        }
-        .category:focus, .category.active {
-            background: #e64a19;
-            outline: 3px solid yellow;
-            transform: scale(1.1);
-        }
-        .content-container {
-            flex: 1;
-            display: grid;
-            grid-template-columns: repeat(4, 1fr);
-            gap: 12px;
-            padding: 20px;
-            overflow-y: auto;
-            justify-content: center;
-            position: relative;
-        }
-        .item {
-            background: rgba(255, 255, 255, 0.1);
-            width: 100%;
-            height: 180px;
-            border-radius: 12px;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            cursor: pointer;
-            transition: 0.3s;
-        }
-        .item img {
-            width: 80%;
-            height: 80%;
-            object-fit: contain;
-            border-radius: 8px;
-        }
-        .item:focus {
-            background: rgba(255, 255, 255, 0.2);
-            transform: scale(1.1);
-            outline: 3px solid yellow;
-        }
-        .back-button {
-            position: fixed;
-            top: 10px;
-            left: 10px;
-            background: none;
-            border: none;
-            cursor: pointer;
-            outline: none;
-            display: none;
-            z-index: 1000;
-        }
-        .back-button img {
-            width: 50px;
-            height: 50px;
-        }
-    </style>
-    <script>
-        const serverUrl = "http://lukatv.net:8080";
-        const username = "17512157228784";
-        const password = "31263913139833";
-        let categories = [];
-        let lastCategoryIndex = null; // متغير لحفظ رقم الفئة الأخيرة
+package com.example.s
 
-        async function loadCategories() {
-            try {
-                let vodCategories = await fetch(`${serverUrl}/player_api.php?username=${username}&password=${password}&action=get_vod_categories`).then(res => res.json());
-                categories = vodCategories;
-                displayCategories();
-            } catch (error) {
-                document.getElementById("categories").innerHTML = "⚠️ خطأ في تحميل الفئات";
-            }
-        }
+import android.annotation.SuppressLint
+import android.content.Intent
+import android.net.Uri
+import android.os.Bundle
+import android.webkit.WebChromeClient
+import android.webkit.WebSettings
+import android.webkit.WebView
+import android.webkit.WebViewClient
+import androidx.appcompat.app.AppCompatActivity
 
-        function displayCategories() {
-            let container = document.getElementById("categories");
-            container.innerHTML = "";
-            categories.forEach((category, idx) => {
-                let div = document.createElement("div");
-                div.className = "category";
-                div.innerText = category.category_name;
-                div.tabIndex = 0;
-                div.onclick = () => selectCategory(category, idx); // أرسل رقم الفئة
-                container.appendChild(div);
-            });
-            setTimeout(() => {
-                // ركز على الفئة الأخيرة إذا كانت موجودة
-                if (lastCategoryIndex !== null && container.children[lastCategoryIndex]) {
-                    container.children[lastCategoryIndex].focus();
-                } else {
-                    container.firstChild?.focus();
+class WebViewActivity : AppCompatActivity() {
+
+    private lateinit var webView: WebView
+
+    @SuppressLint("SetJavaScriptEnabled")
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+
+        webView = WebView(this)
+
+        val webSettings: WebSettings = webView.settings
+        webSettings.javaScriptEnabled = true
+        webSettings.mediaPlaybackRequiresUserGesture = false
+        webSettings.domStorageEnabled = true
+        webSettings.loadsImagesAutomatically = true
+        webSettings.useWideViewPort = true
+        webSettings.javaScriptCanOpenWindowsAutomatically = true
+        webSettings.allowFileAccess = true
+        webSettings.allowContentAccess = true
+        webSettings.cacheMode = WebSettings.LOAD_DEFAULT
+        webSettings.mixedContentMode = WebSettings.MIXED_CONTENT_ALWAYS_ALLOW
+
+        webView.webChromeClient = WebChromeClient()
+
+        // إعداد الـ headers العامة
+        val headers = mapOf(
+            "User-Agent" to "Mozilla/5.0 (Linux; Android ${android.os.Build.VERSION.RELEASE}) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Mobile Safari/537.36",
+            "Referer" to "https://example.com/",
+            "Origin" to "https://example.com/"
+        )
+
+        webView.webViewClient = object : WebViewClient() {
+
+            override fun shouldOverrideUrlLoading(view: WebView?, url: String?): Boolean {
+                url ?: return false
+
+                return when {
+                    url.startsWith("https://play/stream") -> {
+                        val uri = Uri.parse(url)
+                        val streamUrl = uri.getQueryParameter("url")
+                        val channelName = uri.getQueryParameter("name") ?: "Live Channel"
+
+                        if (!streamUrl.isNullOrEmpty()) {
+                            val intent = Intent(this@WebViewActivity, PlayerActivity::class.java).apply {
+                                putExtra("streamUrl", streamUrl)
+                                putExtra("channelName", channelName)
+                            }
+                            startActivity(intent)
+                        }
+                        true
+                    }
+
+                    url.startsWith("intent://") ||
+                            url.startsWith("xmtv://") ||
+                            url.startsWith("vlc://") ||
+                            url.startsWith("ssiptv://") -> {
+
+                        val streamUrl = convertCustomSchemeToStream(url)
+                        val drmLicense = extractDrmLicense(url)
+
+                        if (streamUrl != null) {
+                            val intent = Intent(this@WebViewActivity, PlayerActivity::class.java).apply {
+                                putExtra("streamUrl", streamUrl)
+                                putExtra("channelName", "Live Stream")
+                                putExtra("drmLicense", drmLicense)
+                            }
+                            startActivity(intent)
+                        }
+                        true
+                    }
+
+                    else -> {
+                        // تحويل روابط يوتيوب إلى embed مع autoplay
+                        val finalUrl = if (url.contains("youtube.com/watch")) {
+                            val uri = Uri.parse(url)
+                            val videoId = uri.getQueryParameter("v")
+                            "https://www.youtube.com/embed/$videoId?autoplay=1"
+                        } else {
+                            url
+                        }
+
+                        // تحميل الرابط مع headers
+                        view?.loadUrl(finalUrl, headers)
+                        true
+                    }
                 }
-            }, 100);
-        }
+            }
 
-        async function selectCategory(category, idx) {
-            lastCategoryIndex = idx; // حفظ رقم الفئة
-            document.getElementById("categories").style.display = "none";
-            document.getElementById("backButton").style.display = "block";
+            override fun onPageFinished(view: WebView?, url: String?) {
+                view?.evaluateJavascript(
+                    """
+                    (function() {
+                        try {
+                            var videos = document.getElementsByTagName('video');
+                            if (videos.length > 0) {
+                                videos[0].muted = false;
+                                videos[0].autoplay = true;
+                                videos[0].play();
+                            }
 
-            try {
-                let response = await fetch(`${serverUrl}/player_api.php?username=${username}&password=${password}&action=get_vod_streams&category_id=${category.category_id}`);
-                let items = await response.json();
-                displayItems(items);
-            } catch (error) {
-                document.getElementById("content").innerHTML = "⚠️ خطأ في تحميل المحتوى";
+                            var fbPlayer = document.querySelector('[data-sigil*="inlineVideo"]');
+                            if (fbPlayer) {
+                                fbPlayer.click();
+                            }
+
+                            if (window.location.hostname.includes('youtube.com')) {
+                                var ytVideo = document.querySelector('video');
+                                if (ytVideo) {
+                                    ytVideo.muted = false;
+                                    ytVideo.play();
+                                }
+                            }
+                        } catch(e) {}
+                    })();
+                    """.trimIndent(), null
+                )
             }
         }
 
-        function displayItems(items) {
-            let container = document.getElementById("content");
-            container.innerHTML = "";
+        val url = intent.getStringExtra("url") ?: ""
+        webView.loadUrl(url, headers)
 
-            items.forEach(item => {
-                let div = document.createElement("div");
-                div.className = "item";
-                div.tabIndex = 0;
-                div.onclick = () => openItem(item);
-                let img = document.createElement("img");
-                img.src = item.stream_icon || "https://via.placeholder.com/100";
-                img.alt = item.name;
-                div.appendChild(img);
-                container.appendChild(div);
-            });
+        setContentView(webView)
+    }
 
-            container.firstChild?.focus();
-        }
-
-        function goBack() {
-            document.getElementById("categories").style.display = "block";
-            document.getElementById("backButton").style.display = "none";
-            document.getElementById("content").innerHTML = "";
-
-            setTimeout(() => {
-                // ركز على الفئة الأخيرة
-                let cats = document.querySelectorAll(".category");
-                if (lastCategoryIndex !== null && cats[lastCategoryIndex]) {
-                    cats[lastCategoryIndex].focus();
-                } else {
-                    cats[0]?.focus();
+    override fun onBackPressed() {
+        // أرسل أمر جافاسكريبت للصفحة لتنفيذ goBack إذا زر الرجوع ظاهر
+        webView.evaluateJavascript(
+            """
+            (function(){
+                if(document.getElementById('backButton') && document.getElementById('backButton').style.display === 'block'){
+                    goBack();
+                    true;
+                }else{
+                    false;
                 }
-            }, 100);
-        }
-
-        function openItem(item) {
-            const streamUrl = `${serverUrl}/movie/${username}/${password}/${item.stream_id}.mp4`;
-            const name = encodeURIComponent(item.name || "Movie");
-            window.location.href = `https://play/stream?url=${encodeURIComponent(streamUrl)}&name=${name}`;
-        }
-
-        // دعم زر الرجوع من الريموت كنترول
-        document.addEventListener("keydown", function(e) {
-            // زر الرجوع في بعض أجهزة التلفاز الذكية أو الريموت يكون 8 أو 10009 أو 27 (Escape)
-            if (
-                document.getElementById("backButton").style.display === "block" && 
-                (e.key === "Backspace" || e.key === "Escape" || e.keyCode === 8 || e.keyCode === 10009 || e.keyCode === 27)
-            ) {
-                e.preventDefault();
-                goBack();
+            })();
+            """.trimIndent()
+        ) { result ->
+            // إذا لم يتم الرجوع داخل الصفحة، نفذ الرجوع الافتراضي
+            if (result == "false") {
+                super.onBackPressed()
             }
-        });
+        }
+    }
 
-        document.addEventListener("DOMContentLoaded", loadCategories);
-    </script>
-</head>
-<body>
-    <div class="sidebar" id="categories"></div>
-    <button id="backButton" class="back-button" onclick="goBack()">
-        <img src="https://cdn-icons-png.flaticon.com/512/271/271220.png" alt="رجوع">
-    </button>
-    <div class="content-container" id="content"></div>
-</body>
-</html>
+    private fun convertCustomSchemeToStream(customUrl: String): String? {
+        return try {
+            when {
+                customUrl.startsWith("intent://") -> {
+                    val uri = Uri.parse(customUrl)
+                    uri.getQueryParameter("url")
+                        ?: customUrl.replace("intent://", "http://").substringBefore("#Intent")
+                }
+
+                customUrl.startsWith("xmtv://") ||
+                        customUrl.startsWith("vlc://") ||
+                        customUrl.startsWith("ssiptv://") -> {
+                    customUrl.replaceFirst(Regex("^[a-z]+://"), "http://")
+                }
+
+                else -> null
+            }
+        } catch (e: Exception) {
+            null
+        }
+    }
+
+    private fun extractDrmLicense(url: String): String {
+        return try {
+            if (url.contains("license_key=")) {
+                val uri = Uri.parse(url)
+                uri.getQueryParameter("license_key") ?: ""
+            } else {
+                ""
+            }
+        } catch (e: Exception) {
+            ""
+        }
+    }
+}
