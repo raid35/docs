@@ -99,7 +99,8 @@
         const username = "17512157228784";
         const password = "31263913139833";
         let categories = [];
-        
+        let lastCategoryIndex = null; // متغير لحفظ رقم الفئة الأخيرة
+
         async function loadCategories() {
             try {
                 let vodCategories = await fetch(`${serverUrl}/player_api.php?username=${username}&password=${password}&action=get_vod_categories`).then(res => res.json());
@@ -113,20 +114,26 @@
         function displayCategories() {
             let container = document.getElementById("categories");
             container.innerHTML = "";
-            categories.forEach(category => {
+            categories.forEach((category, idx) => {
                 let div = document.createElement("div");
                 div.className = "category";
                 div.innerText = category.category_name;
                 div.tabIndex = 0;
-                div.onclick = () => selectCategory(category);
+                div.onclick = () => selectCategory(category, idx); // أرسل رقم الفئة
                 container.appendChild(div);
             });
             setTimeout(() => {
-                container.firstChild?.focus();
+                // ركز على الفئة الأخيرة إذا كانت موجودة
+                if (lastCategoryIndex !== null && container.children[lastCategoryIndex]) {
+                    container.children[lastCategoryIndex].focus();
+                } else {
+                    container.firstChild?.focus();
+                }
             }, 100);
         }
 
-        async function selectCategory(category) {
+        async function selectCategory(category, idx) {
+            lastCategoryIndex = idx; // حفظ رقم الفئة
             document.getElementById("categories").style.display = "none";
             document.getElementById("backButton").style.display = "block";
 
@@ -164,15 +171,19 @@
             document.getElementById("content").innerHTML = "";
 
             setTimeout(() => {
-                document.querySelector(".category")?.focus();
+                // ركز على الفئة الأخيرة
+                let cats = document.querySelectorAll(".category");
+                if (lastCategoryIndex !== null && cats[lastCategoryIndex]) {
+                    cats[lastCategoryIndex].focus();
+                } else {
+                    cats[0]?.focus();
+                }
             }, 100);
         }
 
-        // ✅ هنا التعديل الأساسي لفتح الفيلم في ExoPlayer
         function openItem(item) {
             const streamUrl = `${serverUrl}/movie/${username}/${password}/${item.stream_id}.mp4`;
             const name = encodeURIComponent(item.name || "Movie");
-            // توجيه الرابط إلى كود WebViewActivity
             window.location.href = `https://play/stream?url=${encodeURIComponent(streamUrl)}&name=${name}`;
         }
 
