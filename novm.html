@@ -187,6 +187,18 @@
             window.location.href = `https://play/stream?url=${encodeURIComponent(streamUrl)}&name=${name}`;
         }
 
+        // دعم زر الرجوع من الريموت كنترول
+        document.addEventListener("keydown", function(e) {
+            // زر الرجوع في بعض أجهزة التلفاز الذكية أو الريموت يكون 8 أو 10009 أو 27 (Escape)
+            if (
+                document.getElementById("backButton").style.display === "block" && 
+                (e.key === "Backspace" || e.key === "Escape" || e.keyCode === 8 || e.keyCode === 10009 || e.keyCode === 27)
+            ) {
+                e.preventDefault();
+                goBack();
+            }
+        });
+
         document.addEventListener("DOMContentLoaded", loadCategories);
     </script>
 </head>
