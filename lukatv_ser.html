@@ -66,6 +66,8 @@
             justify-content: center;
             cursor: pointer;
             transition: 0.3s;
+            text-align: center;
+            padding: 10px;
         }
         .item img {
             width: 80%;
@@ -107,7 +109,9 @@
 
         async function loadCategories() {
             try {
-                let seriesCategories = await fetch(`${serverUrl}/player_api.php?username=${username}&password=${password}&action=get_series_categories`).then(res => res.json());
+                let seriesCategories = await fetch(
+                    `${serverUrl}/player_api.php?username=${username}&password=${password}&action=get_series_categories`
+                ).then(res => res.json());
                 categories = seriesCategories;
                 displayCategories();
             } catch (error) {
@@ -141,7 +145,9 @@
             document.getElementById("backButton").style.display = "block";
 
             try {
-                let response = await fetch(`${serverUrl}/player_api.php?username=${username}&password=${password}&action=get_series&category_id=${category.category_id}`);
+                let response = await fetch(
+                    `${serverUrl}/player_api.php?username=${username}&password=${password}&action=get_series&category_id=${category.category_id}`
+                );
                 let items = await response.json();
                 displaySeries(items);
             } catch (error) {
@@ -170,8 +176,9 @@
 
         async function loadEpisodes(seriesId) {
             try {
-                let info = await fetch(`${serverUrl}/player_api.php?username=${username}&password=${password}&action=get_series_info&series_id=${seriesId}`)
-                    .then(r => r.json());
+                let info = await fetch(
+                    `${serverUrl}/player_api.php?username=${username}&password=${password}&action=get_series_info&series_id=${seriesId}`
+                ).then(r => r.json());
 
                 let container = document.getElementById("content");
                 container.innerHTML = "";
@@ -187,10 +194,9 @@
                             div.className = "item";
                             div.innerText = ep.title;
                             div.onclick = () => {
-                                div.onclick = () => {
-    const streamUrl = `${serverUrl}/series/${username}/${password}/${ep.id}.mp4`;
-    window.location.href = `https://play/stream?url=${encodeURIComponent(streamUrl)}&name=${encodeURIComponent(ep.title)}`;
-};
+                                const streamUrl = `${serverUrl}/series/${username}/${password}/${ep.id}.mp4`;
+                                window.location.href = `https://play/stream?url=${encodeURIComponent(streamUrl)}&name=${encodeURIComponent(ep.title)}`;
+                            };
                             container.appendChild(div);
                         });
                     });
