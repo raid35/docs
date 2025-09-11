@@ -187,9 +187,10 @@
                             div.className = "item";
                             div.innerText = ep.title;
                             div.onclick = () => {
-                                const streamUrl = `${serverUrl}/series/${username}/${password}/${seriesId}/${ep.season}/${ep.id}.mp4`;
-                                window.location.href = `https://play/stream?url=${encodeURIComponent(streamUrl)}&name=${encodeURIComponent(ep.title)}`;
-                            };
+                                div.onclick = () => {
+    const streamUrl = `${serverUrl}/series/${username}/${password}/${ep.id}.mp4`;
+    window.location.href = `https://play/stream?url=${encodeURIComponent(streamUrl)}&name=${encodeURIComponent(ep.title)}`;
+};
                             container.appendChild(div);
                         });
                     });
