@@ -153,7 +153,6 @@
         div.tabIndex = 0;
         div.onclick = () => loadEpisodes(serie.series_id);
 
-        // جرب عدة صيغ للصورة
         let covers = [
           serie.cover,
           serie.cover?.replace(/\.\w+$/, ".jpg"),
@@ -192,7 +191,6 @@
           div.tabIndex = 0;
           div.onclick = () => playEpisode(episode);
 
-          // جرب عدة صيغ للصورة
           let covers = [
             coverImage,
             coverImage?.replace(/\.\w+$/, ".jpg"),
