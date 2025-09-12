@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>مشغل البث المباشر</title>
+    <title>مشغل الأفلام والمسلسلات</title>
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -29,9 +29,6 @@
             overflow-y: auto;
             border-right: 3px solid #333;
         }
-        .hidden {
-            display: none;
-        }
         .category {
             background: #ff5722;
             padding: 15px;
@@ -51,7 +48,7 @@
         .content-container {
             flex: 1;
             display: grid;
-            grid-template-columns: repeat(5, 1fr); /* تم التعديل هنا ليصبح 5 أعمدة */
+            grid-template-columns: repeat(4, 1fr);
             gap: 12px;
             padding: 20px;
             overflow-y: auto;
@@ -81,7 +78,6 @@
             transform: scale(1.1);
             outline: 3px solid yellow;
         }
-        /* زر الرجوع */
         .back-button {
             position: fixed;
             top: 10px;
@@ -98,111 +94,113 @@
             height: 50px;
         }
     </style>
-  <script>
-    const serverUrl = "http://magic-tv.live:2095";
-    const username = "NXSpskTMGZ";
-    const password = "q7YmlQeACt";
-    let categories = [];
-    let lastCategoryIndex = null; // جديد: حفظ رقم الفئة الأخيرة
+    <script>
+        const serverUrl = "http://magic-tv.live:2095";
+        const username = "NXSpskTMGZ";
+        const password = "q7YmlQeACt";
+        let categories = [];
+        let lastCategoryIndex = null; // متغير لحفظ رقم الفئة الأخيرة
 
-    async function loadCategories() {
-        try {
-            let liveCategories = await fetch(`${serverUrl}/player_api.php?username=${username}&password=${password}&action=get_live_categories`).then(res => res.json());
-            categories = liveCategories;
-            displayCategories();
-        } catch (error) {
-            document.getElementById("categories").innerHTML = "⚠️ خطأ في تحميل الفئات";
-        }
-    }
-
-    function displayCategories() {
-        let container = document.getElementById("categories");
-        container.innerHTML = "";
-        categories.forEach((category, idx) => {
-            let div = document.createElement("div");
-            div.className = "category";
-            div.innerText = category.category_name;
-            div.tabIndex = 0;
-            div.onclick = () => selectCategory(category, idx); // أرسل رقم الفئة
-            container.appendChild(div);
-        });
-        setTimeout(() => {
-            // ركز على الفئة الأخيرة إذا كانت موجودة
-            if (lastCategoryIndex !== null && container.children[lastCategoryIndex]) {
-                container.children[lastCategoryIndex].focus();
-            } else {
-                container.firstChild?.focus();
+        async function loadCategories() {
+            try {
+                let vodCategories = await fetch(`${serverUrl}/player_api.php?username=${username}&password=${password}&action=get_vod_categories`).then(res => res.json());
+                categories = vodCategories;
+                displayCategories();
+            } catch (error) {
+                document.getElementById("categories").innerHTML = "⚠️ خطأ في تحميل الفئات";
             }
-        }, 100);
-    }
-
-    async function selectCategory(category, idx) {
-        lastCategoryIndex = idx; // حفظ رقم الفئة
-        document.getElementById("categories").style.display = "none";
-        document.getElementById("backButton").style.display = "block";
-
-        try {
-            let response = await fetch(`${serverUrl}/player_api.php?username=${username}&password=${password}&action=get_live_streams&category_id=${category.category_id}`);
-            let items = await response.json();
-            displayItems(items);
-        } catch (error) {
-            document.getElementById("content").innerHTML = "⚠️ خطأ في تحميل المحتوى";
         }
-    }
 
-    function displayItems(items) {
-        let container = document.getElementById("content");
-        container.innerHTML = "";
+        function displayCategories() {
+            let container = document.getElementById("categories");
+            container.innerHTML = "";
+            categories.forEach((category, idx) => {
+                let div = document.createElement("div");
+                div.className = "category";
+                div.innerText = category.category_name;
+                div.tabIndex = 0;
+                div.onclick = () => selectCategory(category, idx); // أرسل رقم الفئة
+                container.appendChild(div);
+            });
+            setTimeout(() => {
+                // ركز على الفئة الأخيرة إذا كانت موجودة
+                if (lastCategoryIndex !== null && container.children[lastCategoryIndex]) {
+                    container.children[lastCategoryIndex].focus();
+                } else {
+                    container.firstChild?.focus();
+                }
+            }, 100);
+        }
 
-        items.forEach(item => {
-            let div = document.createElement("div");
-            div.className = "item";
-            div.tabIndex = 0;
-            div.onclick = () => openItem(item); // مرر الكائن كاملًا
-            let img = document.createElement("img");
-            img.src = item.stream_icon || "https://via.placeholder.com/100";
-            img.alt = "Logo";
-            div.appendChild(img);
-            container.appendChild(div);
+        async function selectCategory(category, idx) {
+            lastCategoryIndex = idx; // حفظ رقم الفئة
+            document.getElementById("categories").style.display = "none";
+            document.getElementById("backButton").style.display = "block";
+
+            try {
+                let response = await fetch(`${serverUrl}/player_api.php?username=${username}&password=${password}&action=get_vod_streams&category_id=${category.category_id}`);
+                let items = await response.json();
+                displayItems(items);
+            } catch (error) {
+                document.getElementById("content").innerHTML = "⚠️ خطأ في تحميل المحتوى";
+            }
+        }
+
+        function displayItems(items) {
+            let container = document.getElementById("content");
+            container.innerHTML = "";
+
+            items.forEach(item => {
+                let div = document.createElement("div");
+                div.className = "item";
+                div.tabIndex = 0;
+                div.onclick = () => openItem(item);
+                let img = document.createElement("img");
+                img.src = item.stream_icon || "https://via.placeholder.com/100";
+                img.alt = item.name;
+                div.appendChild(img);
+                container.appendChild(div);
+            });
+
+            container.firstChild?.focus();
+        }
+
+        function goBack() {
+            document.getElementById("categories").style.display = "block";
+            document.getElementById("backButton").style.display = "none";
+            document.getElementById("content").innerHTML = "";
+
+            setTimeout(() => {
+                // ركز على الفئة الأخيرة
+                let cats = document.querySelectorAll(".category");
+                if (lastCategoryIndex !== null && cats[lastCategoryIndex]) {
+                    cats[lastCategoryIndex].focus();
+                } else {
+                    cats[0]?.focus();
+                }
+            }, 100);
+        }
+
+        function openItem(item) {
+            const streamUrl = `${serverUrl}/movie/${username}/${password}/${item.stream_id}.mp4`;
+            const name = encodeURIComponent(item.name || "Movie");
+            window.location.href = `https://play/stream?url=${encodeURIComponent(streamUrl)}&name=${name}`;
+        }
+
+        // دعم زر الرجوع من الريموت كنترول
+        document.addEventListener("keydown", function(e) {
+            // زر الرجوع في بعض أجهزة التلفاز الذكية أو الريموت يكون 8 أو 10009 أو 27 (Escape)
+            if (
+                document.getElementById("backButton").style.display === "block" && 
+                (e.key === "Backspace" || e.key === "Escape" || e.keyCode === 8 || e.keyCode === 10009 || e.keyCode === 27)
+            ) {
+                e.preventDefault();
+                goBack();
+            }
         });
 
-        container.firstChild?.focus();
-    }
-
-    function goBack() {
-        document.getElementById("categories").style.display = "block";
-        document.getElementById("backButton").style.display = "none";
-        document.getElementById("content").innerHTML = "";
-
-        setTimeout(() => {
-            let cats = document.querySelectorAll(".category");
-            if (lastCategoryIndex !== null && cats[lastCategoryIndex]) {
-                cats[lastCategoryIndex].focus();
-            } else {
-                cats[0]?.focus();
-            }
-        }, 100);
-    }
-
-    function openItem(item) {
-        const streamUrl = `${serverUrl}/live/${username}/${password}/${item.stream_id}.m3u8`;
-        const name = encodeURIComponent(item.name || "قناة");
-        window.location.href = `https://play/stream?url=${encodeURIComponent(streamUrl)}&name=${name}`;
-    }
-
-    // دعم زر الرجوع من الريموت أو الكيبورد
-    document.addEventListener("keydown", function(e) {
-        if (
-            document.getElementById("backButton").style.display === "block" &&
-            (e.key === "Backspace" || e.key === "Escape" || e.keyCode === 8 || e.keyCode === 10009 || e.keyCode === 27)
-        ) {
-            e.preventDefault();
-            goBack();
-        }
-    });
-
-    document.addEventListener("DOMContentLoaded", loadCategories);
-</script>
+        document.addEventListener("DOMContentLoaded", loadCategories);
+    </script>
 </head>
 <body>
     <div class="sidebar" id="categories"></div>
