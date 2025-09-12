@@ -81,6 +81,7 @@
     let categories = [];
     let lastCategoryId = null;
     let lastSeriesId = null;
+    let lastCategoryIndex = null; // جديد: حفظ رقم الفئة الأخيرة
 
     async function loadCategories() {
       try {
@@ -95,21 +96,27 @@
     function displayCategories() {
       let container = document.getElementById("categories");
       container.innerHTML = "";
-      categories.forEach(category => {
+      categories.forEach((category, idx) => {
         let div = document.createElement("div");
         div.className = "category";
         div.innerText = category.category_name;
         div.tabIndex = 0;
-        div.onclick = () => loadSeries(category.category_id);
+        div.onclick = () => loadSeries(category.category_id, idx); // أرسل رقم الفئة
         container.appendChild(div);
       });
       setTimeout(() => {
-        container.firstChild?.focus();
+        // ركز على الفئة الأخيرة إذا كانت موجودة
+        if (lastCategoryIndex !== null && container.children[lastCategoryIndex]) {
+          container.children[lastCategoryIndex].focus();
+        } else {
+          container.firstChild?.focus();
+        }
       }, 100);
     }
 
-    async function loadSeries(categoryId) {
+    async function loadSeries(categoryId, idx) {
       lastCategoryId = categoryId;
+      lastCategoryIndex = idx; // حفظ رقم الفئة
       document.getElementById("categories").style.display = "none";
       document.getElementById("backButton").style.display = "block";
 
@@ -172,31 +179,47 @@
     function playEpisode(episode) {
       const streamUrl = `${serverUrl}/series/${username}/${password}/${episode.id}.${episode.container_extension}`;
       const name = encodeURIComponent(episode.title || `حلقة ${episode.episode_num}`);
-      // ✅ يرسل الرابط لمشغل ExoPlayer
       window.location.href = `https://play/stream?url=${encodeURIComponent(streamUrl)}&name=${name}`;
     }
 
     function goBack() {
       if (lastSeriesId) {
-        loadSeries(lastCategoryId);
+        loadSeries(lastCategoryId, lastCategoryIndex); // أرسل رقم الفئة
         lastSeriesId = null;
       } else {
         document.getElementById("categories").style.display = "block";
         document.getElementById("backButton").style.display = "none";
         document.getElementById("content").innerHTML = "";
         setTimeout(() => {
-          document.querySelector(".category")?.focus();
+          // ركز على الفئة الأخيرة
+          let cats = document.querySelectorAll(".category");
+          if (lastCategoryIndex !== null && cats[lastCategoryIndex]) {
+            cats[lastCategoryIndex].focus();
+          } else {
+            cats[0]?.focus();
+          }
         }, 100);
       }
     }
 
+    // دعم زر الرجوع من الريموت أو الكيبورد
+    document.addEventListener("keydown", function(e) {
+      if (
+        document.getElementById("backButton").style.display === "block" &&
+        (e.key === "Backspace" || e.key === "Escape" || e.keyCode === 8 || e.keyCode === 10009 || e.keyCode === 27)
+      ) {
+        e.preventDefault();
+        goBack();
+      }
+    });
+
     document.addEventListener("DOMContentLoaded", loadCategories);
-  </script>
+</script>
 </head>
 <body>
   <div class="sidebar" id="categories"></div>
   <button id="backButton" class="back-button" onclick="goBack()">
-    <img src="https://cdn-icons-png.flaticon.com/512/271/271220.png" alt="رجوع">
+    <img src="https://www2.0zz0.com/2025/09/11/17/301657026.png" alt="رجوع">
   </button>
   <div class="content-container" id="content"></div>
 </body>
