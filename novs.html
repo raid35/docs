@@ -129,18 +129,43 @@
       }
     }
 
-    function displaySeries(series) {
+    // دالة تجربة عدة صيغ للصورة
+    function getValidImage(srcs, fallback) {
+      return new Promise(resolve => {
+        let idx = 0;
+        function tryNext() {
+          if (idx >= srcs.length) return resolve(fallback);
+          let img = new window.Image();
+          img.onload = () => resolve(srcs[idx]);
+          img.onerror = () => { idx++; tryNext(); };
+          img.src = srcs[idx];
+        }
+        tryNext();
+      });
+    }
+
+    async function displaySeries(series) {
       let container = document.getElementById("content");
       container.innerHTML = "";
-      series.forEach(serie => {
+      for (const serie of series) {
         let div = document.createElement("div");
         div.className = "item";
         div.tabIndex = 0;
         div.onclick = () => loadEpisodes(serie.series_id);
-        div.innerHTML = `<img src="${serie.cover}" alt="صورة المسلسل" style="width:100%; border-radius: 8px;"> 
+
+        // جرب عدة صيغ للصورة
+        let covers = [
+          serie.cover,
+          serie.cover?.replace(/\.\w+$/, ".jpg"),
+          serie.cover?.replace(/\.\w+$/, ".png"),
+          serie.cover?.replace(/\.\w+$/, ".webp"),
+        ].filter(Boolean);
+
+        let imgSrc = await getValidImage(covers, "https://via.placeholder.com/100");
+        div.innerHTML = `<img src="${imgSrc}" alt="صورة المسلسل" style="width:100%; border-radius: 8px;"> 
                          <br> ${serie.name}`;
         container.appendChild(div);
-      });
+      }
       setTimeout(() => {
         container.firstChild?.focus();
       }, 100);
@@ -157,20 +182,30 @@
       }
     }
 
-    function displayEpisodes(episodes, coverImage) {
+    async function displayEpisodes(episodes, coverImage) {
       let container = document.getElementById("content");
       container.innerHTML = "";
-      Object.keys(episodes).forEach(season => {
-        episodes[season].forEach(episode => {
+      for (const season of Object.keys(episodes)) {
+        for (const episode of episodes[season]) {
           let div = document.createElement("div");
           div.className = "episode";
           div.tabIndex = 0;
           div.onclick = () => playEpisode(episode);
-          div.innerHTML = `<img src="${coverImage}" alt="شعار الحلقة" style="width:100%; border-radius: 8px;"> 
+
+          // جرب عدة صيغ للصورة
+          let covers = [
+            coverImage,
+            coverImage?.replace(/\.\w+$/, ".jpg"),
+            coverImage?.replace(/\.\w+$/, ".png"),
+            coverImage?.replace(/\.\w+$/, ".webp"),
+          ].filter(Boolean);
+
+          let imgSrc = await getValidImage(covers, "https://via.placeholder.com/100");
+          div.innerHTML = `<img src="${imgSrc}" alt="شعار الحلقة" style="width:100%; border-radius: 8px;"> 
                            <br> الموسم ${season} - الحلقة ${episode.episode_num}`;
           container.appendChild(div);
-        });
-      });
+        }
+      }
       setTimeout(() => {
         container.firstChild?.focus();
       }, 100);
