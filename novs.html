@@ -116,7 +116,7 @@
 
     async function loadSeries(categoryId, idx) {
       lastCategoryId = categoryId;
-      if (typeof idx !== "undefined") lastCategoryIndex = idx; // حفظ رقم الفئة إذا أرسل
+      lastCategoryIndex = idx; // حفظ رقم الفئة
       document.getElementById("categories").style.display = "none";
       document.getElementById("backButton").style.display = "block";
 
@@ -184,15 +184,14 @@
 
     function goBack() {
       if (lastSeriesId) {
-        // عند الرجوع من الحلقات إلى المسلسلات
-        loadSeries(lastCategoryId, lastCategoryIndex); // أرسل رقم الفئة الأخيرة
+        loadSeries(lastCategoryId, lastCategoryIndex); // أرسل رقم الفئة
         lastSeriesId = null;
       } else {
-        // عند الرجوع من المسلسلات إلى الفئات
         document.getElementById("categories").style.display = "block";
         document.getElementById("backButton").style.display = "none";
         document.getElementById("content").innerHTML = "";
         setTimeout(() => {
+          // ركز على الفئة الأخيرة
           let cats = document.querySelectorAll(".category");
           if (lastCategoryIndex !== null && cats[lastCategoryIndex]) {
             cats[lastCategoryIndex].focus();
@@ -215,7 +214,7 @@
     });
 
     document.addEventListener("DOMContentLoaded", loadCategories);
-  </script>
+</script>
 </head>
 <body>
   <div class="sidebar" id="categories"></div>
