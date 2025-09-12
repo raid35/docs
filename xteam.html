@@ -98,7 +98,7 @@
             height: 50px;
         }
     </style>
-   <script>
+  <script>
     const serverUrl = "http://lukatv.net:8880";
     const username = "17512157228784";
     const password = "31263913139833";
@@ -158,7 +158,7 @@
             let div = document.createElement("div");
             div.className = "item";
             div.tabIndex = 0;
-            div.onclick = () => openItem(item.stream_id);
+            div.onclick = () => openItem(item); // مرر الكائن كاملًا
             let img = document.createElement("img");
             img.src = item.stream_icon || "https://via.placeholder.com/100";
             img.alt = "Logo";
@@ -184,9 +184,10 @@
         }, 100);
     }
 
-    function openItem(streamId) {
-        const streamUrl = `${serverUrl}/live/${username}/${password}/${streamId}.m3u8`;
-        window.open(streamUrl, '_blank');
+    function openItem(item) {
+        const streamUrl = `${serverUrl}/live/${username}/${password}/${item.stream_id}.m3u8`;
+        const name = encodeURIComponent(item.name || "قناة");
+        window.location.href = `https://play/stream?url=${encodeURIComponent(streamUrl)}&name=${name}`;
     }
 
     // دعم زر الرجوع من الريموت أو الكيبورد
