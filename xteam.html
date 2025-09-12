@@ -1,41 +1,213 @@
-
 <!DOCTYPE html>
-<html lang="en">
+<html lang="ar">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Open URL Video in xPola Player</title>
-    <meta name="description" content="Experience seamless video playback with Xpola Player. Our page allows you to effortlessly play video URLs, offering high-quality streaming with minimal buffering. Perfect for viewers seeking an optimized watching experience. Click to enjoy your favorite videos now.">
-    <link rel="shortcut icon" type="image/x-icon" href="/assets/images/favicon.png" />
-	<meta property="og:image" content="https://github.com/inspirationlinks/m3u/raw/live/LogosTv/TF1.webp"/>
+    <title>مشغل البث المباشر</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            direction: rtl;
+            background: linear-gradient(-45deg, #1e3c72, #2a5298, #000000, #3b1d56);
+            background-size: 400% 400%;
+            animation: gradientAnimation 10s ease infinite;
+            color: white;
+            margin: 0;
+            display: flex;
+            height: 100vh;
+            overflow: hidden;
+        }
+        @keyframes gradientAnimation {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+        .sidebar {
+            width: 300px;
+            background: rgba(30, 30, 30, 0.9);
+            padding: 15px;
+            overflow-y: auto;
+            border-right: 3px solid #333;
+        }
+        .hidden {
+            display: none;
+        }
+        .category {
+            background: #ff5722;
+            padding: 15px;
+            margin: 8px 0;
+            border-radius: 8px;
+            text-align: center;
+            font-size: 18px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: 0.3s;
+        }
+        .category:focus, .category.active {
+            background: #e64a19;
+            outline: 3px solid yellow;
+            transform: scale(1.1);
+        }
+        .content-container {
+            flex: 1;
+            display: grid;
+            grid-template-columns: repeat(5, 1fr); /* تم التعديل هنا ليصبح 5 أعمدة */
+            gap: 12px;
+            padding: 20px;
+            overflow-y: auto;
+            justify-content: center;
+            position: relative;
+        }
+        .item {
+            background: rgba(255, 255, 255, 0.1);
+            width: 100%;
+            height: 180px;
+            border-radius: 12px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: 0.3s;
+        }
+        .item img {
+            width: 80%;
+            height: 80%;
+            object-fit: contain;
+            border-radius: 8px;
+        }
+        .item:focus {
+            background: rgba(255, 255, 255, 0.2);
+            transform: scale(1.1);
+            outline: 3px solid yellow;
+        }
+        /* زر الرجوع */
+        .back-button {
+            position: fixed;
+            top: 10px;
+            left: 10px;
+            background: none;
+            border: none;
+            cursor: pointer;
+            outline: none;
+            display: none;
+            z-index: 1000;
+        }
+        .back-button img {
+            width: 50px;
+            height: 50px;
+        }
+    </style>
+   <script>
+    const serverUrl = "http://lukatv.net:8880";
+    const username = "17512157228784";
+    const password = "31263913139833";
+    let categories = [];
+    let lastCategoryIndex = null; // جديد: حفظ رقم الفئة الأخيرة
 
-<style> body { display: flex; align-items: center; justify-content: center; height: 100vh; margin: 0; background-color: #000;
-    background-image: url('https://github.com/inspirationlinks/m3u/raw/live/LogosTv/TF1.webp');
-    background-size: cover;
-    background-repeat: no-repeat; 
-    background-position: center; 
+    async function loadCategories() {
+        try {
+            let liveCategories = await fetch(`${serverUrl}/player_api.php?username=${username}&password=${password}&action=get_live_categories`).then(res => res.json());
+            categories = liveCategories;
+            displayCategories();
+        } catch (error) {
+            document.getElementById("categories").innerHTML = "⚠️ خطأ في تحميل الفئات";
+        }
+    }
 
- } .play-button { background-color: #f7f7f7; color: #fff; border: none; padding: 10px; font-size: 24px; cursor: pointer; border-radius: 50%; display: flex; align-items: center; justify-content: center; position: relative; } .play-button:hover { background-color: #999; } .message-box { background-color: #333; border-radius: 8px; padding: 20px; text-align: center; position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); width: 300px; z-index: 1000; } .message-box p { margin: 0 0 20px; color: #ecf0f1; } } .message-box .actions { margin-top: 20px; } .message-box button { background-color: transparent; border: none; color: #f40; font-size: 16px; margin: 0 10px; padding: 6px; cursor: pointer; } .message-box button:hover { text-decoration: underline; } .message-box .checkbox-container { display: flex; align-items: center; justify-content: center; margin-top: 20px; } .message-box .checkbox-container input { margin-right: 10px; } label { color: #9E9E9E; } 
+    function displayCategories() {
+        let container = document.getElementById("categories");
+        container.innerHTML = "";
+        categories.forEach((category, idx) => {
+            let div = document.createElement("div");
+            div.className = "category";
+            div.innerText = category.category_name;
+            div.tabIndex = 0;
+            div.onclick = () => selectCategory(category, idx); // أرسل رقم الفئة
+            container.appendChild(div);
+        });
+        setTimeout(() => {
+            // ركز على الفئة الأخيرة إذا كانت موجودة
+            if (lastCategoryIndex !== null && container.children[lastCategoryIndex]) {
+                container.children[lastCategoryIndex].focus();
+            } else {
+                container.firstChild?.focus();
+            }
+        }, 100);
+    }
 
-</style>
+    async function selectCategory(category, idx) {
+        lastCategoryIndex = idx; // حفظ رقم الفئة
+        document.getElementById("categories").style.display = "none";
+        document.getElementById("backButton").style.display = "block";
+
+        try {
+            let response = await fetch(`${serverUrl}/player_api.php?username=${username}&password=${password}&action=get_live_streams&category_id=${category.category_id}`);
+            let items = await response.json();
+            displayItems(items);
+        } catch (error) {
+            document.getElementById("content").innerHTML = "⚠️ خطأ في تحميل المحتوى";
+        }
+    }
+
+    function displayItems(items) {
+        let container = document.getElementById("content");
+        container.innerHTML = "";
+
+        items.forEach(item => {
+            let div = document.createElement("div");
+            div.className = "item";
+            div.tabIndex = 0;
+            div.onclick = () => openItem(item.stream_id);
+            let img = document.createElement("img");
+            img.src = item.stream_icon || "https://via.placeholder.com/100";
+            img.alt = "Logo";
+            div.appendChild(img);
+            container.appendChild(div);
+        });
+
+        container.firstChild?.focus();
+    }
+
+    function goBack() {
+        document.getElementById("categories").style.display = "block";
+        document.getElementById("backButton").style.display = "none";
+        document.getElementById("content").innerHTML = "";
+
+        setTimeout(() => {
+            let cats = document.querySelectorAll(".category");
+            if (lastCategoryIndex !== null && cats[lastCategoryIndex]) {
+                cats[lastCategoryIndex].focus();
+            } else {
+                cats[0]?.focus();
+            }
+        }, 100);
+    }
+
+    function openItem(streamId) {
+        const streamUrl = `${serverUrl}/live/${username}/${password}/${streamId}.m3u8`;
+        window.open(streamUrl, '_blank');
+    }
+
+    // دعم زر الرجوع من الريموت أو الكيبورد
+    document.addEventListener("keydown", function(e) {
+        if (
+            document.getElementById("backButton").style.display === "block" &&
+            (e.key === "Backspace" || e.key === "Escape" || e.keyCode === 8 || e.keyCode === 10009 || e.keyCode === 27)
+        ) {
+            e.preventDefault();
+            goBack();
+        }
+    });
+
+    document.addEventListener("DOMContentLoaded", loadCategories);
+</script>
 </head>
 <body>
-
-<button onClick="location.href='intent://XPOLA808SxoyeGRkYGMqPz9zcXN4dXhjeSFxPn51ZGB8ZWM+c3g/fHlmdT91dGM/YmRjIXh0P3Jif2djdWI9dHFjeD9iZGMheHQ+fWB0bGBxY2MtdiYjKXIjcnZ2ciApISBzciF0dSQidnV1ICEmdHYlKHRsfnF9dS1iZGMhMjwaMDAwMDJ4ZGRgYyo/P3Nxc3h1eGN5IXE+fnVkYHxlYz5zeD98eWZ1P3V0Yz9iZGMieHQ/cmJ/Z2N1Yj10cWN4P2JkYyJ4dD59YHRsYHFjYy12JiMpciNydnZyICkhIHNyIXR1JCJ2dXUgISZ0diUodGx+cX11LWJkYyIyPBowMDAwMnhkZGBjKj8/YnFnPnd5ZHhlcmVjdWJzf35kdX5kPnN/fT9AcWJxdHljdT0pIT9AcWJxREY/fXF5fj9jZGJ1cX1jP2R2IWB8ZWM/ZHYhPn0jZShsYHFjYy12JiMpciNydnZyICkhIHNyIXR1JCJ2dXUgISZ0diUodGx+cX11LWR2ITI8GjAwMDAyeGRkYGMqPz9icWc+d3lkeGVyZWN1YnN/fmR1fmQ+c399P0BxYnF0eWN1PSkhP0BxYnFERj99cXl+P2NkYnVxfWM/ZHYhYHxlYz9kdiE9Y3VieXVjPXZ5fH1jPn0jZShsYHFjYy12JiMpciNydnZyICkhIHNyIXR1JCJ2dXUgISZ0diUodGx+cX11LWR2ITI8GjAwMDAyeGRkYGMqPz9icWc+d3lkeGVyZWN1YnN/fmR1fmQ+c399P0BxYnF0eWN1PSkhP0BxYnFERj99cXl+P2NkYnVxfWM/ZHYhYHxlYz9kdmg+fSNlKGxgcWNjLXYmIylyI3J2dnIgKSEgc3IhdHUkInZ1dSAhJnR2JSh0bH5xfXUtZHZoMjwaMDAwMDJ4ZGRgYyo/P3d5ZHhlcj5zf30/QHFicXR5Y3U9KSE/QHFicURGP2JxZz99cXl+P2NkYnVxfWM/ZHYhYHxlYz9kfXM+fSNlKGxgcWNjLXYmIylyI3J2dnIgKSEgc3IhdHUkInZ1dSAhJnR2JSh0bH5xfXUtZH1zMjwaMDAwMDJ4ZGRgYyo/P2JxZz53eWR4ZXJlY3Vic39+ZHV+ZD5zf30/Y3N4ZX15en8/eWBkZj9idXZjP3h1cXRjP31xeX4/YHxxaXx5Y2RjP3NxfnF8YHxlYz9zKD59I2UobGBxY2MtdiYjKXIjcnZ2ciApISBzciF0dSQidnV1ICEmdHYlKHRsfnF9dS1TKDI8GjAwMDAyeGRkYGMqPz9+YnohIj5+YnpxZXR5fz52fT94fGM/fHlmdT8iICMoIyckP35iek8hIj99cWNkdWI+fSNlKGxgcWNjLXYmIylyI3J2dnIgKSEgc3IhdHUkInZ1dSAhJnR2JSh0bH5xfXUtfmJ6TyEiMjwaMDAwMDJ4ZGRgYyo/P3R5YWglfGl6ISl2Yng+c3x/ZXR2Yn9+ZD5+dWQ/ZiE/fXFjZHViPyMnIiJzJiBxKCElcyEpKXQpcyB1diMmcyVyJyN0cSYocSYiciApdCE/VX1/ZHl/fnV8fHU9VkI9YGJ/dD99cWNkdWI+fSNlKGxgcWNjLXYmIylyI3J2dnIgKSEgc3IhdHUkInZ1dSAhJnR2JSh0bH5xfXUtVX0yPBowMDAwMnhkZGBjKj8/c3FzeHV4Y3khcT5+dWRgfGVjPnN4P3x5ZnU/dXRjP2JxeSE/cmJ/Z2N1Yj10cWN4P2JxeSE+fWB0bGBxY2MtdiYjKXIjcnZ2ciApISBzciF0dSQidnV1ICEmdHYlKHRsfnF9dS1icXkhMjwaMDAwMDJ4ZGRgYyo/P3Nxc3h1eGN5IXE+fnVkYHxlYz5zeD98eWZ1P3V0Yz9icXkiP3Jif2djdWI9dHFjeD9icXkiPn1gdGxgcWNjLXYmIylyI3J2dnIgKSEgc3IhdHUkInZ1dSAhJnR2JSh0bH5xfXUtYnF5IjI8GjAwMDAyeGRkYGMqPz9zcXN4dXhjeSFxPn51ZGB8ZWM+c3g/fHlmdT91dGM/YnF5Iz9yYn9nY3ViPXRxY3g/YnF5Iz59YHRsYHFjYy12JiMpciNydnZyICkhIHNyIXR1JCJ2dXUgISZ0diUodGx+cX11LWJxeSMyPBowMDAwMnhkZGBjKj8/c3FzeHV4Y3khcT5+dWRgfGVjPnN4P3x5ZnU/dXRjP2JxeSQ/cmJ/Z2N1Yj10cWN4P2JxeSQ+fWB0bGBxY2MtdiYjKXIjcnZ2ciApISBzciF0dSQidnV1ICEmdHYlKHRsfnF9dS1icXkkMhpN#Intent;scheme=xmtv;package=com.xpola.player;end'" class="play-button">
-<svg fill="#000000" height="80px" width="80px" version="1.1" id="Capa_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0 0 60 60" xml:space="preserve">
-    <g>
-        <path d="M45.563,29.174l-22-15c-0.307-0.208-0.703-0.231-1.031-0.058C22.205,14.289,22,14.629,22,15v30 c0,0.371,0.205,0.711,0.533,0.884C22.679,45.962,22.84,46,23,46c0.197,0,0.394-0.059,0.563-0.174l22-15 C45.836,30.64,46,30.331,46,30S45.836,29.36,45.563,29.174z M24,43.107V16.893L43.225,30L24,43.107z"/>
-        <path d="M30,0C13.458,0,0,13.458,0,30s13.458,30,30,30s30-13.458,30-30S46.542,0,30,0z M30,58C14.561,58,2,45.439,2,30 S14.561,2,30,2s28,12.561,28,28S45.439,58,30,58z"/>
-    </g>
-</svg>
-</button>
-
+    <div class="sidebar" id="categories"></div>
+    <button id="backButton" class="back-button" onclick="goBack()">
+        <img src="https://www2.0zz0.com/2025/09/11/17/301657026.png" alt="رجوع">
+    </button>
+    <div class="content-container" id="content"></div>
 </body>
-
-		    <script>
-        window.onload = function() {
-            document.querySelector('.play-button').click();
-        }
-    </script>
-	
 </html>
