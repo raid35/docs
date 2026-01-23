@@ -3,7 +3,6 @@
 <head>
     <meta charset="UTF-8">
     <title>Smart TV Player Pro</title>
-    <meta content="noindex, nofollow, noarchive" name="robots"/>
     <meta name="referrer" content="no-referrer" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     
@@ -14,7 +13,8 @@
     <style>
         body, html { margin: 0; padding: 0; width: 100%; height: 100%; background-color: black; overflow: hidden; }
         #jwplayerDiv { width: 100% !important; height: 100% !important; }
-        .jw-expandButton svg { width: 22px; height: 22px; }
+        /* تحسين شكل شريط المهام */
+        .jw-controlbar { bottom: 10px !important; }
     </style>
 </head>
 <body>
@@ -22,7 +22,7 @@
     <div id="jwplayerDiv"></div>
 
     <script>
-        // 1. نظام تزوير الهوية
+        // 1. نظام تزوير الهوية (مهم جداً للسرعة أيضاً)
         (function() {
             var originalFetch = window.fetch;
             var originalXHR = window.XMLHttpRequest;
@@ -40,10 +40,8 @@
             };
         })();
 
-        // أيقونة التمدد الخاصة بك
         const expandSvg = `<svg fill="#ffffff" version="1.1" id="expand_icon" xmlns="http://www.w3.org/2000/svg" width="24px" height="24px" viewBox="0 0 100 100"><g><path d="M22.661,20.5H36c1.104,0,2-0.896,2-2s-0.896-2-2-2H19c-1.104,0-2.5,1.276-2.5,2.381v17c0,1.104,0.896,2,2,2s2-0.896,2-2V24.876l16.042,15.791c0.391,0.391,1.027,0.586,1.539,0.586s1.086-0.195,1.477-0.586c0.781-0.781,0.812-2.237,0.031-3.019L22.661,20.5z"/><path d="M83,16.5H66c-1.104,0-2,0.896-2,2s0.896,2,2,2h12.605L61.647,37.648c-0.781,0.781-0.781,2.142,0,2.923c0.39,0.391,0.902,0.633,1.414,0.633s0.774-0.171,1.164-0.562l16.274-16.5v11.738c0,1.104,0.896,2,2,2s2-0.896,2-2v-17C84.5,17.776,84.104,16.5,83,16.5z"/><path d="M36.542,60.962L20.5,76.754V65.881c0-1.104-0.896-2-2-2s-2,0.896-2,2v17c0,1.104,1.396,1.619,2.5,1.619h17c1.104,0,2-0.896,2-2s-0.896-2-2-2H22.529L39.62,63.6c0.781-0.781,0.656-1.951-0.125-2.732C38.715,60.086,37.322,60.181,36.542,60.962z"/><path d="M82.5,63.881c-1.104,0-2,0.896-2,2v11.606L64.226,60.962c-0.78-0.781-1.923-0.781-2.703,0c-0.781,0.781-0.719,1.856,0.062,2.638l17.152,16.9H66c-1.104,0-2,0.896-2,2s0.896,2,2,2h17c1.104,0,1.5-0.515,1.5-1.619v-17C84.5,64.776,83.604,63.881,82.5,63.881z"/></g></svg>`;
 
-        // 2. قاعدة بيانات القنوات
         const channelList = {
             "BEIN2": {
                 url: "https://aba5sdmaaaaaaaamdwujas5g6mg4r.otte.live.cf.ww.aiv-cdn.net/syd-nitro/live/clients/dash/enc/8m8cd46i1t/out/v1/83985c68e4174e90a58a1f2c024be4c9/cenc.mpd",
@@ -63,17 +61,32 @@
 
         function setupPlayer(id) {
             const ch = channelList[id] || channelList["SSC1"];
+            
             const player = jwplayer("jwplayerDiv").setup({
                 file: ch.url,
                 width: "100%",
                 height: "100%",
                 autostart: true,
                 stretching: "fill",
+                preload: "auto", // بدء التحميل فوراً
+                /* إعدادات السرعة الفائقة لـ DASH */
+                dashjsConfig: {
+                    streaming: {
+                        lowLatencyEnabled: true,
+                        liveDelay: 3,
+                        initialBufferLevel: 1 // تحميل ثانية واحدة فقط قبل البدء
+                    }
+                },
+                /* إعدادات السرعة الفائقة لـ HLS */
+                hlsjsConfig: {
+                    enableWorker: true,
+                    liveSyncDurationCount: 2,
+                    initialLiveManifestSize: 1
+                },
                 drm: { clearkey: { keyId: ch.k1, key: ch.k2 } }
             });
 
             player.on('ready', function() {
-                // إضافة زر التمدد لشريط المهام الأصلي
                 player.addButton(expandSvg, 'تمدد الفيديو', function() {
                     isExpanded = !isExpanded;
                     const video = document.querySelector("#jwplayerDiv video");
@@ -81,7 +94,14 @@
                 }, 'expandButton');
             });
 
+            // ضمان عدم التوقف
             player.on('pause', function() { player.play(); });
+            
+            // محاولة كسر كتم الصوت التلقائي لبعض المتصفحات
+            player.on('play', function() {
+                player.setMute(false);
+                player.setVolume(100);
+            });
         }
 
         setupPlayer(getID);
