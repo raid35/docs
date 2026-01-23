@@ -3,103 +3,62 @@
 <head>
   <meta charset="UTF-8">
   <meta name="referrer" content="no-referrer" />
-  <title>مشغل القنوات الاحترافي</title>
+  <title>Smart TV Player</title>
   <script src="//ssl.p.jwpcdn.com/player/v/8.26.0/jwplayer.js"></script>
   <script>jwplayer.key = "XSuP4qMl+9tK17QNb+4+th2Pm9AWgMO/cYH8CI0HGGr7bdjo";</script>
   <link href="https://fonts.googleapis.com/css2?family=Cairo&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.2.1/css/all.min.css" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <style>
-    * { margin: 0; padding: 0; outline: none; box-sizing: border-box; }
-    body, html { width: 100%; height: 100%; overflow: hidden; background-color: black; font-family: 'Cairo', sans-serif; }
+    * { margin: 0; padding: 0; outline: none; }
+    body, html { width: 100%; height: 100%; overflow: hidden; background-color: black; }
     #jwplayerDiv { width: 100%!important; height: 100%!important; }
-    
-    /* تنسيق قائمة اختيار القنوات */
-    .menu-container {
-      position: absolute;
-      top: 10px;
-      right: 10px;
-      z-index: 9999;
-      display: flex;
-      flex-direction: column;
-      align-items: flex-end;
-    }
-    
-    #channelSelector {
-      background: rgba(0, 0, 0, 0.7);
-      color: white;
-      border: 1px solid #ff0000;
-      padding: 8px;
-      border-radius: 5px;
-      font-family: 'Cairo';
-      cursor: pointer;
-      outline: none;
-    }
-
-    .channel-title {
-      color: white;
-      background: rgba(255, 0, 0, 0.6);
-      padding: 2px 10px;
-      border-radius: 4px;
-      margin-bottom: 5px;
-      font-size: 12px;
-    }
   </style>
 </head>
 <body>
 
-  <div class="menu-container">
-    <div class="channel-title" id="chNameDisplay">القناة الحالية: SSC 1</div>
-    <select id="channelSelector" onchange="loadChannel(this.value)"
-    </select>
-  </div>
-
   <div id="jwplayerDiv"></div>
   
   <script>
-    // --- مصفوفة القنوات (أضف روابطك ومفاتيحك هنا) ---
-    const channelData = [
-      {
-        name: "SSC1",
+    // 1. قاعدة بيانات القنوات (أضف روابطك ومفاتيحك هنا)
+    const channels = {
+      "SSC1": {
         url: "https://shahid-sports-1-enc.edgenextcdn.net/out/v1/0169cfa282614ebe97ef0201da87bb04/index.mpd",
         keyId: "ab081a704aad41829b1123b09b6ecafd",
         key: "dd51609092fff15e68b91debf5d591f9"
       },
-      {
-        name: "القناة الثانية",
-        url: "رابط_القناة_الثانية_هنا",
-        keyId: "KEY_ID_هنا",
-        key: "KEY_هنا"
+      "SSC2": {
+        url: "رابط_قناة_2",
+        keyId: "KEY_ID_2",
+        key: "KEY_2"
       },
-      {
-        name: "القناة الثالثة",
-        url: "رابط_القناة_الثالثة_هنا",
-        keyId: "KEY_ID_هنا",
-        key: "KEY_هنا"
+      "SSC3": {
+        url: "رابط_قناة_3",
+        keyId: "KEY_ID_3",
+        key: "KEY_3"
       },
-      {
-        name: "القناة الرابعة",
-        url: "رابط_القناة_الرابعة_هنا",
-        keyId: "KEY_ID_هنا",
-        key: "KEY_هنا"
+      "SSC4": {
+        url: "رابط_قناة_4",
+        keyId: "KEY_ID_4",
+        key: "KEY_4"
       }
-    ];
+    };
 
-    let isExpanded = true;
-    let playerInstance = jwplayer("jwplayerDiv");
+    // 2. وظيفة جلب المعرف (ID) من الرابط تلقائياً
+    const urlParams = new URLSearchParams(window.location.search);
+    const channelId = urlParams.get('id') || "SSC1"; // إذا لم يوضع ID سيفتح SSC1 افتراضياً
 
-    function loadChannel(index) {
-      const ch = channelData[index];
-      document.getElementById('chNameDisplay').innerText = "جاري تشغيل: " + ch.name;
-
-      playerInstance.setup({
+    // 3. دالة تشغيل القناة المختارة
+    function startPlayer(id) {
+      const ch = channels[id] || channels["SSC1"]; // اختيار القناة أو العودة للرئيسية في حال الخطأ
+      
+      jwplayer("jwplayerDiv").setup({
         file: ch.url,
         width: "100%",
         height: "100%",
         autostart: true,
         mute: false,
         volume: 100,
-        stretching: "uniform",
+        stretching: "fill", // تمدد كامل ليناسب شاشات التلفاز
         drm: {
           clearkey: {
             keyId: ch.keyId,
@@ -107,24 +66,13 @@
           }
         }
       });
-
-      playerInstance.on('ready', function() {
-        applyObjectFit();
-      });
     }
 
-    // تشغيل القناة الأولى تلقائياً عند فتح الصفحة
-    loadChannel(0);
+    // بدء التشغيل فور تحميل الصفحة
+    startPlayer(channelId);
 
-    function applyObjectFit() {
-      const videoElement = document.querySelector("#jwplayerDiv video");
-      if (videoElement) {
-        videoElement.style.objectFit = isExpanded ? 'fill' : 'contain';
-      }
-    }
-
-    // تأمين استمرار التشغيل
-    playerInstance.on('pause', function() { playerInstance.play(); });
+    // منع الإيقاف التلقائي (مفيد للبث المباشر)
+    jwplayer().on('pause', function() { jwplayer().play(); });
   </script>
 </body>
 </html>
