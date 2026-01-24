@@ -2,12 +2,12 @@
 <html lang="ar">
 <head>
     <meta charset="UTF-8">
-    <title>Siksa TV - Auto Fix</title>
+    <title>Siksa TV - Max 5 Support</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <script src="//ssl.p.jwpcdn.com/player/v/8.26.0/jwplayer.js"></script>
     <script>jwplayer.key = "XSuP4qMl+9tK17QNb+4+th2Pm9AWgMO/cYH8CI0HGGr7bdjo";</script>
     <style>
-        body, html { margin: 0; padding: 0; width: 100%; height: 100%; background-color: black; overflow: hidden; }
+        body, html { margin: 0; padding: 0; width: 100%; height: 100%; background-color: black; }
         #jwplayerDiv { width: 100% !important; height: 100% !important; }
     </style>
 </head>
@@ -15,58 +15,58 @@
     <div id="jwplayerDiv"></div>
 
     <script>
-        // دالة سحرية لتحويل Base64 إلى Hex لضمان عمل المشغل
-        function b64ToHex(b64) {
-            const raw = atob(b64.replace(/-/g, '+').replace(/_/g, '/'));
-            let res = "";
-            for (let i = 0; i < raw.length; i++) {
-                const hex = raw.charCodeAt(i).toString(16);
-                res += (hex.length === 2 ? hex : '0' + hex);
-            }
-            return res.toLowerCase();
+        // دالة تحويل Base64 إلى Hex ليتوافق المشغل مع المتصفح
+        function base64ToHex(str) {
+            try {
+                const raw = atob(str.replace(/-/g, '+').replace(/_/g, '/'));
+                let result = '';
+                for (let i = 0; i < raw.length; i++) {
+                    const hex = raw.charCodeAt(i).toString(16);
+                    result += (hex.length === 2 ? hex : '0' + hex);
+                }
+                return result.toLowerCase();
+            } catch (e) { return str; }
         }
 
         const channelList = {
             "max5": {
                 url: "https://api-proxad.dc2.oqee.net/playlist/v1/live/973/1/live.mpd",
-                clearkeys: {
-                    "sEeP0mQk6I+h5keO411/CA": "9QRCQtjSJMrkCH/Y72VAIw",
-                    "InUSnyhWdxReNOuL4kmuSg": "dQVcYFHWUMUpYnseYm9TCg",
-                    "LrcsuNUlcZzdo+H1zEOzQg": "4Hl+IoZXVIcgUgFd2ikF9w",
-                    "CtLb067+IHA08kBQ68mM0Q": "CxIf52nQsbRaOmu4xA40BQ"
-                }
+                // وضعنا المفاتيح كما هي تماماً من ملف الـ M3U الخاص بك
+                clearkeys: [
+                    {"kid": "sEeP0mQk6I+h5keO411/CA", "k": "9QRCQtjSJMrkCH/Y72VAIw"},
+                    {"kid": "InUSnyhWdxReNOuL4kmuSg", "k": "dQVcYFHWUMUpYnseYm9TCg"},
+                    {"kid": "LrcsuNUlcZzdo+H1zEOzQg", "k": "4Hl+IoZXVIcgUgFd2ikF9w"},
+                    {"kid": "CtLb067+IHA08kBQ68mM0Q", "k": "CxIf52nQsbRaOmu4xA40BQ"}
+                ]
             }
         };
 
         const getID = new URLSearchParams(window.location.search).get('id') || "max5";
         const ch = channelList[getID];
 
-        // تحضير المفاتيح بالصيغة الصحيحة للمتصفح (Hex)
-        let finalDrmKeys = {};
-        if (ch.clearkeys) {
-            for (let kid in ch.clearkeys) {
-                // تحويل الـ ID والـ Key من Base64 إلى Hex
-                finalDrmKeys[b64ToHex(kid)] = b64ToHex(ch.clearkeys[kid]);
-            }
-        }
+        // تحضير المفاتيح: تحويل كل مفتاح من Base64 إلى Hex
+        let drmKeys = {};
+        ch.clearkeys.forEach(item => {
+            drmKeys[base64ToHex(item.kid)] = base64ToHex(item.k);
+        });
 
-        jwplayer("jwplayerDiv").setup({
+        const player = jwplayer("jwplayerDiv").setup({
             file: ch.url,
+            type: "dash",
             width: "100%",
             height: "100%",
             autostart: true,
             drm: {
-                clearkey: finalDrmKeys
+                clearkey: drmKeys
             }
         });
 
-        // تزوير الـ User-Agent لفتح حماية السيرفر
+        // تزوير الـ User-Agent (OQEE تتطلبه بشدة)
         (function() {
-            var customUA = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36";
             var orgOpen = XMLHttpRequest.prototype.open;
             XMLHttpRequest.prototype.open = function() {
                 orgOpen.apply(this, arguments);
-                this.setRequestHeader('User-Agent', customUA);
+                this.setRequestHeader('User-Agent', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36');
             };
         })();
     </script>
