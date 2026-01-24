@@ -1,78 +1,114 @@
 <!DOCTYPE html>
 <html lang="ar">
 <head>
-  <meta charset="UTF-8">
-  <meta name="referrer" content="no-referrer" />
-  <title>Smart TV Player</title>
-  <script src="//ssl.p.jwpcdn.com/player/v/8.26.0/jwplayer.js"></script>
-  <script>jwplayer.key = "XSuP4qMl+9tK17QNb+4+th2Pm9AWgMO/cYH8CI0HGGr7bdjo";</script>
-  <link href="https://fonts.googleapis.com/css2?family=Cairo&display=swap" rel="stylesheet">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <style>
-    * { margin: 0; padding: 0; outline: none; }
-    body, html { width: 100%; height: 100%; overflow: hidden; background-color: black; }
-    #jwplayerDiv { width: 100%!important; height: 100%!important; }
-  </style>
+    <meta charset="UTF-8">
+    <title>Siksa TV - Multi-Key Support</title>
+    <meta name="referrer" content="no-referrer" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    
+    <script src="//ssl.p.jwpcdn.com/player/v/8.26.0/jwplayer.js"></script>
+    <script>jwplayer.key = "XSuP4qMl+9tK17QNb+4+th2Pm9AWgMO/cYH8CI0HGGr7bdjo";</script>
+    <link rel="stylesheet" href="https://akomov.com/todapi/jw_ako.css">
+
+    <style>
+        body, html { margin: 0; padding: 0; width: 100%; height: 100%; background-color: black; overflow: hidden; }
+        #jwplayerDiv { width: 100% !important; height: 100% !important; }
+    </style>
 </head>
 <body>
 
-  <div id="jwplayerDiv"></div>
-  
-  <script>
-    // 1. قاعدة بيانات القنوات (أضف روابطك ومفاتيحك هنا)
-    const channels = {
-      "SSC1": {
-        url: "https://shahid-sports-1-enc.edgenextcdn.net/out/v1/0169cfa282614ebe97ef0201da87bb04/index.mpd",
-        keyId: "ab081a704aad41829b1123b09b6ecafd",
-        key: "dd51609092fff15e68b91debf5d591f9"
-      },
-      "SSC2": {
-        url: "رابط_قناة_2",
-        keyId: "KEY_ID_2",
-        key: "KEY_2"
-      },
-      "SSC3": {
-        url: "رابط_قناة_3",
-        keyId: "KEY_ID_3",
-        key: "KEY_3"
-      },
-      "SSC4": {
-        url: "رابط_قناة_4",
-        keyId: "KEY_ID_4",
-        key: "KEY_4"
-      }
-    };
+    <div id="jwplayerDiv"></div>
 
-    // 2. وظيفة جلب المعرف (ID) من الرابط تلقائياً
-    const urlParams = new URLSearchParams(window.location.search);
-    const channelId = urlParams.get('id') || "SSC1"; // إذا لم يوضع ID سيفتح SSC1 افتراضياً
+    <script>
+        // 1. تزوير الهوية (User-Agent) للروابط المحمية
+        (function() {
+            var originalFetch = window.fetch;
+            var originalXHR = window.XMLHttpRequest;
+            var customUA = "Mozilla/5.0 (Smart-TV; Linux; Tizen 6.0) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/85.0.4183.102 TV Safari/537.36";
+            window.fetch = function(url, options) {
+                options = options || {};
+                options.headers = options.headers || {};
+                options.headers['User-Agent'] = customUA;
+                return originalFetch.call(this, url, options);
+            };
+            var XHROpen = originalXHR.prototype.open;
+            originalXHR.prototype.open = function(method, url) {
+                XHROpen.apply(this, arguments);
+                this.setRequestHeader('User-Agent', customUA);
+            };
+        })();
 
-    // 3. دالة تشغيل القناة المختارة
-    function startPlayer(id) {
-      const ch = channels[id] || channels["SSC1"]; // اختيار القناة أو العودة للرئيسية في حال الخطأ
-      
-      jwplayer("jwplayerDiv").setup({
-        file: ch.url,
-        width: "100%",
-        height: "100%",
-        autostart: true,
-        mute: false,
-        volume: 100,
-        stretching: "fill", // تمدد كامل ليناسب شاشات التلفاز
-        drm: {
-          clearkey: {
-            keyId: ch.keyId,
-            key: ch.key
-          }
+        // أيقونة التمدد
+        const expandSvg = `<svg fill="#ffffff" version="1.1" id="expand_icon" xmlns="http://www.w3.org/2000/svg" width="24px" height="24px" viewBox="0 0 100 100"><g><path d="M22.661,20.5H36c1.104,0,2-0.896,2-2s-0.896-2-2-2H19c-1.104,0-2.5,1.276-2.5,2.381v17c0,1.104,0.896,2,2,2s2-0.896,2-2V24.876l16.042,15.791c0.391,0.391,1.027,0.586,1.539,0.586s1.086-0.195,1.477-0.586c0.781-0.781,0.812-2.237,0.031-3.019L22.661,20.5z"/><path d="M83,16.5H66c-1.104,0-2,0.896-2,2s0.896,2,2,2h12.605L61.647,37.648c-0.781,0.781-0.781,2.142,0,2.923c0.39,0.391,0.902,0.633,1.414,0.633s0.774-0.171,1.164-0.562l16.274-16.5v11.738c0,1.104,0.896,2,2,2s2-0.896,2-2v-17C84.5,17.776,84.104,16.5,83,16.5z"/><path d="M36.542,60.962L20.5,76.754V65.881c0-1.104-0.896-2-2-2s-2,0.896-2,2v17c0,1.104,1.396,1.619,2.5,1.619h17c1.104,0,2-0.896,2-2s-0.896-2-2-2H22.529L39.62,63.6c0.781-0.781,0.656-1.951-0.125-2.732C38.715,60.086,37.322,60.181,36.542,60.962z"/><path d="M82.5,63.881c-1.104,0-2,0.896-2,2v11.606L64.226,60.962c-0.78-0.781-1.923-0.781-2.703,0c-0.781,0.781-0.719,1.856,0.062,2.638l17.152,16.9H66c-1.104,0-2,0.896-2,2s0.896,2,2,2h17c1.104,0,1.5-0.515,1.5-1.619v-17C84.5,64.776,83.604,63.881,82.5,63.881z"/></g></svg>`;
+
+        // قائمة القنوات
+        const channelList = {
+            "BEIN2": {
+                url: "https://aba5sdmaaaaaaaamdwujas5g6mg4r.otte.live.cf.ww.aiv-cdn.net/syd-nitro/live/clients/dash/enc/8m8cd46i1t/out/v1/83985c68e4174e90a58a1f2c024be4c9/cenc.mpd",
+                k1: "0b42be2664d7e811d04f3e504e0924c5",
+                k2: "ae24090123b8c72ac5404dc152847cb8"
+            },
+            "max5": {
+                url: "https://api-proxad.dc2.oqee.net/playlist/v1/live/973/1/live.mpd",
+                // وضع المفاتيح المتعددة هنا بصيغة (ID: KEY)
+                all_keys: {
+                    "sEeP0mQk6I+h5keO411/CA": "9QRCQtjSJMrkCH/Y72VAIw",
+                    "InUSnyhWdxReNOuL4kmuSg": "-dQVcYFHWUMUpYnseYm9TCg",
+                    "LrcsuNUlcZzdo+H1zEOzQg": "4Hl+IoZXVIcgUgFd2ikF9w",
+                    "CtLb067+IHA08kBQ68mM0Q": "CxIf52nQsbRaOmu4xA40BQ"                   
+                }
+            }
+        };
+
+        const urlParams = new URLSearchParams(window.location.search);
+        const getID = urlParams.get('id') || "BEIN2";
+        const selectedChannel = channelList[getID] || channelList["BEIN2"];
+        let isExpanded = true;
+
+        // --- الجزء الأهم: دالة تحضير مفاتيح الـ DRM ---
+        let drmKeys = {};
+        if (selectedChannel.all_keys) {
+            // إذا كانت القناة تحتوي على مفاتيح متعددة
+            drmKeys = selectedChannel.all_keys;
+        } else {
+            // إذا كانت القناة عادية تستخدم k1 و k2
+            drmKeys[selectedChannel.k1] = selectedChannel.k2;
         }
-      });
-    }
 
-    // بدء التشغيل فور تحميل الصفحة
-    startPlayer(channelId);
+        const player = jwplayer("jwplayerDiv").setup({
+            file: selectedChannel.url,
+            width: "100%",
+            height: "100%",
+            autostart: true,
+            stretching: "fill",
+            drm: { 
+                clearkey: drmKeys 
+            }
+        });
 
-    // منع الإيقاف التلقائي (مفيد للبث المباشر)
-    jwplayer().on('pause', function() { jwplayer().play(); });
-  </script>
+        player.on('ready', function() {
+            player.addButton(expandSvg, 'تمدد الفيديو', function() {
+                isExpanded = !isExpanded;
+                const video = document.querySelector("#jwplayerDiv video");
+                if (video) video.style.objectFit = isExpanded ? 'fill' : 'contain';
+            }, 'expandButton');
+        });
+
+        // اختيار الصوت العربي تلقائياً
+        player.on('audioTracks', function() {
+            const tracks = player.getAudioTracks();
+            tracks.forEach((track, index) => {
+                if (track.label.toLowerCase().includes("ara") || track.label.includes("عربي")) {
+                    player.setCurrentAudioTrack(index);
+                }
+            });
+        });
+
+        window.addEventListener("beforeunload", function() { player.remove(); });
+        document.addEventListener("visibilitychange", function() {
+            if (document.hidden) { player.pause(); }
+        });
+
+    </script>
 </body>
 </html>
