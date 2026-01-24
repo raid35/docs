@@ -2,8 +2,7 @@
 <html lang="ar">
 <head>
     <meta charset="UTF-8">
-    <title>Siksa TV - Universal Player</title>
-    <meta name="referrer" content="no-referrer" />
+    <title>Siksa TV - Auto Fix</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <script src="//ssl.p.jwpcdn.com/player/v/8.26.0/jwplayer.js"></script>
     <script>jwplayer.key = "XSuP4qMl+9tK17QNb+4+th2Pm9AWgMO/cYH8CI0HGGr7bdjo";</script>
@@ -16,53 +15,52 @@
     <div id="jwplayerDiv"></div>
 
     <script>
-        // دالة لتحويل Base64 إلى Hex (لأن المتصفح يحتاج Hex أحياناً أو العكس)
-        // لكن JWPlayer في النسخ الحديثة يفضل استقبال القيم مباشرة كـ Object
-        
+        // دالة سحرية لتحويل Base64 إلى Hex لضمان عمل المشغل
+        function b64ToHex(b64) {
+            const raw = atob(b64.replace(/-/g, '+').replace(/_/g, '/'));
+            let res = "";
+            for (let i = 0; i < raw.length; i++) {
+                const hex = raw.charCodeAt(i).toString(16);
+                res += (hex.length === 2 ? hex : '0' + hex);
+            }
+            return res.toLowerCase();
+        }
+
         const channelList = {
             "max5": {
                 url: "https://api-proxad.dc2.oqee.net/playlist/v1/live/973/1/live.mpd",
-                     {"keys":[{"kty":"oct","kid":"Ssudj4RaMVolmhKGe2eS5A","k":"nJgaml_4-5gUnWAhuWI6sw"},{"kty":"oct","kid":"LrsNNZsjhyVs0gxUevMq9w","k":"-udRObNMfJuPnNQHHYDBng"},{"kty":"oct","kid":"bfof_0SBOSIGmniwlD7LaQ","k":"CKf8e0d4lgszyA4m00E9mw"},{"kty":"oct","kid":"vm0egZi_k1JwslM9Vr0c_Q","k":"uIP7-bZSuYxTDGS8mofBUg"},{"kty":"oct","kid":"Y8BEn3INpLfVF59DcHbq3w","k":"5hFONrHRo5ADHlgtCz86Nw"}]}
                 clearkeys: {
                     "sEeP0mQk6I+h5keO411/CA": "9QRCQtjSJMrkCH/Y72VAIw",
                     "InUSnyhWdxReNOuL4kmuSg": "dQVcYFHWUMUpYnseYm9TCg",
                     "LrcsuNUlcZzdo+H1zEOzQg": "4Hl+IoZXVIcgUgFd2ikF9w",
                     "CtLb067+IHA08kBQ68mM0Q": "CxIf52nQsbRaOmu4xA40BQ"
                 }
-            },
-            "BEIN2": {
-                url: "https://aba5sdmaaaaaaaamdwujas5g6mg4r.otte.live.cf.ww.aiv-cdn.net/syd-nitro/live/clients/dash/enc/8m8cd46i1t/out/v1/83985c68e4174e90a58a1f2c024be4c9/cenc.mpd",
-                k1: "0b42be2664d7e811d04f3e504e0924c5",
-                k2: "ae24090123b8c72ac5404dc152847cb8"
             }
         };
 
-        const urlParams = new URLSearchParams(window.location.search);
-        const getID = urlParams.get('id') || "max5";
-        const ch = channelList[getID] || channelList["max5"];
+        const getID = new URLSearchParams(window.location.search).get('id') || "max5";
+        const ch = channelList[getID];
 
-        // تجهيز المفاتيح للمشغل
-        let drmConfig = {};
+        // تحضير المفاتيح بالصيغة الصحيحة للمتصفح (Hex)
+        let finalDrmKeys = {};
         if (ch.clearkeys) {
-            drmConfig = ch.clearkeys;
-        } else {
-            drmConfig[ch.k1] = ch.k2;
+            for (let kid in ch.clearkeys) {
+                // تحويل الـ ID والـ Key من Base64 إلى Hex
+                finalDrmKeys[b64ToHex(kid)] = b64ToHex(ch.clearkeys[kid]);
+            }
         }
 
-        const player = jwplayer("jwplayerDiv").setup({
-            playlist: [{
-                file: ch.url,
-                drm: {
-                    clearkey: drmConfig
-                }
-            }],
+        jwplayer("jwplayerDiv").setup({
+            file: ch.url,
             width: "100%",
             height: "100%",
             autostart: true,
-            stretching: "fill"
+            drm: {
+                clearkey: finalDrmKeys
+            }
         });
 
-        // تزوير UA لروابط OQEE (مهم جداً لهذه القناة)
+        // تزوير الـ User-Agent لفتح حماية السيرفر
         (function() {
             var customUA = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36";
             var orgOpen = XMLHttpRequest.prototype.open;
