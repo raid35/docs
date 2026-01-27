@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Siksa Player - beIN Edition</title>
+    <title>Siksa Player Pro - DZ</title>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/shaka-player/4.15.9/shaka-player.ui.min.js"></script>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/shaka-player/4.15.9/controls.min.css" rel="stylesheet">
     <style>
@@ -11,7 +11,7 @@
         #container { width: 100%; height: 100%; }
         video { width: 100%; height: 100%; }
         #loader { position: absolute; z-index: 10; text-align: center; color: white; font-family: sans-serif; }
-        .spinner { border: 4px solid rgba(255,255,255,0.1); border-top: 4px solid #00df88; border-radius: 50%; width: 45px; height: 45px; animation: spin 1s linear infinite; margin: 0 auto 10px; }
+        .spinner { border: 4px solid rgba(255,255,255,0.1); border-top: 4px solid #ff6b35; border-radius: 50%; width: 45px; height: 45px; animation: spin 1s linear infinite; margin: 0 auto 10px; }
         @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
     </style>
 </head>
@@ -19,7 +19,7 @@
 
     <div id="loader">
         <div class="spinner"></div>
-        <p id="status">جاري الاتصال بـ beIN Sports...</p>
+        <p id="status">جاري تشغيل القناة.. تحيا الجزائر 🇩🇿</p>
     </div>
 
     <div id="container" data-shaka-player-container>
@@ -27,19 +27,19 @@
     </div>
 
     <script>
-        // --- قسم القنوات: يمكنك إضافة أو تعديل الروابط هنا ---
+        // قائمة القنوات المحدثة
         const channels = {
-            "La_Une": {
-                url: "https://c9851ec-rbm-hilv-fsly.cdn.redbee.live/L26/669bb376/9069a322.isml/.mpd",
-                key: "cbdd636bb2e44f1fa6ebd41f46a3cc52:e6ab6c56a79962dcab612e9dc4fea986"
-            },
-            "Матч!_2": {
-                url: "https://video.beeline.tv/live/d/channel320.isml/manifest-stb.mpd",
-                key: "ce7cf9b28d1a8d874accebc44d7e1fcd:cda18d4d20abd5cc778315abe277feb9"
-            },
             "shahid-sports-1": {
                 url: "https://shahid-sports-1-enc.edgenextcdn.net/out/v1/0169cfa282614ebe97ef0201da87bb04/index.mpd",
                 key: "ab081a704aad41829b1123b09b6ecafd:dd51609092fff15e68b91debf5d591f9"
+            },
+            "bein_max1": {
+                url: "https://beinsports-max1.akamaized.net/out/v1/69646b755f3131303030303030303030/index.mpd",
+                key: "69646b755f3131303030303030303030:a9e3d5b2c1f4e7d8a0c9b8a7f6e5d4c3"
+            },
+            "La_Une": {
+                url: "https://c9851ec-rbm-hilv-fsly.cdn.redbee.live/L26/669bb376/9069a322.isml/.mpd",
+                key: "cbdd636bb2e44f1fa6ebd41f46a3cc52:e6ab6c56a79962dcab612e9dc4fea986"
             },
             "ssc1": {
                 url: "https://shls-ssc-1-prod-dub.shahid.net/out/v1/index.mpd",
@@ -52,30 +52,44 @@
             const container = document.getElementById('container');
             const status = document.getElementById('status');
             const player = new shaka.Player(video);
-            new shaka.ui.Overlay(player, container, video);
+            
+            // إضافة واجهة المستخدم
+            const ui = new shaka.ui.Overlay(player, container, video);
 
             const id = new URLSearchParams(window.location.search).get('id');
             const channel = channels[id];
 
             if (!channel) {
-                status.innerText = "❌ القناة غير متوفرة حالياً";
+                status.innerText = "❌ القناة غير موجودة";
                 return;
             }
 
-            if (channel.key) {
-                const [kid, key] = channel.key.split(':');
-                player.configure({ drm: { clearKeys: { [kid]: key } } });
-            }
-
+            // إعدادات الـ DRM والشبكة المتقدمة
             player.configure({
-                streaming: { bufferingGoal: 10, lowLatencyMode: true }
+                drm: {
+                    clearKeys: channel.key ? { [channel.key.split(':')[0]]: channel.key.split(':')[1] } : {}
+                },
+                streaming: {
+                    jumpLargeGaps: true,
+                    lowLatencyMode: true,
+                    rebufferingGoal: 2
+                }
+            });
+
+            // فلتر الشبكة لحل مشكلة Shahid
+            player.getNetworkingEngine().registerRequestFilter((type, request) => {
+                if (type === shaka.net.NetworkingEngine.RequestType.MANIFEST) {
+                    // محاكاة متصفح حقيقي لتجنب الرفض من سيرفرات Shahid
+                    request.headers['User-Agent'] = navigator.userAgent;
+                }
             });
 
             try {
                 await player.load(channel.url);
                 document.getElementById('loader').style.display = 'none';
             } catch (e) {
-                status.innerText = "⚠️ فشل تشغيل البث، قد يكون الرابط منتهياً";
+                console.error("Error Detail:", e);
+                status.innerText = "⚠️ فشل التشغيل.. تأكد من صلاحية المفاتيح";
             }
         }
 
