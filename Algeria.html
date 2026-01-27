@@ -434,44 +434,57 @@
 
     <script>
         // Enhanced Channel Configuration
-        const channel = {
-            name: "HGTV HD",
-            url: "https://otte.live.fly.ww.aiv-cdn.net/pdx-nitro/live/clients/dash/enc/uiffe4jhf0/out/v1/3534efafca8c4815adbb4d2e9a1fe003/cenc.mpd",
-            key: "3dcfbec0e7146928baa55210bf2cb62f:bc85f74f815d9be5ae1dd6defaa05135",
-            type: "mpd",
-            
-            // Additional DRM configurations
-            drmConfig: {
-                // Widevine
-                'com.widevine.alpha': {
-                    serverURL: 'https://widevine-proxy.appspot.com/proxy',
-                    httpRequestHeaders: {}
-                },
-                // PlayReady
-                'com.microsoft.playready': {
-                    serverURL: 'https://playready.directtaps.net/pr/svc/rightsmanager.asmx',
-                    httpRequestHeaders: {}
-                },
-                // FairPlay (for Safari)
-                'com.apple.fps.1_0': {
-                    serverURL: 'https://fps.ezdrm.com/api/licenses/',
-                    httpRequestHeaders: {}
-                }
-            },
-            
-            // Network headers
-            headers: {
-                'User-Agent': 'Mozilla/5.0 (Smart TV; Linux; Tizen 6.0) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/85.0.4183.102 TV Safari/537.36',
-                'Accept': '*/*',
-                'Accept-Language': 'en-US,en;q=0.9,ar;q=0.8',
-                'Accept-Encoding': 'gzip, deflate, br',
-                'Origin': 'https://www.intigral.net',
-                'Referer': 'https://www.intigral.net/',
-                'Sec-Fetch-Dest': 'empty',
-                'Sec-Fetch-Mode': 'cors',
-                'Sec-Fetch-Site': 'cross-site'
+       const channels = [
+    {
+        name: "HGTV HD",
+        url: "https://otte.live.fly.ww.aiv-cdn.net/pdx-nitro/live/clients/dash/enc/uiffe4jhf0/out/v1/3534efafca8c4815adbb4d2e9a1fe003/cenc.mpd",
+        key: "3dcfbec0e7146928baa55210bf2cb62f:bc85f74f815d9be5ae1dd6defaa05135",
+        type: "mpd",
+        drmConfig: {
+            'com.widevine.alpha': {
+                serverURL: 'https://widevine-proxy.appspot.com/proxy',
+                httpRequestHeaders: {}
             }
-        };
+        }
+    },
+
+    {
+        name: "Discovery HD",
+        url: "https://example.com/discovery.mpd",
+        key: "key1:key2",
+        type: "mpd",
+        drmConfig: {
+            'com.widevine.alpha': {
+                serverURL: 'https://widevine-proxy.appspot.com/proxy',
+                httpRequestHeaders: {}
+            }
+        }
+    },
+
+    {
+        name: "National Geographic HD",
+        url: "https://example.com/natgeo.mpd",
+        key: "key3:key4",
+        type: "mpd",
+        drmConfig: {
+            'com.widevine.alpha': {
+                serverURL: 'https://widevine-proxy.appspot.com/proxy',
+                httpRequestHeaders: {}
+            }
+        }
+    },
+
+    {
+        name: "Animal Planet HD",
+        url: "https://example.com/animalplanet.mpd",
+        key: "key5:key6",
+        type: "mpd",
+        drmConfig: {
+            'com.widevine.alpha': {
+                serverURL: 'https://widevine-proxy.appspot.com/proxy',
+                httpRequestHeaders: {}
+            }
+        ];
 
         // Global Variables
         let currentPlayer = null;
