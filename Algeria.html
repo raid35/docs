@@ -1,17 +1,17 @@
 <!DOCTYPE html>
-<html lang="ar">
+<html lang="ar" dir="rtl">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Siksa Player - المستودع</title>
+    <title>Siksa Player - beIN Edition</title>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/shaka-player/4.15.9/shaka-player.ui.min.js"></script>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/shaka-player/4.15.9/controls.min.css" rel="stylesheet">
     <style>
         body { margin: 0; background: #000; height: 100vh; display: flex; align-items: center; justify-content: center; overflow: hidden; }
         #container { width: 100%; height: 100%; }
         video { width: 100%; height: 100%; }
-        #loader { position: absolute; color: white; font-family: sans-serif; text-align: center; }
-        .spinner { border: 4px solid rgba(255,255,255,0.1); border-top: 4px solid #00ff88; border-radius: 50%; width: 40px; height: 40px; animation: spin 1s linear infinite; margin-bottom: 10px; }
+        #loader { position: absolute; z-index: 10; text-align: center; color: white; font-family: sans-serif; }
+        .spinner { border: 4px solid rgba(255,255,255,0.1); border-top: 4px solid #00df88; border-radius: 50%; width: 45px; height: 45px; animation: spin 1s linear infinite; margin: 0 auto 10px; }
         @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
     </style>
 </head>
@@ -19,7 +19,7 @@
 
     <div id="loader">
         <div class="spinner"></div>
-        <p>جاري تشغيل البث...</p>
+        <p id="status">جاري الاتصال بـ beIN Sports...</p>
     </div>
 
     <div id="container" data-shaka-player-container>
@@ -27,70 +27,60 @@
     </div>
 
     <script>
-        // مصفوفة القنوات - أضف قنواتك هنا بسهولة
+        // --- قسم القنوات: يمكنك إضافة أو تعديل الروابط هنا ---
         const channels = {
-            "sps1": {
-                url: "https://sps1.starzplayarabia.com/out/v1/eee188845e9543699fd24e5a9890c6e2/index.mpd",
-                key: "b253c726c24c7c94a3ddf9b1907e2c76:097963d6ad73c3d712a104981de0ed42"
+            "La_Une": {
+                url: "https://c9851ec-rbm-hilv-fsly.cdn.redbee.live/L26/669bb376/9069a322.isml/.mpd",
+                key: "cbdd636bb2e44f1fa6ebd41f46a3cc52:e6ab6c56a79962dcab612e9dc4fea986"
             },
-            "sps2": {
-                url: "https://sps2.starzplayarabia.com/out/v1/9c44569429154f3a9e62310b1a0391d1/index.mpd",
-                key: "b3f3e8095f924619b884967384a2d1d0:e7a96d2e67300c14c5b3641777990141"
+            "Матч!_2": {
+                url: "https://video.beeline.tv/live/d/channel320.isml/manifest-stb.mpd",
+                key: "ce7cf9b28d1a8d874accebc44d7e1fcd:cda18d4d20abd5cc778315abe277feb9"
             },
-            "discovery": {
-                url: "https://example.com/discovery.mpd",
-                key: "key_id:key_value"
+            "bein3": {
+                url: "https://beinsports-3.akamaized.net/out/v1/69646b755f3330303030303030303030/index.mpd",
+                key: "69646b755f3330303030303030303030:e4a2359b05563399f1d9adfce641724a"
             },
-            "nat_geo": {
-                url: "https://example.com/natgeo.mpd",
-                key: "key_id:key_value"
-            },
-            "fubo": {
-                url: "https://fubo-sports-2-in.fubotv.com/playlist.mpd",
-                key: "" // بدون تشفير
+            "ssc1": {
+                url: "https://shls-ssc-1-prod-dub.shahid.net/out/v1/index.mpd",
+                key: "4504f76274b74548b898f090d8109672:368d1890e035f5835697693630f9a265"
             }
         };
 
         async function init() {
             const video = document.getElementById('video');
             const container = document.getElementById('container');
+            const status = document.getElementById('status');
             const player = new shaka.Player(video);
-            
-            // إضافة أزرار التحكم (UI)
             new shaka.ui.Overlay(player, container, video);
 
-            const params = new URLSearchParams(window.location.search);
-            const channel = channels[params.get('id')];
+            const id = new URLSearchParams(window.location.search).get('id');
+            const channel = channels[id];
 
             if (!channel) {
-                document.getElementById('loader').innerHTML = "❌ القناة غير موجودة";
+                status.innerText = "❌ القناة غير متوفرة حالياً";
                 return;
             }
 
-            // إعداد المفاتيح (ClearKey)
             if (channel.key) {
                 const [kid, key] = channel.key.split(':');
                 player.configure({ drm: { clearKeys: { [kid]: key } } });
             }
 
-            // تحسين سلاسة البث
             player.configure({
-                streaming: {
-                    bufferingGoal: 10,
-                    lowLatencyMode: true,
-                    jumpLargeGaps: true
-                }
+                streaming: { bufferingGoal: 10, lowLatencyMode: true }
             });
 
             try {
                 await player.load(channel.url);
                 document.getElementById('loader').style.display = 'none';
             } catch (e) {
-                document.getElementById('loader').innerHTML = "❌ خطأ في تشغيل القناة";
+                status.innerText = "⚠️ فشل تشغيل البث، قد يكون الرابط منتهياً";
             }
         }
 
-        document.addEventListener('DOMContentLoaded', init);
+        document.addEventListener('shaka-ui-loaded', init);
+        document.addEventListener('DOMContentLoaded', () => { if(!window.shaka) init(); });
     </script>
 </body>
 </html>
