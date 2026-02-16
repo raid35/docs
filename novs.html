@@ -81,7 +81,7 @@
     let categories = [];
     let lastCategoryId = null;
     let lastSeriesId = null;
-    let lastCategoryIndex = null;
+    let lastCategoryIndex = null; 
 
     async function loadCategories() {
       try {
@@ -115,7 +115,7 @@
 
     async function loadSeries(categoryId, idx) {
       lastCategoryId = categoryId;
-      lastCategoryIndex = idx;
+      lastCategoryIndex = idx; 
       document.getElementById("categories").style.display = "none";
       document.getElementById("backButton").style.display = "block";
 
@@ -175,21 +175,18 @@
       }, 100);
     }
 
-    // --- التعديل الجوهري لضمان التعرف على المشغل ---
+    // --- التعديل للتشغيل مع الحفاظ على الهيكل ---
     function playEpisode(episode) {
       const streamUrl = `${serverUrl}/series/${username}/${password}/${episode.id}.${episode.container_extension}`;
-      
-      // نستخدم بروتوكول intent بشكل صريح مع استهداف package التطبيق الخاص بك
-      // هذا يمنع المتصفح من محاولة تحميل الملف ويفتح التطبيق فوراً
       const title = encodeURIComponent(episode.title || `الحلقة ${episode.episode_num}`);
-      const intentUrl = `intent:${streamUrl}#Intent;action=android.intent.action.VIEW;package=com.example.siksa;type=video/*;S.title=${title};end`;
-
-      window.location.href = intentUrl;
+      
+      // إرسال الرابط مباشرة لمشغل تطبيقك com.example.siksa
+      window.location.href = `intent:${streamUrl}#Intent;action=android.intent.action.VIEW;package=com.example.siksa;type=video/*;S.title=${title};end`;
     }
 
     function goBack() {
       if (lastSeriesId) {
-        loadSeries(lastCategoryId, lastCategoryIndex);
+        loadSeries(lastCategoryId, lastCategoryIndex); 
         lastSeriesId = null;
       } else {
         document.getElementById("categories").style.display = "block";
