@@ -46,7 +46,7 @@
     .category:focus, .item:focus, .episode:focus {
       background: rgba(255, 255, 255, 0.3);
       outline: 3px solid yellow;
-      transform: scale(1.1);
+      transform: scale(1.05);
     }
     .content-container {
       flex: 1;
@@ -56,44 +56,46 @@
       padding: 20px;
       overflow-y: auto;
       justify-content: center;
-      position: relative;
     }
     .back-button {
       position: fixed;
       top: 10px;
       left: 10px;
-      background: none;
+      background: rgba(0,0,0,0.5);
+      border-radius: 50%;
       border: none;
       cursor: pointer;
-      outline: none;
       display: none;
       z-index: 1000;
     }
-    .back-button img {
-      width: 50px;
-      height: 50px;
-    }
+    .back-button img { width: 50px; height: 50px; }
   </style>
   <script>
     const serverUrl = "http://iptv.ndasat.xyz:88";
     const username = "937895244185412";
     const password = "937895244185412";
+    
     let categories = [];
+    let currentState = "CATEGORIES"; // CATEGORIES, SERIES, EPISODES
     let lastCategoryId = null;
-    let lastSeriesId = null;
-    let lastCategoryIndex = null; 
+    let lastCategoryIndex = null;
 
     async function loadCategories() {
       try {
         let response = await fetch(`${serverUrl}/player_api.php?username=${username}&password=${password}&action=get_series_categories`);
         categories = await response.json();
-        displayCategories();
+        showCategoriesView();
       } catch (error) {
         document.getElementById("categories").innerHTML = "⚠️ خطأ في تحميل الفئات";
       }
     }
 
-    function displayCategories() {
+    function showCategoriesView() {
+      currentState = "CATEGORIES";
+      document.getElementById("categories").style.display = "block";
+      document.getElementById("backButton").style.display = "none";
+      document.getElementById("content").innerHTML = "";
+      
       let container = document.getElementById("categories");
       container.innerHTML = "";
       categories.forEach((category, idx) => {
@@ -104,18 +106,24 @@
         div.onclick = () => loadSeries(category.category_id, idx);
         container.appendChild(div);
       });
+
       setTimeout(() => {
-        if (lastCategoryIndex !== null && container.children[lastCategoryIndex]) {
-          container.children[lastCategoryIndex].focus();
+        let cats = document.querySelectorAll(".category");
+        if (lastCategoryIndex !== null && cats[lastCategoryIndex]) {
+          cats[lastCategoryIndex].focus();
         } else {
-          container.firstChild?.focus();
+          cats[0]?.focus();
         }
       }, 100);
     }
 
-    async function loadSeries(categoryId, idx) {
+    async function loadSeries(categoryId, idx, pushState = true) {
+      if (pushState) history.pushState({view: "SERIES", catId: categoryId, catIdx: idx}, "");
+      
+      currentState = "SERIES";
       lastCategoryId = categoryId;
-      lastCategoryIndex = idx; 
+      lastCategoryIndex = idx;
+      
       document.getElementById("categories").style.display = "none";
       document.getElementById("backButton").style.display = "block";
 
@@ -136,17 +144,16 @@
         div.className = "item";
         div.tabIndex = 0;
         div.onclick = () => loadEpisodes(serie.series_id);
-        div.innerHTML = `<img src="${serie.cover}" alt="صورة المسلسل" style="width:100%; border-radius: 8px;"> 
-                         <br> ${serie.name}`;
+        div.innerHTML = `<img src="${serie.cover}" onerror="this.src='https://via.placeholder.com/150'" style="width:100%; border-radius: 8px;"><br>${serie.name}`;
         container.appendChild(div);
       });
-      setTimeout(() => {
-        container.firstChild?.focus();
-      }, 100);
+      setTimeout(() => container.firstChild?.focus(), 100);
     }
 
-    async function loadEpisodes(seriesId) {
-      lastSeriesId = seriesId;
+    async function loadEpisodes(seriesId, pushState = true) {
+      if (pushState) history.pushState({view: "EPISODES", seriesId: seriesId}, "");
+      
+      currentState = "EPISODES";
       try {
         let response = await fetch(`${serverUrl}/player_api.php?username=${username}&password=${password}&action=get_series_info&series_id=${seriesId}`);
         let seriesInfo = await response.json();
@@ -165,60 +172,62 @@
           div.className = "episode";
           div.tabIndex = 0;
           div.onclick = () => playEpisode(episode);
-          div.innerHTML = `<img src="${coverImage}" alt="شعار الحلقة" style="width:100%; border-radius: 8px;"> 
-                           <br> الموسم ${season} - الحلقة ${episode.episode_num}`;
+          div.innerHTML = `<img src="${coverImage}" style="width:100%; border-radius: 8px;"><br>الموسم ${season} - حلقة ${episode.episode_num}`;
           container.appendChild(div);
         });
       });
-      setTimeout(() => {
-        container.firstChild?.focus();
-      }, 100);
+      setTimeout(() => container.firstChild?.focus(), 100);
     }
 
-    // إضافة إرسال الرابط فقط هنا
     function playEpisode(episode) {
       const streamUrl = `${serverUrl}/series/${username}/${password}/${episode.id}.${episode.container_extension}`;
       const title = encodeURIComponent(episode.title || `الحلقة ${episode.episode_num}`);
-      
-      // إرسال الرابط مباشرة للمشغل الخاص بك
+      // الانتقال للمشغل (أندرويد سيتعامل مع هذا عبر WebViewActivity)
       window.location.href = `intent:${streamUrl}#Intent;action=android.intent.action.VIEW;package=com.example.siksa;type=video/*;S.title=${title};end`;
     }
 
+    // الدالة السحرية للرجوع
     function goBack() {
-      if (lastSeriesId) {
-        loadSeries(lastCategoryId, lastCategoryIndex); 
-        lastSeriesId = null;
-      } else {
-        document.getElementById("categories").style.display = "block";
-        document.getElementById("backButton").style.display = "none";
-        document.getElementById("content").innerHTML = "";
-        setTimeout(() => {
-          let cats = document.querySelectorAll(".category");
-          if (lastCategoryIndex !== null && cats[lastCategoryIndex]) {
-            cats[lastCategoryIndex].focus();
-          } else {
-            cats[0]?.focus();
-          }
-        }, 100);
+      if (currentState === "EPISODES") {
+        loadSeries(lastCategoryId, lastCategoryIndex, false);
+        history.replaceState({view: "SERIES", catId: lastCategoryId, catIdx: lastCategoryIndex}, "");
+      } else if (currentState === "SERIES") {
+        showCategoriesView();
+        history.replaceState({view: "CATEGORIES"}, "");
       }
     }
 
+    // الاستماع لزر الرجوع الخاص بالنظام أو المتصفح
+    window.onpopstate = function(event) {
+      if (event.state) {
+        if (event.state.view === "CATEGORIES") showCategoriesView();
+        else if (event.state.view === "SERIES") loadSeries(event.state.catId, event.state.catIdx, false);
+        else if (event.state.view === "EPISODES") loadEpisodes(event.state.seriesId, false);
+      } else {
+        showCategoriesView();
+      }
+    };
+
+    // الاستماع لأزرار الريموت كنترول
     document.addEventListener("keydown", function(e) {
-      if (
-        document.getElementById("backButton").style.display === "block" &&
-        (e.key === "Backspace" || e.key === "Escape" || e.keyCode === 8 || e.keyCode === 10009 || e.keyCode === 27)
-      ) {
-        e.preventDefault();
-        goBack();
+      const backKeys = [8, 27, 10009]; // Backspace, Escape, Samsung Return
+      if (backKeys.includes(e.keyCode) || e.key === "Backspace") {
+        if (currentState !== "CATEGORIES") {
+          e.preventDefault();
+          history.back(); // هذا سيفعل onpopstate تلقائياً
+        }
       }
     });
 
-    document.addEventListener("DOMContentLoaded", loadCategories);
-</script>
+    document.addEventListener("DOMContentLoaded", () => {
+      history.replaceState({view: "CATEGORIES"}, "");
+      loadCategories();
+    });
+  </script>
 </head>
 <body>
   <div class="sidebar" id="categories"></div>
-  <button id="backButton" class="back-button" onclick="goBack()">
+  <button id="backButton" class="back-button" onclick="history.back()">
     <img src="https://www2.0zz0.com/2025/09/11/17/301657026.png" alt="رجوع">
   </button>
   <div class="content-container" id="content"></div>
