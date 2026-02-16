@@ -57,6 +57,14 @@
       overflow-y: auto;
       justify-content: center;
     }
+    /* تحسين شكل الصور لتكون متناسقة */
+    .content-container img {
+      width: 100%;
+      height: 160px;
+      object-fit: cover;
+      border-radius: 8px;
+      background-color: #222;
+    }
     .back-button {
       position: fixed;
       top: 10px;
@@ -76,7 +84,7 @@
     const password = "937895244185412";
     
     let categories = [];
-    let currentState = "CATEGORIES"; // CATEGORIES, SERIES, EPISODES
+    let currentState = "CATEGORIES"; 
     let lastCategoryId = null;
     let lastCategoryIndex = null;
 
@@ -144,7 +152,7 @@
         div.className = "item";
         div.tabIndex = 0;
         div.onclick = () => loadEpisodes(serie.series_id);
-        div.innerHTML = `<img src="${serie.cover}" onerror="this.src='https://via.placeholder.com/150'" style="width:100%; border-radius: 8px;"><br>${serie.name}`;
+        div.innerHTML = `<img src="${serie.cover}" onerror="this.src='https://via.placeholder.com/150x200?text=No+Image'"><br>${serie.name}`;
         container.appendChild(div);
       });
       setTimeout(() => container.firstChild?.focus(), 100);
@@ -156,8 +164,12 @@
       currentState = "EPISODES";
       try {
         let response = await fetch(`${serverUrl}/player_api.php?username=${username}&password=${password}&action=get_series_info&series_id=${seriesId}`);
-        let seriesInfo = await response.json();
-        displayEpisodes(seriesInfo.episodes, seriesInfo.cover);
+        let seriesData = await response.json();
+        
+        // جلب غلاف المسلسل لاستخدامه للحلقات
+        const seriesCover = seriesData.info.cover || ""; 
+        
+        displayEpisodes(seriesData.episodes, seriesCover);
       } catch (error) {
         document.getElementById("content").innerHTML = "⚠️ خطأ في تحميل الحلقات";
       }
@@ -172,7 +184,12 @@
           div.className = "episode";
           div.tabIndex = 0;
           div.onclick = () => playEpisode(episode);
-          div.innerHTML = `<img src="${coverImage}" style="width:100%; border-radius: 8px;"><br>الموسم ${season} - حلقة ${episode.episode_num}`;
+          
+          // استخدام صورة غلاف المسلسل لكل حلقة
+          div.innerHTML = `
+            <img src="${coverImage}" onerror="this.src='https://via.placeholder.com/300x160?text=No+Image'">
+            <div style="margin-top:8px;">الموسم ${season} - حلقة ${episode.episode_num}</div>
+          `;
           container.appendChild(div);
         });
       });
@@ -182,22 +199,9 @@
     function playEpisode(episode) {
       const streamUrl = `${serverUrl}/series/${username}/${password}/${episode.id}.${episode.container_extension}`;
       const title = encodeURIComponent(episode.title || `الحلقة ${episode.episode_num}`);
-      // الانتقال للمشغل (أندرويد سيتعامل مع هذا عبر WebViewActivity)
       window.location.href = `intent:${streamUrl}#Intent;action=android.intent.action.VIEW;package=com.example.siksa;type=video/*;S.title=${title};end`;
     }
 
-    // الدالة السحرية للرجوع
-    function goBack() {
-      if (currentState === "EPISODES") {
-        loadSeries(lastCategoryId, lastCategoryIndex, false);
-        history.replaceState({view: "SERIES", catId: lastCategoryId, catIdx: lastCategoryIndex}, "");
-      } else if (currentState === "SERIES") {
-        showCategoriesView();
-        history.replaceState({view: "CATEGORIES"}, "");
-      }
-    }
-
-    // الاستماع لزر الرجوع الخاص بالنظام أو المتصفح
     window.onpopstate = function(event) {
       if (event.state) {
         if (event.state.view === "CATEGORIES") showCategoriesView();
@@ -208,13 +212,12 @@
       }
     };
 
-    // الاستماع لأزرار الريموت كنترول
     document.addEventListener("keydown", function(e) {
-      const backKeys = [8, 27, 10009]; // Backspace, Escape, Samsung Return
+      const backKeys = [8, 27, 10009]; 
       if (backKeys.includes(e.keyCode) || e.key === "Backspace") {
         if (currentState !== "CATEGORIES") {
           e.preventDefault();
-          history.back(); // هذا سيفعل onpopstate تلقائياً
+          history.back();
         }
       }
     });
