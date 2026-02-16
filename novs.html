@@ -81,7 +81,7 @@
     let categories = [];
     let lastCategoryId = null;
     let lastSeriesId = null;
-    let lastCategoryIndex = null; 
+    let lastCategoryIndex = null; // حفظ رقم الفئة الأخيرة
 
     async function loadCategories() {
       try {
@@ -175,13 +175,13 @@
       }, 100);
     }
 
-    // --- التعديل للتشغيل مع الحفاظ على الهيكل ---
+    // التعديل فقط لإرسال الرابط مع الحفاظ على بقاء الصفحة كما هي
     function playEpisode(episode) {
       const streamUrl = `${serverUrl}/series/${username}/${password}/${episode.id}.${episode.container_extension}`;
-      const title = encodeURIComponent(episode.title || `الحلقة ${episode.episode_num}`);
+      const name = encodeURIComponent(episode.title || `حلقة ${episode.episode_num}`);
       
-      // إرسال الرابط مباشرة لمشغل تطبيقك com.example.siksa
-      window.location.href = `intent:${streamUrl}#Intent;action=android.intent.action.VIEW;package=com.example.siksa;type=video/*;S.title=${title};end`;
+      // نستخدم التنسيق الذي يفهمه تطبيقك لفتح المشغل
+      window.location.href = `intent:${streamUrl}#Intent;action=android.intent.action.VIEW;package=com.example.siksa;type=video/*;S.title=${name};end`;
     }
 
     function goBack() {
@@ -203,6 +203,7 @@
       }
     }
 
+    // دعم زر الرجوع من الريموت أو الكيبورد (نفس الكود الأصلي)
     document.addEventListener("keydown", function(e) {
       if (
         document.getElementById("backButton").style.display === "block" &&
