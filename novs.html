@@ -81,7 +81,7 @@
     let categories = [];
     let lastCategoryId = null;
     let lastSeriesId = null;
-    let lastCategoryIndex = null; // جديد: حفظ رقم الفئة الأخيرة
+    let lastCategoryIndex = null;
 
     async function loadCategories() {
       try {
@@ -101,11 +101,10 @@
         div.className = "category";
         div.innerText = category.category_name;
         div.tabIndex = 0;
-        div.onclick = () => loadSeries(category.category_id, idx); // أرسل رقم الفئة
+        div.onclick = () => loadSeries(category.category_id, idx);
         container.appendChild(div);
       });
       setTimeout(() => {
-        // ركز على الفئة الأخيرة إذا كانت موجودة
         if (lastCategoryIndex !== null && container.children[lastCategoryIndex]) {
           container.children[lastCategoryIndex].focus();
         } else {
@@ -116,7 +115,7 @@
 
     async function loadSeries(categoryId, idx) {
       lastCategoryId = categoryId;
-      lastCategoryIndex = idx; // حفظ رقم الفئة
+      lastCategoryIndex = idx;
       document.getElementById("categories").style.display = "none";
       document.getElementById("backButton").style.display = "block";
 
@@ -176,22 +175,26 @@
       }, 100);
     }
 
+    // التعديل هنا ليرسل الرابط للمشغل الخاص بك
     function playEpisode(episode) {
       const streamUrl = `${serverUrl}/series/${username}/${password}/${episode.id}.${episode.container_extension}`;
-      const name = encodeURIComponent(episode.title || `حلقة ${episode.episode_num}`);
-      window.location.href = `https://play/stream?url=${encodeURIComponent(streamUrl)}&name=${name}`;
+      
+      // إنشاء رابط Intent يفتح تطبيقك com.example.siksa ويمرر الرابط في الـ Data
+      // S.title هو حقل إضافي لإرسال العنوان إذا أردت استخدامه
+      const intentUrl = `intent:${streamUrl}#Intent;scheme=http;package=com.example.siksa;S.title=${encodeURIComponent(episode.title || 'Episode')};end`;
+      
+      window.location.href = intentUrl;
     }
 
     function goBack() {
       if (lastSeriesId) {
-        loadSeries(lastCategoryId, lastCategoryIndex); // أرسل رقم الفئة
+        loadSeries(lastCategoryId, lastCategoryIndex);
         lastSeriesId = null;
       } else {
         document.getElementById("categories").style.display = "block";
         document.getElementById("backButton").style.display = "none";
         document.getElementById("content").innerHTML = "";
         setTimeout(() => {
-          // ركز على الفئة الأخيرة
           let cats = document.querySelectorAll(".category");
           if (lastCategoryIndex !== null && cats[lastCategoryIndex]) {
             cats[lastCategoryIndex].focus();
@@ -202,7 +205,6 @@
       }
     }
 
-    // دعم زر الرجوع من الريموت أو الكيبورد
     document.addEventListener("keydown", function(e) {
       if (
         document.getElementById("backButton").style.display === "block" &&
