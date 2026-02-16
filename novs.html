@@ -57,7 +57,6 @@
       overflow-y: auto;
       justify-content: center;
     }
-    /* تحسين شكل الصور لتكون متناسقة */
     .content-container img {
       width: 100%;
       height: 160px;
@@ -65,18 +64,6 @@
       border-radius: 8px;
       background-color: #222;
     }
-    .back-button {
-      position: fixed;
-      top: 10px;
-      left: 10px;
-      background: rgba(0,0,0,0.5);
-      border-radius: 50%;
-      border: none;
-      cursor: pointer;
-      display: none;
-      z-index: 1000;
-    }
-    .back-button img { width: 50px; height: 50px; }
   </style>
   <script>
     const serverUrl = "http://iptv.ndasat.xyz:88";
@@ -101,7 +88,6 @@
     function showCategoriesView() {
       currentState = "CATEGORIES";
       document.getElementById("categories").style.display = "block";
-      document.getElementById("backButton").style.display = "none";
       document.getElementById("content").innerHTML = "";
       
       let container = document.getElementById("categories");
@@ -133,7 +119,6 @@
       lastCategoryIndex = idx;
       
       document.getElementById("categories").style.display = "none";
-      document.getElementById("backButton").style.display = "block";
 
       try {
         let response = await fetch(`${serverUrl}/player_api.php?username=${username}&password=${password}&action=get_series&category_id=${categoryId}`);
@@ -165,10 +150,7 @@
       try {
         let response = await fetch(`${serverUrl}/player_api.php?username=${username}&password=${password}&action=get_series_info&series_id=${seriesId}`);
         let seriesData = await response.json();
-        
-        // جلب غلاف المسلسل لاستخدامه للحلقات
         const seriesCover = seriesData.info.cover || ""; 
-        
         displayEpisodes(seriesData.episodes, seriesCover);
       } catch (error) {
         document.getElementById("content").innerHTML = "⚠️ خطأ في تحميل الحلقات";
@@ -184,8 +166,6 @@
           div.className = "episode";
           div.tabIndex = 0;
           div.onclick = () => playEpisode(episode);
-          
-          // استخدام صورة غلاف المسلسل لكل حلقة
           div.innerHTML = `
             <img src="${coverImage}" onerror="this.src='https://via.placeholder.com/300x160?text=No+Image'">
             <div style="margin-top:8px;">الموسم ${season} - حلقة ${episode.episode_num}</div>
@@ -230,9 +210,6 @@
 </head>
 <body>
   <div class="sidebar" id="categories"></div>
-  <button id="backButton" class="back-button" onclick="history.back()">
-    <img src="https://www2.0zz0.com/2025/09/11/17/301657026.png" alt="رجوع">
-  </button>
   <div class="content-container" id="content"></div>
 </body>
 </html>
