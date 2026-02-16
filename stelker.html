@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="ar">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>بوابة Stalker - Live TV</title>
+  <style>
+    /* نفس التصميم السابق مع تغيير الألوان لتمييز البوابة */
+    body {
+      font-family: Arial, sans-serif; direction: rtl;
+      background: linear-gradient(-45deg, #141e30, #243b55);
+      color: white; margin: 0; display: flex; height: 100vh; overflow: hidden;
+    }
+    .sidebar { width: 300px; background: rgba(0, 0, 0, 0.8); padding: 15px; overflow-y: auto; border-left: 3px solid #00d2ff; }
+    .category, .channel-item {
+      background: #3949ab; padding: 12px; margin: 6px 0; border-radius: 8px;
+      text-align: center; font-size: 16px; cursor: pointer; transition: 0.2s;
+    }
+    .channel-item { background: rgba(255, 255, 255, 0.1); height: 140px; display: flex; flex-direction: column; align-items: center; justify-content: center; }
+    .category:focus, .channel-item:focus { background: #00d2ff; color: black; outline: none; transform: scale(1.05); }
+    .content-container { flex: 1; display: grid; grid-template-columns: repeat(5, 1fr); gap: 15px; padding: 20px; overflow-y: auto; }
+    .channel-item img { width: 70px; height: 70px; object-fit: contain; margin-bottom: 10px; }
+  </style>
+  <script>
+    // الإعدادات الجديدة للسيرفر
+    const portalUrl = "http://main.light-ott.net:80/portal.php";
+    const mac = "00:1A:79:34:62:66";
+    let token = ""; // سيتم جلبه عند عمل Handshake
+
+    async function apiRequest(action, params = "") {
+        const url = `${portalUrl}?type=itv&action=${action}${params}`;
+        // ملاحظة: هذا الطلب سيعمل فقط إذا كان الـ WebView يرسل الهيدرز التي وضعناها في الكود البرمجي (X-User-Agent)
+        const response = await fetch(url);
+        return await response.json();
+    }
+
+    async function loadPortal() {
+        try {
+            // الخطوة 1: الـ Handshake لجلب التوكن
+            let handshake = await apiRequest("handshake");
+            token = handshake.js.token;
+
+            // الخطوة 2: جلب الفئات
+            let data = await apiRequest("get_categories", `&token=${token}`);
+            displayCategories(data.js);
+        } catch (e) {
+            document.getElementById("content").innerHTML = "⚠️ فشل الاتصال بالبوابة. تأكد من إعدادات الماك أدريس في التطبيق.";
+        }
+    }
+
+    function displayCategories(categories) {
+        let container = document.getElementById("categories");
+        container.innerHTML = "";
+        categories.forEach((cat, idx) => {
+            let div = document.createElement("div");
+            div.className = "category";
+            div.innerText = cat.title;
+            div.tabIndex = 0;
+            div.onclick = () => loadChannels(cat.id, idx);
+            container.appendChild(div);
+        });
+        container.firstChild?.focus();
+    }
+
+    async function loadChannels(catId, idx) {
+        document.getElementById("categories").style.display = "none";
+        try {
+            let data = await apiRequest("get_all_channels", `&category=${catId}&token=${token}`);
+            displayChannels(data.js.data);
+        } catch (e) {
+            console.error("Error loading channels");
+        }
+    }
+
+    function displayChannels(channels) {
+        let container = document.getElementById("content");
+        container.innerHTML = "";
+        channels.forEach(ch => {
+            let div = document.createElement("div");
+            div.className = "channel-item";
+            div.tabIndex = 0;
+            div.onclick = () => playChannel(ch.cmd); // في نظام Stalker الرابط يكون في حقل cmd
+            div.innerHTML = `
+                <img src="${ch.logo}" onerror="this.src='https://cdn-icons-png.flaticon.com/512/716/716429.png'">
+                <div style="font-size:12px;">${ch.name}</div>
+            `;
+            container.appendChild(div);
+        });
+    }
+
+    function playChannel(cmd) {
+        // روابط الستالكر تأتي بصيغة ffmpeg http://...
+        const cleanUrl = cmd.replace("ffmpeg ", "").replace("ffrtv ", "");
+        window.location.href = `intent:${cleanUrl}#Intent;action=android.intent.action.VIEW;package=com.example.siksa;type=video/*;end`;
+    }
+
+    document.addEventListener("DOMContentLoaded", loadPortal);
+  </script>
+</head>
+<body>
+  <div class="sidebar" id="categories"></div>
+  <div class="content-container" id="content"></div>
+</body>
+</html>
