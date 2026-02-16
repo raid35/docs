@@ -175,14 +175,15 @@
       }, 100);
     }
 
-    // التعديل هنا ليرسل الرابط للمشغل الخاص بك
+    // --- التعديل الجوهري لضمان التعرف على المشغل ---
     function playEpisode(episode) {
       const streamUrl = `${serverUrl}/series/${username}/${password}/${episode.id}.${episode.container_extension}`;
       
-      // إنشاء رابط Intent يفتح تطبيقك com.example.siksa ويمرر الرابط في الـ Data
-      // S.title هو حقل إضافي لإرسال العنوان إذا أردت استخدامه
-      const intentUrl = `intent:${streamUrl}#Intent;scheme=http;package=com.example.siksa;S.title=${encodeURIComponent(episode.title || 'Episode')};end`;
-      
+      // نستخدم بروتوكول intent بشكل صريح مع استهداف package التطبيق الخاص بك
+      // هذا يمنع المتصفح من محاولة تحميل الملف ويفتح التطبيق فوراً
+      const title = encodeURIComponent(episode.title || `الحلقة ${episode.episode_num}`);
+      const intentUrl = `intent:${streamUrl}#Intent;action=android.intent.action.VIEW;package=com.example.siksa;type=video/*;S.title=${title};end`;
+
       window.location.href = intentUrl;
     }
 
