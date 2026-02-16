@@ -75,13 +75,13 @@
     }
   </style>
   <script>
-    const serverUrl = "http://u.goldeniptv.com:2052";
-    const username = "rashad1";
-    const password = "rashad1";
+    const serverUrl = "http://iptv.ndasat.xyz:88";
+    const username = "937895244185412";
+    const password = "937895244185412";
     let categories = [];
     let lastCategoryId = null;
     let lastSeriesId = null;
-    let lastCategoryIndex = null; // حفظ رقم الفئة الأخيرة
+    let lastCategoryIndex = null; 
 
     async function loadCategories() {
       try {
@@ -175,13 +175,13 @@
       }, 100);
     }
 
-    // التعديل فقط لإرسال الرابط مع الحفاظ على بقاء الصفحة كما هي
+    // إضافة إرسال الرابط فقط هنا
     function playEpisode(episode) {
       const streamUrl = `${serverUrl}/series/${username}/${password}/${episode.id}.${episode.container_extension}`;
-      const name = encodeURIComponent(episode.title || `حلقة ${episode.episode_num}`);
+      const title = encodeURIComponent(episode.title || `الحلقة ${episode.episode_num}`);
       
-      // نستخدم التنسيق الذي يفهمه تطبيقك لفتح المشغل
-      window.location.href = `intent:${streamUrl}#Intent;action=android.intent.action.VIEW;package=com.example.siksa;type=video/*;S.title=${name};end`;
+      // إرسال الرابط مباشرة للمشغل الخاص بك
+      window.location.href = `intent:${streamUrl}#Intent;action=android.intent.action.VIEW;package=com.example.siksa;type=video/*;S.title=${title};end`;
     }
 
     function goBack() {
@@ -203,7 +203,6 @@
       }
     }
 
-    // دعم زر الرجوع من الريموت أو الكيبورد (نفس الكود الأصلي)
     document.addEventListener("keydown", function(e) {
       if (
         document.getElementById("backButton").style.display === "block" &&
