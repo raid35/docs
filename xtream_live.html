@@ -1,0 +1,203 @@
+<!DOCTYPE html>
+<html lang="ar">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>البث المباشر - Live TV</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      direction: rtl;
+      background: linear-gradient(-45deg, #0f2027, #203a43, #2c5364);
+      background-size: 400% 400%;
+      animation: gradientAnimation 10s ease infinite;
+      color: white;
+      margin: 0;
+      display: flex;
+      height: 100vh;
+      overflow: hidden;
+    }
+    @keyframes gradientAnimation {
+      0% { background-position: 0% 50%; }
+      50% { background-position: 100% 50%; }
+      100% { background-position: 0% 50%; }
+    }
+    .sidebar {
+      width: 300px;
+      background: rgba(0, 0, 0, 0.8);
+      padding: 15px;
+      overflow-y: auto;
+      border-right: 3px solid #00d2ff;
+    }
+    .category, .channel-item {
+      background: #009688; /* لون مميز للقنوات الحية */
+      padding: 12px;
+      margin: 6px 0;
+      border-radius: 8px;
+      text-align: center;
+      font-size: 16px;
+      font-weight: bold;
+      cursor: pointer;
+      transition: 0.2s;
+    }
+    .channel-item {
+      background: rgba(255, 255, 255, 0.1);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      height: 140px;
+    }
+    .category:focus, .channel-item:focus {
+      background: #00d2ff;
+      color: black;
+      outline: none;
+      transform: scale(1.05);
+    }
+    .content-container {
+      flex: 1;
+      display: grid;
+      grid-template-columns: repeat(5, 1fr); /* 5 قنوات في الصف لسهولة التصفح */
+      gap: 15px;
+      padding: 20px;
+      overflow-y: auto;
+    }
+    .channel-item img {
+      width: 80px;
+      height: 80px;
+      object-fit: contain; /* للحفاظ على أبعاد لوجو القناة */
+      margin-bottom: 10px;
+      background: rgba(255,255,255,0.05);
+      padding: 5px;
+      border-radius: 5px;
+    }
+    .channel-name {
+      font-size: 14px;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+      overflow: hidden;
+      width: 100%;
+    }
+  </style>
+  <script>
+    const serverUrl = "http://iptv.ndasat.xyz:88";
+    const username = "937895244185412";
+    const password = "937895244185412";
+    
+    let categories = [];
+    let currentState = "CATEGORIES"; 
+    let lastCategoryId = null;
+    let lastCategoryIndex = null;
+
+    // جلب فئات القنوات
+    async function loadCategories() {
+      try {
+        let response = await fetch(`${serverUrl}/player_api.php?username=${username}&password=${password}&action=get_live_categories`);
+        categories = await response.json();
+        showCategoriesView();
+      } catch (error) {
+        document.getElementById("categories").innerHTML = "⚠️ خطأ في تحميل الفئات";
+      }
+    }
+
+    function showCategoriesView() {
+      currentState = "CATEGORIES";
+      document.getElementById("categories").style.display = "block";
+      document.getElementById("content").innerHTML = "";
+      
+      let container = document.getElementById("categories");
+      container.innerHTML = "";
+      categories.forEach((category, idx) => {
+        let div = document.createElement("div");
+        div.className = "category";
+        div.innerText = category.category_name;
+        div.tabIndex = 0;
+        div.onclick = () => loadChannels(category.category_id, idx);
+        container.appendChild(div);
+      });
+
+      setTimeout(() => {
+        let cats = document.querySelectorAll(".category");
+        if (lastCategoryIndex !== null && cats[lastCategoryIndex]) {
+          cats[lastCategoryIndex].focus();
+        } else {
+          cats[0]?.focus();
+        }
+      }, 100);
+    }
+
+    // جلب القنوات التابعة للفئة
+    async function loadChannels(categoryId, idx, pushState = true) {
+      if (pushState) history.pushState({view: "CHANNELS", catId: categoryId, catIdx: idx}, "");
+      
+      currentState = "CHANNELS";
+      lastCategoryId = categoryId;
+      lastCategoryIndex = idx;
+      
+      document.getElementById("categories").style.display = "none";
+
+      try {
+        let response = await fetch(`${serverUrl}/player_api.php?username=${username}&password=${password}&action=get_live_streams&category_id=${categoryId}`);
+        let channels = await response.json();
+        displayChannels(channels);
+      } catch (error) {
+        document.getElementById("content").innerHTML = "⚠️ خطأ في تحميل القنوات";
+      }
+    }
+
+    function displayChannels(channels) {
+      let container = document.getElementById("content");
+      container.innerHTML = "";
+      channels.forEach(channel => {
+        let div = document.createElement("div");
+        div.className = "channel-item";
+        div.tabIndex = 0;
+        div.onclick = () => playChannel(channel);
+        div.innerHTML = `
+          <img src="${channel.stream_icon}" onerror="this.src='https://cdn-icons-png.flaticon.com/512/716/716429.png'">
+          <div class="channel-name">${channel.name}</div>
+        `;
+        container.appendChild(div);
+      });
+      setTimeout(() => container.firstChild?.focus(), 100);
+    }
+
+    // تشغيل القناة الحية
+    function playChannel(channel) {
+      // روابط البث المباشر لا تحتاج لامتداد في العادة، لكن نضع m3u8 كافتراضي
+      const streamUrl = `${serverUrl}/live/${username}/${password}/${channel.stream_id}.m3u8`;
+      const title = encodeURIComponent(channel.name);
+      window.location.href = `intent:${streamUrl}#Intent;action=android.intent.action.VIEW;package=com.example.siksa;type=video/*;S.title=${title};end`;
+    }
+
+    // نظام الرجوع
+    window.onpopstate = function(event) {
+      if (event.state) {
+        if (event.state.view === "CATEGORIES") showCategoriesView();
+        else if (event.state.view === "CHANNELS") loadChannels(event.state.catId, event.state.catIdx, false);
+      } else {
+        showCategoriesView();
+      }
+    };
+
+    document.addEventListener("keydown", function(e) {
+      const backKeys = [8, 27, 10009]; 
+      if (backKeys.includes(e.keyCode) || e.key === "Backspace") {
+        if (currentState !== "CATEGORIES") {
+          e.preventDefault();
+          history.back();
+        }
+      }
+    });
+
+    document.addEventListener("DOMContentLoaded", () => {
+      history.replaceState({view: "CATEGORIES"}, "");
+      loadCategories();
+    });
+  </script>
+</head>
+<body>
+  <div class="sidebar" id="categories"></div>
+  <div class="content-container" id="content"></div>
+</body>
+</html>
