@@ -1,0 +1,215 @@
+<!DOCTYPE html>
+<html lang="ar">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>مشغل المسلسلات</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      direction: rtl;
+      background: linear-gradient(-45deg, #1e3c72, #2a5298, #000000, #3b1d56);
+      background-size: 400% 400%;
+      animation: gradientAnimation 10s ease infinite;
+      color: white;
+      margin: 0;
+      display: flex;
+      height: 100vh;
+      overflow: hidden;
+    }
+    @keyframes gradientAnimation {
+      0% { background-position: 0% 50%; }
+      50% { background-position: 100% 50%; }
+      100% { background-position: 0% 50%; }
+    }
+    .sidebar {
+      width: 300px;
+      background: rgba(30, 30, 30, 0.9);
+      padding: 15px;
+      overflow-y: auto;
+      border-right: 3px solid #333;
+    }
+    .category, .item, .episode {
+      background: #ff5722;
+      padding: 15px;
+      margin: 8px 0;
+      border-radius: 8px;
+      text-align: center;
+      font-size: 18px;
+      font-weight: bold;
+      cursor: pointer;
+      transition: 0.3s;
+    }
+    .item, .episode {
+      background: rgba(255, 255, 255, 0.15);
+    }
+    .category:focus, .item:focus, .episode:focus {
+      background: rgba(255, 255, 255, 0.3);
+      outline: 3px solid yellow;
+      transform: scale(1.05);
+    }
+    .content-container {
+      flex: 1;
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 12px;
+      padding: 20px;
+      overflow-y: auto;
+      justify-content: center;
+    }
+    .content-container img {
+      width: 100%;
+      height: 160px;
+      object-fit: cover;
+      border-radius: 8px;
+      background-color: #222;
+    }
+  </style>
+  <script>
+    const serverUrl = "http://eagle2024.xyz";
+    const username = "staar_870012";
+    const password = "MUK6qsGk";
+    
+    let categories = [];
+    let currentState = "CATEGORIES"; 
+    let lastCategoryId = null;
+    let lastCategoryIndex = null;
+
+    async function loadCategories() {
+      try {
+        let response = await fetch(`${serverUrl}/player_api.php?username=${username}&password=${password}&action=get_series_categories`);
+        categories = await response.json();
+        showCategoriesView();
+      } catch (error) {
+        document.getElementById("categories").innerHTML = "⚠️ خطأ في تحميل الفئات";
+      }
+    }
+
+    function showCategoriesView() {
+      currentState = "CATEGORIES";
+      document.getElementById("categories").style.display = "block";
+      document.getElementById("content").innerHTML = "";
+      
+      let container = document.getElementById("categories");
+      container.innerHTML = "";
+      categories.forEach((category, idx) => {
+        let div = document.createElement("div");
+        div.className = "category";
+        div.innerText = category.category_name;
+        div.tabIndex = 0;
+        div.onclick = () => loadSeries(category.category_id, idx);
+        container.appendChild(div);
+      });
+
+      setTimeout(() => {
+        let cats = document.querySelectorAll(".category");
+        if (lastCategoryIndex !== null && cats[lastCategoryIndex]) {
+          cats[lastCategoryIndex].focus();
+        } else {
+          cats[0]?.focus();
+        }
+      }, 100);
+    }
+
+    async function loadSeries(categoryId, idx, pushState = true) {
+      if (pushState) history.pushState({view: "SERIES", catId: categoryId, catIdx: idx}, "");
+      
+      currentState = "SERIES";
+      lastCategoryId = categoryId;
+      lastCategoryIndex = idx;
+      
+      document.getElementById("categories").style.display = "none";
+
+      try {
+        let response = await fetch(`${serverUrl}/player_api.php?username=${username}&password=${password}&action=get_series&category_id=${categoryId}`);
+        let series = await response.json();
+        displaySeries(series);
+      } catch (error) {
+        document.getElementById("content").innerHTML = "⚠️ خطأ في تحميل المسلسلات";
+      }
+    }
+
+    function displaySeries(series) {
+      let container = document.getElementById("content");
+      container.innerHTML = "";
+      series.forEach(serie => {
+        let div = document.createElement("div");
+        div.className = "item";
+        div.tabIndex = 0;
+        div.onclick = () => loadEpisodes(serie.series_id);
+        div.innerHTML = `<img src="${serie.cover}" onerror="this.src='https://via.placeholder.com/150x200?text=No+Image'"><br>${serie.name}`;
+        container.appendChild(div);
+      });
+      setTimeout(() => container.firstChild?.focus(), 100);
+    }
+
+    async function loadEpisodes(seriesId, pushState = true) {
+      if (pushState) history.pushState({view: "EPISODES", seriesId: seriesId}, "");
+      
+      currentState = "EPISODES";
+      try {
+        let response = await fetch(`${serverUrl}/player_api.php?username=${username}&password=${password}&action=get_series_info&series_id=${seriesId}`);
+        let seriesData = await response.json();
+        const seriesCover = seriesData.info.cover || ""; 
+        displayEpisodes(seriesData.episodes, seriesCover);
+      } catch (error) {
+        document.getElementById("content").innerHTML = "⚠️ خطأ في تحميل الحلقات";
+      }
+    }
+
+    function displayEpisodes(episodes, coverImage) {
+      let container = document.getElementById("content");
+      container.innerHTML = "";
+      Object.keys(episodes).forEach(season => {
+        episodes[season].forEach(episode => {
+          let div = document.createElement("div");
+          div.className = "episode";
+          div.tabIndex = 0;
+          div.onclick = () => playEpisode(episode);
+          div.innerHTML = `
+            <img src="${coverImage}" onerror="this.src='https://via.placeholder.com/300x160?text=No+Image'">
+            <div style="margin-top:8px;">الموسم ${season} - حلقة ${episode.episode_num}</div>
+          `;
+          container.appendChild(div);
+        });
+      });
+      setTimeout(() => container.firstChild?.focus(), 100);
+    }
+
+    function playEpisode(episode) {
+      const streamUrl = `${serverUrl}/series/${username}/${password}/${episode.id}.${episode.container_extension}`;
+      const title = encodeURIComponent(episode.title || `الحلقة ${episode.episode_num}`);
+      window.location.href = `intent:${streamUrl}#Intent;action=android.intent.action.VIEW;package=com.example.siksa;type=video/*;S.title=${title};end`;
+    }
+
+    window.onpopstate = function(event) {
+      if (event.state) {
+        if (event.state.view === "CATEGORIES") showCategoriesView();
+        else if (event.state.view === "SERIES") loadSeries(event.state.catId, event.state.catIdx, false);
+        else if (event.state.view === "EPISODES") loadEpisodes(event.state.seriesId, false);
+      } else {
+        showCategoriesView();
+      }
+    };
+
+    document.addEventListener("keydown", function(e) {
+      const backKeys = [8, 27, 10009]; 
+      if (backKeys.includes(e.keyCode) || e.key === "Backspace") {
+        if (currentState !== "CATEGORIES") {
+          e.preventDefault();
+          history.back();
+        }
+      }
+    });
+
+    document.addEventListener("DOMContentLoaded", () => {
+      history.replaceState({view: "CATEGORIES"}, "");
+      loadCategories();
+    });
+  </script>
+</head>
+<body>
+  <div class="sidebar" id="categories"></div>
+  <div class="content-container" id="content"></div>
+</body>
+</html>
