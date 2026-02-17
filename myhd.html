@@ -1,783 +1,188 @@
 <!DOCTYPE html>
 <html lang="ar">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>مشغل البث المباشر - ريموت كنترول</title>
-    <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>مشغل الأفلام</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      direction: rtl;
+      background: linear-gradient(-45deg, #1e3c72, #2a5298, #000000, #3b1d56);
+      background-size: 400% 400%;
+      animation: gradientAnimation 10s ease infinite;
+      color: white;
+      margin: 0;
+      display: flex;
+      height: 100vh;
+      overflow: hidden;
+    }
+    @keyframes gradientAnimation {
+      0% { background-position: 0% 50%; }
+      50% { background-position: 100% 50%; }
+      100% { background-position: 0% 50%; }
+    }
+    .sidebar {
+      width: 300px;
+      background: rgba(30, 30, 30, 0.9);
+      padding: 15px;
+      overflow-y: auto;
+      border-right: 3px solid #333;
+    }
+    .category, .movie-item {
+      background: #e91e63; /* لون مختلف قليلاً للأفلام لتغيير الجو */
+      padding: 15px;
+      margin: 8px 0;
+      border-radius: 8px;
+      text-align: center;
+      font-size: 18px;
+      font-weight: bold;
+      cursor: pointer;
+      transition: 0.3s;
+    }
+    .movie-item {
+      background: rgba(255, 255, 255, 0.15);
+    }
+    .category:focus, .movie-item:focus {
+      background: rgba(255, 255, 255, 0.3);
+      outline: 3px solid #00e5ff;
+      transform: scale(1.05);
+    }
+    .content-container {
+      flex: 1;
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 15px;
+      padding: 20px;
+      overflow-y: auto;
+      justify-content: center;
+    }
+    .content-container img {
+      width: 100%;
+      height: 220px; /* طول الأفلام عادة يكون أكبر (Portrait) */
+      object-fit: cover;
+      border-radius: 8px;
+      background-color: #222;
+    }
+  </style>
+  <script>
+    const serverUrl = "http://eagle2024.xyz";
+    const username = "staar_870012";
+    const password = "MUK6qsGk";
+    
+    let categories = [];
+    let currentState = "CATEGORIES"; 
+    let lastCategoryId = null;
+    let lastCategoryIndex = null;
 
-        body {
-            font-family: Arial, sans-serif;
-            direction: rtl;
-            background: linear-gradient(-45deg, #1e3c72, #2a5298, #000000, #3b1d56);
-            background-size: 400% 400%;
-            animation: gradientAnimation 10s ease infinite;
-            color: white;
-            height: 100vh;
-            overflow: hidden;
-        }
+    // جلب فئات الأفلام
+    async function loadCategories() {
+      try {
+        let response = await fetch(`${serverUrl}/player_api.php?username=${username}&password=${password}&action=get_vod_categories`);
+        categories = await response.json();
+        showCategoriesView();
+      } catch (error) {
+        document.getElementById("categories").innerHTML = "⚠️ خطأ في تحميل فئات الأفلام";
+      }
+    }
 
-        @keyframes gradientAnimation {
-            0% { background-position: 0% 50%; }
-            50% { background-position: 100% 50%; }
-            100% { background-position: 0% 50%; }
-        }
+    function showCategoriesView() {
+      currentState = "CATEGORIES";
+      document.getElementById("categories").style.display = "block";
+      document.getElementById("content").innerHTML = "";
+      
+      let container = document.getElementById("categories");
+      container.innerHTML = "";
+      categories.forEach((category, idx) => {
+        let div = document.createElement("div");
+        div.className = "category";
+        div.innerText = category.category_name;
+        div.tabIndex = 0;
+        div.onclick = () => loadMovies(category.category_id, idx);
+        container.appendChild(div);
+      });
 
-        /* شاشة التحميل */
-        .loading-screen {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(0, 0, 0, 0.9);
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
-            z-index: 9999;
+      setTimeout(() => {
+        let cats = document.querySelectorAll(".category");
+        if (lastCategoryIndex !== null && cats[lastCategoryIndex]) {
+          cats[lastCategoryIndex].focus();
+        } else {
+          cats[0]?.focus();
         }
+      }, 100);
+    }
 
-        .spinner {
-            border: 6px solid #333;
-            border-top: 6px solid #ff5722;
-            border-radius: 50%;
-            width: 60px;
-            height: 60px;
-            animation: spin 1s linear infinite;
-            margin-bottom: 20px;
-        }
+    // جلب الأفلام التابعة للفئة
+    async function loadMovies(categoryId, idx, pushState = true) {
+      if (pushState) history.pushState({view: "MOVIES", catId: categoryId, catIdx: idx}, "");
+      
+      currentState = "MOVIES";
+      lastCategoryId = categoryId;
+      lastCategoryIndex = idx;
+      
+      document.getElementById("categories").style.display = "none";
 
-        @keyframes spin {
-            0% { transform: rotate(0deg); }
-            100% { transform: rotate(360deg); }
-        }
+      try {
+        let response = await fetch(`${serverUrl}/player_api.php?username=${username}&password=${password}&action=get_vod_streams&category_id=${categoryId}`);
+        let movies = await response.json();
+        displayMovies(movies);
+      } catch (error) {
+        document.getElementById("content").innerHTML = "⚠️ خطأ في تحميل قائمة الأفلام";
+      }
+    }
 
-        .loading-text {
-            font-size: 24px;
-            font-weight: bold;
-            color: #ff5722;
-            text-align: center;
-        }
+    function displayMovies(movies) {
+      let container = document.getElementById("content");
+      container.innerHTML = "";
+      movies.forEach(movie => {
+        let div = document.createElement("div");
+        div.className = "movie-item";
+        div.tabIndex = 0;
+        div.onclick = () => playMovie(movie);
+        div.innerHTML = `
+          <img src="${movie.stream_icon}" onerror="this.src='https://via.placeholder.com/200x300?text=Movie'">
+          <div style="margin-top:8px; font-size:14px;">${movie.name}</div>
+        `;
+        container.appendChild(div);
+      });
+      setTimeout(() => container.firstChild?.focus(), 100);
+    }
 
-        /* العنوان الرئيسي */
-        .header {
-            background: rgba(0, 0, 0, 0.7);
-            padding: 20px;
-            text-align: center;
-            border-bottom: 3px solid #ff5722;
-        }
+    // تشغيل الفيلم
+    function playMovie(movie) {
+      const streamUrl = `${serverUrl}/movie/${username}/${password}/${movie.stream_id}.${movie.container_extension}`;
+      const title = encodeURIComponent(movie.name);
+      window.location.href = `intent:${streamUrl}#Intent;action=android.intent.action.VIEW;package=com.example.siksa;type=video/*;S.title=${title};end`;
+    }
 
-        .header h1 {
-            font-size: 36px;
-            color: #ff5722;
-            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.8);
-        }
+    // نظام الرجوع
+    window.onpopstate = function(event) {
+      if (event.state) {
+        if (event.state.view === "CATEGORIES") showCategoriesView();
+        else if (event.state.view === "MOVIES") loadMovies(event.state.catId, event.state.catIdx, false);
+      } else {
+        showCategoriesView();
+      }
+    };
 
-        /* منطقة المحتوى */
-        .content-area {
-            height: calc(100vh - 100px);
-            padding: 20px;
-            overflow: hidden;
+    document.addEventListener("keydown", function(e) {
+      const backKeys = [8, 27, 10009]; 
+      if (backKeys.includes(e.keyCode) || e.key === "Backspace") {
+        if (currentState !== "CATEGORIES") {
+          e.preventDefault();
+          history.back();
         }
+      }
+    });
 
-        /* شبكة الفئات */
-        .categories-grid {
-            display: grid;
-            grid-template-columns: repeat(4, 1fr);
-            gap: 20px;
-            height: 100%;
-            padding: 20px;
-        }
-
-        .category-item {
-            background: linear-gradient(135deg, #ff5722, #e64a19);
-            border-radius: 15px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            border: 4px solid transparent;
-            font-size: 20px;
-            font-weight: bold;
-            text-align: center;
-            padding: 20px;
-            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
-        }
-
-        .category-item:hover,
-        .category-item.focused {
-            transform: scale(1.1);
-            border-color: #ffeb3b;
-            box-shadow: 0 0 25px rgba(255, 235, 59, 0.6);
-            background: linear-gradient(135deg, #ff6f00, #ff5722);
-        }
-
-        /* شبكة القنوات */
-        .streams-grid {
-            display: grid;
-            grid-template-columns: repeat(6, 1fr);
-            gap: 15px;
-            height: calc(100% - 80px);
-            padding: 20px;
-            overflow-y: auto;
-        }
-
-        .stream-item {
-            background: rgba(255, 255, 255, 0.1);
-            border-radius: 12px;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            border: 3px solid transparent;
-            padding: 15px;
-            height: 180px;
-            backdrop-filter: blur(10px);
-        }
-
-        .stream-item:hover,
-        .stream-item.focused {
-            transform: scale(1.05);
-            border-color: #ffeb3b;
-            background: rgba(255, 255, 255, 0.2);
-            box-shadow: 0 0 20px rgba(255, 235, 59, 0.5);
-        }
-
-        .stream-item img {
-            width: 80px;
-            height: 80px;
-            object-fit: contain;
-            border-radius: 8px;
-            margin-bottom: 10px;
-        }
-
-        .stream-item .name {
-            font-size: 14px;
-            text-align: center;
-            font-weight: bold;
-            overflow: hidden;
-            text-overflow: ellipsis;
-            display: -webkit-box;
-            -webkit-line-clamp: 2;
-            -webkit-box-orient: vertical;
-            line-height: 1.2;
-        }
-
-        /* شريط المعلومات */
-        .info-bar {
-            background: rgba(0, 0, 0, 0.8);
-            padding: 15px 20px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            border-top: 2px solid #ff5722;
-        }
-
-        .info-bar .current-category {
-            font-size: 18px;
-            font-weight: bold;
-            color: #ff5722;
-        }
-
-        .info-bar .controls-hint {
-            font-size: 14px;
-            opacity: 0.8;
-        }
-
-        /* إخفاء العناصر */
-        .hidden {
-            display: none !important;
-        }
-
-        /* رسائل الخطأ */
-        .error-message {
-            position: fixed;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            background: rgba(244, 67, 54, 0.9);
-            color: white;
-            padding: 20px 30px;
-            border-radius: 10px;
-            font-size: 18px;
-            text-align: center;
-            z-index: 8888;
-            border: 2px solid #f44336;
-            max-width: 80%;
-            word-wrap: break-word;
-        }
-
-        /* Debug info */
-        .debug-info {
-            position: fixed;
-            top: 10px;
-            right: 10px;
-            background: rgba(0, 0, 0, 0.8);
-            padding: 10px;
-            border-radius: 5px;
-            font-size: 12px;
-            max-width: 300px;
-            z-index: 7777;
-            display: none;
-        }
-
-        /* تحسينات للشاشات الكبيرة */
-        @media (min-width: 1920px) {
-            .categories-grid {
-                grid-template-columns: repeat(5, 1fr);
-            }
-            
-            .streams-grid {
-                grid-template-columns: repeat(8, 1fr);
-            }
-            
-            .header h1 {
-                font-size: 48px;
-            }
-        }
-
-        /* تحسينات للشاشات المتوسطة */
-        @media (max-width: 1366px) {
-            .categories-grid {
-                grid-template-columns: repeat(3, 1fr);
-            }
-            
-            .streams-grid {
-                grid-template-columns: repeat(5, 1fr);
-            }
-        }
-
-        /* تحسينات للشاشات الصغيرة */
-        @media (max-width: 1024px) {
-            .categories-grid {
-                grid-template-columns: repeat(2, 1fr);
-            }
-            
-            .streams-grid {
-                grid-template-columns: repeat(4, 1fr);
-            }
-        }
-    </style>
+    document.addEventListener("DOMContentLoaded", () => {
+      history.replaceState({view: "CATEGORIES"}, "");
+      loadCategories();
+    });
+  </script>
 </head>
 <body>
-    <!-- شاشة التحميل -->
-    <div id="loadingScreen" class="loading-screen">
-        <div class="spinner"></div>
-        <div class="loading-text">
-            <div>🚀 جاري تحميل البث المباشر</div>
-            <div id="loadingStatus" style="font-size: 16px; margin-top: 10px; opacity: 0.8;">الاتصال بالسيرفر...</div>
-        </div>
-    </div>
-
-    <!-- معلومات التشخيص -->
-    <div id="debugInfo" class="debug-info"></div>
-
-    <!-- العنوان الرئيسي -->
-    <div class="header">
-        <h1>📺 مشغل البث المباشر</h1>
-    </div>
-
-    <!-- منطقة المحتوى -->
-    <div class="content-area">
-        <!-- شبكة الفئات -->
-        <div id="categoriesContainer" class="categories-grid hidden"></div>
-
-        <!-- شبكة القنوات -->
-        <div id="streamsContainer" class="streams-grid hidden"></div>
-    </div>
-
-    <!-- شريط المعلومات -->
-    <div class="info-bar">
-        <div class="current-category" id="currentCategoryName">الفئات المتاحة</div>
-        <div class="controls-hint">
-            استخدم أزرار الاتجاهات للتنقل • ENTER للاختيار • BACK للرجوع • F1 للتشخيص
-        </div>
-    </div>
-
-    <script>
-        // ⚙️ إعدادات السيرفر المخفية - قم بتغيير هذه البيانات
-        const HIDDEN_SERVER = {
-            url: "http://line.porschetv.net:80",
-            mac: "00:1A:79:ae:1b:b4", // ضع MAC Address هنا إذا كان السيرفر يعمل بـ MAC
-            //username: "PBIEHEC4VZ", //
-            //password: "8J4A9VGVWM", //
-            type: "user" // غيرت من "mac" إلى "user" لأن لديك username/password
-        };
-
-        // متغيرات التطبيق
-        let categories = [];
-        let currentStreams = [];
-        let currentView = "categories";
-        let focusedIndex = 0;
-        let currentCategory = null;
-        let isLoading = false;
-        let debugMode = false;
-
-        // عناصر DOM
-        const loadingScreen = document.getElementById("loadingScreen");
-        const loadingStatus = document.getElementById("loadingStatus");
-        const categoriesContainer = document.getElementById("categoriesContainer");
-        const streamsContainer = document.getElementById("streamsContainer");
-        const currentCategoryName = document.getElementById("currentCategoryName");
-        const debugInfo = document.getElementById("debugInfo");
-
-        // وظائف التشخيص
-        function debugLog(message, data = null) {
-            console.log(`[DEBUG] ${message}`, data || '');
-            if (debugMode) {
-                const time = new Date().toLocaleTimeString();
-                debugInfo.innerHTML += `<div>[${time}] ${message}</div>`;
-                if (data) {
-                    debugInfo.innerHTML += `<div style="margin-left: 10px; opacity: 0.7;">${JSON.stringify(data, null, 2)}</div>`;
-                }
-                debugInfo.scrollTop = debugInfo.scrollHeight;
-            }
-        }
-
-        function toggleDebug() {
-            debugMode = !debugMode;
-            debugInfo.style.display = debugMode ? 'block' : 'none';
-            if (debugMode) {
-                debugInfo.innerHTML = '<div><strong>🔍 وضع التشخيص مفعل</strong></div>';
-                debugLog('Server Config', HIDDEN_SERVER);
-            }
-        }
-
-        // وظائف التحميل
-        function showLoading(status = "جاري التحميل...") {
-            loadingScreen.classList.remove("hidden");
-            loadingStatus.textContent = status;
-            isLoading = true;
-            debugLog(`Loading: ${status}`);
-        }
-
-        function hideLoading() {
-            loadingScreen.classList.add("hidden");
-            isLoading = false;
-            debugLog('Loading hidden');
-        }
-
-        function showError(message, details = null) {
-            const errorDiv = document.createElement("div");
-            errorDiv.className = "error-message";
-            errorDiv.innerHTML = `⚠️ ${message}`;
-            if (details && debugMode) {
-                errorDiv.innerHTML += `<br><small style="opacity: 0.8;">${details}</small>`;
-            }
-            document.body.appendChild(errorDiv);
-            
-            debugLog(`Error: ${message}`, details);
-            
-            setTimeout(() => {
-                if (document.body.contains(errorDiv)) {
-                    document.body.removeChild(errorDiv);
-                }
-            }, 6000);
-        }
-
-        // بناء رابط API
-        function buildApiUrl(action, params = "") {
-            let url = `${HIDDEN_SERVER.url}/player_api.php?action=${action}`;
-            
-            if (HIDDEN_SERVER.type === "mac" && HIDDEN_SERVER.mac) {
-                url += `&mac=${HIDDEN_SERVER.mac}`;
-            } else if (HIDDEN_SERVER.type === "user" && HIDDEN_SERVER.username && HIDDEN_SERVER.password) {
-                url += `&username=${HIDDEN_SERVER.username}&password=${HIDDEN_SERVER.password}`;
-            } else {
-                throw new Error("إعدادات السيرفر غير صحيحة - تحقق من النوع والبيانات");
-            }
-            
-            if (params) url += `&${params}`;
-            
-            debugLog(`API URL built: ${url}`);
-            return url;
-        }
-
-        // تحميل الفئات مع معالجة أفضل للأخطاء
-        async function loadCategories() {
-            showLoading("تحميل الفئات...");
-            
-            try {
-                // التحقق من إعدادات السيرفر أولاً
-                if (!HIDDEN_SERVER.url) {
-                    throw new Error("رابط السيرفر غير محدد");
-                }
-
-                if (HIDDEN_SERVER.type === "mac" && !HIDDEN_SERVER.mac) {
-                    throw new Error("MAC Address غير محدد");
-                }
-
-                if (HIDDEN_SERVER.type === "user" && (!HIDDEN_SERVER.username || !HIDDEN_SERVER.password)) {
-                    throw new Error("اسم المستخدم أو كلمة المرور غير محددة");
-                }
-
-                const apiUrl = buildApiUrl("get_live_categories");
-                debugLog("Fetching categories from", apiUrl);
-                
-                // إضافة timeout للطلب
-                const controller = new AbortController();
-                const timeoutId = setTimeout(() => controller.abort(), 15000); // 15 ثانية timeout
-                
-                const response = await fetch(apiUrl, {
-                    method: 'GET',
-                    signal: controller.signal,
-                    headers: {
-                        'Accept': 'application/json',
-                        'Cache-Control': 'no-cache'
-                    }
-                });
-                
-                clearTimeout(timeoutId);
-                
-                debugLog(`Response status: ${response.status}`);
-                debugLog(`Response headers:`, Object.fromEntries(response.headers.entries()));
-                
-                if (!response.ok) {
-                    const errorText = await response.text();
-                    debugLog(`Response error text:`, errorText);
-                    throw new Error(`خطأ HTTP ${response.status}: ${response.statusText}`);
-                }
-                
-                const responseText = await response.text();
-                debugLog(`Raw response:`, responseText.substring(0, 500) + '...');
-                
-                let data;
-                try {
-                    data = JSON.parse(responseText);
-                } catch (parseError) {
-                    debugLog(`JSON parse error:`, parseError);
-                    throw new Error(`خطأ في تحليل البيانات: ${parseError.message}`);
-                }
-                
-                debugLog(`Parsed data:`, data);
-                
-                if (!Array.isArray(data)) {
-                    if (data && data.error) {
-                        throw new Error(`خطأ من السيرفر: ${data.error}`);
-                    }
-                    throw new Error("تنسيق البيانات غير صحيح - البيانات ليست مصفوفة");
-                }
-                
-                if (data.length === 0) {
-                    throw new Error("لا توجد فئات متاحة في هذا السيرفر");
-                }
-                
-                categories = data;
-                debugLog(`Categories loaded successfully: ${categories.length} categories`);
-                displayCategories();
-                hideLoading();
-                
-            } catch (error) {
-                debugLog("Error in loadCategories:", error);
-                hideLoading();
-                
-                if (error.name === 'AbortError') {
-                    showError("انتهت مهلة الاتصال بالسيرفر", "تحقق من اتصال الإنترنت أو حالة السيرفر");
-                } else if (error.message.includes('Failed to fetch')) {
-                    showError("فشل الاتصال بالسيرفر", "تحقق من رابط السيرفر أو إعدادات CORS");
-                } else {
-                    showError(`فشل تحميل الفئات: ${error.message}`, error.stack);
-                }
-            }
-        }
-
-        // عرض الفئات
-        function displayCategories() {
-            categoriesContainer.innerHTML = "";
-            categoriesContainer.classList.remove("hidden");
-            streamsContainer.classList.add("hidden");
-            
-            categories.forEach((category, index) => {
-                const div = document.createElement("div");
-                div.className = "category-item";
-                div.textContent = category.category_name;
-                div.dataset.index = index;
-                categoriesContainer.appendChild(div);
-            });
-            
-            currentView = "categories";
-            focusedIndex = 0;
-            updateFocus();
-            currentCategoryName.textContent = "الفئات المتاحة";
-            debugLog(`Categories displayed: ${categories.length} items`);
-        }
-
-        // تحميل القنوات
-        async function loadStreams(category) {
-            showLoading(`تحميل قنوات ${category.category_name}...`);
-            currentCategory = category;
-            
-            try {
-                const apiUrl = buildApiUrl("get_live_streams", `category_id=${category.category_id}`);
-                debugLog("Fetching streams from", apiUrl);
-                
-                const controller = new AbortController();
-                const timeoutId = setTimeout(() => controller.abort(), 15000);
-                
-                const response = await fetch(apiUrl, {
-                    method: 'GET',
-                    signal: controller.signal,
-                    headers: {
-                        'Accept': 'application/json',
-                        'Cache-Control': 'no-cache'
-                    }
-                });
-                
-                clearTimeout(timeoutId);
-                
-                if (!response.ok) {
-                    const errorText = await response.text();
-                    debugLog(`Streams response error:`, errorText);
-                    throw new Error(`خطأ HTTP ${response.status}: ${response.statusText}`);
-                }
-                
-                const responseText = await response.text();
-                debugLog(`Streams raw response:`, responseText.substring(0, 500) + '...');
-                
-                let data;
-                try {
-                    data = JSON.parse(responseText);
-                } catch (parseError) {
-                    throw new Error(`خطأ في تحليل بيانات القنوات: ${parseError.message}`);
-                }
-                
-                if (!Array.isArray(data)) {
-                    if (data && data.error) {
-                        throw new Error(`خطأ من السيرفر: ${data.error}`);
-                    }
-                    throw new Error("تنسيق بيانات القنوات غير صحيح");
-                }
-                
-                currentStreams = data;
-                debugLog(`Streams loaded: ${currentStreams.length} streams`);
-                displayStreams();
-                hideLoading();
-                
-            } catch (error) {
-                debugLog("Error in loadStreams:", error);
-                hideLoading();
-                
-                if (error.name === 'AbortError') {
-                    showError("انتهت مهلة تحميل القنوات");
-                } else {
-                    showError(`فشل تحميل القنوات: ${error.message}`);
-                }
-            }
-        }
-
-        // عرض القنوات
-        function displayStreams() {
-            streamsContainer.innerHTML = "";
-            categoriesContainer.classList.add("hidden");
-            streamsContainer.classList.remove("hidden");
-            
-            if (currentStreams.length === 0) {
-                streamsContainer.innerHTML = `
-                    <div style="grid-column: 1 / -1; text-align: center; padding: 50px; font-size: 24px;">
-                        📺 لا توجد قنوات في هذه الفئة
-                    </div>
-                `;
-                return;
-            }
-            
-            currentStreams.forEach((stream, index) => {
-                const div = document.createElement("div");
-                div.className = "stream-item";
-                div.dataset.index = index;
-                
-                const img = document.createElement("img");
-                img.src = stream.stream_icon || "https://via.placeholder.com/80x80/ff5722/white?text=📺";
-                img.alt = stream.name || "قناة";
-                img.onerror = () => {
-                    img.src = "https://via.placeholder.com/80x80/ff5722/white?text=📺";
-                };
-                
-                const nameDiv = document.createElement("div");
-                nameDiv.className = "name";
-                nameDiv.textContent = stream.name || "قناة غير معروفة";
-                
-                div.appendChild(img);
-                div.appendChild(nameDiv);
-                streamsContainer.appendChild(div);
-            });
-            
-            currentView = "streams";
-            focusedIndex = 0;
-            updateFocus();
-            currentCategoryName.textContent = currentCategory.category_name;
-            debugLog(`Streams displayed: ${currentStreams.length} items`);
-        }
-
-        // تحديث التركيز
-        function updateFocus() {
-            const container = currentView === "categories" ? categoriesContainer : streamsContainer;
-            const items = container.children;
-            
-            Array.from(items).forEach(item => item.classList.remove("focused"));
-            
-            if (items[focusedIndex]) {
-                items[focusedIndex].classList.add("focused");
-                items[focusedIndex].scrollIntoView({ 
-                    behavior: "smooth", 
-                    block: "nearest",
-                    inline: "nearest"
-                });
-            }
-        }
-
-        // تشغيل القناة
-        function playStream(stream) {
-            try {
-                let streamUrl;
-                
-                if (HIDDEN_SERVER.type === "mac") {
-                    streamUrl = `${HIDDEN_SERVER.url}/live/${HIDDEN_SERVER.mac}/${stream.stream_id}.m3u8`;
-                } else {
-                    streamUrl = `${HIDDEN_SERVER.url}/live/${HIDDEN_SERVER.username}/${HIDDEN_SERVER.password}/${stream.stream_id}.m3u8`;
-                }
-                
-                const channelName = encodeURIComponent(stream.name || "Live Channel");
-                const playUrl = `https://play/stream?url=${encodeURIComponent(streamUrl)}&name=${channelName}`;
-                
-                debugLog("Playing stream:", { streamUrl, playUrl });
-                window.location.href = playUrl;
-                
-            } catch (error) {
-                debugLog("Error playing stream:", error);
-                showError("خطأ في تشغيل القناة");
-            }
-        }
-
-        // العودة للفئات
-        function goBack() {
-            if (currentView === "streams") {
-                displayCategories();
-            }
-        }
-
-        // معالجة مفاتيح الريموت كنترول
-        document.addEventListener("keydown", (event) => {
-            if (isLoading) return;
-            
-            const container = currentView === "categories" ? categoriesContainer : streamsContainer;
-            const items = container.children;
-            const totalItems = items.length;
-            
-            if (totalItems === 0 && event.key !== "F1") return;
-            
-            // حساب عدد الأعمدة
-            let columnsCount = 4; // افتراضي
-            if (items.length > 0) {
-                const containerWidth = container.offsetWidth;
-                const itemWidth = items[0].offsetWidth;
-                const gap = 20;
-                columnsCount = Math.floor((containerWidth + gap) / (itemWidth + gap));
-            }
-            
-            switch(event.key) {
-                case "F1":
-                    event.preventDefault();
-                    toggleDebug();
-                    break;
-                    
-                case "ArrowRight":
-                    event.preventDefault();
-                    focusedIndex = Math.max(0, focusedIndex - 1);
-                    updateFocus();
-                    break;
-                    
-                case "ArrowLeft":
-                    event.preventDefault();
-                    focusedIndex = Math.min(totalItems - 1, focusedIndex + 1);
-                    updateFocus();
-                    break;
-                    
-                case "ArrowUp":
-                    event.preventDefault();
-                    focusedIndex = Math.max(0, focusedIndex - columnsCount);
-                    updateFocus();
-                    break;
-                    
-                case "ArrowDown":
-                    event.preventDefault();
-                    focusedIndex = Math.min(totalItems - 1, focusedIndex + columnsCount);
-                    updateFocus();
-                    break;
-                    
-                case "Enter":
-                    event.preventDefault();
-                    if (currentView === "categories") {
-                        const selectedCategory = categories[focusedIndex];
-                        if (selectedCategory) {
-                            loadStreams(selectedCategory);
-                        }
-                    } else if (currentView === "streams") {
-                        const selectedStream = currentStreams[focusedIndex];
-                        if (selectedStream) {
-                            playStream(selectedStream);
-                        }
-                    }
-                    break;
-                    
-                case "Escape":
-                case "Backspace":
-                case "GoBack":
-                case "Back":
-                    event.preventDefault();
-                    goBack();
-                    break;
-                    
-                case "F5":
-                case "Refresh":
-                    event.preventDefault();
-                    location.reload();
-                    break;
-                    
-                case "Home":
-                    event.preventDefault();
-                    focusedIndex = 0;
-                    updateFocus();
-                    break;
-                    
-                case "End":
-                    event.preventDefault();
-                    focusedIndex = totalItems - 1;
-                    updateFocus();
-                    break;
-            }
-        });
-
-        // بدء التطبيق
-        document.addEventListener("DOMContentLoaded", () => {
-            debugLog("🚀 Starting Remote Control IPTV Player...");
-            debugLog("Server configuration", HIDDEN_SERVER);
-            
-            setTimeout(() => {
-                loadCategories();
-            }, 1000);
-        });
-
-        // معالجة الأخطاء العامة
-        window.addEventListener('error', (event) => {
-            debugLog('Global error:', event.error);
-            hideLoading();
-            showError("حدث خطأ غير متوقع", event.error?.message);
-        });
-
-        window.addEventListener('unhandledrejection', (event) => {
-            debugLog('Unhandled promise rejection:', event.reason);
-            hideLoading();
-            showError("خطأ في الاتصال", event.reason?.message);
-        });
-    </script>
+  <div class="sidebar" id="categories"></div>
+  <div class="content-container" id="content"></div>
 </body>
 </html>
