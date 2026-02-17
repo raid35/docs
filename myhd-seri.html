@@ -176,10 +176,23 @@
       setTimeout(() => container.firstChild?.focus(), 100);
     }
 
+    // الدالة المعدلة لضمان التشغيل التلقائي ومعالجة الامتدادات
     function playEpisode(episode) {
-      const streamUrl = `${serverUrl}/series/${username}/${password}/${episode.id}.${episode.container_extension}`;
-      const title = encodeURIComponent(episode.title || `الحلقة ${episode.episode_num}`);
-      window.location.href = `intent:${streamUrl}#Intent;action=android.intent.action.VIEW;package=com.example.siksa;type=video/*;S.title=${title};end`;
+      const extension = episode.container_extension || "mp4";
+      const streamUrl = `${serverUrl}/series/${username}/${password}/${episode.id}.${extension}`;
+      const title = encodeURIComponent(`الموسم ${episode.season || ''} - حلقة ${episode.episode_num}`);
+      
+      // استخدام رابط Intent محسّن مع إضافة فلاج الشاشة الكاملة وتحديد المشغل
+      const intentUrl = `intent:${streamUrl}#Intent;` +
+        `action=android.intent.action.VIEW;` +
+        `type=video/*;` +
+        `package=com.example.siksa;` + 
+        `S.title=${title};` +
+        `B.force_fullscreen=true;` + 
+        `S.browser_fallback_url=${encodeURIComponent(streamUrl)};` +
+        `end`;
+
+      window.location.href = intentUrl;
     }
 
     window.onpopstate = function(event) {
