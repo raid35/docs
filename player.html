@@ -6,13 +6,14 @@
     <meta name="referrer" content="no-referrer" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     
-    <script src="//ssl.p.jwpcdn.com/player/v/8.26.0/jwplayer.js"></script>
+    <script src="https://ssl.p.jwpcdn.com/player/v/8.26.0/jwplayer.js"></script>
     <script>jwplayer.key = "XSuP4qMl+9tK17QNb+4+th2Pm9AWgMO/cYH8CI0HGGr7bdjo";</script>
-    <link rel="stylesheet" href="https://akomov.com/todapi/jw_ako.css">
 
     <style>
         body, html { margin: 0; padding: 0; width: 100%; height: 100%; background-color: black; overflow: hidden; }
         #jwplayerDiv { width: 100% !important; height: 100% !important; }
+        /* إخفاء رسائل الخطأ المزعجة التي قد تظهر فوق الفيديو */
+        .jw-error-msg { display: none !important; }
     </style>
 </head>
 <body>
@@ -20,88 +21,75 @@
     <div id="jwplayerDiv"></div>
 
     <script>
-        // 1. تزوير الهوية (لضمان تجاوز حماية السيرفرات)
+        // 1. نظام تزوير الهوية (User-Agent) لتخطي الحماية
         (function() {
-            var originalFetch = window.fetch;
-            var originalXHR = window.XMLHttpRequest;
-            var customUA = "Mozilla/5.0 (Smart-TV; Linux; Tizen 6.0) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/85.0.4183.102 TV Safari/537.36";
-            window.fetch = function(url, options) {
-                options = options || {};
-                options.headers = options.headers || {};
-                options.headers['User-Agent'] = customUA;
-                return originalFetch.call(this, url, options);
-            };
-            var XHROpen = originalXHR.prototype.open;
-            originalXHR.prototype.open = function(method, url) {
-                XHROpen.apply(this, arguments);
-                this.setRequestHeader('User-Agent', customUA);
+            var customUA = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36";
+            var XHROpen = XMLHttpRequest.prototype.open;
+            XMLHttpRequest.prototype.open = function() {
+                this.addEventListener('loadstart', function() {
+                    this.setRequestHeader('User-Agent', customUA);
+                });
+                return XHROpen.apply(this, arguments);
             };
         })();
 
-        // أيقونة تمدد الشاشة
-        const expandSvg = `<svg fill="#ffffff" width="24px" height="24px" viewBox="0 0 100 100"><g><path d="M22.661,20.5H36c1.104,0,2-0.896,2-2s-0.896-2-2-2H19c-1.104,0-2.5,1.276-2.5,2.381v17c0,1.104,0.896,2,2,2s2-0.896,2-2V24.876l16.042,15.791c0.391,0.391,1.027,0.586,1.539,0.586s1.086-0.195,1.477-0.586c0.781-0.781,0.812-2.237,0.031-3.019L22.661,20.5z"/><path d="M83,16.5H66c-1.104,0-2,0.896-2,2s0.896,2,2,2h12.605L61.647,37.648c-0.781,0.781-0.781,2.142,0,2.923c0.39,0.391,0.902,0.633,1.414,0.633s0.774-0.171,1.164-0.562l16.274-16.5v11.738c0,1.104,0.896,2,2,2s2-0.896,2-2v-17C84.5,17.776,84.104,16.5,83,16.5z"/><path d="M36.542,60.962L20.5,76.754V65.881c0-1.104-0.896-2-2-2s-2,0.896-2,2v17c0,1.104,1.396,1.619,2.5,1.619h17c1.104,0,2-0.896,2-2s-0.896-2-2-2H22.529L39.62,63.6c0.781-0.781,0.656-1.951-0.125-2.732C38.715,60.086,37.322,60.181,36.542,60.962z"/><path d="M82.5,63.881c-1.104,0-2,0.896-2,2v11.606L64.226,60.962c-0.78-0.781-1.923-0.781-2.703,0c-0.781,0.781-0.719,1.856,0.062,2.638l17.152,16.9H66c-1.104,0-2,0.896-2,2s0.896,2,2,2h17c1.104,0,1.5-0.515,1.5-1.619v-17C84.5,64.776,83.604,63.881,82.5,63.881z"/></g></svg>`;
-
-        // قائمة القنوات المحدثة
+        // 2. قائمة القنوات مع تصحيح الروابط والمفاتيح
         const channelList = {
             "BEIN1": {
-                url: "https://sps1.starzplayarabia.com/out/v1/eee188845e9543699fd24e5a9890c6e2/index.mpd",
-                k1: "b253c726c24c7c94a3ddf9b1907e2c76", k2: "097963d6ad73c3d712a104981de0ed42"
+                url: "https://aba5sdmaaaaaaaamooyrewxky2c4j.otte.live.cf.ww.aiv-cdn.net/syd-nitro/live/dash/enc/ghwcl6hv68/out/v1/83536910d8034e9b9895a20fbe1c1687/cenc.mpd",
+                kid: "335dad778109954503dcbb21dc92015f", 
+                key: "24bfd75d436cbf73168a2a2dccd40281"
             },
             "BEIN2": {
                 url: "https://aba5sdmaaaaaaaamdwujas5g6mg4r.otte.live.cf.ww.aiv-cdn.net/syd-nitro/live/clients/dash/enc/8m8cd46i1t/out/v1/83985c68e4174e90a58a1f2c024be4c9/cenc.mpd",
-                k1: "0b42be2664d7e811d04f3e504e0924c5", k2: "ae24090123b8c72ac5404dc152847cb8"
+                kid: "0b42be2664d7e811d04f3e504e0924c5", 
+                key: "ae24090123b8c72ac5404dc152847cb8"
             },
             "BEIN3": {
                 url: "https://aba5sdmaaaaaaaamhq2w5oosrf5ae.otte.live.cf.ww.aiv-cdn.net/syd-nitro/live/clients/dash/enc/q4u5nwaogz/out/v1/18de6d3e65934f3a8de4358e69eab86c/cenc.mpd",
-                k1: "7995c724a13748ed970840a8ab5bb9b3", k2: "67bdaf1e2175b9ff682fcdf0e2354b1e"
+                kid: "7995c724a13748ed970840a8ab5bb9b3", 
+                key: "67bdaf1e2175b9ff682fcdf0e2354b1e"
             }
         };
 
         const urlParams = new URLSearchParams(window.location.search);
         const getID = urlParams.get('id') || "BEIN1";
-        const currentChannel = channelList[getID] || channelList["BEIN1"];
-        let isExpanded = true;
+        const ch = channelList[getID] || channelList["BEIN1"];
 
+        // 3. إعداد المشغل (تأكد من أن أسماء المفاتيح داخل clearkey دقيقة)
         const player = jwplayer("jwplayerDiv").setup({
-            file: currentChannel.url,
+            playlist: [{
+                file: ch.url,
+                drm: {
+                    clearkey: {
+                        keyId: ch.kid,
+                        key: ch.key
+                    }
+                }
+            }],
             width: "100%",
             height: "100%",
             autostart: true,
             stretching: "fill",
-            drm: { 
-                clearkey: { 
-                    keyId: currentChannel.k1, 
-                    key: currentChannel.k2 
-                } 
-            }
+            displaytitle: false,
+            cast: {} // لدعم الكروم كاست
         });
 
-        player.on('ready', function() {
-            player.addButton(expandSvg, 'تمدد الفيديو', function() {
-                isExpanded = !isExpanded;
-                const video = document.querySelector("#jwplayerDiv video");
-                if (video) video.style.objectFit = isExpanded ? 'fill' : 'contain';
-            }, 'expandButton');
-        });
-
-        // اختيار الصوت العربي تلقائياً
-        player.on('audioTracks', function() {
-            const tracks = player.getAudioTracks();
-            tracks.forEach((track, index) => {
-                if (track.label.toLowerCase().includes("ara") || track.label.includes("عربي")) {
+        // اختيار اللغة العربية تلقائياً
+        player.on('audioTracks', function(e) {
+            e.tracks.forEach((track, index) => {
+                if (track.label.toLowerCase().includes("ar")) {
                     player.setCurrentAudioTrack(index);
                 }
             });
         });
 
-        // منع الصوت في الخلفية
-        window.addEventListener("beforeunload", function() { player.remove(); });
-        document.addEventListener("visibilitychange", function() {
-            if (document.hidden) { 
-                player.pause(); 
-            } else {
+        // التعامل مع الخطأ (إعادة تشغيل تلقائي في حال فشل السيرفر)
+        player.on('error', function() {
+            setTimeout(function() {
+                player.load();
                 player.play();
-            }
+            }, 2000);
         });
 
     </script>
