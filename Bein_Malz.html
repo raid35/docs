@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Siksa TV - Ultra Smooth</title>
+    <title>Siksa TV - Balanced</title>
     <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700&display=swap" rel="stylesheet">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/shaka-player/4.15.9/shaka-player.ui.min.js"></script>
@@ -13,19 +13,18 @@
         * { margin: 0; padding: 0; box-sizing: border-box; }
         body { font-family: 'Cairo', sans-serif; background: #000; color: #fff; overflow: hidden; height: 100vh; }
         .video-player { position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; background: #000; }
-        #dash-video { width: 100%; height: 100%; object-fit: contain; background: #000; }
+        #dash-video { width: 100%; height: 100%; object-fit: contain; }
 
-        .header { position: absolute; top: 0; left: 0; width: 100%; padding: 15px; background: linear-gradient(to bottom, rgba(0,0,0,0.8), transparent); z-index: 2000; display: flex; align-items: center; gap: 10px; opacity: 0; transition: 0.5s; pointer-events: none; }
+        .header { position: absolute; top: 0; left: 0; width: 100%; padding: 15px; background: linear-gradient(to bottom, rgba(0,0,0,0.8), transparent); z-index: 2000; display: flex; align-items: center; gap: 10px; opacity: 0; transition: 0.5s; }
         .header.show { opacity: 1; }
         .badge { background: #ff6b35; padding: 4px 12px; border-radius: 4px; font-weight: bold; font-size: 0.9rem; }
 
         .controls { position: absolute; bottom: 30px; left: 50%; transform: translateX(-50%); background: rgba(0,0,0,0.7); padding: 10px 25px; border-radius: 50px; display: flex; gap: 20px; opacity: 0; transition: 0.3s; z-index: 2000; }
         .controls.show { opacity: 1; }
-        .btn { background: none; border: none; color: white; font-size: 1.4rem; cursor: pointer; transition: 0.2s; }
-        .btn:hover { color: #ff6b35; transform: scale(1.1); }
+        .btn { background: none; border: none; color: white; font-size: 1.4rem; cursor: pointer; }
 
-        .loading { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); z-index: 3000; text-align: center; pointer-events: none; }
-        .spinner { width: 45px; height: 45px; border: 4px solid rgba(255,107,53,0.1); border-top: 4px solid #ff6b35; border-radius: 50%; animation: spin 0.8s linear infinite; margin: 0 auto 10px; }
+        .loading { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); z-index: 3000; text-align: center; }
+        .spinner { width: 40px; height: 40px; border: 3px solid rgba(255,107,53,0.2); border-top: 3px solid #ff6b35; border-radius: 50%; animation: spin 1s linear infinite; margin: 0 auto 10px; }
         @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
     </style>
 </head>
@@ -34,12 +33,12 @@
     <div class="video-player" id="playerUI">
         <div class="header" id="headerUI">
             <span class="badge" id="channelName">LIVE</span>
-            <span id="channelStatus">S</span>
+            <span id="channelStatus">بث مباشر</span>
         </div>
 
         <div class="loading" id="loader">
             <div class="spinner"></div>
-            <p style="font-size: 0.9rem; letter-spacing: 1px;">OPTIMIZING STREAM...</p>
+            <p>جاري التحميل...</p>
         </div>
 
         <video id="dash-video" autoplay crossorigin="anonymous" playsinline></video>
@@ -69,7 +68,7 @@
             }
         };
 
-        async function initSmoothPlayer() {
+        async function initPlayer() {
             const params = new URLSearchParams(window.location.search);
             const channelId = params.get('id') || "BEIN1";
             const channel = channelList[channelId];
@@ -79,73 +78,52 @@
             const video = document.getElementById('dash-video');
             const player = new shaka.Player(video);
 
-            document.getElementById('channelName').innerText = channelId;
-
             const keys = {};
             keys[channel.k1] = channel.k2;
 
-            // --- إعدادات المحترفين لضمان سلاسة ExoPlayer ---
+            // --- إعدادات خفيفة وسريعة التبديل ---
             player.configure({
                 preferredAudioLanguage: 'ar',
                 drm: { clearKeys: keys },
                 streaming: {
-                    bufferingGoal: 60,                // تخزين 60 ثانية مسبقاً لمنع أي توقف
-                    rebufferingGoal: 1,               // العودة للبث بسرعة البرق عند الانقطاع
-                    bufferBehind: 15,                 // الحفاظ على مخزن خلفي
-                    retryParameters: { maxAttempts: 5 },
-                    lowLatencyMode: true,             // تقليل التأخير لزيادة السلاسة
+                    bufferingGoal: 10,       // تقليل القيمة لـ 10 ثوانٍ فقط لتخفيف الضغط
+                    rebufferingGoal: 2,      // تشغيل سريع عند الانقطاع
+                    bufferBehind: 10,
                     jumpOnLiveEdge: true
                 },
                 abr: {
-                    enabled: true,
-                    switchInterval: 0,                // تبديل فوري للجودة بمجرد توفر السرعة
-                    bandwidthUpgradeTarget: 0.85,
-                    restrictToLanguage: true
-                },
-                manifest: {
-                    dash: {
-                        autoCorrectDrift: true        // تصحيح انزياح الوقت تلقائياً
-                    }
+                    enabled: true,           // تشغيل التبديل التلقائي
+                    switchInterval: 2,       // منح المشغل وقت بسيط (ثانيتين) للتنقل بين الجودات بهدوء
                 }
             });
-
-            // تحسين منطق التبديل: لا تفرغ المخزن عند تغيير الجودة
-            player.configure('streaming.forceTransmuxTS', true);
 
             try {
                 await player.load(channel.url);
                 document.getElementById('loader').style.display = 'none';
+                document.getElementById('channelName').innerText = channelId;
                 player.selectAudioLanguage('ar');
-            } catch (e) { console.error("Load Error", e); }
+            } catch (e) { console.error(e); }
         }
 
-        // تحكمات الواجهة
+        // واجهة المستخدم
         const ui = document.getElementById('playerUI');
-        const showUI = () => {
+        ui.onmousemove = () => {
             document.getElementById('headerUI').classList.add('show');
             document.getElementById('controlsUI').classList.add('show');
-            clearTimeout(window.hideTimer);
-            window.hideTimer = setTimeout(() => {
+            clearTimeout(window.t);
+            window.t = setTimeout(() => {
                 document.getElementById('headerUI').classList.remove('show');
                 document.getElementById('controlsUI').classList.remove('show');
             }, 3000);
         };
-
-        ui.onmousemove = showUI;
-        ui.ontouchstart = showUI;
 
         const v = document.getElementById('dash-video');
         document.getElementById('playBtn').onclick = () => {
             if(v.paused) { v.play(); document.getElementById('playBtn').innerHTML = '<i class="fas fa-pause"></i>'; }
             else { v.pause(); document.getElementById('playBtn').innerHTML = '<i class="fas fa-play"></i>'; }
         };
-        
-        document.getElementById('muteBtn').onclick = () => {
-            v.muted = !v.muted;
-            document.getElementById('muteBtn').innerHTML = v.muted ? '<i class="fas fa-volume-mute"></i>' : '<i class="fas fa-volume-up"></i>';
-        };
 
-        document.addEventListener('DOMContentLoaded', initSmoothPlayer);
+        document.addEventListener('DOMContentLoaded', initPlayer);
     </script>
 </body>
 </html>
