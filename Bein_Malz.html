@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Siksa TV - Multi Player</title>
+    <title>Siksa TV - Pro Player</title>
     <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700&display=swap" rel="stylesheet">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/shaka-player/4.15.9/shaka-player.ui.min.js"></script>
@@ -15,17 +15,14 @@
         .video-player { position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; background: #000; }
         #dash-video { width: 100%; height: 100%; object-fit: contain; }
 
-        /* الهيدر العلوي */
         .header { position: absolute; top: 0; left: 0; width: 100%; padding: 15px; background: linear-gradient(to bottom, rgba(0,0,0,0.8), transparent); z-index: 2000; display: flex; align-items: center; gap: 10px; opacity: 0; transition: 0.5s; }
         .header.show { opacity: 1; }
         .badge { background: #ff6b35; padding: 4px 12px; border-radius: 4px; font-weight: bold; font-size: 0.9rem; }
 
-        /* شريط التحكم السفلي */
         .controls { position: absolute; bottom: 30px; left: 50%; transform: translateX(-50%); background: rgba(0,0,0,0.7); padding: 10px 25px; border-radius: 50px; display: flex; gap: 20px; opacity: 0; transition: 0.3s; z-index: 2000; }
         .controls.show { opacity: 1; }
         .btn { background: none; border: none; color: white; font-size: 1.4rem; cursor: pointer; }
 
-        /* حالة التحميل */
         .loading { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); z-index: 3000; text-align: center; }
         .spinner { width: 40px; height: 40px; border: 3px solid rgba(255,107,53,0.2); border-top: 3px solid #ff6b35; border-radius: 50%; animation: spin 1s linear infinite; margin: 0 auto 10px; }
         @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
@@ -36,12 +33,12 @@
     <div class="video-player" id="playerUI">
         <div class="header" id="headerUI">
             <span class="badge" id="channelName">LIVE</span>
-            <span id="channelStatus">بث مباشر</span>
+            <span id="channelStatus">بث مباشر - جودة عالية</span>
         </div>
 
         <div class="loading" id="loader">
             <div class="spinner"></div>
-            <p>جاري تشغيل القناة...</p>
+            <p>جاري تحسين جودة البث...</p>
         </div>
 
         <video id="dash-video" autoplay crossorigin="anonymous"></video>
@@ -53,14 +50,13 @@
     </div>
 
     <script>
-        // --- 1. قائمة القنوات (نفس قائمة صديقك مع تعديل بسيط للأسماء) ---
         const channelList = {
             "BEIN1": {
                 url: "https://aba5sdmaaaaaaaamooyrewxky2c4j.otte.live.cf.ww.aiv-cdn.net/syd-nitro/live/dash/enc/ghwcl6hv68/out/v1/83536910d8034e9b9895a20fbe1c1687/cenc.mpd",
                 k1: "335dad778109954503dcbb21dc92015f",
                 k2: "24bfd75d436cbf73168a2a2dccd40281"
             },
-            "BEIN2": {
+             "BEIN2": {
                 url: "https://aba5sdmaaaaaaaamdwujas5g6mg4r.otte.live.cf.ww.aiv-cdn.net/syd-nitro/live/clients/dash/enc/8m8cd46i1t/out/v1/83985c68e4174e90a58a1f2c024be4c9/cenc.mpd",
                 k1: "0b42be2664d7e811d04f3e504e0924c5",
                 k2: "ae24090123b8c72ac5404dc152847cb8"
@@ -70,49 +66,51 @@
                 k1: "7995c724a13748ed970840a8ab5bb9b3",
                 k2: "67bdaf1e2175b9ff682fcdf0e2354b1e"
             }
-            // يمكنك إضافة باقي قنوات القائمة هنا بنفس الطريقة...
         };
 
         async function startApp() {
-            // جلب الـ ID من الرابط
             const params = new URLSearchParams(window.location.search);
-            const channelId = params.get('id') || "shahid-sports-1";
+            const channelId = params.get('id') || "BEIN1";
             const channel = channelList[channelId];
 
-            if (!channel) {
-                alert("القناة غير موجودة في القائمة!");
-                return;
-            }
+            if (!channel) return;
 
             const video = document.getElementById('dash-video');
             const player = new shaka.Player(video);
 
-            // تحديث الواجهة
             document.getElementById('channelName').innerText = channelId.toUpperCase();
-            document.title = channelId.toUpperCase();
 
-            // إعداد المفاتيح واللغة العربية
             const keys = {};
             keys[channel.k1] = channel.k2;
 
+            // --- إعدادات السلاسة ومنع التقطع عند تغيير الجودة ---
             player.configure({
                 preferredAudioLanguage: 'ar',
-                drm: { clearKeys: keys }
+                drm: { clearKeys: keys },
+                streaming: {
+                    bufferingGoal: 30,           // زيادة التخزين المؤقت لـ 30 ثانية لمنع التوقف
+                    rebufferingGoal: 2,           // العودة للعمل بسرعة عند ضعف النت
+                    bufferBehind: 30,             // الحفاظ على 30 ثانية خلف البث للسلاسة
+                    alwaysStreamText: false,
+                    infiniteStreamDuration: true,
+                    jumpOnLiveEdge: true          // القفز لأحدث نقطة في البث المباشر
+                },
+                abr: {
+                    enabled: true,                // تشغيل الجودة التلقائية الذكية
+                    switchInterval: 1             // تقليل وقت اتخاذ القرار عند التغيير لسرعة الاستجابة
+                }
             });
 
             try {
                 await player.load(channel.url);
                 document.getElementById('loader').style.display = 'none';
                 
-                // التأكد من الصوت العربي
-                const tracks = player.getVariantTracks();
-                if (tracks.some(t => t.language === 'ar')) {
-                    player.selectAudioLanguage('ar');
-                }
+                // اختيار اللغة العربية فوراً
+                player.selectAudioLanguage('ar');
             } catch (e) { console.error("Error", e); }
         }
 
-        // إظهار/إخفاء العناصر
+        // تفاعل الواجهة
         const ui = document.getElementById('playerUI');
         ui.onmousemove = () => {
             document.getElementById('headerUI').classList.add('show');
@@ -124,7 +122,6 @@
             }, 3000);
         };
 
-        // أزرار التحكم
         const v = document.getElementById('dash-video');
         document.getElementById('playBtn').onclick = () => {
             if(v.paused) { v.play(); document.getElementById('playBtn').innerHTML = '<i class="fas fa-pause"></i>'; }
@@ -132,7 +129,7 @@
         };
         document.getElementById('muteBtn').onclick = () => {
             v.muted = !v.muted;
-            document.getElementById('btnMute').innerHTML = v.muted ? '<i class="fas fa-volume-mute"></i>' : '<i class="fas fa-volume-up"></i>';
+            document.getElementById('muteBtn').innerHTML = v.muted ? '<i class="fas fa-volume-mute"></i>' : '<i class="fas fa-volume-up"></i>';
         };
 
         document.addEventListener('DOMContentLoaded', startApp);
