@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>مشغل القنوات الاحترافي</title>
+    <title>Siksa TV - Multi Player</title>
     <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700&display=swap" rel="stylesheet">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/shaka-player/4.15.9/shaka-player.ui.min.js"></script>
@@ -15,143 +15,127 @@
         .video-player { position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; background: #000; }
         #dash-video { width: 100%; height: 100%; object-fit: contain; }
 
-        .channel-header { 
-            position: absolute; top: 0; left: 0; width: 100%; 
-            padding: 20px; background: linear-gradient(to bottom, rgba(0,0,0,0.9), transparent);
-            z-index: 2000; display: flex; align-items: center; gap: 15px;
-            transition: 0.5s; opacity: 0;
-        }
-        .channel-header.show { opacity: 1; }
-        .channel-badge { background: #ff6b35; padding: 5px 15px; border-radius: 5px; font-weight: 700; }
+        /* الهيدر العلوي */
+        .header { position: absolute; top: 0; left: 0; width: 100%; padding: 15px; background: linear-gradient(to bottom, rgba(0,0,0,0.8), transparent); z-index: 2000; display: flex; align-items: center; gap: 10px; opacity: 0; transition: 0.5s; }
+        .header.show { opacity: 1; }
+        .badge { background: #ff6b35; padding: 4px 12px; border-radius: 4px; font-weight: bold; font-size: 0.9rem; }
 
-        .control-bar { 
-            position: absolute; bottom: 30px; left: 50%; transform: translateX(-50%); 
-            background: rgba(0,0,0,0.8); padding: 10px 30px; border-radius: 50px; 
-            display: flex; gap: 20px; opacity: 0; transition: 0.3s; z-index: 2000; 
-        }
-        .control-bar.show { opacity: 1; }
-        .control-btn { background: none; border: none; color: white; font-size: 1.5rem; cursor: pointer; }
+        /* شريط التحكم السفلي */
+        .controls { position: absolute; bottom: 30px; left: 50%; transform: translateX(-50%); background: rgba(0,0,0,0.7); padding: 10px 25px; border-radius: 50px; display: flex; gap: 20px; opacity: 0; transition: 0.3s; z-index: 2000; }
+        .controls.show { opacity: 1; }
+        .btn { background: none; border: none; color: white; font-size: 1.4rem; cursor: pointer; }
 
-        .loading, .error-msg { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); z-index: 3000; text-align: center; }
-        .spinner { width: 50px; height: 50px; border: 3px solid rgba(255,107,53,0.2); border-top: 3px solid #ff6b35; border-radius: 50%; animation: spin 1s linear infinite; margin-bottom: 10px; }
+        /* حالة التحميل */
+        .loading { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); z-index: 3000; text-align: center; }
+        .spinner { width: 40px; height: 40px; border: 3px solid rgba(255,107,53,0.2); border-top: 3px solid #ff6b35; border-radius: 50%; animation: spin 1s linear infinite; margin: 0 auto 10px; }
         @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
-        .error-msg { display: none; background: rgba(255,0,0,0.7); padding: 20px; border-radius: 10px; }
     </style>
 </head>
 <body>
 
-    <div class="video-player" id="mainContainer">
-        <div class="channel-header" id="channelHeader">
-            <div class="channel-badge" id="channelDisplay">انتظر...</div>
-            <div id="status">LIVE</div>
+    <div class="video-player" id="playerUI">
+        <div class="header" id="headerUI">
+            <span class="badge" id="channelName">LIVE</span>
+            <span id="channelStatus">بث مباشر</span>
         </div>
 
-        <div class="loading" id="loading">
+        <div class="loading" id="loader">
             <div class="spinner"></div>
-            <div>جاري الاتصال بالبث...</div>
-        </div>
-
-        <div class="error-msg" id="errorBox">
-            <i class="fas fa-exclamation-triangle fa-2x"></i>
-            <p style="margin-top:10px;">عذراً، البث غير متاح حالياً أو المفاتيح منتهية.</p>
-            <button onclick="location.reload()" style="margin-top:10px; padding:5px 10px;">إعادة المحاولة</button>
+            <p>جاري تشغيل القناة...</p>
         </div>
 
         <video id="dash-video" autoplay crossorigin="anonymous"></video>
 
-        <div class="control-bar" id="controlBar">
-            <button class="control-btn" id="btnPlay"><i class="fas fa-pause"></i></button>
-            <button class="control-btn" id="btnMute"><i class="fas fa-volume-up"></i></button>
+        <div class="controls" id="controlsUI">
+            <button class="btn" id="playBtn"><i class="fas fa-pause"></i></button>
+            <button class="btn" id="muteBtn"><i class="fas fa-volume-up"></i></button>
         </div>
     </div>
 
     <script>
-        // --- قائمة القنوات المحدثة ---
-        // تأكد أن الروابط والمفاتيح (KeyId و Key) صحيحة وحديثة لتلك القنوات
-        const channels = {
-            "ZIGGO_2": {
-                name: "ZIGGO SPORT 2",
-                url: "https://mag02.tvx.prd.tv.odido.nl/wh7f454c46tw407556707_-381738111/PLTV/86/224/3221241511/3221241511.mpd?accountinfo=~~V2.0~yVi0dMX4icO5Ka9e92EQfg8812e1c1044f7d357066472e3ee99ef4~2dRB9E-vDtoAbYl169LbcJpxUgWVJtbeU_PlhGfNUflphvljOb5VaEhxruETYG9qcccaf5c5b655bf7504ed7ec5a1dd798f:UTC,", 
-                keyId: "4dbea4b5713a4aa1ae3a2544cd522fc7",
-                key: "a8323ea99b2d6200a48e1bc27322d548"
+        // --- 1. قائمة القنوات (نفس قائمة صديقك مع تعديل بسيط للأسماء) ---
+        const channelList = {
+            "BEIN2": {
+                url: "https://aba5sdmaaaaaaaamdwujas5g6mg4r.otte.live.cf.ww.aiv-cdn.net/syd-nitro/live/clients/dash/enc/8m8cd46i1t/out/v1/83985c68e4174e90a58a1f2c024be4c9/cenc.mpd",
+                k1: "0b42be2664d7e811d04f3e504e0924c5",
+                k2: "ae24090123b8c72ac5404dc152847cb8"
             },
-            "SHAHID_1": {
-                name: "SHAHID SPORTS 1",
-                url: "رابط_قناة_شاهد_هنا",
-                keyId: "مفتاح_شاهد_ID",
-                key: "مفتاح_شاهد_KEY"
+            "shahid-sports-1": {
+                url: "https://shahid-sports-1-enc.edgenextcdn.net/out/v1/0169cfa282614ebe97ef0201da87bb04/index.mpd",
+                k1: "ab081a704aad41829b1123b09b6ecafd",
+                k2: "dd51609092fff15e68b91debf5d591f9"
+            },
+            "ZIGGO_1": {
+                url: "https://mag04.tvx.prd.tv.odido.nl/wh7f454c46tw75168188_-627298088/PLTV/86/224/3221241590/3221241590.mpd?accountinfo=~~V2.0~qbcsJh_jU5C9BcZc959e_wae44b4867b3417aa76b5db2da20fe46c~KZzTWjB8qD1zdgbJjRPVLJX-tV0qiN9RBHC_iseGrsmTSRjj06oGDtGlpSCRGOwF3626cf085c08d024c7e4aafc18c32440:UTC,",
+                k1: "ef34ae91b4f2415e8439b2ad105e7488",
+                k2: "243248d8de1ff8c7c587ee2057317523"
             }
+            // يمكنك إضافة باقي قنوات القائمة هنا بنفس الطريقة...
         };
 
-        async function initPlayer() {
+        async function startApp() {
+            // جلب الـ ID من الرابط
             const params = new URLSearchParams(window.location.search);
-            const channelId = params.get('id'); // سيأخذ القيمة من الرابط بعد ?id=
-            
-            const channel = channels[channelId];
-            
+            const channelId = params.get('id') || "shahid-sports-1";
+            const channel = channelList[channelId];
+
             if (!channel) {
-                document.getElementById('loading').style.display = 'none';
-                document.getElementById('errorBox').style.display = 'block';
-                document.getElementById('errorBox').innerHTML = "القناة غير موجودة في الكود.";
+                alert("القناة غير موجودة في القائمة!");
                 return;
             }
 
             const video = document.getElementById('dash-video');
             const player = new shaka.Player(video);
 
-            document.getElementById('channelDisplay').innerText = channel.name;
+            // تحديث الواجهة
+            document.getElementById('channelName').innerText = channelId.toUpperCase();
+            document.title = channelId.toUpperCase();
 
-            const drmConfig = {};
-            drmConfig[channel.keyId] = channel.key;
+            // إعداد المفاتيح واللغة العربية
+            const keys = {};
+            keys[channel.k1] = channel.k2;
 
             player.configure({
                 preferredAudioLanguage: 'ar',
-                drm: { clearKeys: drmConfig }
-            });
-
-            player.addEventListener('error', (e) => {
-                console.error("Shaka Error:", e);
-                document.getElementById('loading').style.display = 'none';
-                document.getElementById('errorBox').style.display = 'block';
+                drm: { clearKeys: keys }
             });
 
             try {
                 await player.load(channel.url);
-                document.getElementById('loading').style.display = 'none';
+                document.getElementById('loader').style.display = 'none';
                 
-                // تفعيل العربية تلقائياً
+                // التأكد من الصوت العربي
                 const tracks = player.getVariantTracks();
                 if (tracks.some(t => t.language === 'ar')) {
                     player.selectAudioLanguage('ar');
                 }
-            } catch (e) {
-                console.error("Load failed", e);
-            }
+            } catch (e) { console.error("Error", e); }
         }
 
-        // تحكم الواجهة
-        const container = document.getElementById('mainContainer');
-        container.addEventListener('mousemove', () => {
-            document.getElementById('channelHeader').classList.add('show');
-            document.getElementById('controlBar').classList.add('show');
-            clearTimeout(window.hideTimer);
-            window.hideTimer = setTimeout(() => {
-                document.getElementById('channelHeader').classList.remove('show');
-                document.getElementById('controlBar').classList.remove('show');
+        // إظهار/إخفاء العناصر
+        const ui = document.getElementById('playerUI');
+        ui.onmousemove = () => {
+            document.getElementById('headerUI').classList.add('show');
+            document.getElementById('controlsUI').classList.add('show');
+            clearTimeout(window.t);
+            window.t = setTimeout(() => {
+                document.getElementById('headerUI').classList.remove('show');
+                document.getElementById('controlsUI').classList.remove('show');
             }, 3000);
-        });
-
-        const v = document.getElementById('dash-video');
-        document.getElementById('btnPlay').onclick = () => {
-            if(v.paused) { v.play(); document.getElementById('btnPlay').innerHTML = '<i class="fas fa-pause"></i>'; }
-            else { v.pause(); document.getElementById('btnPlay').innerHTML = '<i class="fas fa-play"></i>'; }
         };
-        document.getElementById('btnMute').onclick = () => {
+
+        // أزرار التحكم
+        const v = document.getElementById('dash-video');
+        document.getElementById('playBtn').onclick = () => {
+            if(v.paused) { v.play(); document.getElementById('playBtn').innerHTML = '<i class="fas fa-pause"></i>'; }
+            else { v.pause(); document.getElementById('playBtn').innerHTML = '<i class="fas fa-play"></i>'; }
+        };
+        document.getElementById('muteBtn').onclick = () => {
             v.muted = !v.muted;
             document.getElementById('btnMute').innerHTML = v.muted ? '<i class="fas fa-volume-mute"></i>' : '<i class="fas fa-volume-up"></i>';
         };
 
-        document.addEventListener('DOMContentLoaded', initPlayer);
+        document.addEventListener('DOMContentLoaded', startApp);
     </script>
 </body>
 </html>
