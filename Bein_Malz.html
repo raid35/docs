@@ -3,121 +3,110 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Siksa Player Pro - Fixed</title>
-    
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/shaka-player/5.0.2/shaka-player.ui.min.js"></script>
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/shaka-player/5.0.2/controls.min.css" rel="stylesheet">
+    <title>Siksa TV - Stable</title>
     <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@600&display=swap" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/shaka-player/5.0.2/shaka-player.compiled.js"></script>
 
     <style>
-        * { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
-        body { font-family: 'Cairo', sans-serif; background: #000; overflow: hidden; height: 100vh; width: 100vw; }
-        
-        .container { width: 100%; height: 100%; position: relative; background: #000; }
-        video { width: 100%; height: 100%; object-fit: contain; }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: 'Cairo', sans-serif; background: #000; color: #fff; overflow: hidden; height: 100vh; }
+        .video-player { position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; background: #000; }
+        #dash-video { width: 100%; height: 100%; object-fit: contain; }
 
-        /* تخصيص مؤشر التحميل */
-        #loader {
-            position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);
-            z-index: 100; text-align: center; color: white;
+        /* واجهة تحكم بسيطة وخفيفة */
+        .controls { 
+            position: absolute; bottom: 30px; left: 50%; transform: translateX(-50%); 
+            background: rgba(0,0,0,0.6); padding: 10px 20px; border-radius: 50px; 
+            display: flex; gap: 25px; z-index: 2000; transition: 0.3s; opacity: 0;
         }
-        .spinner {
-            width: 50px; height: 50px; border: 4px solid rgba(255,107,53,0.1);
-            border-top: 4px solid #ff6b35; border-radius: 50%;
-            animation: spin 1s linear infinite; margin: 0 auto 10px;
-        }
+        .controls.show { opacity: 1; }
+        .btn { background: none; border: none; color: white; font-size: 1.5rem; cursor: pointer; }
+
+        .loading { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); z-index: 3000; text-align: center; }
+        .spinner { width: 40px; height: 40px; border: 3px solid rgba(255,107,53,0.2); border-top: 3px solid #ff6b35; border-radius: 50%; animation: spin 1s linear infinite; margin: 0 auto 10px; }
         @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
-
-        /* إخفاء الإعلانات والتحكم في شكل القائمة */
-        .shaka-server-side-ad-container { display: none !important; }
-        .shaka-overflow-menu, .shaka-settings-menu { 
-            background: rgba(20, 20, 20, 0.95) !important; 
-            color: white !important;
-            border-radius: 10px !important;
-        }
     </style>
 </head>
 <body>
 
-    <div class="container" id="videoContainer" data-shaka-player-container>
-        <div id="loader">
+    <div class="video-player" id="playerUI">
+        <div class="loading" id="loader">
             <div class="spinner"></div>
-            <p>جاري تشغيل البث...</p>
+            <p>جاري تشغيل القناة...</p>
         </div>
-        <video id="video" data-shaka-player autoplay crossorigin="anonymous" playsinline></video>
+
+        <video id="dash-video" autoplay crossorigin="anonymous" playsinline></video>
+
+        <div class="controls" id="controlsUI">
+            <button class="btn" id="playBtn"><i class="fas fa-pause"></i></button>
+            <button class="btn" id="muteBtn"><i class="fas fa-volume-mute"></i></button>
+        </div>
     </div>
 
     <script>
         const channelList = {
-            "BEIN1": {
-                url: "https://aba5sdmaaaaaaaamooyrewxky2c4j.otte.live.cf.ww.aiv-cdn.net/syd-nitro/live/dash/enc/ghwcl6hv68/out/v1/83536910d8034e9b9895a20fbe1c1687/cenc.mpd",
-                k1: "335dad778109954503dcbb21dc92015f", k2: "24bfd75d436cbf73168a2a2dccd40281"
-            },
-            "BEIN2": {
-                url: "https://aba5sdmaaaaaaaamdwujas5g6mg4r.otte.live.cf.ww.aiv-cdn.net/syd-nitro/live/clients/dash/enc/8m8cd46i1t/out/v1/83985c68e4174e90a58a1f2c024be4c9/cenc.mpd",
-                k1: "0b42be2664d7e811d04f3e504e0924c5", k2: "ae24090123b8c72ac5404dc152847cb8"
-            },
-            "BEIN3": {
-                url: "https://a83aivottlinear-a.akamaihd.net/OTTB/syd-nitro/live/clients/dash/enc/q4u5nwaogz/out/v1/18de6d3e65934f3a8de4358e69eab86c/cenc.mpd",
-                k1: "7995c724a13748ed970840a8ab5bb9b3", k2: "67bdaf1e2175b9ff682fcdf0e2354b1e"
-            }
+            "BEIN1": { url: "https://aba5sdmaaaaaaaamooyrewxky2c4j.otte.live.cf.ww.aiv-cdn.net/syd-nitro/live/dash/enc/ghwcl6hv68/out/v1/83536910d8034e9b9895a20fbe1c1687/cenc.mpd", k1: "335dad778109954503dcbb21dc92015f", k2: "24bfd75d436cbf73168a2a2dccd40281" },
+            "BEIN2": { url: "https://aba5sdmaaaaaaaamdwujas5g6mg4r.otte.live.cf.ww.aiv-cdn.net/syd-nitro/live/clients/dash/enc/8m8cd46i1t/out/v1/83985c68e4174e90a58a1f2c024be4c9/cenc.mpd", k1: "0b42be2664d7e811d04f3e504e0924c5", k2: "ae24090123b8c72ac5404dc152847cb8" },
+            "BEIN3": { url: "https://a83aivottlinear-a.akamaihd.net/OTTB/syd-nitro/live/clients/dash/enc/q4u5nwaogz/out/v1/18de6d3e65934f3a8de4358e69eab86c/cenc.mpd", k1: "7995c724a13748ed970840a8ab5bb9b3", k2: "67bdaf1e2175b9ff682fcdf0e2354b1e" }
         };
 
         async function initPlayer() {
-            const video = document.getElementById('video');
-            const container = document.getElementById('videoContainer');
-            
-            // البدء بإنشاء المشغل
+            const video = document.getElementById('dash-video');
             const player = new shaka.Player(video);
-            const ui = new shaka.ui.Overlay(player, container, video);
             
-            // إعدادات الواجهة
-            ui.configure({
-                'controlPanelElements': ['play_pause', 'mute', 'quality', 'fullscreen', 'spacer'],
-                'doubleClickForFullscreen': true
-            });
-
-            // استلام القناة
-            const urlParams = new URLSearchParams(window.location.search);
-            const id = urlParams.get('id') || "BEIN1";
+            // جلب القناة
+            const params = new URLSearchParams(window.location.search);
+            const id = params.get('id') || "BEIN1";
             const channel = channelList[id];
 
             if (!channel) return;
 
-            // ضبط المفاتيح
+            // إعداد التشفير
             const keys = {}; keys[channel.k1] = channel.k2;
 
-            // ضبط الإعدادات التقنية (مهم جداً للثبات)
             player.configure({
                 drm: { clearKeys: keys },
                 streaming: {
-                    bufferingGoal: 30, // تخزين 30 ثانية
+                    bufferingGoal: 30,
                     rebufferingGoal: 2,
                     jumpOnLiveEdge: true,
-                    retryParameters: { maxAttempts: 5 }
-                },
-                abr: { enabled: true } // التبديل التلقائي للجودة حسب سرعة النت
+                }
             });
 
-            // معالجة الأخطاء
+            // معالجة الخطأ لإعادة المحاولة
             player.addEventListener('error', (e) => {
-                console.error('Shaka Error:', e.detail);
-                if (e.detail.severity === 2) {
-                    setTimeout(() => player.load(channel.url), 2000);
-                }
+                if (e.detail.severity === 2) player.load(channel.url);
             });
 
             try {
                 await player.load(channel.url);
                 document.getElementById('loader').style.display = 'none';
-                video.muted = false; // تشغيل الصوت
-            } catch (error) {
-                console.error('Load Error:', error);
-            }
+                video.play();
+            } catch (e) { console.error("Load failed", e); }
         }
 
-        // انتظر تحميل الواجهة أولاً ثم ابدأ المشغل
-        document.addEventListener('shaka-ui-loaded', initPlayer);
+        // تحكمات الواجهة
+        const v = document.getElementById('dash-video');
+        const controls = document.getElementById('controlsUI');
+        
+        document.getElementById('playBtn').onclick = () => {
+            if(v.paused) { v.play(); document.getElementById('playBtn').innerHTML = '<i class="fas fa-pause"></i>'; }
+            else { v.pause(); document.getElementById('playBtn').innerHTML = '<i class="fas fa-play"></i>'; }
+        };
+
+        document.getElementById('muteBtn').onclick = () => {
+            v.muted = !v.muted;
+            document.getElementById('muteBtn').innerHTML = v.muted ? '<i class="fas fa-volume-mute"></i>' : '<i class="fas fa-volume-up"></i>';
+        };
+
+        // إظهار وإخفاء الأزرار عند اللمس
+        document.getElementById('playerUI').onclick = () => {
+            controls.classList.toggle('show');
+            setTimeout(() => controls.classList.remove('show'), 4000);
+        };
+
+        document.addEventListener('DOMContentLoaded', initPlayer);
     </script>
 </body>
 </html>
