@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>مشغل SIKSA المتعدد</title>
+    <title>مشغل القنوات الاحترافي</title>
     <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700&display=swap" rel="stylesheet">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/shaka-player/4.15.9/shaka-player.ui.min.js"></script>
@@ -15,7 +15,6 @@
         .video-player { position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; background: #000; }
         #dash-video { width: 100%; height: 100%; object-fit: contain; }
 
-        /* رأس الصفحة (اسم القناة) */
         .channel-header { 
             position: absolute; top: 0; left: 0; width: 100%; 
             padding: 20px; background: linear-gradient(to bottom, rgba(0,0,0,0.9), transparent);
@@ -25,19 +24,18 @@
         .channel-header.show { opacity: 1; }
         .channel-badge { background: #ff6b35; padding: 5px 15px; border-radius: 5px; font-weight: 700; }
 
-        /* شريط التحكم */
         .control-bar { 
             position: absolute; bottom: 30px; left: 50%; transform: translateX(-50%); 
             background: rgba(0,0,0,0.8); padding: 10px 30px; border-radius: 50px; 
             display: flex; gap: 20px; opacity: 0; transition: 0.3s; z-index: 2000; 
         }
         .control-bar.show { opacity: 1; }
-        .control-btn { background: none; border: none; color: white; font-size: 1.5rem; cursor: pointer; transition: 0.2s; }
-        .control-btn:hover { color: #ff6b35; }
+        .control-btn { background: none; border: none; color: white; font-size: 1.5rem; cursor: pointer; }
 
-        .loading { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); z-index: 3000; text-align: center; }
+        .loading, .error-msg { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); z-index: 3000; text-align: center; }
         .spinner { width: 50px; height: 50px; border: 3px solid rgba(255,107,53,0.2); border-top: 3px solid #ff6b35; border-radius: 50%; animation: spin 1s linear infinite; margin-bottom: 10px; }
         @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+        .error-msg { display: none; background: rgba(255,0,0,0.7); padding: 20px; border-radius: 10px; }
     </style>
 </head>
 <body>
@@ -50,7 +48,13 @@
 
         <div class="loading" id="loading">
             <div class="spinner"></div>
-            <div>جاري تحميل القناة...</div>
+            <div>جاري الاتصال بالبث...</div>
+        </div>
+
+        <div class="error-msg" id="errorBox">
+            <i class="fas fa-exclamation-triangle fa-2x"></i>
+            <p style="margin-top:10px;">عذراً، البث غير متاح حالياً أو المفاتيح منتهية.</p>
+            <button onclick="location.reload()" style="margin-top:10px; padding:5px 10px;">إعادة المحاولة</button>
         </div>
 
         <video id="dash-video" autoplay crossorigin="anonymous"></video>
@@ -62,49 +66,41 @@
     </div>
 
     <script>
-        // --- 1. قائمة القنوات (يمكنك إضافة مئات القنوات هنا) ---
+        // --- قائمة القنوات المحدثة ---
+        // تأكد أن الروابط والمفاتيح (KeyId و Key) صحيحة وحديثة لتلك القنوات
         const channels = {
-            "ZIGGO_2: {
-                name: "ZIGGO_2",
-                url: "https://mag02.tvx.prd.tv.odido.nl/wh7f454c46tw407556707_-381738111/PLTV/86/224/3221241511/3221241511.mpd?accountinfo=~~V2.0~yVi0dMX4icO5Ka9e92EQfg8812e1c1044f7d357066472e3ee99ef4~2dRB9E-vDtoAbYl169LbcJpxUgWVJtbeU_PlhGfNUflphvljOb5VaEhxruETYG9qcccaf5c5b655bf7504ed7ec5a1dd798f:UTC,",
+            "ZIGGO_2": {
+                name: "ZIGGO SPORT 2",
+                url: "https://mag02.tvx.prd.tv.odido.nl/wh7f454c46tw407556707_-381738111/PLTV/86/224/3221241511/3221241511.mpd?accountinfo=...", 
                 keyId: "4dbea4b5713a4aa1ae3a2544cd522fc7",
                 key: "a8323ea99b2d6200a48e1bc27322d548"
             },
-            "shahid-2": {
-                name: "SHAHID SPORTS 2",
-                url: "رابط_القناة_الثانية_هنا",
-                keyId: "مفتاح_ID_الثاني",
-                key: "مفتاح_KEY_الثاني"
-            },
-            "bein-1": {
-                name: "beIN SPORTS 1",
-                url: "رابط_بي_ان_هنا",
-                keyId: "مفتاح_بي_ان_ID",
-                key: "مفتاح_بي_ان_KEY"
+            "SHAHID_1": {
+                name: "SHAHID SPORTS 1",
+                url: "رابط_قناة_شاهد_هنا",
+                keyId: "مفتاح_شاهد_ID",
+                key: "مفتاح_شاهد_KEY"
             }
         };
 
-        // --- 2. دالة تشغيل القناة بناءً على المعرف (ID) ---
         async function initPlayer() {
-            // جلب الـ ID من الرابط (مثلاً ?id=shahid-1)
             const params = new URLSearchParams(window.location.search);
-            const channelId = params.get('id') || "shahid-1"; // إذا لم يختر شيئاً يشغل القناة الأولى
+            const channelId = params.get('id'); // سيأخذ القيمة من الرابط بعد ?id=
             
             const channel = channels[channelId];
             
             if (!channel) {
-                alert("القناة غير موجودة!");
+                document.getElementById('loading').style.display = 'none';
+                document.getElementById('errorBox').style.display = 'block';
+                document.getElementById('errorBox').innerHTML = "القناة غير موجودة في الكود.";
                 return;
             }
 
             const video = document.getElementById('dash-video');
             const player = new shaka.Player(video);
 
-            // تحديث الواجهة
             document.getElementById('channelDisplay').innerText = channel.name;
-            document.title = channel.name;
 
-            // إعداد التشفير
             const drmConfig = {};
             drmConfig[channel.keyId] = channel.key;
 
@@ -113,21 +109,27 @@
                 drm: { clearKeys: drmConfig }
             });
 
+            player.addEventListener('error', (e) => {
+                console.error("Shaka Error:", e);
+                document.getElementById('loading').style.display = 'none';
+                document.getElementById('errorBox').style.display = 'block';
+            });
+
             try {
                 await player.load(channel.url);
                 document.getElementById('loading').style.display = 'none';
                 
-                // تفعيل اللغة العربية تلقائياً
+                // تفعيل العربية تلقائياً
                 const tracks = player.getVariantTracks();
                 if (tracks.some(t => t.language === 'ar')) {
                     player.selectAudioLanguage('ar');
                 }
             } catch (e) {
-                console.error("Error loading channel", e);
+                console.error("Load failed", e);
             }
         }
 
-        // --- تحكم الواجهة (إظهار/إخفاء) ---
+        // تحكم الواجهة
         const container = document.getElementById('mainContainer');
         container.addEventListener('mousemove', () => {
             document.getElementById('channelHeader').classList.add('show');
@@ -139,7 +141,6 @@
             }, 3000);
         });
 
-        // أزرار التشغيل
         const v = document.getElementById('dash-video');
         document.getElementById('btnPlay').onclick = () => {
             if(v.paused) { v.play(); document.getElementById('btnPlay').innerHTML = '<i class="fas fa-pause"></i>'; }
