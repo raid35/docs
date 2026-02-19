@@ -3,34 +3,38 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Siksa TV Pro - Smart Adaptive</title>
+    <title>Siksa TV Pro - Vivid Colors</title>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/shaka-player/4.15.9/shaka-player.ui.min.js"></script>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/shaka-player/4.15.9/controls.min.css" rel="stylesheet">
     <style>
         body, html { margin: 0; padding: 0; background: #000; width: 100%; height: 100%; overflow: hidden; }
         .shaka-video-container { width: 100%; height: 100%; }
-        video { width: 100%; height: 100%; object-fit: contain; }
-        
-        /* تحسين مظهر شريط التحميل ليتناسب مع Google TV */
-        .shaka-bottom-controls { display: flex; direction: ltr; }
 
-        /* --- إضافة وتنسيق دائرة التحميل (Spinner) مثل ExoPlayer --- */
+        /* --- محرك معالجة الألوان (هنا السحر) --- */
+        video { 
+            width: 100%; 
+            height: 100%; 
+            object-fit: contain;
+            /* زيادة التباين والتشبع والحدة لتحاكي جودة الهاتف */
+            filter: contrast(1.1) saturate(1.2) brightness(1.05);
+            /* تحسين جودة الحواف (الحدة) */
+            image-rendering: -webkit-optimize-contrast;
+            image-rendering: crisp-edges;
+        }
+
+        /* تنسيق خاص لدائرة التحميل */
         .shaka-spinner-container {
-            width: 100% !important;
-            height: 100% !important;
-            display: flex;
-            justify-content: center;
-            align-items: center;
+            width: 100% !important; height: 100% !important;
+            display: flex; justify-content: center; align-items: center;
         }
-
         .shaka-spinner {
-            width: 70px !important; /* حجم الدائرة */
-            height: 70px !important;
-            border-width: 6px !important; /* سمك الخط */
-            border-color: rgba(255, 255, 255, 0.2) !important;
-            border-top-color: #ff6b35 !important; /* لون التحميل (يمكنك تغييره للأزرق أو البرتقالي) */
+            width: 75px !important; height: 75px !important;
+            border-width: 6px !important;
+            border-top-color: #ff6b35 !important;
         }
-        /* ------------------------------------------------------- */
+        
+        /* جعل شريط التحكم مريح للعين في التلفاز */
+        .shaka-bottom-controls { direction: ltr; padding-bottom: 20px; }
     </style>
 </head>
 <body>
@@ -43,18 +47,23 @@
         const channelList = {
             "BEIN1": {
                 url: "https://aba5sdmaaaaaaaamooyrewxky2c4j.otte.live.cf.ww.aiv-cdn.net/syd-nitro/live/dash/enc/ghwcl6hv68/out/v1/83536910d8034e9b9895a20fbe1c1687/cenc.mpd",
-                kid: "335dad778109954503dcbb21dc92015f", 
+                kid: "335dad778109954503dcbb21dc92015f",
                 key: "24bfd75d436cbf73168a2a2dccd40281"
             },
             "BEIN2": {
                 url: "https://aba5sdmaaaaaaaamdwujas5g6mg4r.otte.live.cf.ww.aiv-cdn.net/syd-nitro/live/clients/dash/enc/8m8cd46i1t/out/v1/83985c68e4174e90a58a1f2c024be4c9/cenc.mpd",
-                kid: "0b42be2664d7e811d04f3e504e0924c5", 
+                kid: "0b42be2664d7e811d04f3e504e0924c5",
                 key: "ae24090123b8c72ac5404dc152847cb8"
             },
             "BEIN3": {
                 url: "https://aba5sdmaaaaaaaamhq2w5oosrf5ae.otte.live.cf.ww.aiv-cdn.net/syd-nitro/live/clients/dash/enc/q4u5nwaogz/out/v1/18de6d3e65934f3a8de4358e69eab86c/cenc.mpd",
-                kid: "7995c724a13748ed970840a8ab5bb9b3", 
+                kid: "7995c724a13748ed970840a8ab5bb9b3",
                 key: "67bdaf1e2175b9ff682fcdf0e2354b1e"
+            },
+            "La_Une": {
+                url: "https://c9851ec-rbm-hilv-fsly.cdn.redbee.live/L26/669bb376/9069a322.isml/.mpd",
+                kid: "cbdd636bb2e44f1fa6ebd41f46a3cc52", 
+                key: "e6ab6c56a79962dcab612e9dc4fea986"
             }
         };
 
@@ -65,46 +74,32 @@
             const player = controls.getPlayer();
 
             const params = new URLSearchParams(window.location.search);
-            const channelId = params.get('id') || "BEIN1";
+            const channelId = params.get('id') || "sps1";
             const channel = channelList[channelId];
 
             if (!channel) return;
+
+            // فلتر تخطي حماية السيرفر
+            player.getNetworkingEngine().registerRequestFilter(function(type, request) {
+                request.headers['User-Agent'] = 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36';
+            });
 
             const drmConfig = {};
             drmConfig[channel.kid] = channel.key;
 
             player.configure({
                 drm: { clearKeys: drmConfig },
-                abr: {
-                    enabled: true,
-                    defaultBandwidthEstimate: 1000000,
-                    switchInterval: 1,
-                    restrictions: { minHeight: 360 }
-                },
+                abr: { enabled: true, switchInterval: 1 },
                 streaming: {
-                    bufferingGoal: 30,
+                    bufferingGoal: 45, // زيادة التخزين المؤقت لثبات الجودة الناقية
                     rebufferingGoal: 2,
-                    bufferBehind: 30,
-                    lowLatencyEnabled: true,
-                    retryParameters: {
-                        maxAttempts: 5,
-                        baseDelay: 1000
-                    }
-                },
-                manifest: {
-                    dash: { autoCorrectDrift: true }
+                    lowLatencyEnabled: true
                 }
             });
 
             try {
                 await player.load(channel.url);
-                const audioTracks = player.getVariantTracks();
-                if (audioTracks.some(t => t.language === 'ar')) {
-                    player.selectAudioLanguage('ar');
-                }
-            } catch (e) {
-                console.error('Error loading channel:', e);
-            }
+            } catch (e) { console.error('Load Error:', e); }
         }
 
         document.addEventListener('shaka-ui-loaded', initPlayer);
