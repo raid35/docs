@@ -3,142 +3,106 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Siksa TV - Balanced</title>
-    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700&display=swap" rel="stylesheet">
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <title>Siksa TV Pro - Vivid Colors</title>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/shaka-player/4.15.9/shaka-player.ui.min.js"></script>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/shaka-player/4.15.9/controls.min.css" rel="stylesheet">
-    
     <style>
-        * { margin: 0; padding: 0; box-sizing: border-box; }
-        body { font-family: 'Cairo', sans-serif; background: #000; color: #fff; overflow: hidden; height: 100vh; }
-        .video-player { position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; background: #000; }
-        #dash-video { width: 100%; height: 100%; object-fit: contain; }
+        body, html { margin: 0; padding: 0; background: #000; width: 100%; height: 100%; overflow: hidden; }
+        .shaka-video-container { width: 100%; height: 100%; }
 
-        .header { position: absolute; top: 0; left: 0; width: 100%; padding: 15px; background: linear-gradient(to bottom, rgba(0,0,0,0.8), transparent); z-index: 2000; display: flex; align-items: center; gap: 10px; opacity: 0; transition: 0.5s; }
-        .header.show { opacity: 1; }
-        .badge { background: #ff6b35; padding: 4px 12px; border-radius: 4px; font-weight: bold; font-size: 0.9rem; }
+        /* --- محرك معالجة الألوان (هنا السحر) --- */
+        video { 
+            width: 100%; 
+            height: 100%; 
+            object-fit: contain;
+            /* زيادة التباين والتشبع والحدة لتحاكي جودة الهاتف */
+            filter: contrast(1.1) saturate(1.2) brightness(1.05);
+            /* تحسين جودة الحواف (الحدة) */
+            image-rendering: -webkit-optimize-contrast;
+            image-rendering: crisp-edges;
+        }
 
-        .controls { position: absolute; bottom: 30px; left: 50%; transform: translateX(-50%); background: rgba(0,0,0,0.7); padding: 10px 25px; border-radius: 50px; display: flex; gap: 20px; opacity: 0; transition: 0.3s; z-index: 2000; }
-        .controls.show { opacity: 1; }
-        .btn { background: none; border: none; color: white; font-size: 1.4rem; cursor: pointer; }
-
-        .loading { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); z-index: 3000; text-align: center; }
-        .spinner { width: 40px; height: 40px; border: 3px solid rgba(255,107,53,0.2); border-top: 3px solid #ff6b35; border-radius: 50%; animation: spin 1s linear infinite; margin: 0 auto 10px; }
-        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+        /* تنسيق خاص لدائرة التحميل */
+        .shaka-spinner-container {
+            width: 100% !important; height: 100% !important;
+            display: flex; justify-content: center; align-items: center;
+        }
+        .shaka-spinner {
+            width: 75px !important; height: 75px !important;
+            border-width: 6px !important;
+            border-top-color: #ff6b35 !important;
+        }
+        
+        /* جعل شريط التحكم مريح للعين في التلفاز */
+        .shaka-bottom-controls { direction: ltr; padding-bottom: 20px; }
     </style>
 </head>
 <body>
 
-    <div class="video-player" id="playerUI">
-        <div class="header" id="headerUI">
-            <span class="badge" id="channelName">LIVE</span>
-            <span id="channelStatus">بث مباشر</span>
-        </div>
-
-        <div class="loading" id="loader">
-            <div class="spinner"></div>
-            <p>جاري التحميل...</p>
-        </div>
-
-        <video id="dash-video" autoplay crossorigin="anonymous" playsinline></video>
-
-        <div class="controls" id="controlsUI">
-            <button class="btn" id="playBtn"><i class="fas fa-pause"></i></button>
-            <button class="btn" id="muteBtn"><i class="fas fa-volume-up"></i></button>
-        </div>
+    <div data-shaka-player-container class="shaka-video-container">
+        <video id="dash-video" data-shaka-player autoplay crossorigin="anonymous" playsinline></video>
     </div>
 
     <script>
         const channelList = {
             "ZIGGO_1": {
-                url: "ttps://mag04.tvx.prd.tv.odido.nl/wh7f454c46tw75168188_-627298088/PLTV/86/224/3221241590/3221241590.mpd?accountinfo=~~V2.0~qbcsJh_jU5C9BcZc959e_wae44b4867b3417aa76b5db2da20fe46c~KZzTWjB8qD1zdgbJjRPVLJX-tV0qiN9RBHC_iseGrsmTSRjj06oGDtGlpSCRGOwF3626cf085c08d024c7e4aafc18c32440:UTC,",
-                k1: "ef34ae91b4f2415e8439b2ad105e7488",
-                k2: "243248d8de1ff8c7c587ee2057317523"
+                url: "https://mag04.tvx.prd.tv.odido.nl/wh7f454c46tw75168188_-627298088/PLTV/86/224/3221241590/3221241590.mpd?accountinfo=~~V2.0~qbcsJh_jU5C9BcZc959e_wae44b4867b3417aa76b5db2da20fe46c~KZzTWjB8qD1zdgbJjRPVLJX-tV0qiN9RBHC_iseGrsmTSRjj06oGDtGlpSCRGOwF3626cf085c08d024c7e4aafc18c32440:UTC,",
+                kid: "ef34ae91b4f2415e8439b2ad105e7488",
+                key: "243248d8de1ff8c7c587ee2057317523"
             },
-            "ZIGGO_2": {
-                url: "https://mag02.tvx.prd.tv.odido.nl/wh7f454c46tw407556707_-381738111/PLTV/86/224/3221241511/3221241511.mpd?accountinfo=~~V2.0~yVi0dMX4icO5Ka9e92EQfg8812e1c1044f7d357066472e3ee99ef4~2dRB9E-vDtoAbYl169LbcJpxUgWVJtbeU_PlhGfNUflphvljOb5VaEhxruETYG9qcccaf5c5b655bf7504ed7ec5a1dd798f:UTC,",
-                k1: "4dbea4b5713a4aa1ae3a2544cd522fc7",
-                k2: "a8323ea99b2d6200a48e1bc27322d548"
+            "BEIN2": {
+                url: "https://aba5sdmaaaaaaaamdwujas5g6mg4r.otte.live.cf.ww.aiv-cdn.net/syd-nitro/live/clients/dash/enc/8m8cd46i1t/out/v1/83985c68e4174e90a58a1f2c024be4c9/cenc.mpd",
+                kid: "0b42be2664d7e811d04f3e504e0924c5",
+                key: "ae24090123b8c72ac5404dc152847cb8"
             },
-			"ZIGGO_3": {
-                url: "https://mag02.tvx.prd.tv.odido.nl/wh7f454c46tw407556707_-381738111/PLTV/86/224/3221241511/3221241511.mpd?accountinfo=~~V2.0~yVi0dMX4icO5Ka9e92EQfg8812e1c1044f7d357066472e3ee99ef4~2dRB9E-vDtoAbYl169LbcJpxUgWVJtbeU_PlhGfNUflphvljOb5VaEhxruETYG9qcccaf5c5b655bf7504ed7ec5a1dd798f:UTC,",
-                k1: "4dbea4b5713a4aa1ae3a2544cd522fc7",
-                k2: "a8323ea99b2d6200a48e1bc27322d548"
+            "BEIN3": {
+                url: "https://aba5sdmaaaaaaaamhq2w5oosrf5ae.otte.live.cf.ww.aiv-cdn.net/syd-nitro/live/clients/dash/enc/q4u5nwaogz/out/v1/18de6d3e65934f3a8de4358e69eab86c/cenc.mpd",
+                kid: "7995c724a13748ed970840a8ab5bb9b3",
+                key: "67bdaf1e2175b9ff682fcdf0e2354b1e"
             },
-			"ZIGGO_4": {
-                url: "https://mag02.tvx.prd.tv.odido.nl/wh7f454c46tw407556707_-381738111/PLTV/86/224/3221241511/3221241511.mpd?accountinfo=~~V2.0~yVi0dMX4icO5Ka9e92EQfg8812e1c1044f7d357066472e3ee99ef4~2dRB9E-vDtoAbYl169LbcJpxUgWVJtbeU_PlhGfNUflphvljOb5VaEhxruETYG9qcccaf5c5b655bf7504ed7ec5a1dd798f:UTC,",
-                k1: "4dbea4b5713a4aa1ae3a2544cd522fc7",
-                k2: "a8323ea99b2d6200a48e1bc27322d548"
-            },
-			"ZIGGO_5": {
-                url: "https://mag02.tvx.prd.tv.odido.nl/wh7f454c46tw407556707_-381738111/PLTV/86/224/3221241511/3221241511.mpd?accountinfo=~~V2.0~yVi0dMX4icO5Ka9e92EQfg8812e1c1044f7d357066472e3ee99ef4~2dRB9E-vDtoAbYl169LbcJpxUgWVJtbeU_PlhGfNUflphvljOb5VaEhxruETYG9qcccaf5c5b655bf7504ed7ec5a1dd798f:UTC,",
-                k1: "3fb40d85724942f994d86943f48021db",
-                k2: "a6da8742502c8a2153067f5f2a70fb02"
-            },
-            "ZIGGO_6": {
-                url: "https://mag03.tvx.prd.tv.odido.nl/wh7f454c46tw1024019879_757686866/PLTV/86/224/3221241521/3221241521.mpd?accountinfo=~~V2.0~URnD_afuosWHfY5OEqRXOwfa01c8ac56cf4511de39c2c4a3cab278~iVxKjbtf2gx_dYFqI-vt5C4Cu3COYDjZaw6C_kO2T2wm30fwo1ctD1gr_e2PrgTh48867c3177f3c34842031623cb2e06c9:UTC,",
-                k1: "1a0ffa532aa2498490826e2f6a37f7c9",
-                k2: "a8cec27bc7d47909c5b0d8f473b43e8d"
+            "La_Une": {
+                url: "https://c9851ec-rbm-hilv-fsly.cdn.redbee.live/L26/669bb376/9069a322.isml/.mpd",
+                kid: "cbdd636bb2e44f1fa6ebd41f46a3cc52", 
+                key: "e6ab6c56a79962dcab612e9dc4fea986"
             }
         };
 
         async function initPlayer() {
+            const video = document.getElementById('dash-video');
+            const ui = video['ui'];
+            const controls = ui.getControls();
+            const player = controls.getPlayer();
+
             const params = new URLSearchParams(window.location.search);
-            const channelId = params.get('id') || "BEIN1";
+            const channelId = params.get('id') || "sps1";
             const channel = channelList[channelId];
 
             if (!channel) return;
 
-            const video = document.getElementById('dash-video');
-            const player = new shaka.Player(video);
+            // فلتر تخطي حماية السيرفر
+            player.getNetworkingEngine().registerRequestFilter(function(type, request) {
+                request.headers['User-Agent'] = 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36';
+            });
 
-            const keys = {};
-            keys[channel.k1] = channel.k2;
+            const drmConfig = {};
+            drmConfig[channel.kid] = channel.key;
 
-            // --- إعدادات خفيفة وسريعة التبديل ---
             player.configure({
-                preferredAudioLanguage: 'ar',
-                drm: { clearKeys: keys },
+                drm: { clearKeys: drmConfig },
+                abr: { enabled: true, switchInterval: 1 },
                 streaming: {
-                    bufferingGoal: 10,       // تقليل القيمة لـ 10 ثوانٍ فقط لتخفيف الضغط
-                    rebufferingGoal: 2,      // تشغيل سريع عند الانقطاع
-                    bufferBehind: 10,
-                    jumpOnLiveEdge: true
-                },
-                abr: {
-                    enabled: true,           // تشغيل التبديل التلقائي
-                    switchInterval: 2,       // منح المشغل وقت بسيط (ثانيتين) للتنقل بين الجودات بهدوء
+                    bufferingGoal: 45, // زيادة التخزين المؤقت لثبات الجودة الناقية
+                    rebufferingGoal: 2,
+                    lowLatencyEnabled: true
                 }
             });
 
             try {
                 await player.load(channel.url);
-                document.getElementById('loader').style.display = 'none';
-                document.getElementById('channelName').innerText = channelId;
-                player.selectAudioLanguage('ar');
-            } catch (e) { console.error(e); }
+            } catch (e) { console.error('Load Error:', e); }
         }
 
-        // واجهة المستخدم
-        const ui = document.getElementById('playerUI');
-        ui.onmousemove = () => {
-            document.getElementById('headerUI').classList.add('show');
-            document.getElementById('controlsUI').classList.add('show');
-            clearTimeout(window.t);
-            window.t = setTimeout(() => {
-                document.getElementById('headerUI').classList.remove('show');
-                document.getElementById('controlsUI').classList.remove('show');
-            }, 3000);
-        };
-
-        const v = document.getElementById('dash-video');
-        document.getElementById('playBtn').onclick = () => {
-            if(v.paused) { v.play(); document.getElementById('playBtn').innerHTML = '<i class="fas fa-pause"></i>'; }
-            else { v.pause(); document.getElementById('playBtn').innerHTML = '<i class="fas fa-play"></i>'; }
-        };
-
-        document.addEventListener('DOMContentLoaded', initPlayer);
+        document.addEventListener('shaka-ui-loaded', initPlayer);
     </script>
 </body>
 </html>
