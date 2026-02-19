@@ -13,6 +13,24 @@
         
         /* تحسين مظهر شريط التحميل ليتناسب مع Google TV */
         .shaka-bottom-controls { display: flex; direction: ltr; }
+
+        /* --- إضافة وتنسيق دائرة التحميل (Spinner) مثل ExoPlayer --- */
+        .shaka-spinner-container {
+            width: 100% !important;
+            height: 100% !important;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .shaka-spinner {
+            width: 70px !important; /* حجم الدائرة */
+            height: 70px !important;
+            border-width: 6px !important; /* سمك الخط */
+            border-color: rgba(255, 255, 255, 0.2) !important;
+            border-top-color: #ff6b35 !important; /* لون التحميل (يمكنك تغييره للأزرق أو البرتقالي) */
+        }
+        /* ------------------------------------------------------- */
     </style>
 </head>
 <body>
@@ -52,37 +70,34 @@
 
             if (!channel) return;
 
-            // ضبط المفاتيح
             const drmConfig = {};
             drmConfig[channel.kid] = channel.key;
 
-            // --- الإعدادات الاحترافية (ExoPlayer Style) ---
             player.configure({
                 drm: { clearKeys: drmConfig },
                 abr: {
-                    enabled: true,            // تفعيل التبديل التلقائي للجودة
-                    defaultBandwidthEstimate: 1000000, // البدء بجودة متوسطة لتجنب التقطيع الأولي
-                    switchInterval: 1,        // سرعة التبديل عند تغير سرعة النت (ثانية واحدة)
-                    restrictions: { minHeight: 360 } // عدم النزول لجودة سيئة جداً
+                    enabled: true,
+                    defaultBandwidthEstimate: 1000000,
+                    switchInterval: 1,
+                    restrictions: { minHeight: 360 }
                 },
                 streaming: {
-                    bufferingGoal: 30,        // تخزين 30 ثانية للمستقبل (ممتاز للتلفاز)
-                    rebufferingGoal: 2,       // إعادة التشغيل فوراً بعد تخزين ثانيتين فقط
-                    bufferBehind: 30,         // الاحتفاظ بما تم تشغيله للرجوع إليه
-                    lowLatencyEnabled: true,  // وضع البث المباشر السريع
+                    bufferingGoal: 30,
+                    rebufferingGoal: 2,
+                    bufferBehind: 30,
+                    lowLatencyEnabled: true,
                     retryParameters: {
-                        maxAttempts: 5,       // إعادة المحاولة 5 مرات عند الفشل
-                        baseDelay: 1000       // التأخير بين المحاولات ثانية واحدة
+                        maxAttempts: 5,
+                        baseDelay: 1000
                     }
                 },
                 manifest: {
-                    dash: { autoCorrectDrift: true } // تصحيح وقت البث المباشر تلقائياً
+                    dash: { autoCorrectDrift: true }
                 }
             });
 
             try {
                 await player.load(channel.url);
-                // تفعيل الصوت العربي تلقائياً إذا وجد
                 const audioTracks = player.getVariantTracks();
                 if (audioTracks.some(t => t.language === 'ar')) {
                     player.selectAudioLanguage('ar');
