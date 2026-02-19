@@ -3,50 +3,19 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Siksa TV - Balanced</title>
-    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700&display=swap" rel="stylesheet">
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <title>Siksa TV Pro</title>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/shaka-player/4.15.9/shaka-player.ui.min.js"></script>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/shaka-player/4.15.9/controls.min.css" rel="stylesheet">
-    
     <style>
-        * { margin: 0; padding: 0; box-sizing: border-box; }
-        body { font-family: 'Cairo', sans-serif; background: #000; color: #fff; overflow: hidden; height: 100vh; }
-        .video-player { position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; background: #000; }
-        #dash-video { width: 100%; height: 100%; object-fit: contain; }
-
-        .header { position: absolute; top: 0; left: 0; width: 100%; padding: 15px; background: linear-gradient(to bottom, rgba(0,0,0,0.8), transparent); z-index: 2000; display: flex; align-items: center; gap: 10px; opacity: 0; transition: 0.5s; }
-        .header.show { opacity: 1; }
-        .badge { background: #ff6b35; padding: 4px 12px; border-radius: 4px; font-weight: bold; font-size: 0.9rem; }
-
-        .controls { position: absolute; bottom: 30px; left: 50%; transform: translateX(-50%); background: rgba(0,0,0,0.7); padding: 10px 25px; border-radius: 50px; display: flex; gap: 20px; opacity: 0; transition: 0.3s; z-index: 2000; }
-        .controls.show { opacity: 1; }
-        .btn { background: none; border: none; color: white; font-size: 1.4rem; cursor: pointer; }
-
-        .loading { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); z-index: 3000; text-align: center; }
-        .spinner { width: 40px; height: 40px; border: 3px solid rgba(255,107,53,0.2); border-top: 3px solid #ff6b35; border-radius: 50%; animation: spin 1s linear infinite; margin: 0 auto 10px; }
-        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+        body { margin: 0; background: #000; height: 100vh; display: flex; align-items: center; }
+        #player-container { width: 100%; height: 100%; }
+        video { width: 100%; height: 100%; }
     </style>
 </head>
 <body>
 
-    <div class="video-player" id="playerUI">
-        <div class="header" id="headerUI">
-            <span class="badge" id="channelName">LIVE</span>
-            <span id="channelStatus">بث مباشر</span>
-        </div>
-
-        <div class="loading" id="loader">
-            <div class="spinner"></div>
-            <p>جاري التحميل...</p>
-        </div>
-
+    <div id="player-container">
         <video id="dash-video" autoplay crossorigin="anonymous" playsinline></video>
-
-        <div class="controls" id="controlsUI">
-            <button class="btn" id="playBtn"><i class="fas fa-pause"></i></button>
-            <button class="btn" id="muteBtn"><i class="fas fa-volume-up"></i></button>
-        </div>
     </div>
 
     <script>
@@ -60,11 +29,6 @@
                 url: "https://aba5sdmaaaaaaaamdwujas5g6mg4r.otte.live.cf.ww.aiv-cdn.net/syd-nitro/live/clients/dash/enc/8m8cd46i1t/out/v1/83985c68e4174e90a58a1f2c024be4c9/cenc.mpd",
                 kid: "0b42be2664d7e811d04f3e504e0924c5", 
                 key: "ae24090123b8c72ac5404dc152847cb8"
-            },
-			"BEIN3": {
-                url: "https://aba5sdmaaaaaaaamhq2w5oosrf5ae.otte.live.cf.ww.aiv-cdn.net/syd-nitro/live/clients/dash/enc/q4u5nwaogz/out/v1/18de6d3e65934f3a8de4358e69eab86c/cenc.mpd",
-                kid: "7995c724a13748ed970840a8ab5bb9b3", 
-                key: "67bdaf1e2175b9ff682fcdf0e2354b1e"
             }
         };
 
@@ -78,50 +42,29 @@
             const video = document.getElementById('dash-video');
             const player = new shaka.Player(video);
 
-            const keys = {};
-            keys[channel.k1] = channel.k2;
+            // إصلاح مصفوفة المفاتيح
+            const drmConfig = {};
+            drmConfig[channel.kid] = channel.key;
 
-            // --- إعدادات خفيفة وسريعة التبديل ---
             player.configure({
-                preferredAudioLanguage: 'ar',
-                drm: { clearKeys: keys },
+                drm: { clearKeys: drmConfig },
                 streaming: {
-                    bufferingGoal: 10,       // تقليل القيمة لـ 10 ثوانٍ فقط لتخفيف الضغط
-                    rebufferingGoal: 2,      // تشغيل سريع عند الانقطاع
-                    bufferBehind: 10,
-                    jumpOnLiveEdge: true
-                },
-                abr: {
-                    enabled: true,           // تشغيل التبديل التلقائي
-                    switchInterval: 2,       // منح المشغل وقت بسيط (ثانيتين) للتنقل بين الجودات بهدوء
+                    bufferingGoal: 5, // تقليل التخزين لسرعة البدء في الموبايل
+                    rebufferingGoal: 2,
+                    lowLatencyEnabled: true
                 }
             });
 
+            // إضافة مستمع للأخطاء لمعرفة السبب في الـ WebView
+            player.addEventListener('error', (event) => console.error('Error code', event.detail.code, 'object', event.detail));
+
             try {
                 await player.load(channel.url);
-                document.getElementById('loader').style.display = 'none';
-                document.getElementById('channelName').innerText = channelId;
-                player.selectAudioLanguage('ar');
-            } catch (e) { console.error(e); }
+                console.log('The video has now been loaded!');
+            } catch (e) {
+                console.error('Error loading item', e);
+            }
         }
-
-        // واجهة المستخدم
-        const ui = document.getElementById('playerUI');
-        ui.onmousemove = () => {
-            document.getElementById('headerUI').classList.add('show');
-            document.getElementById('controlsUI').classList.add('show');
-            clearTimeout(window.t);
-            window.t = setTimeout(() => {
-                document.getElementById('headerUI').classList.remove('show');
-                document.getElementById('controlsUI').classList.remove('show');
-            }, 3000);
-        };
-
-        const v = document.getElementById('dash-video');
-        document.getElementById('playBtn').onclick = () => {
-            if(v.paused) { v.play(); document.getElementById('playBtn').innerHTML = '<i class="fas fa-pause"></i>'; }
-            else { v.pause(); document.getElementById('playBtn').innerHTML = '<i class="fas fa-play"></i>'; }
-        };
 
         document.addEventListener('DOMContentLoaded', initPlayer);
     </script>
