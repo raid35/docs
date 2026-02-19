@@ -3,19 +3,22 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Siksa TV Pro</title>
+    <title>Siksa TV Pro - Smart Adaptive</title>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/shaka-player/4.15.9/shaka-player.ui.min.js"></script>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/shaka-player/4.15.9/controls.min.css" rel="stylesheet">
     <style>
-        body { margin: 0; background: #000; height: 100vh; display: flex; align-items: center; }
-        #player-container { width: 100%; height: 100%; }
-        video { width: 100%; height: 100%; }
+        body, html { margin: 0; padding: 0; background: #000; width: 100%; height: 100%; overflow: hidden; }
+        .shaka-video-container { width: 100%; height: 100%; }
+        video { width: 100%; height: 100%; object-fit: contain; }
+        
+        /* تحسين مظهر شريط التحميل ليتناسب مع Google TV */
+        .shaka-bottom-controls { display: flex; direction: ltr; }
     </style>
 </head>
 <body>
 
-    <div id="player-container">
-        <video id="dash-video" autoplay crossorigin="anonymous" playsinline></video>
+    <div data-shaka-player-container class="shaka-video-container">
+        <video id="dash-video" data-shaka-player autoplay crossorigin="anonymous" playsinline></video>
     </div>
 
     <script>
@@ -38,40 +41,58 @@
         };
 
         async function initPlayer() {
+            const video = document.getElementById('dash-video');
+            const ui = video['ui'];
+            const controls = ui.getControls();
+            const player = controls.getPlayer();
+
             const params = new URLSearchParams(window.location.search);
             const channelId = params.get('id') || "BEIN1";
             const channel = channelList[channelId];
 
             if (!channel) return;
 
-            const video = document.getElementById('dash-video');
-            const player = new shaka.Player(video);
-
-            // إصلاح مصفوفة المفاتيح
+            // ضبط المفاتيح
             const drmConfig = {};
             drmConfig[channel.kid] = channel.key;
 
+            // --- الإعدادات الاحترافية (ExoPlayer Style) ---
             player.configure({
                 drm: { clearKeys: drmConfig },
+                abr: {
+                    enabled: true,            // تفعيل التبديل التلقائي للجودة
+                    defaultBandwidthEstimate: 1000000, // البدء بجودة متوسطة لتجنب التقطيع الأولي
+                    switchInterval: 1,        // سرعة التبديل عند تغير سرعة النت (ثانية واحدة)
+                    restrictions: { minHeight: 360 } // عدم النزول لجودة سيئة جداً
+                },
                 streaming: {
-                    bufferingGoal: 5, // تقليل التخزين لسرعة البدء في الموبايل
-                    rebufferingGoal: 2,
-                    lowLatencyEnabled: true
+                    bufferingGoal: 30,        // تخزين 30 ثانية للمستقبل (ممتاز للتلفاز)
+                    rebufferingGoal: 2,       // إعادة التشغيل فوراً بعد تخزين ثانيتين فقط
+                    bufferBehind: 30,         // الاحتفاظ بما تم تشغيله للرجوع إليه
+                    lowLatencyEnabled: true,  // وضع البث المباشر السريع
+                    retryParameters: {
+                        maxAttempts: 5,       // إعادة المحاولة 5 مرات عند الفشل
+                        baseDelay: 1000       // التأخير بين المحاولات ثانية واحدة
+                    }
+                },
+                manifest: {
+                    dash: { autoCorrectDrift: true } // تصحيح وقت البث المباشر تلقائياً
                 }
             });
 
-            // إضافة مستمع للأخطاء لمعرفة السبب في الـ WebView
-            player.addEventListener('error', (event) => console.error('Error code', event.detail.code, 'object', event.detail));
-
             try {
                 await player.load(channel.url);
-                console.log('The video has now been loaded!');
+                // تفعيل الصوت العربي تلقائياً إذا وجد
+                const audioTracks = player.getVariantTracks();
+                if (audioTracks.some(t => t.language === 'ar')) {
+                    player.selectAudioLanguage('ar');
+                }
             } catch (e) {
-                console.error('Error loading item', e);
+                console.error('Error loading channel:', e);
             }
         }
 
-        document.addEventListener('DOMContentLoaded', initPlayer);
+        document.addEventListener('shaka-ui-loaded', initPlayer);
     </script>
 </body>
 </html>
