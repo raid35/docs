@@ -3,50 +3,40 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Siksa TV - Balanced</title>
-    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700&display=swap" rel="stylesheet">
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <title>Siksa TV Pro - Smart Adaptive</title>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/shaka-player/4.15.9/shaka-player.ui.min.js"></script>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/shaka-player/4.15.9/controls.min.css" rel="stylesheet">
-    
     <style>
-        * { margin: 0; padding: 0; box-sizing: border-box; }
-        body { font-family: 'Cairo', sans-serif; background: #000; color: #fff; overflow: hidden; height: 100vh; }
-        .video-player { position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; background: #000; }
-        #dash-video { width: 100%; height: 100%; object-fit: contain; }
+        body, html { margin: 0; padding: 0; background: #000; width: 100%; height: 100%; overflow: hidden; }
+        .shaka-video-container { width: 100%; height: 100%; }
+        video { width: 100%; height: 100%; object-fit: contain; }
+        
+        /* تحسين مظهر شريط التحميل ليتناسب مع Google TV */
+        .shaka-bottom-controls { display: flex; direction: ltr; }
 
-        .header { position: absolute; top: 0; left: 0; width: 100%; padding: 15px; background: linear-gradient(to bottom, rgba(0,0,0,0.8), transparent); z-index: 2000; display: flex; align-items: center; gap: 10px; opacity: 0; transition: 0.5s; }
-        .header.show { opacity: 1; }
-        .badge { background: #ff6b35; padding: 4px 12px; border-radius: 4px; font-weight: bold; font-size: 0.9rem; }
+        /* --- إضافة وتنسيق دائرة التحميل (Spinner) مثل ExoPlayer --- */
+        .shaka-spinner-container {
+            width: 100% !important;
+            height: 100% !important;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
 
-        .controls { position: absolute; bottom: 30px; left: 50%; transform: translateX(-50%); background: rgba(0,0,0,0.7); padding: 10px 25px; border-radius: 50px; display: flex; gap: 20px; opacity: 0; transition: 0.3s; z-index: 2000; }
-        .controls.show { opacity: 1; }
-        .btn { background: none; border: none; color: white; font-size: 1.4rem; cursor: pointer; }
-
-        .loading { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); z-index: 3000; text-align: center; }
-        .spinner { width: 40px; height: 40px; border: 3px solid rgba(255,107,53,0.2); border-top: 3px solid #ff6b35; border-radius: 50%; animation: spin 1s linear infinite; margin: 0 auto 10px; }
-        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+        .shaka-spinner {
+            width: 70px !important; /* حجم الدائرة */
+            height: 70px !important;
+            border-width: 6px !important; /* سمك الخط */
+            border-color: rgba(255, 255, 255, 0.2) !important;
+            border-top-color: #ff6b35 !important; /* لون التحميل (يمكنك تغييره للأزرق أو البرتقالي) */
+        }
+        /* ------------------------------------------------------- */
     </style>
 </head>
 <body>
 
-    <div class="video-player" id="playerUI">
-        <div class="header" id="headerUI">
-            <span class="badge" id="channelName">LIVE</span>
-            <span id="channelStatus">بث مباشر</span>
-        </div>
-
-        <div class="loading" id="loader">
-            <div class="spinner"></div>
-            <p>جاري التحميل...</p>
-        </div>
-
-        <video id="dash-video" autoplay crossorigin="anonymous" playsinline></video>
-
-        <div class="controls" id="controlsUI">
-            <button class="btn" id="playBtn"><i class="fas fa-pause"></i></button>
-            <button class="btn" id="muteBtn"><i class="fas fa-volume-up"></i></button>
-        </div>
+    <div data-shaka-player-container class="shaka-video-container">
+        <video id="dash-video" data-shaka-player autoplay crossorigin="anonymous" playsinline></video>
     </div>
 
     <script>
@@ -79,61 +69,55 @@
         };
 
         async function initPlayer() {
+            const video = document.getElementById('dash-video');
+            const ui = video['ui'];
+            const controls = ui.getControls();
+            const player = controls.getPlayer();
+
             const params = new URLSearchParams(window.location.search);
             const channelId = params.get('id') || "BEIN1";
             const channel = channelList[channelId];
 
             if (!channel) return;
 
-            const video = document.getElementById('dash-video');
-            const player = new shaka.Player(video);
+            const drmConfig = {};
+            drmConfig[channel.kid] = channel.key;
 
-            const keys = {};
-            keys[channel.k1] = channel.k2;
-
-            // --- إعدادات خفيفة وسريعة التبديل ---
             player.configure({
-                preferredAudioLanguage: 'ar',
-                drm: { clearKeys: keys },
-                streaming: {
-                    bufferingGoal: 10,       // تقليل القيمة لـ 10 ثوانٍ فقط لتخفيف الضغط
-                    rebufferingGoal: 2,      // تشغيل سريع عند الانقطاع
-                    bufferBehind: 10,
-                    jumpOnLiveEdge: true
-                },
+                drm: { clearKeys: drmConfig },
                 abr: {
-                    enabled: true,           // تشغيل التبديل التلقائي
-                    switchInterval: 2,       // منح المشغل وقت بسيط (ثانيتين) للتنقل بين الجودات بهدوء
+                    enabled: true,
+                    defaultBandwidthEstimate: 1000000,
+                    switchInterval: 1,
+                    restrictions: { minHeight: 360 }
+                },
+                streaming: {
+                    bufferingGoal: 30,
+                    rebufferingGoal: 2,
+                    bufferBehind: 30,
+                    lowLatencyEnabled: true,
+                    retryParameters: {
+                        maxAttempts: 5,
+                        baseDelay: 1000
+                    }
+                },
+                manifest: {
+                    dash: { autoCorrectDrift: true }
                 }
             });
 
             try {
                 await player.load(channel.url);
-                document.getElementById('loader').style.display = 'none';
-                document.getElementById('channelName').innerText = channelId;
-                player.selectAudioLanguage('ar');
-            } catch (e) { console.error(e); }
+                const audioTracks = player.getVariantTracks();
+                if (audioTracks.some(t => t.language === 'ar')) {
+                    player.selectAudioLanguage('ar');
+                }
+            } catch (e) {
+                console.error('Error loading channel:', e);
+            }
         }
 
-        // واجهة المستخدم
-        const ui = document.getElementById('playerUI');
-        ui.onmousemove = () => {
-            document.getElementById('headerUI').classList.add('show');
-            document.getElementById('controlsUI').classList.add('show');
-            clearTimeout(window.t);
-            window.t = setTimeout(() => {
-                document.getElementById('headerUI').classList.remove('show');
-                document.getElementById('controlsUI').classList.remove('show');
-            }, 3000);
-        };
-
-        const v = document.getElementById('dash-video');
-        document.getElementById('playBtn').onclick = () => {
-            if(v.paused) { v.play(); document.getElementById('playBtn').innerHTML = '<i class="fas fa-pause"></i>'; }
-            else { v.pause(); document.getElementById('playBtn').innerHTML = '<i class="fas fa-play"></i>'; }
-        };
-
-        document.addEventListener('DOMContentLoaded', initPlayer);
+        document.addEventListener('shaka-ui-loaded', initPlayer);
     </script>
 </body>
 </html>
