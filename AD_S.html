@@ -3,31 +3,38 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Siksa TV Pro - Global Support</title>
+    <title>Siksa TV Pro - Vivid Colors</title>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/shaka-player/4.15.9/shaka-player.ui.min.js"></script>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/shaka-player/4.15.9/controls.min.css" rel="stylesheet">
     <style>
         body, html { margin: 0; padding: 0; background: #000; width: 100%; height: 100%; overflow: hidden; }
         .shaka-video-container { width: 100%; height: 100%; }
-        video { width: 100%; height: 100%; object-fit: contain; }
-        
-        .shaka-bottom-controls { display: flex; direction: ltr; }
 
-        /* دائرة التحميل الاحترافية */
+        /* --- محرك معالجة الألوان (هنا السحر) --- */
+        video { 
+            width: 100%; 
+            height: 100%; 
+            object-fit: contain;
+            /* زيادة التباين والتشبع والحدة لتحاكي جودة الهاتف */
+            filter: contrast(1.1) saturate(1.2) brightness(1.05);
+            /* تحسين جودة الحواف (الحدة) */
+            image-rendering: -webkit-optimize-contrast;
+            image-rendering: crisp-edges;
+        }
+
+        /* تنسيق خاص لدائرة التحميل */
         .shaka-spinner-container {
-            width: 100% !important;
-            height: 100% !important;
-            display: flex;
-            justify-content: center;
-            align-items: center;
+            width: 100% !important; height: 100% !important;
+            display: flex; justify-content: center; align-items: center;
         }
         .shaka-spinner {
-            width: 70px !important;
-            height: 70px !important;
+            width: 75px !important; height: 75px !important;
             border-width: 6px !important;
-            border-color: rgba(255, 255, 255, 0.2) !important;
             border-top-color: #ff6b35 !important;
         }
+        
+        /* جعل شريط التحكم مريح للعين في التلفاز */
+        .shaka-bottom-controls { direction: ltr; padding-bottom: 20px; }
     </style>
 </head>
 <body>
@@ -67,14 +74,14 @@
             const player = controls.getPlayer();
 
             const params = new URLSearchParams(window.location.search);
-            const channelId = params.get('id') || "BEIN1";
+            const channelId = params.get('id') || "sps1";
             const channel = channelList[channelId];
 
             if (!channel) return;
 
-            // نظام فلترة الطلبات لتخطي حماية السيرفر (مهم لقنوات StarzPlay)
+            // فلتر تخطي حماية السيرفر
             player.getNetworkingEngine().registerRequestFilter(function(type, request) {
-                request.headers['User-Agent'] = 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/118.0.0.0 Safari/537.36';
+                request.headers['User-Agent'] = 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36';
             });
 
             const drmConfig = {};
@@ -82,33 +89,20 @@
 
             player.configure({
                 drm: { clearKeys: drmConfig },
-                abr: {
-                    enabled: true,
-                    defaultBandwidthEstimate: 1000000,
-                    switchInterval: 1
-                },
+                abr: { enabled: true, switchInterval: 1 },
                 streaming: {
-                    bufferingGoal: 30,
+                    bufferingGoal: 45, // زيادة التخزين المؤقت لثبات الجودة الناقية
                     rebufferingGoal: 2,
-                    lowLatencyEnabled: true,
-                    retryParameters: { maxAttempts: 5, baseDelay: 1000 }
+                    lowLatencyEnabled: true
                 }
             });
 
             try {
                 await player.load(channel.url);
-                // محاولة اختيار المسار الصوتي العربي
-                const tracks = player.getVariantTracks();
-                if (tracks.some(t => t.language.startsWith('ar'))) {
-                    player.selectAudioLanguage('ar');
-                }
-            } catch (e) {
-                console.error('فشل في تحميل القناة:', e);
-            }
+            } catch (e) { console.error('Load Error:', e); }
         }
 
         document.addEventListener('shaka-ui-loaded', initPlayer);
     </script>
 </body>
 </html>
-
