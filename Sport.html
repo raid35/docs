@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Siksa TV Pro - Vivid Colors</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/shaka-player/4.15.9/shaka-player.ui.min.js"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/shaka-player/4.15.9/controls.min.css" rel="stylesheet">
+    <style>
+        body, html { margin: 0; padding: 0; background: #000; width: 100%; height: 100%; overflow: hidden; }
+        .shaka-video-container { width: 100%; height: 100%; }
+
+        /* --- محرك معالجة الألوان (هنا السحر) --- */
+        video { 
+            width: 100%; 
+            height: 100%; 
+            object-fit: contain;
+            /* زيادة التباين والتشبع والحدة لتحاكي جودة الهاتف */
+            filter: contrast(1.1) saturate(1.2) brightness(1.05);
+            /* تحسين جودة الحواف (الحدة) */
+            image-rendering: -webkit-optimize-contrast;
+            image-rendering: crisp-edges;
+        }
+
+        /* تنسيق خاص لدائرة التحميل */
+        .shaka-spinner-container {
+            width: 100% !important; height: 100% !important;
+            display: flex; justify-content: center; align-items: center;
+        }
+        .shaka-spinner {
+            width: 75px !important; height: 75px !important;
+            border-width: 6px !important;
+            border-top-color: #ff6b35 !important;
+        }
+        
+        /* جعل شريط التحكم مريح للعين في التلفاز */
+        .shaka-bottom-controls { direction: ltr; padding-bottom: 20px; }
+    </style>
+</head>
+<body>
+
+    <div data-shaka-player-container class="shaka-video-container">
+        <video id="dash-video" data-shaka-player autoplay crossorigin="anonymous" playsinline></video>
+    </div>
+
+    <script>
+        const channelList = {
+            "Матч": {
+                url: "https://video.beeline.tv/live/d/channel317.isml/manifest-stb.mpd",
+                kid: "5e1c798b16d24dc8cbfc7819abf77b4d",
+                key: "4ba5d9aeba2239b425d1cf7b45474333"
+            },
+            "Матч_1": {
+                url: "https://video.beeline.tv/live/d/channel319.isml/manifest-stb.mpd",
+                kid: "9145a6e0f778e61866f573d4944dd533",
+                key: "d02173d40515fea5c83944f21d0f3114"
+            },
+            "Матч_2": {
+                url: "https://video.beeline.tv/live/d/channel320.isml/manifest-stb.mpd",
+                kid: "ce7cf9b28d1a8d874accebc44d7e1fcd",
+                key: "cda18d4d20abd5cc778315abe277feb9"
+            },
+             "Матч_3": {
+                url: "https://video.beeline.tv/live/d/channel321.isml/manifest-stb.mpd",
+                kid: "6cfb55b12aaa9df1626a8adaa4f26329",
+                key: "84486e2e8e5fdee2ef8240019923078c"
+            },
+            "premier_1": {
+                url: "https://ottb.live.cf.ww.aiv-cdn.net/lhr-nitro/live/clients/dash/enc/vwq77hfgzw/out/v1/b858e0b845c64cec953887bd4269e4ea/cenc.mpd",
+                kid: "1444f4235529f183f0a5a486befe9cdb",
+                key: "e5e3fec67a1bb3472a2089c8a0a2557f"
+            },
+			"premier_2": {
+                url: "https://ottb.live.cf.ww.aiv-cdn.net/lhr-nitro/live/clients/dash/enc/w34nznx0bz/out/v1/1c6639b9af994c75847def2249302066/cenc.mpd",
+                kid: "1a5df53609ebc9857898c490f4724918",
+                key: "77f62980d582ec541280796acf8b2d19"
+            },
+			"Sport_1": {
+                url: "https://dash2.antik.sk/stream/nvidia_sport_1/playlist_cenc.mpd",
+                kid: "11223344556677889900112233445566",
+                key: "4b80724d0ef86bcb2c21f7999d67739d"
+            },
+			"Sport_2": {
+                url: "https://dash2.antik.sk/stream/nvidia_sport2/playlist_cenc.mpd",
+                kid: "11223344556677889900112233445566",
+                key: "4b80724d0ef86bcb2c21f7999d67739d"
+            },
+			"Nova_1": {
+                url: "https://dash2.antik.sk/stream/nvidia_nova_sport1/playlist_cenc.mpd",
+                kid: "11223344556677889900112233445566",
+                key: "4b80724d0ef86bcb2c21f7999d67739d"
+            },
+            "Nova_2": {
+               url: "https://dash2.antik.sk/stream/nvidia_nova_sport2/playlist_cenc.mpd",
+                kid: "11223344556677889900112233445566",
+                key: "4b80724d0ef86bcb2c21f7999d67739d"
+            }
+        };
+
+        async function initPlayer() {
+            const video = document.getElementById('dash-video');
+            const ui = video['ui'];
+            const controls = ui.getControls();
+            const player = controls.getPlayer();
+
+            const params = new URLSearchParams(window.location.search);
+            const channelId = params.get('id') || "sps1";
+            const channel = channelList[channelId];
+
+            if (!channel) return;
+
+            // فلتر تخطي حماية السيرفر
+            player.getNetworkingEngine().registerRequestFilter(function(type, request) {
+                request.headers['User-Agent'] = 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36';
+            });
+
+            const drmConfig = {};
+            drmConfig[channel.kid] = channel.key;
+
+            player.configure({
+                drm: { clearKeys: drmConfig },
+                abr: { enabled: true, switchInterval: 1 },
+                streaming: {
+                    bufferingGoal: 45, // زيادة التخزين المؤقت لثبات الجودة الناقية
+                    rebufferingGoal: 2,
+                    lowLatencyEnabled: true
+                }
+            });
+
+            try {
+                await player.load(channel.url);
+            } catch (e) { console.error('Load Error:', e); }
+        }
+
+        document.addEventListener('shaka-ui-loaded', initPlayer);
+    </script>
+</body>
+</html>
