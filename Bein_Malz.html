@@ -1,40 +1,57 @@
 <!DOCTYPE html>
-<html lang="ar">
+<html lang="ar" dir="rtl">
 <head>
     <meta charset="UTF-8">
-    <title>Siksa TV Pro - Fast Load</title>
-    <meta name="referrer" content="no-referrer" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Siksa TV - Balanced</title>
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700&display=swap" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/shaka-player/4.15.9/shaka-player.ui.min.js"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/shaka-player/4.15.9/controls.min.css" rel="stylesheet">
     
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/shaka-player/4.3.5/shaka-player.compiled.js"></script>
-    <script src="https://ssl.p.jwpcdn.com/player/v/8.26.0/jwplayer.js"></script>
-    <script>jwplayer.key = "XSuP4qMl+9tK17QNb+4+th2Pm9AWgMO/cYH8CI0HGGr7bdjo";</script>
-
     <style>
-        body, html { margin: 0; padding: 0; width: 100%; height: 100%; background-color: black; overflow: hidden; }
-        #jwplayerDiv { width: 100% !important; height: 100% !important; }
-        .jw-error-msg { display: none !important; }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: 'Cairo', sans-serif; background: #000; color: #fff; overflow: hidden; height: 100vh; }
+        .video-player { position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; background: #000; }
+        #dash-video { width: 100%; height: 100%; object-fit: contain; }
+
+        .header { position: absolute; top: 0; left: 0; width: 100%; padding: 15px; background: linear-gradient(to bottom, rgba(0,0,0,0.8), transparent); z-index: 2000; display: flex; align-items: center; gap: 10px; opacity: 0; transition: 0.5s; }
+        .header.show { opacity: 1; }
+        .badge { background: #ff6b35; padding: 4px 12px; border-radius: 4px; font-weight: bold; font-size: 0.9rem; }
+
+        .controls { position: absolute; bottom: 30px; left: 50%; transform: translateX(-50%); background: rgba(0,0,0,0.7); padding: 10px 25px; border-radius: 50px; display: flex; gap: 20px; opacity: 0; transition: 0.3s; z-index: 2000; }
+        .controls.show { opacity: 1; }
+        .btn { background: none; border: none; color: white; font-size: 1.4rem; cursor: pointer; }
+
+        .loading { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); z-index: 3000; text-align: center; }
+        .spinner { width: 40px; height: 40px; border: 3px solid rgba(255,107,53,0.2); border-top: 3px solid #ff6b35; border-radius: 50%; animation: spin 1s linear infinite; margin: 0 auto 10px; }
+        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
     </style>
 </head>
 <body>
 
-    <div id="jwplayerDiv"></div>
+    <div class="video-player" id="playerUI">
+        <div class="header" id="headerUI">
+            <span class="badge" id="channelName">LIVE</span>
+            <span id="channelStatus">بث مباشر</span>
+        </div>
+
+        <div class="loading" id="loader">
+            <div class="spinner"></div>
+            <p>جاري التحميل...</p>
+        </div>
+
+        <video id="dash-video" autoplay crossorigin="anonymous" playsinline></video>
+
+        <div class="controls" id="controlsUI">
+            <button class="btn" id="playBtn"><i class="fas fa-pause"></i></button>
+            <button class="btn" id="muteBtn"><i class="fas fa-volume-up"></i></button>
+        </div>
+    </div>
 
     <script>
-        // نظام تزوير الهوية
-        (function() {
-            var customUA = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36";
-            var XHROpen = XMLHttpRequest.prototype.open;
-            XMLHttpRequest.prototype.open = function() {
-                this.addEventListener('loadstart', function() {
-                    this.setRequestHeader('User-Agent', customUA);
-                });
-                return XHROpen.apply(this, arguments);
-            };
-        })();
-
         const channelList = {
-           "BEIN1": {
+            "BEIN1": {
                 url: "https://aba5sdmaaaaaaaamooyrewxky2c4j.otte.live.cf.ww.aiv-cdn.net/syd-nitro/live/dash/enc/ghwcl6hv68/out/v1/83536910d8034e9b9895a20fbe1c1687/cenc.mpd",
                 kid: "335dad778109954503dcbb21dc92015f", 
                 key: "24bfd75d436cbf73168a2a2dccd40281"
@@ -44,58 +61,79 @@
                 kid: "0b42be2664d7e811d04f3e504e0924c5", 
                 key: "ae24090123b8c72ac5404dc152847cb8"
             },
-            "BEIN3": {
+			"BEIN3": {
                 url: "https://aba5sdmaaaaaaaamhq2w5oosrf5ae.otte.live.cf.ww.aiv-cdn.net/syd-nitro/live/clients/dash/enc/q4u5nwaogz/out/v1/18de6d3e65934f3a8de4358e69eab86c/cenc.mpd",
                 kid: "7995c724a13748ed970840a8ab5bb9b3", 
                 key: "67bdaf1e2175b9ff682fcdf0e2354b1e"
+            },
+			"La_Une": {
+                url: "https://c9851ec-rbm-hilv-fsly.cdn.redbee.live/L26/669bb376/9069a322.isml/.mpd",
+                k1: "cbdd636bb2e44f1fa6ebd41f46a3cc52",
+                k2: "e6ab6c56a79962dcab612e9dc4fea986"
+            },
+            "BEIN3": {
+                url: "https://a83aivottlinear-a.akamaihd.net/OTTB/syd-nitro/live/clients/dash/enc/q4u5nwaogz/out/v1/18de6d3e65934f3a8de4358e69eab86c/cenc.mpd",
+                k1: "7995c724a13748ed970840a8ab5bb9b3",
+                k2: "67bdaf1e2175b9ff682fcdf0e2354b1e"
             }
         };
 
-        const urlParams = new URLSearchParams(window.location.search);
-        const getID = urlParams.get('id') || "BEIN1";
-        const ch = channelList[getID] || channelList["BEIN1"];
+        async function initPlayer() {
+            const params = new URLSearchParams(window.location.search);
+            const channelId = params.get('id') || "BEIN1";
+            const channel = channelList[channelId];
 
-        const player = jwplayer("jwplayerDiv").setup({
-            playlist: [{
-                file: ch.url,
-                drm: {
-                    clearkey: {
-                        keys: [{
-                            keyId: ch.kid,
-                            key: ch.key
-                        }]
-                    }
-                }
-            }],
-            // --- إعدادات تسريع التحميل ---
-            preload: "auto", // بدء تحميل البيانات فوراً
-            autostart: true,
-            stretching: "fill",
-            dashconfig: {
-                "streaming": {
-                    "lowLatencyEnabled": true, // تفعيل وضع الكمون المنخفض
-                    "bufferTimeAtTopQuality": 10,
-                    "stableBufferTime": 5, // تقليل الوقت المستقر للتخزين
-                    "initialBufferTime": 1.5 // البدء بعد تخزين 1.5 ثانية فقط بدلاً من 30
-                }
-            },
-            // ------------------------
-            width: "100%",
-            height: "100%",
-            cast: {}
-        });
+            if (!channel) return;
 
-        player.on('audioTracks', function(e) {
-            e.tracks.forEach((track, index) => {
-                if (track.label.toLowerCase().includes("ar")) {
-                    player.setCurrentAudioTrack(index);
+            const video = document.getElementById('dash-video');
+            const player = new shaka.Player(video);
+
+            const keys = {};
+            keys[channel.k1] = channel.k2;
+
+            // --- إعدادات خفيفة وسريعة التبديل ---
+            player.configure({
+                preferredAudioLanguage: 'ar',
+                drm: { clearKeys: keys },
+                streaming: {
+                    bufferingGoal: 10,       // تقليل القيمة لـ 10 ثوانٍ فقط لتخفيف الضغط
+                    rebufferingGoal: 2,      // تشغيل سريع عند الانقطاع
+                    bufferBehind: 10,
+                    jumpOnLiveEdge: true
+                },
+                abr: {
+                    enabled: true,           // تشغيل التبديل التلقائي
+                    switchInterval: 2,       // منح المشغل وقت بسيط (ثانيتين) للتنقل بين الجودات بهدوء
                 }
             });
-        });
 
-        player.on('error', function() {
-            setTimeout(function() { player.load(); player.play(); }, 1000);
-        });
+            try {
+                await player.load(channel.url);
+                document.getElementById('loader').style.display = 'none';
+                document.getElementById('channelName').innerText = channelId;
+                player.selectAudioLanguage('ar');
+            } catch (e) { console.error(e); }
+        }
+
+        // واجهة المستخدم
+        const ui = document.getElementById('playerUI');
+        ui.onmousemove = () => {
+            document.getElementById('headerUI').classList.add('show');
+            document.getElementById('controlsUI').classList.add('show');
+            clearTimeout(window.t);
+            window.t = setTimeout(() => {
+                document.getElementById('headerUI').classList.remove('show');
+                document.getElementById('controlsUI').classList.remove('show');
+            }, 3000);
+        };
+
+        const v = document.getElementById('dash-video');
+        document.getElementById('playBtn').onclick = () => {
+            if(v.paused) { v.play(); document.getElementById('playBtn').innerHTML = '<i class="fas fa-pause"></i>'; }
+            else { v.pause(); document.getElementById('playBtn').innerHTML = '<i class="fas fa-play"></i>'; }
+        };
+
+        document.addEventListener('DOMContentLoaded', initPlayer);
     </script>
 </body>
 </html>
