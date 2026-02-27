@@ -3,211 +3,157 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Siksa TV - Multi Level</title>
+    <title>Siksa Pro Player</title>
     <link href="https://vjs.zencdn.net/8.10.0/video-js.css" rel="stylesheet" />
+    <script src="https://cdn.jsdelivr.net/npm/hls.js@latest"></script>
     <style>
-        body {
-            background: #0f0c29;
-            color: white;
-            font-family: sans-serif;
-            margin: 0;
-            padding: 20px;
+        :root { --primary: #00d2ff; --bg: #050505; }
+        body { background: var(--bg); color: white; font-family: 'Segoe UI', sans-serif; margin: 0; overflow: hidden; }
+        
+        .header { display: flex; align-items: center; padding: 15px 25px; background: #111; border-bottom: 2px solid #222; }
+        .back-btn { background: #ff4b2b; color: white; border: none; padding: 10px 20px; border-radius: 8px; cursor: pointer; display: none; margin-left: 15px; font-weight: bold; }
+        
+        #main-content { 
+            display: grid; 
+            grid-template-columns: repeat(auto-fill, minmax(160px, 1fr)); 
+            gap: 20px; padding: 25px; 
+            height: calc(100vh - 100px); overflow-y: auto; 
         }
 
-        .header-nav {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 20px;
+        .card { 
+            background: #1a1a1a; border: 3px solid transparent; border-radius: 12px; 
+            padding: 15px; text-align: center; cursor: pointer; transition: 0.25s;
         }
+        .card:focus, .card:hover { border-color: var(--primary); transform: translateY(-5px); background: #222; outline: none; }
+        .card img { width: 100%; aspect-ratio: 1; object-fit: contain; background: #000; border-radius: 8px; }
+        .card span { display: block; margin-top: 12px; font-size: 15px; font-weight: 500; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 
-        .container {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
-            gap: 15px;
+        #player-wrapper { 
+            display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; 
+            background: #000; z-index: 9999; 
         }
-
-        .card {
-            background: rgba(255, 255, 255, 0.05);
-            border: 2px solid transparent;
-            border-radius: 10px;
-            padding: 10px;
-            text-align: center;
-            cursor: pointer;
-            transition: 0.2s;
-        }
-
-        .card:focus, .card:hover {
-            transform: scale(1.05);
-            border-color: #00d2ff;
-            background: rgba(255, 255, 255, 0.1);
-            outline: none;
-        }
-
-        .card img {
-            width: 100%;
-            aspect-ratio: 1/1;
-            object-fit: contain;
-            border-radius: 5px;
-        }
-
-        .card span {
-            display: block;
-            margin-top: 8px;
-            font-size: 14px;
-            height: 34px;
-            overflow: hidden;
-        }
-
-        #player-container {
-            display: none;
-            position: fixed;
-            top: 0; left: 0; width: 100%; height: 100%;
-            background: black; z-index: 9999;
-        }
-
-        .back-btn {
-            background: #e74c3c;
-            color: white;
-            border: none;
-            padding: 8px 15px;
-            border-radius: 5px;
-            cursor: pointer;
-            display: none;
-        }
-
-        .close-player {
-            position: absolute;
-            top: 20px; left: 20px;
-            z-index: 10000;
-            background: rgba(255,0,0,0.7);
-            color: white; border: none; padding: 10px;
-            border-radius: 50%; width: 40px; height: 40px;
-        }
+        video { width: 100%; height: 100%; }
+        .loader { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); border: 5px solid #333; border-top: 5px solid var(--primary); border-radius: 50%; width: 50px; height: 50px; animation: spin 1s linear infinite; display: none; }
+        @keyframes spin { 0% { transform: translate(-50%, -50%) rotate(0deg); } 100% { transform: translate(-50%, -50%) rotate(360deg); } }
+        .close-vid { position: absolute; top: 20px; left: 20px; z-index: 10001; background: rgba(255,255,255,0.2); color: white; border: none; padding: 10px 15px; border-radius: 5px; cursor: pointer; }
     </style>
 </head>
 <body>
 
-    <div class="header-nav">
-        <button id="btn-back" class="back-btn" onclick="showPackages()">⬅ رجوع للباقات</button>
-        <h2 id="title">الباقات الرئيسية</h2>
-        <div style="width: 80px;"></div>
+    <div class="header">
+        <button id="btn-back" class="back-btn" onclick="showPackages()">السابق</button>
+        <h2 id="title">Siksa TV - الباقات</h2>
     </div>
 
-    <div class="container" id="main-content">
-        </div>
+    <div id="main-content"></div>
 
-    <div id="player-container">
-        <button class="close-player" onclick="closePlayer()">X</button>
-        <video id="video-player" class="video-js vjs-big-play-centered vjs-fill" controls></video>
+    <div id="player-wrapper">
+        <div id="loading-spinner" class="loader"></div>
+        <button class="close-vid" onclick="closePlayer()">إغلاق (X)</button>
+        <video id="video" controls autoplay></video>
     </div>
 
-    <script src="https://vjs.zencdn.net/8.10.0/video.min.js"></script>
     <script>
-        // رابط ملف الباقات الرئيسي الخاص بك
-        const MASTER_M3U = 'https://raw.githubusercontent.com/raid35/channel-links/main/siksa_tv.m3u'; 
-        
-        let allPackages = [];
-        const contentDiv = document.getElementById('main-content');
-        const backBtn = document.getElementById('btn-back');
-        const titleText = document.getElementById('title');
-        let player = videojs('video-player');
+        const MASTER_URL = 'https://raw.githubusercontent.com/raid35/channel-links/main/siksa_tv.m3u';
+        const contentContainer = document.getElementById('main-content');
+        const videoElement = document.getElementById('video');
+        const spinner = document.getElementById('loading-spinner');
+        let hls = new Hls();
 
-        // 1. جلب الباقات عند التشغيل
-        async function init() {
-            contentDiv.innerHTML = "جاري تحميل الباقات...";
+        // تشغيل الباقة الرئيسية
+        async function start() {
             try {
-                const response = await fetch(MASTER_M3U);
-                const text = await response.text();
-                allPackages = parseM3U(text);
+                const res = await fetch(MASTER_URL);
+                const data = await res.text();
+                window.allPackages = parseM3U(data);
                 showPackages();
-            } catch (e) {
-                contentDiv.innerHTML = "خطأ في التحميل، تأكد من الرابط أو إعدادات CORS";
-            }
+            } catch (e) { alert("خطأ في الاتصال بالخادم"); }
         }
 
-        // دالة تحليل ملفات M3U
-        function parseM3U(data) {
-            const lines = data.split('\n');
+        function parseM3U(text) {
+            const lines = text.split('\n');
             const items = [];
-            let currentItem = {};
-
+            let current = null;
             lines.forEach(line => {
                 line = line.trim();
                 if (line.startsWith('#EXTINF')) {
-                    const nameMatch = line.split(',').pop();
-                    const logoMatch = line.match(/tvg-logo="([^"]+)"/);
-                    currentItem = {
-                        name: nameMatch || "بدون اسم",
-                        logo: logoMatch ? logoMatch[1] : 'https://via.placeholder.com/150'
-                    };
+                    const name = line.split(',').pop();
+                    const logo = line.match(/tvg-logo="([^"]+)"/)?.[1] || '';
+                    current = { name, logo };
                 } else if (line.startsWith('http')) {
-                    currentItem.url = line;
-                    items.push(currentItem);
-                    currentItem = {};
+                    if (current) { current.url = line; items.push(current); current = null; }
                 }
             });
             return items;
         }
 
-        // عرض الباقات
         function showPackages() {
-            titleText.innerText = "الباقات الرئيسية";
-            backBtn.style.display = 'none';
-            contentDiv.innerHTML = '';
-            
-            allPackages.forEach(pkg => {
-                const card = createCard(pkg, () => loadChannels(pkg.url, pkg.name));
-                contentDiv.appendChild(card);
+            document.getElementById('btn-back').style.display = 'none';
+            document.getElementById('title').innerText = "الباقات الرئيسية";
+            renderCards(window.allPackages, true);
+        }
+
+        async function loadSubMenu(url, title) {
+            contentContainer.innerHTML = '';
+            spinner.style.display = 'block';
+            try {
+                const res = await fetch(url);
+                const data = await res.text();
+                const channels = parseM3U(data);
+                document.getElementById('btn-back').style.display = 'block';
+                document.getElementById('title').innerText = title;
+                renderCards(channels, false);
+            } catch (e) { alert("لا يمكن فتح هذه الباقة"); }
+            spinner.style.display = 'none';
+        }
+
+        function renderCards(items, isPackage) {
+            contentContainer.innerHTML = '';
+            items.forEach(item => {
+                const div = document.createElement('div');
+                div.className = 'card';
+                div.tabIndex = 0;
+                div.innerHTML = `<img src="${item.logo}" onerror="this.src='https://via.placeholder.com/150?text=TV'"><span>${item.name}</span>`;
+                div.onclick = () => isPackage ? loadSubMenu(item.url, item.name) : playStream(item.url);
+                div.onkeydown = (e) => { if(e.key === 'Enter') div.onclick(); };
+                contentContainer.appendChild(div);
             });
         }
 
-        // جلب القنوات داخل الباقة
-        async function loadChannels(url, name) {
-            contentDiv.innerHTML = "جاري فتح الباقة...";
-            titleText.innerText = "باقة: " + name;
-            backBtn.style.display = 'block';
+        function playStream(url) {
+            document.getElementById('player-wrapper').style.display = 'block';
+            spinner.style.display = 'block';
 
-            try {
-                const response = await fetch(url);
-                const text = await response.text();
-                const channels = parseM3U(text);
-                
-                contentDiv.innerHTML = '';
-                channels.forEach(ch => {
-                    const card = createCard(ch, () => playVideo(ch.url));
-                    contentDiv.appendChild(card);
-                });
-            } catch (e) {
-                contentDiv.innerHTML = "فشل تحميل قنوات هذه الباقة.";
+            // إذا كان الرابط m3u8 نستخدم مكتبة HLS.js للسرعة
+            if (url.includes('m3u8')) {
+                if (Hls.isSupported()) {
+                    hls.loadSource(url);
+                    hls.attachMedia(videoElement);
+                    hls.on(Hls.Events.MANIFEST_PARSED, () => {
+                        videoElement.play();
+                        spinner.style.display = 'none';
+                    });
+                } else if (videoElement.canPlayType('application/vnd.apple.mpegurl')) {
+                    videoElement.src = url;
+                    videoElement.play();
+                }
+            } else {
+                // للروابط العادية mp4 أو غيرها
+                videoElement.src = url;
+                videoElement.play();
+                videoElement.onplaying = () => spinner.style.display = 'none';
             }
         }
 
-        function createCard(item, action) {
-            const div = document.createElement('div');
-            div.className = 'card';
-            div.tabIndex = 0;
-            div.innerHTML = `
-                <img src="${item.logo}" onerror="this.src='https://via.placeholder.com/150?text=TV'">
-                <span>${item.name}</span>
-            `;
-            div.onclick = action;
-            div.onkeydown = (e) => { if(e.key === 'Enter') action(); };
-            return div;
-        }
-
-        function playVideo(url) {
-            document.getElementById('player-container').style.display = 'block';
-            player.src({ type: 'application/x-mpegURL', src: url });
-            player.play();
-        }
-
         function closePlayer() {
-            player.pause();
-            document.getElementById('player-container').style.display = 'none';
+            hls.destroy();
+            hls = new Hls(); // إعادة تهيئة للمرة القادمة
+            videoElement.pause();
+            videoElement.src = "";
+            document.getElementById('player-wrapper').style.display = 'none';
         }
 
-        init();
+        start();
     </script>
 </body>
 </html>
