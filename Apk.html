@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Siksa TV Web</title>
+    <link href="https://vjs.zencdn.net/8.10.0/video-js.css" rel="stylesheet" />
+    <style>
+        body {
+            background: linear-gradient(135deg, #0f0c29, #302b63, #24243e);
+            color: white;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            margin: 0;
+            padding: 20px;
+            overflow-x: hidden;
+        }
+
+        .container {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+            gap: 20px;
+            padding: 20px;
+        }
+
+        .card {
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 12px;
+            padding: 10px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            border: 2px solid transparent;
+        }
+
+        /* تأثير التركيز عند اختيار القناة (مهم للريموت كنترول) */
+        .card:hover, .card:focus {
+            transform: scale(1.1);
+            border-color: #fff;
+            background: rgba(255, 255, 255, 0.2);
+            outline: none;
+        }
+
+        .card img {
+            width: 100%;
+            height: 100px;
+            object-fit: contain;
+            border-radius: 8px;
+            margin-bottom: 10px;
+        }
+
+        .card span {
+            display: block;
+            font-size: 0.9em;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        #player-container {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: black;
+            z-index: 1000;
+        }
+
+        .close-btn {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            background: red;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            cursor: pointer;
+            z-index: 1001;
+            border-radius: 5px;
+        }
+    </style>
+</head>
+<body>
+
+    <h2 style="text-align: center;">قائمة القنوات</h2>
+    <div class="container" id="channel-list">
+        جاري تحميل القنوات...
+    </div>
+
+    <div id="player-container">
+        <button class="close-btn" onclick="closePlayer()">إغلاق X</button>
+        <video id="my-video" class="video-js vjs-default-skin" controls preload="auto" width="1280" height="720" data-setup="{}">
+            <p class="vjs-no-js">لمشاهدة هذا الفيديو، يرجى تفعيل JavaScript.</p>
+        </video>
+    </div>
+
+    <script src="https://vjs.zencdn.net/8.10.0/video.min.js"></script>
+    <script>
+        const M3U_URL = 'https://raw.githubusercontent.com/raid35/channel-links/main/siksa_tv.m3u';
+        const channelList = document.getElementById('channel-list');
+        const playerContainer = document.getElementById('player-container');
+        let player = videojs('my-video');
+
+        async function fetchChannels() {
+            try {
+                const response = await fetch(M3U_URL);
+                const data = await response.text();
+                parseM3U(data);
+            } catch (error) {
+                channelList.innerHTML = "فشل تحميل القنوات. تأكد من إعدادات CORS.";
+            }
+        }
+
+        function parseM3U(data) {
+            const lines = data.split('\n');
+            channelList.innerHTML = '';
+            let currentChannel = {};
+
+            lines.forEach(line => {
+                if (line.startsWith('#EXTINF')) {
+                    const name = line.split(',')[1];
+                    const logoMatch = line.match(/tvg-logo="([^"]+)"/);
+                    currentChannel = {
+                        name: name,
+                        logo: logoMatch ? logoMatch[1] : 'https://via.placeholder.com/150?text=No+Logo'
+                    };
+                } else if (line.startsWith('http')) {
+                    currentChannel.url = line.trim();
+                    createCard(currentChannel);
+                }
+            });
+        }
+
+        function createCard(channel) {
+            const div = document.createElement('div');
+            div.className = 'card';
+            div.tabIndex = 0; // لجعلها قابلة للتركيز بواسطة ريموت التلفاز
+            div.innerHTML = `
+                <img src="${channel.logo}" alt="${channel.name}">
+                <span>${channel.name}</span>
+            `;
+            div.onclick = () => playVideo(channel.url);
+            div.onkeydown = (e) => { if(e.key === 'Enter') playVideo(channel.url); };
+            channelList.appendChild(div);
+        }
+
+        function playVideo(url) {
+            playerContainer.style.display = 'block';
+            player.src({ type: 'application/x-mpegURL', src: url });
+            player.play();
+        }
+
+        function closePlayer() {
+            player.pause();
+            playerContainer.style.display = 'none';
+        }
+
+        fetchChannels();
+    </script>
+</body>
+</html>
