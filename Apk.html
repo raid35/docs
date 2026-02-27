@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Siksa TV Pro - TV UI</title>
+    <title>Siksa Pro Player</title>
     
     <meta name="referrer" content="no-referrer" />
     <script src="https://cdnjs.cloudflare.com/ajax/libs/shaka-player/4.3.5/shaka-player.compiled.js"></script>
@@ -12,50 +12,68 @@
     <link rel="stylesheet" href="https://akomov.com/todapi/jw_ako.css">
 
     <style>
-        :root { --primary: #00d2ff; --bg: #050505; --sidebar-width: 250px; }
-        body { background: var(--bg); color: white; font-family: sans-serif; margin: 0; overflow: hidden; display: flex; height: 100vh; }
+        :root { --primary: #00d2ff; --bg: #050505; }
+        body { background: var(--bg); color: white; font-family: 'Segoe UI', sans-serif; margin: 0; overflow: hidden; }
         
-        /* القائمة الجانبية */
-        #sidebar { width: var(--sidebar-width); background: #111; padding: 20px; display: flex; flex-direction: column; gap: 10px; border-left: 2px solid #222; }
-        .side-item { padding: 15px; border-radius: 10px; cursor: pointer; font-weight: bold; transition: 0.3s; }
-        .side-item:focus { background: var(--primary); color: black; outline: none; }
+        .header { display: flex; align-items: center; padding: 15px 25px; background: #111; border-bottom: 2px solid #222; }
+        .back-btn { background: #ff4b2b; color: white; border: none; padding: 10px 20px; border-radius: 8px; cursor: pointer; display: none; margin-left: 15px; font-weight: bold; }
         
-        /* منطقة القنوات */
-        #main-content { flex: 1; padding: 30px; display: grid; grid-template-columns: repeat(auto-fill, minmax(160px, 1fr)); gap: 20px; overflow-y: auto; }
-        
-        .card { background: #1a1a1a; border: 3px solid transparent; border-radius: 12px; padding: 15px; text-align: center; transition: 0.3s; }
-        .card:focus { border-color: var(--primary); transform: scale(1.05); background: #222; outline: none; }
-        .card img { width: 100%; aspect-ratio: 1; object-fit: contain; border-radius: 8px; }
-        .card span { display: block; margin-top: 10px; font-size: 14px; }
+        #main-content { 
+            display: grid; 
+            grid-template-columns: repeat(auto-fill, minmax(160px, 1fr)); 
+            gap: 20px; padding: 25px; 
+            height: calc(100vh - 100px); overflow-y: auto; 
+        }
 
-        /* المشغل */
-        #player-wrapper { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: #000; z-index: 9999; }
+        .card { 
+            background: #1a1a1a; border: 3px solid transparent; border-radius: 12px; 
+            padding: 15px; text-align: center; cursor: pointer; transition: 0.25s;
+            outline: none;
+        }
+        /* دعم الريموت (التحديد) */
+        .card:focus, .card:hover { border-color: var(--primary); transform: translateY(-5px); background: #222; outline: none; }
+        
+        .card img { width: 100%; aspect-ratio: 1; object-fit: contain; background: #000; border-radius: 8px; }
+        .card span { display: block; margin-top: 12px; font-size: 15px; font-weight: 500; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+
+        #player-wrapper { 
+            display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; 
+            background: #000; z-index: 9999; 
+        }
         #jwplayerDiv { width: 100% !important; height: 100% !important; }
+
+        .loader { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); border: 5px solid #333; border-top: 5px solid var(--primary); border-radius: 50%; width: 50px; height: 50px; animation: spin 1s linear infinite; display: none; }
+        @keyframes spin { 0% { transform: translate(-50%, -50%) rotate(0deg); } 100% { transform: translate(-50%, -50%) rotate(360deg); } }
     </style>
 </head>
 <body>
 
-    <div id="sidebar">
-        <h2 style="margin-bottom: 20px;">القائمة</h2>
-        <div id="menu-items"></div>
+    <div class="header">
+        <button id="btn-back" class="back-btn" onclick="showPackages()">السابق</button>
+        <h2 id="title">Siksa TV - الباقات</h2>
     </div>
 
     <div id="main-content"></div>
 
     <div id="player-wrapper">
+        <div id="loading-spinner" class="loader"></div>
         <div id="jwplayerDiv"></div>
     </div>
 
     <script>
         const MASTER_URL = 'https://raw.githubusercontent.com/raid35/channel-links/main/siksa_tv.m3u';
-        let allPackages = [];
+        const contentContainer = document.getElementById('main-content');
+        const spinner = document.getElementById('loading-spinner');
         let jwInst = null;
+        let isInsidePackage = false;
 
-        async function init() {
-            const res = await fetch(MASTER_URL);
-            const data = await res.text();
-            allPackages = parseM3U(data);
-            renderSidebar();
+        async function start() {
+            try {
+                const res = await fetch(MASTER_URL);
+                const data = await res.text();
+                window.allPackages = parseM3U(data);
+                showPackages();
+            } catch (e) { alert("خطأ في التحميل"); }
         }
 
         function parseM3U(text) {
@@ -75,34 +93,38 @@
             return items;
         }
 
-        function renderSidebar() {
-            const menu = document.getElementById('menu-items');
-            allPackages.forEach((pkg, index) => {
-                const div = document.createElement('div');
-                div.className = 'side-item';
-                div.tabIndex = 0;
-                div.innerText = pkg.name;
-                div.onclick = () => loadCategory(pkg.url);
-                menu.appendChild(div);
-                if(index === 0) div.focus();
-            });
+        function showPackages() {
+            isInsidePackage = false;
+            document.getElementById('btn-back').style.display = 'none';
+            document.getElementById('title').innerText = "Siksa TV - الباقات";
+            renderCards(window.allPackages, true);
         }
 
-        async function loadCategory(url) {
-            const container = document.getElementById('main-content');
-            container.innerHTML = "جاري التحميل...";
-            const res = await fetch(url);
-            const data = await res.text();
-            const channels = parseM3U(data);
-            
-            container.innerHTML = '';
-            channels.forEach(ch => {
+        async function loadSubMenu(url, title) {
+            contentContainer.innerHTML = '';
+            spinner.style.display = 'block';
+            try {
+                const res = await fetch(url);
+                const data = await res.text();
+                const channels = parseM3U(data);
+                isInsidePackage = true;
+                document.getElementById('btn-back').style.display = 'block';
+                document.getElementById('title').innerText = title;
+                renderCards(channels, false);
+            } catch (e) { alert("فشل التحميل"); }
+            spinner.style.display = 'none';
+        }
+
+        function renderCards(items, isPackage) {
+            contentContainer.innerHTML = '';
+            items.forEach((item, index) => {
                 const div = document.createElement('div');
                 div.className = 'card';
                 div.tabIndex = 0;
-                div.innerHTML = `<img src="${ch.logo}" onerror="this.src='https://via.placeholder.com/150?text=TV'"><span>${ch.name}</span>`;
-                div.onclick = () => playStream(ch.url);
-                container.appendChild(div);
+                div.innerHTML = `<img src="${item.logo}" onerror="this.src='https://via.placeholder.com/150?text=TV'"><span>${item.name}</span>`;
+                div.onclick = () => isPackage ? loadSubMenu(item.url, item.name) : playStream(item.url);
+                contentContainer.appendChild(div);
+                if(index === 0) div.focus();
             });
         }
 
@@ -110,23 +132,45 @@
             document.getElementById('player-wrapper').style.display = 'block';
             if (jwInst) jwInst.remove();
             jwInst = jwplayer("jwplayerDiv").setup({
-                file: url, width: "100%", height: "100%", autostart: true, stretching: "exactfit",
-                type: (url.includes(".m3u8") ? "hls" : "mp4"),
+                file: url,
+                width: "100%", height: "100%", autostart: true,
+                stretching: "exactfit",
+                type: (url.includes(".mpd")) ? "dash" : (url.includes(".m3u8") ? "hls" : "mp4"),
             });
+            jwInst.on('buffer', () => spinner.style.display = 'block');
+            jwInst.on('play', () => spinner.style.display = 'none');
         }
 
-        // تحسين التنقل للريموت
-        window.addEventListener('keydown', (e) => {
-            if (e.keyCode === 8 || e.keyCode === 10009) { // زر الرجوع
-                if (document.getElementById('player-wrapper').style.display === 'block') {
-                    if(jwInst) { jwInst.remove(); jwInst = null; }
-                    document.getElementById('player-wrapper').style.display = 'none';
+        function closePlayer() {
+            if (jwInst) { jwInst.remove(); jwInst = null; }
+            document.getElementById('player-wrapper').style.display = 'none';
+        }
+
+        // --- نظام الريموت (الأسهم والرجوع فقط) ---
+        window.addEventListener('keydown', function(e) {
+            const cards = Array.from(document.querySelectorAll('.card'));
+            const index = cards.indexOf(document.activeElement);
+            const cols = Math.floor(contentContainer.offsetWidth / 180);
+
+            switch(e.key) {
+                case "ArrowRight": if(cards[index+1]) cards[index+1].focus(); break;
+                case "ArrowLeft":  if(cards[index-1]) cards[index-1].focus(); break;
+                case "ArrowDown":  if(cards[index+cols]) cards[index+cols].focus(); break;
+                case "ArrowUp":    if(cards[index-cols]) cards[index-cols].focus(); break;
+                case "Enter":      document.activeElement.click(); break;
+                case "BackSpace":
+                case "Escape":
                     e.preventDefault();
-                }
+                    if (document.getElementById('player-wrapper').style.display === 'block') {
+                        closePlayer();
+                    } else if (isInsidePackage) {
+                        showPackages();
+                    }
+                    break;
             }
         });
 
-        init();
+        start();
     </script>
 </body>
 </html>
