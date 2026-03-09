@@ -196,17 +196,35 @@
                 case 'ArrowDown':
                     e.preventDefault();
                     newIndex = currentIndex + cols;
-                    // التأكد من أن العنصر في نفس العمود تقريباً
+                    // إذا لم يكن هناك عنصر في الصف التالي بنفس العمود
+                    // اختر آخر عنصر متاح في الصف التالي
                     if (newIndex >= totalCards) {
-                        newIndex = currentIndex;
+                        const nextRowStart = (currentRow + 1) * cols;
+                        if (nextRowStart < totalCards) {
+                            // اختر آخر عنصر في الصف التالي
+                            newIndex = Math.min(totalCards - 1, nextRowStart + cols - 1);
+                        } else {
+                            newIndex = currentIndex;
+                        }
                     }
                     break;
                     
                 case 'ArrowUp':
                     e.preventDefault();
                     newIndex = currentIndex - cols;
+                    // إذا لم يكن هناك عنصر في الصف السابق بنفس العمود
+                    // اختر آخر عنصر متاح في الصف السابق
                     if (newIndex < 0) {
-                        newIndex = currentIndex;
+                        if (currentRow > 0) {
+                            const prevRowStart = (currentRow - 1) * cols;
+                            // اختر آخر عنصر في الصف السابق
+                            newIndex = Math.min(totalCards - 1, prevRowStart + cols - 1);
+                            if (newIndex < prevRowStart) {
+                                newIndex = prevRowStart;
+                            }
+                        } else {
+                            newIndex = currentIndex;
+                        }
                     }
                     break;
                     
