@@ -3,116 +3,179 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>مشغل القنوات السريع</title>
+    <title>A Live - TV Edition</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700&family=Readex+Pro:wght@400;500;600&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Readex+Pro:wght@400;700&display=swap" rel="stylesheet">
     <style>
-        :root { --primary-color: #26ab56; --dark-bg: #1a1a1a; --dark-header: #000000; --dark-card: #2d2d2d; --light-bg: #f5f5f5; --light-header: #ffffff; --light-card: #ffffff; --text-dark: #ffffff; --text-light: #333333; --shadow: 0 4px 12px rgba(0, 0, 0, 0.15); --transition: all 0.3s ease; --focus-border: #ffaa00; }
+        :root { 
+            --primary-color: #26ab56; 
+            --focus-color: #ffaa00; /* لون التحديد عند استخدام الريموت */
+            --dark-bg: #121212; 
+            --dark-card: #1e1e1e; 
+            --text-dark: #ffffff; 
+            --transition: all 0.2s ease-in-out;
+        }
+
         * { margin: 0; padding: 0; box-sizing: border-box; user-select: none; outline: none; }
-        body { font-family: 'Readex Pro', 'Cairo', sans-serif; background-color: var(--dark-bg); color: var(--text-dark); transition: var(--transition); min-height: 100vh; padding-bottom: 20px; }
-        body.light-mode { background-color: var(--light-bg); color: var(--text-light); }
-        header { background-color: var(--dark-header); color: white; padding: 15px 20px; position: fixed; top: 0; width: 100%; z-index: 1000; display: flex; justify-content: space-between; align-items: center; box-shadow: var(--shadow); transition: var(--transition); height: 60px; }
-        body.light-mode header { background-color: var(--light-header); box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1); }
-        .logo { font-size: 1.5rem; font-weight: 700; color: var(--primary-color); }
-        .header-left-icons, .header-right-icons { display: flex; gap: 20px; align-items: center; }
-        .header-left-icons i, .header-right-icons i { font-size: 1.3rem; cursor: pointer; transition: var(--transition); color: white; }
-        body.light-mode .header-left-icons i, body.light-mode .header-right-icons i { color: var(--text-light); }
-        .sidenav { height: 100%; width: 0; position: fixed; z-index: 1100; top: 0; right: 0; background-color: var(--dark-card); overflow-x: hidden; transition: 0.5s; padding-top: 80px; box-shadow: -5px 0 15px rgba(0, 0, 0, 0.2); }
-        body.light-mode .sidenav { background-color: var(--light-card); }
-        .sidenav a { padding: 15px 25px; text-decoration: none; font-size: 1.1rem; color: var(--text-dark); display: block; transition: var(--transition); border-right: 4px solid transparent; margin: 5px 0; cursor: pointer; }
-        body.light-mode .sidenav a { color: var(--text-light); }
-        .sidenav a:hover { background-color: rgba(255, 255, 255, 0.1); border-right: 4px solid var(--primary-color); padding-right: 30px; }
-        .sidenav .closebtn { position: absolute; top: 20px; right: 25px; font-size: 1.5rem; }
-        .search-container { padding: 10px 20px; background-color: var(--dark-header); position: fixed; top: 60px; width: 100%; z-index: 900; border-bottom: 1px solid #333; }
-        body.light-mode .search-container { background-color: var(--light-header); border-bottom: 1px solid #eee; }
-        .search-box { width: 100%; padding: 10px 15px; border-radius: 25px; border: none; background-color: rgba(255, 255, 255, 0.1); color: white; font-family: 'Readex Pro', 'Cairo', sans-serif; transition: var(--transition); }
-        body.light-mode .search-box { background-color: rgba(0, 0, 0, 0.05); color: var(--text-light); }
-        .categories-wrapper { position: fixed; top: 115px; width: 100%; background-color: #0f1821; z-index: 899; padding: 0 10px; box-shadow: 0 2px 5px rgba(0,0,0,0.2); }
-        body.light-mode .categories-wrapper { background-color: #e0e0e0; }
-        .categories-scroll { display: flex; overflow-x: auto; white-space: nowrap; padding: 10px 5px; gap: 15px; scrollbar-width: none; }
+        
+        body { 
+            font-family: 'Readex Pro', sans-serif; 
+            background-color: var(--dark-bg); 
+            color: var(--text-dark); 
+            overflow-x: hidden;
+            padding-bottom: 20px;
+        }
+
+        /* هيدر بسيط جداً للتلفاز */
+        header { 
+            background-color: #000; 
+            padding: 10px 30px; 
+            position: fixed; 
+            top: 0; 
+            width: 100%; 
+            z-index: 1000; 
+            display: flex; 
+            justify-content: space-between; 
+            align-items: center; 
+            height: 60px;
+            border-bottom: 1px solid #333;
+        }
+
+        .logo { font-size: 1.8rem; font-weight: 700; color: var(--primary-color); }
+
+        /* الأقسام (التصنيفات) */
+        .categories-wrapper { 
+            position: fixed; 
+            top: 60px; 
+            width: 100%; 
+            background-color: #000; 
+            z-index: 900; 
+            padding: 5px 20px;
+        }
+
+        .categories-scroll { 
+            display: flex; 
+            overflow-x: auto; 
+            white-space: nowrap; 
+            padding: 10px 0; 
+            gap: 15px; 
+            scrollbar-width: none; 
+        }
         .categories-scroll::-webkit-scrollbar { display: none; }
-        .cat-btn { background: none; border: none; color: #8fa3b0; font-family: 'Readex Pro', 'Cairo', sans-serif; font-size: 0.95rem; font-weight: 600; cursor: pointer; padding-bottom: 5px; border-bottom: 3px solid transparent; transition: all 0.3s; text-transform: uppercase; }
-        .cat-btn.active { color: #ffffff; border-bottom: 3px solid #ffffff; }
-        body.light-mode .cat-btn { color: #666; }
-        body.light-mode .cat-btn.active { color: #000; border-bottom: 3px solid var(--primary-color); }
-        #page { margin-top: 170px; padding: 20px; display: grid; grid-template-columns: repeat(auto-fill, minmax(160px, 1fr)); gap: 20px; align-items: start; }
-        @media (max-width: 480px) { #page { grid-template-columns: repeat(auto-fill, minmax(110px, 1fr)); } }
-        .channel-card { background-color: var(--dark-card); border-radius: 12px; overflow: hidden; transition: var(--transition); box-shadow: var(--shadow); display: flex; flex-direction: column; align-items: center; text-align: center; padding: 15px 10px; border: 2px solid transparent; cursor: pointer; position: relative; text-decoration: none; color: inherit; height: 100%; }
-        body.light-mode .channel-card { background-color: var(--light-card); }
-        .channel-card:hover, .channel-card.focused { transform: translateY(-5px); box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2); border-color: var(--primary-color); background: rgba(38, 171, 86, 0.05); }
-        .channel-card img { width: 80px; height: 80px; object-fit: contain; margin-bottom: 10px; transition: var(--transition); border-radius: 10px; background: white; padding: 5px; flex-shrink: 0; }
-        .channel-card p { font-size: 0.85rem; font-weight: 600; margin-top: 10px; color: inherit; white-space: normal; overflow: visible; text-overflow: unset; word-wrap: break-word; line-height: 1.4; }
+
+        .cat-btn { 
+            background: #222; 
+            border: 2px solid transparent; 
+            color: #bbb; 
+            padding: 8px 20px; 
+            border-radius: 20px;
+            font-family: inherit;
+            cursor: pointer;
+            transition: var(--transition);
+        }
+
+        /* حالة التركيز للريموت في الأقسام */
+        .cat-btn:focus, .cat-btn.active { 
+            background: var(--primary-color); 
+            color: white; 
+            border-color: var(--focus-color);
+            transform: scale(1.05);
+        }
+
+        /* شبكة القنوات - تبدأ من الأعلى مباشرة بعد الأقسام */
+        #page { 
+            margin-top: 130px; 
+            padding: 20px; 
+            display: grid; 
+            grid-template-columns: repeat(auto-fill, minmax(160px, 1fr)); 
+            gap: 25px; 
+        }
+
+        @media (max-width: 480px) { 
+            #page { grid-template-columns: repeat(auto-fill, minmax(120px, 1fr)); } 
+        }
+
+        /* بطاقة القناة */
+        .channel-card { 
+            background-color: var(--dark-card); 
+            border-radius: 15px; 
+            padding: 20px 10px; 
+            display: flex; 
+            flex-direction: column; 
+            align-items: center; 
+            text-align: center; 
+            border: 3px solid transparent; 
+            transition: var(--transition);
+            cursor: pointer;
+            text-decoration: none;
+            color: inherit;
+        }
+
+        /* أهم جزء: تأثير الريموت كنترول */
+        .channel-card:focus { 
+            transform: scale(1.15); 
+            border-color: var(--focus-color); 
+            background: #252525;
+            box-shadow: 0 0 20px rgba(255, 170, 0, 0.4);
+            z-index: 5;
+        }
+
+        .channel-card img { 
+            width: 90px; height: 90px; 
+            object-fit: contain; 
+            margin-bottom: 12px; 
+            background: #fff;
+            padding: 8px;
+            border-radius: 12px;
+        }
+
+        .channel-card p { font-size: 1rem; font-weight: 600; line-height: 1.3; }
+
         .empty-state { grid-column: 1 / -1; text-align: center; padding: 50px; color: #888; }
-        .channel-logo-placeholder { width: 80px; height: 80px; display: flex; align-items: center; justify-content: center; background: #333; border-radius: 10px; margin-bottom: 10px; font-size: 2rem; color: #666; flex-shrink: 0; }
-        .theme-toggle { background: none; border: none; cursor: pointer; font-size: 1.3rem; color: #ffaa00; transition: var(--transition); }
+        
+        /* إخفاء القائمة الجانبية القديمة إذا لم تعد بحاجة لها */
+        .sidenav { display: none; }
     </style>
 </head>
-<body dir="rtl">
-   <header>
-        <div class="header-right-icons">
-            <i class="fas fa-bars" onclick="openNav()"></i>
-        </div>
-        <div class="logo">A Live</div>
-        <div class="header-left-icons">
-            <i class="fas fa-calendar-alt" onclick="window.location.href='go:jd5'"></i>
-            <i class="fas fa-bell" onclick="window.location.href='http://action_notifications'"></i>
-            <button class="theme-toggle" id="themeToggle">
-                <i class="fas fa-moon"></i>
-            </button>
-        </div>
+<body>
+
+    <header>
+        <div class="logo">A LIVE</div>
+        <div style="color: #666; font-size: 0.8rem;">استخدم أسهم الريموت للتنقل</div>
     </header>
-    <div class="search-container">
-        <input type="text" class="search-box" id="searchInput" placeholder="ابحث في القسم الحالي...">
-    </div>
+
     <div class="categories-wrapper">
         <div class="categories-scroll" id="categoriesList"></div>
     </div>
-     <div id="mySidenav" class="sidenav">
-        <a href="javascript:void(0)" class="closebtn" onclick="closeNav()">×</a>
-        <a href="go:a141">ملخصات كرة القدم</a>
-        <a href="go:telegram">تلكرام</a>
-        <a href="go:a11">حول التطبيق</a>
+
+    <div id="page">
+        <div class="empty-state">جاري التحميل...</div>
     </div>
-    <div id="page"></div>
 
     <script>
         const channelsList = document.getElementById('page');
         const categoriesList = document.getElementById('categoriesList');
-        const searchInput = document.getElementById('searchInput');
         const DEFAULT_LOGO = 'https://via.placeholder.com/100x100/2c2c2c/f0f0f0?text=TV';
         let currentChannels = [];
 
-        // --- دالة التشفير المطلوبة ---
         function base64Encode(str) {
             return btoa(unescape(encodeURIComponent(str)));
         }
 
-        // --- دالة تشغيل القناة في مشغل Xpola ---
         function playChannel(url, name) {
-            let parts = [];
-            parts.push(url);
-            parts.push(`name=${name}`);
-            
-            // تم تحديث الـ user-agent ليتوافق مع الحماية الخاصة بالسيرفر الجديد
-            parts.push(`user-agent=ExoPlayerDemo/2.15.1 (Linux; Android 11) ExoPlayerLib/2.15.1`);
+            let parts = [
+                url,
+                `name=${name}`,
+                `user-agent=ExoPlayerDemo/2.15.1 (Linux; Android 11) ExoPlayerLib/2.15.1`
+            ];
 
             const rawUrl = `["${parts.join('|')}|httpcanary=false|rot=false|deviceroot=false|cast=false|name=ET|logosize=40x40|applogobl=https://up6.cc/2025/10/176371402217761.png|applink=https://t.me/A_Tv_Chat"]`;
             const encodedUrl = base64Encode(rawUrl);
-
             const intentUrl = `intent://${encodedUrl}#Intent;scheme=xmtv;package=com.xpola.player;end`;
             window.location.href = intentUrl;
         }
 
-        document.addEventListener("DOMContentLoaded", function() {
-            loadTheme();
-            initApp();
-            searchInput.addEventListener("input", function() {
-                const term = this.value.toLowerCase();
-                if(!currentChannels.length) return;
-                const filtered = currentChannels.filter(ch => ch.name.toLowerCase().includes(term));
-                displayChannels(filtered);
-            });
-        });
+        document.addEventListener("DOMContentLoaded", initApp);
 
         function initApp() {
             fetch('?api=categories&t=' + Date.now())
@@ -120,12 +183,15 @@
                 .then(categories => {
                     renderCategories(categories);
                     if(categories.length > 0) loadCategoryChannels(categories[0].name);
+                }).catch(() => {
+                    // في حال فشل الـ API (للتجربة فقط)
+                    renderCategories([{name: "الكل", count: 0}]);
                 });
         }
 
         function renderCategories(categories) {
             categoriesList.innerHTML = categories.map((cat, index) => 
-                `<button class="cat-btn ${index === 0 ? 'active' : ''}" onclick="handleCatClick('${cat.name}', this)">${cat.name} <small>(${cat.count})</small></button>`
+                `<button class="cat-btn" tabindex="0" onclick="handleCatClick('${cat.name}', this)">${cat.name}</button>`
             ).join('');
         }
 
@@ -147,26 +213,29 @@
         }
 
         function displayChannels(list) {
+            if(list.length === 0) {
+                channelsList.innerHTML = '<div class="empty-state">لا توجد قنوات في هذا القسم</div>';
+                return;
+            }
             channelsList.innerHTML = list.map(ch => `
-                <div class="channel-card" onclick="playChannel('${ch.url}', '${ch.name}')">
-                    ${ch.logo ? `<img src="${ch.logo}" onerror="this.src='${DEFAULT_LOGO}'">` : `<div class="channel-logo-placeholder"><i class="fas fa-tv"></i></div>`}
+                <div class="channel-card" 
+                     tabindex="0" 
+                     onclick="playChannel('${ch.url}', '${ch.name}')">
+                    ${ch.logo ? `<img src="${ch.logo}" onerror="this.src='${DEFAULT_LOGO}'">` : `<div style="font-size:3rem; margin-bottom:10px;"><i class="fas fa-tv"></i></div>`}
                     <p>${ch.name}</p>
                 </div>
             `).join('');
         }
 
-        function openNav() { document.getElementById("mySidenav").style.width = "280px"; }
-        function closeNav() { document.getElementById("mySidenav").style.width = "0"; }
-        
-        function loadTheme() {
-            const t = document.getElementById("themeToggle");
-            if (localStorage.getItem("theme") === "light") document.body.classList.add("light-mode");
-            t.onclick = () => {
-                document.body.classList.toggle("light-mode");
-                localStorage.setItem("theme", document.body.classList.contains("light-mode") ? "light" : "dark");
-            };
-        }
+        // دعم زر Enter في الريموت كنترول
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'Enter') {
+                const activeEl = document.activeElement;
+                if (activeEl && (activeEl.classList.contains('channel-card') || activeEl.classList.contains('cat-btn'))) {
+                    activeEl.click();
+                }
+            }
+        });
     </script>
 </body>
 </html>
-
