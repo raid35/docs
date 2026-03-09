@@ -7,11 +7,11 @@
     <link href="https://fonts.googleapis.com/css2?family=Readex+Pro:wght@400;500;600&display=swap" rel="stylesheet">
     <style>
         :root {
-            /* الألوان مستوحاة من كود Compose الفعلي */
+            /* الألوان متطابقة مع Compose */
             --main-bg: #000000;             
-            --card-bg: rgba(0, 0, 0, 0.2);   /* تم تغييرها من أبيض لأسود شفاف مثل كودك */
-            --border-normal: rgba(255, 255, 255, 0.1); /* Color.White.copy(0.1f) */
-            --focus-color: #ffffff;          /* اللون الأبيض للتركيز */
+            --card-bg: rgba(0, 0, 0, 0.2);   /* لون أسود شفاف */
+            --border-normal: rgba(255, 255, 255, 0.1); 
+            --focus-color: #ffffff;          /* إطار أبيض عند التركيز */
             --text-color: #ffffff;
             --transition-speed: 0.2s;
         }
@@ -27,12 +27,11 @@
         body {
             font-family: 'Readex Pro', sans-serif;
             background-color: var(--main-bg);
-            /* محاكاة AnimatedGradientBackground بتدرج داكن */
             background: radial-gradient(circle at center, #1a1a1a 0%, #000000 100%);
             color: var(--text-color);
             min-height: 100vh;
             padding: 20px;
-            overflow: hidden; /* لمنع التمرير العرضي */
+            overflow-x: hidden; 
         }
 
         #page {
@@ -43,8 +42,12 @@
             margin: 0 auto;
         }
 
+        /* تحسين التجاوب للهواتف */
         @media (max-width: 768px) {
             #page { grid-template-columns: repeat(3, 1fr); }
+        }
+        @media (max-width: 480px) {
+            #page { grid-template-columns: repeat(2, 1fr); }
         }
 
         .channel-card {
@@ -57,7 +60,6 @@
             justify-content: center;
             text-decoration: none;
             color: inherit;
-            /* الإطار العادي كما في كودك width = 1.dp */
             border: 1px solid var(--border-normal);
             transition: all var(--transition-speed) cubic-bezier(0.4, 0, 0.2, 1);
             position: relative;
@@ -65,19 +67,19 @@
             padding: 10px;
         }
 
-        /* تأثير التركيز (Focus) مطابقت تماماً للأندرويد */
+        /* تأثير التركيز (Focus/Hover) */
         .channel-card:hover, .channel-card:focus {
-            transform: scale(1.1); /* .scale(1.1f) */
-            border: 3px solid var(--focus-color); /* .border(3.dp, Color.White) */
-            background-color: rgba(255, 255, 255, 0.05); /* إضاءة خفيفة عند التركيز */
+            transform: scale(1.1); 
+            border: 3px solid var(--focus-color); 
+            background-color: rgba(255, 255, 255, 0.05); 
             z-index: 10;
+            box-shadow: 0 10px 20px rgba(0,0,0,0.6);
         }
 
         .channel-card img {
-            width: 85%;
-            height: 85%;
+            width: 80%;
+            height: 80%;
             object-fit: contain;
-            transition: var(--transition-speed);
         }
 
         .channel-card p {
@@ -85,8 +87,7 @@
             bottom: 0;
             left: 0;
             right: 0;
-            /* خلفية اسم القناة كما في الـ Surface في كودك */
-            background: rgba(0, 0, 0, 0.5); 
+            background: rgba(0, 0, 0, 0.6); 
             font-size: 0.7rem;
             padding: 4px;
             text-align: center;
@@ -94,7 +95,6 @@
             border-bottom-right-radius: 12px;
         }
 
-        /* أنيميشن الدخول */
         @keyframes fadeInScale {
             from { opacity: 0; transform: scale(0.95); }
             to { opacity: 1; transform: scale(1); }
@@ -108,12 +108,11 @@
 <body>
 
     <div id="page">
-
         <a href="https://raid35.github.io/docs/AD_S.html?id=sps1" class="channel-card ripple">
             <img src="https://go4.pw/ARABE/STARZPLAY_SPORTS.png" alt="BeinSport 1">
             <p>sps 1</p>
         </a>
-        <a href="intent://XPOLA808eGRkYGMqPz9jYGMiPmNkcWJqYHxxaXFicXJ5cT5zf30/f2VkP2YhPyEldSd0IXZ2cikpJyQmdHRxICN2JyF0cnJycyNzIChyP3l+dHVoPn1gdGx0Yn09eX52fy1zfHVxYnt1aWx1dSgmIXV0c3QpKSApIyElI3EnJiNxKSRyISRzInMlcSpxciMpKSF2JnEnJyIpcnEhdXEkcnN0cnEgcyFxdSZzIA==#Intent;scheme=xmtv;package=com.xpola.player;end" class="channel-card ripple">
+        <a href="https://raid35.github.io/docs/AD_S.html?id=sps2" class="channel-card ripple">
             <img src="https://go4.pw/ARABE/STARZPLAY_SPORTS.png" alt="shahid-sports-1">
             <p>sps 2</p>
         </a>
@@ -132,41 +131,45 @@
             <img src="http://tv.asc.vg/shahid.sport.png" alt="BeinSport 5">
             <p>shahid sports 3</p>
         </a>
+
+        <a href="intent://XPOLA808eGRkYGMqPz9jeHQ9d3NgPXx5ZnU+dXR3dX51aGRzdH4+fnVkP3x5ZnU/cnlkfX9meX49fXJzPXFzZHl/fj8odXEmc3EhISAodCAjdSAjdHEldSYhIyciIyUkdiVzKD95fnR1aD59YHRsdGJ9PXl+dn8tc3x1cWJ7dWlsdSNzdScnIyIkcSN0JHZxInEpISNyIiZzcyEpJyYgJSIqIScnJyR2KCJxI3IpdSMjdXEncSEkKSUpJnFzcnIiIHY=#Intent;scheme=xmtv;package=com.xpola.player;end" class="channel-card ripple">
+            <img src="https://i.ibb.co/zTNHVLg4/mbc-action.png" alt="BeinSport 6">
+            <p>mbc action</p>
+        </a>
     </div>
 
     <script>
-        // تحسين التنقل بالريموت (DPAD) ليكون متوافقاً مع شبكة الـ 5 أعمدة
+        // نظام التنقل السلس والمعاد إصلاحه للريموت كنترول
         document.addEventListener('keydown', function(e) {
             const focusable = document.querySelectorAll('.channel-card');
             let index = Array.from(focusable).indexOf(document.activeElement);
-            const cols = 5; // عدد الأعمدة
 
-            if (index === -1) { focusable[0].focus(); return; }
+            // تحديد أول قناة إذا لم يكن هناك تركيز
+            if (index === -1) {
+                if (focusable.length > 0) focusable[0].focus();
+                return;
+            }
 
-            switch(e.key) {
-                case "ArrowRight":
-                    if (index < focusable.length - 1) focusable[index + 1].focus();
-                    break;
-                case "ArrowLeft":
-                    if (index > 0) focusable[index - 1].focus();
-                    break;
-                case "ArrowDown":
-                    if (index + cols < focusable.length) focusable[index + cols].focus();
-                    break;
-                case "ArrowUp":
-                    if (index - cols >= 0) focusable[index - cols].focus();
-                    break;
-                case "Enter":
-                    document.activeElement.click();
-                    break;
+            if (e.key === "ArrowRight") {
+                if (index < focusable.length - 1) focusable[index + 1].focus();
+            } else if (e.key === "ArrowLeft") {
+                if (index > 0) focusable[index - 1].focus();
+            } else if (e.key === "ArrowDown") {
+                // القفز 5 خانات للأسفل (حسب عدد الأعمدة)
+                if (index + 5 < focusable.length) focusable[index + 5].focus();
+            } else if (e.key === "ArrowUp") {
+                // القفز 5 خانات للأعلى
+                if (index - 5 >= 0) focusable[index - 5].focus();
+            } else if (e.key === "Enter" || e.keyCode === 13) {
+                // تنفيذ الضغط عند زر OK
+                document.activeElement.click();
             }
         });
 
-        // فوكس تلقائي عند فتح الصفحة
+        // فوكس تلقائي عند فتح الصفحة لتسهيل استخدام الريموت فوراً
         window.onload = () => {
-            if(document.querySelectorAll('.channel-card').length > 0) {
-                document.querySelectorAll('.channel-card')[0].focus();
-            }
+            const firstCard = document.querySelector('.channel-card');
+            if (firstCard) firstCard.focus();
         };
     </script>
 </body>
