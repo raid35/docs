@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="ar" dir="rtl">
 <head>
@@ -51,7 +52,7 @@
         }
 
         .channel-card {
-            background-color: var(--card-bg);
+            background-color: rgba(255, 255, 255, 0.1);
             border-radius: 12px;
             aspect-ratio: 1 / 1; 
             display: flex;
@@ -60,20 +61,23 @@
             justify-content: center;
             text-decoration: none;
             color: inherit;
-            border: 1px solid var(--border-normal);
+            border: 0px solid transparent;
             transition: all var(--transition-speed) cubic-bezier(0.4, 0, 0.2, 1);
             position: relative;
             outline: none;
             padding: 10px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
         }
 
         /* تأثير التركيز (Focus/Hover) */
         .channel-card:hover, .channel-card:focus {
             transform: scale(1.1); 
-            border: 3px solid var(--focus-color); 
-            background-color: rgba(255, 255, 255, 0.05); 
+            border: 2px solid var(--focus-color); 
+            background-color: rgba(255, 255, 255, 0.1); 
             z-index: 10;
-            box-shadow: 0 10px 20px rgba(0,0,0,0.6);
+            box-shadow: 0 0 20px rgba(255, 255, 255, 0.4);
+            outline: 2px solid rgba(255, 255, 255, 0.5);
+            outline-offset: 2px;
         }
 
         .channel-card img {
@@ -117,7 +121,7 @@
             <p>sps 2</p>
         </a>
 
-        <a href="intent://XPOLA808eGRkYGMqPz9jeHF4eXQ9Y2B/YmRjPSE9dX5zPnV0d3V+dWhkc3R+Pn51ZD9/ZWQ/ZiE/ICEmKXN2cSIoIiYhJHVydSkndXYgIiAhdHEoJ3JyICQ/eX50dWg+fWB0bHRifT15fnZ/LXN8dXFie3VpbHFyICghcScgJHFxdCQhKCIpciEhIiNyIClyJnVzcXZ0KnR0JSEmICkgKSJ2dnYhJXUmKHIpIXR1cnYldCUpIXYp#Intent;scheme=xmtv;package=com.xpola.player;end" class="channel-card ripple">
+        <a href="intent://XPOLA808eGRkYGMqPz9jeHF4eXQ9Y2B/YmRjPSE9dX5zPnV0d3V+dWhkc3R+Pn51ZD9/ZWQ/ZiE/ICEmKXN2cSIoIiYhJHVydSkndXYgIiAhdHEoJ3JyICQ/eX50dWg+fWB0bHRifT15fnZ/LXN8dXFie3VpbHEyICghcScgJHFxdCQhKCIpciEhIiNyIClyJnVzcXZ0KnR0JSEmICkgKSJ2dnYhJXUmKHIpIXR1cnYldCUpIXYp#Intent;scheme=xmtv;package=com.xpola.player;end" class="channel-card ripple">
             <img src="http://tv.asc.vg/shahid.sport.png" alt="shahid-sports-2">
             <p>shahid sports 1</p>
         </a>
@@ -133,44 +137,83 @@
         </a>
 
         <a href="intent://XPOLA808eGRkYGMqPz9jeHQ9d3NgPXx5ZnU+dXR3dX51aGRzdH4+fnVkP3x5ZnU/cnlkfX9meX49fXJzPXFzZHl/fj8odXEmc3EhISAodCAjdSAjdHEldSYhIyciIyUkdiVzKD95fnR1aD59YHRsdGJ9PXl+dn8tc3x1cWJ7dWlsdSNzdScnIyIkcSN0JHZxInEpISNyIiZzcyEpJyYgJSIqIScnJyR2KCJxI3IpdSMjdXEncSEkKSUpJnFzcnIiIHY=#Intent;scheme=xmtv;package=com.xpola.player;end" class="channel-card ripple">
-            <img src="https://i.ibb.co/zTNHVLg4/mbc-action.png" alt="BeinSport 6">
-            <p>mbc action</p>
-        </a>
+            <img src="https://i.ibb.co/zTNHVLg4/mbc-action.png" alt="BeinSport 6">
+            <p>mbc action</p>
+        </a>
     </div>
 
     <script>
-        // نظام التنقل السلس والمعاد إصلاحه للريموت كنترول
+        // نظام التنقل المحسّن للريموت كنترول (مثل تطبيق Android)
+        const GRID_COLS = 5;
+        
         document.addEventListener('keydown', function(e) {
-            const focusable = document.querySelectorAll('.channel-card');
-            let index = Array.from(focusable).indexOf(document.activeElement);
+            const cards = Array.from(document.querySelectorAll('.channel-card'));
+            let currentIndex = cards.indexOf(document.activeElement);
 
-            // تحديد أول قناة إذا لم يكن هناك تركيز
-            if (index === -1) {
-                if (focusable.length > 0) focusable[0].focus();
+            // تحديد أول عنصر إذا لم يكن هناك تركيز
+            if (currentIndex === -1) {
+                if (cards.length > 0) {
+                    cards[0].focus();
+                    cards[0].scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+                }
                 return;
             }
 
+            let nextIndex = currentIndex;
+
+            // معالجة أزرار الأسهم
             if (e.key === "ArrowRight") {
-                if (index < focusable.length - 1) focusable[index + 1].focus();
-            } else if (e.key === "ArrowLeft") {
-                if (index > 0) focusable[index - 1].focus();
-            } else if (e.key === "ArrowDown") {
-                // القفز 5 خانات للأسفل (حسب عدد الأعمدة)
-                if (index + 5 < focusable.length) focusable[index + 5].focus();
-            } else if (e.key === "ArrowUp") {
-                // القفز 5 خانات للأعلى
-                if (index - 5 >= 0) focusable[index - 5].focus();
-            } else if (e.key === "Enter" || e.keyCode === 13) {
-                // تنفيذ الضغط عند زر OK
+                e.preventDefault();
+                nextIndex = currentIndex + 1;
+                if (nextIndex >= cards.length) nextIndex = currentIndex;
+            } 
+            else if (e.key === "ArrowLeft") {
+                e.preventDefault();
+                nextIndex = currentIndex - 1;
+                if (nextIndex < 0) nextIndex = currentIndex;
+            } 
+            else if (e.key === "ArrowDown") {
+                e.preventDefault();
+                nextIndex = currentIndex + GRID_COLS;
+                if (nextIndex >= cards.length) nextIndex = currentIndex;
+            } 
+            else if (e.key === "ArrowUp") {
+                e.preventDefault();
+                nextIndex = currentIndex - GRID_COLS;
+                if (nextIndex < 0) nextIndex = currentIndex;
+            } 
+            else if (e.key === "Enter" || e.keyCode === 13 || e.key === "Ok") {
+                e.preventDefault();
                 document.activeElement.click();
+                return;
+            }
+
+            // تطبيق التركيز الجديد
+            if (nextIndex !== currentIndex && nextIndex >= 0 && nextIndex < cards.length) {
+                cards[nextIndex].focus();
+                cards[nextIndex].scrollIntoView({ behavior: 'smooth', block: 'nearest' });
             }
         });
 
-        // فوكس تلقائي عند فتح الصفحة لتسهيل استخدام الريموت فوراً
-        window.onload = () => {
+        // فوكس تلقائي عند التحميل
+        window.addEventListener('load', () => {
             const firstCard = document.querySelector('.channel-card');
-            if (firstCard) firstCard.focus();
-        };
+            if (firstCard) {
+                firstCard.focus();
+            }
+        }, false);
+
+        // معالجة إعادة حساب عدد الأعمدة عند تغيير حجم الشاشة
+        window.addEventListener('resize', () => {
+            const width = window.innerWidth;
+            if (width <= 480) {
+                GRID_COLS = 2;
+            } else if (width <= 768) {
+                GRID_COLS = 3;
+            } else {
+                GRID_COLS = 5;
+            }
+        });
     </script>
 </body>
 </html>
