@@ -1,0 +1,277 @@
+
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Siksa TV - WebView</title>
+    <link href="https://fonts.googleapis.com/css2?family=Readex+Pro:wght@400;500;600&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            /* الألوان متطابقة مع Compose */
+            --main-bg: #000000;             
+            --card-bg: rgba(0, 0, 0, 0.2);   /* لون أسود شفاف */
+            --border-normal: rgba(255, 255, 255, 0.1); 
+            --focus-color: #ffffff;          /* إطار أبيض عند التركيز */
+            --text-color: #ffffff;
+            --transition-speed: 0.2s;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            user-select: none;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        body {
+            font-family: 'Readex Pro', sans-serif;
+            background-color: var(--main-bg);
+            background: radial-gradient(circle at center, #1a1a1a 0%, #000000 100%);
+            color: var(--text-color);
+            min-height: 100vh;
+            padding: 20px;
+            overflow-x: hidden; 
+        }
+
+        #page {
+            display: grid;
+            grid-template-columns: repeat(5, 1fr); 
+            gap: 12px; 
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        /* تحسين التجاوب للهواتف */
+        @media (max-width: 768px) {
+            #page { grid-template-columns: repeat(3, 1fr); }
+        }
+        @media (max-width: 480px) {
+            #page { grid-template-columns: repeat(2, 1fr); }
+        }
+
+        .channel-card {
+            background-color: rgba(255, 255, 255, 0.1);
+            border-radius: 12px;
+            aspect-ratio: 1 / 1; 
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            text-decoration: none;
+            color: inherit;
+            border: 0px solid transparent;
+            transition: all var(--transition-speed) cubic-bezier(0.4, 0, 0.2, 1);
+            position: relative;
+            outline: none;
+            padding: 10px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+        }
+
+        /* تأثير التركيز (Focus/Hover) */
+        .channel-card:hover, .channel-card:focus {
+            transform: scale(1.1); 
+            border: 2px solid var(--focus-color); 
+            background-color: rgba(255, 255, 255, 0.1); 
+            z-index: 10;
+            box-shadow: 0 0 20px rgba(255, 255, 255, 0.4);
+            outline: 2px solid rgba(255, 255, 255, 0.5);
+            outline-offset: 2px;
+        }
+
+        .channel-card img {
+            width: 80%;
+            height: 80%;
+            object-fit: contain;
+        }
+
+        .channel-card p {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: rgba(0, 0, 0, 0.6); 
+            font-size: 0.7rem;
+            padding: 4px;
+            text-align: center;
+            border-bottom-left-radius: 12px;
+            border-bottom-right-radius: 12px;
+        }
+
+        @keyframes fadeInScale {
+            from { opacity: 0; transform: scale(0.95); }
+            to { opacity: 1; transform: scale(1); }
+        }
+
+        .channel-card {
+            animation: fadeInScale 0.3s ease-out forwards;
+        }
+    </style>
+</head>
+<body>
+
+    <div id="page">
+
+        <a href="https://raid35.github.io/docs/AD_S.html?id=La_Une" class="channel-card ripple">
+            <img src="https://upload.wikimedia.org/wikipedia/commons/a/a3/RTBF_La_Une_logo_2004.png" alt="shahid-sports-2">
+            <p>La Une</p>
+        </a>
+
+        <a href="https://raid35.github.io/docs/Sport.html?id=Матч_1" class="channel-card ripple">
+            <img src="https://new.matchtv.ru/assets/202507251502/images/channels/8.jpg" alt="BeinSport 4">
+            <p>Матч! 1 🇷🇺</p>
+        </a>
+
+        <a href="https://raid35.github.io/docs/Sport.html?id=Матч_2" class="channel-card ripple">
+            <img src="https://new.matchtv.ru/assets/202507251502/images/channels/14.jpg" alt="BeinSport 5">
+            <p>Матч! 2 🇷🇺</p>
+        </a>
+
+        <a href="https://raid35.github.io/docs/Sport.html?id=Матч_3" class="channel-card ripple">
+            <img src="https://new.matchtv.ru/assets/202507251502/images/channels/140.jpg"" alt="BeinSport 6">
+            <p>Матч! 3 🇷🇺</p>
+        </a>
+		<a href="https://raid35.github.io/docs/Sport.html?id=Sport_1" class="channel-card ripple">
+            <img src="https://7sport.sk/wp-content/uploads/2023/02/sport1-300x150.png" alt="BeinSport 5">
+            <p>Sport 1 SK</p>
+        </a>
+
+        <a href="https://raid35.github.io/docs/Sport.html?id=Sport_2" class="channel-card ripple">
+            <img src="https://7sport.sk/wp-content/uploads/2023/02/sport2-300x150.png" alt="BeinSport 6">
+            <p>Sport 2 SK</p>
+        </a>
+		<a href="https://raid35.github.io/docs/Sport.html?id=Nova_1" class="channel-card ripple">
+            <img src="https://r2.thesportsdb.com/images/media/channel/logo/6tz1pp1649341425.png" alt="BeinSport 5">
+            <p>Nova Sport 1</p>
+        </a>
+
+        <a href="https://raid35.github.io/docs/Sport.html?id=Nova_2" class="channel-card ripple">
+            <img src="https://r2.thesportsdb.com/images/media/channel/logo/gymhfv1649341436.png" alt="BeinSport 6">
+            <p>Nova Sport 2</p>
+        </a>
+    </div>
+
+    <script>
+        // نظام التنقل السلس والفعال للريموت كنترول
+        let currentIndex = -1;
+        const cards = document.querySelectorAll('.channel-card');
+        
+        function getGridColumns() {
+            const width = window.innerWidth;
+            if (width <= 480) return 2;
+            if (width <= 768) return 3;
+            return 5;
+        }
+        
+        function focusCard(index) {
+            if (index >= 0 && index < cards.length) {
+                currentIndex = index;
+                cards[index].focus();
+                cards[index].scrollIntoView({ behavior: 'smooth', block: 'center' });
+            }
+        }
+        
+        document.addEventListener('keydown', function(e) {
+            const cols = getGridColumns();
+            const totalCards = cards.length;
+            const currentRow = Math.floor(currentIndex / cols);
+            const currentCol = currentIndex % cols;
+            
+            // تحديد أول عنصر في البداية
+            if (currentIndex === -1) {
+                if (totalCards > 0) {
+                    focusCard(0);
+                }
+                return;
+            }
+            
+            let newIndex = currentIndex;
+            
+            switch(e.key) {
+                case 'ArrowRight':
+                    e.preventDefault();
+                    // في العربية: اليمين يعني الذهاب يساراً (تقليل الفهرس)
+                    newIndex = currentIndex - 1;
+                    if (currentCol === 0) newIndex = currentIndex;
+                    break;
+                    
+                case 'ArrowLeft':
+                    e.preventDefault();
+                    // في العربية: اليسار يعني الذهاب يميناً (زيادة الفهرس)
+                    newIndex = currentIndex + 1;
+                    if (newIndex >= totalCards || (Math.floor(newIndex / cols) !== currentRow)) newIndex = currentIndex;
+                    break;
+                    
+                case 'ArrowDown':
+                    e.preventDefault();
+                    newIndex = currentIndex + cols;
+                    // إذا لم يكن هناك عنصر في الصف التالي بنفس العمود
+                    // اختر آخر عنصر متاح في الصف التالي
+                    if (newIndex >= totalCards) {
+                        const nextRowStart = (currentRow + 1) * cols;
+                        if (nextRowStart < totalCards) {
+                            // اختر آخر عنصر في الصف التالي
+                            newIndex = Math.min(totalCards - 1, nextRowStart + cols - 1);
+                        } else {
+                            newIndex = currentIndex;
+                        }
+                    }
+                    break;
+                    
+                case 'ArrowUp':
+                    e.preventDefault();
+                    newIndex = currentIndex - cols;
+                    // إذا لم يكن هناك عنصر في الصف السابق بنفس العمود
+                    // اختر آخر عنصر متاح في الصف السابق
+                    if (newIndex < 0) {
+                        if (currentRow > 0) {
+                            const prevRowStart = (currentRow - 1) * cols;
+                            // اختر آخر عنصر في الصف السابق
+                            newIndex = Math.min(totalCards - 1, prevRowStart + cols - 1);
+                            if (newIndex < prevRowStart) {
+                                newIndex = prevRowStart;
+                            }
+                        } else {
+                            newIndex = currentIndex;
+                        }
+                    }
+                    break;
+                    
+                case 'Enter':
+                case ' ':
+                    e.preventDefault();
+                    if (cards[currentIndex]) {
+                        cards[currentIndex].click();
+                    }
+                    return;
+                    
+                default:
+                    return;
+            }
+            
+            if (newIndex !== currentIndex && newIndex >= 0 && newIndex < totalCards) {
+                focusCard(newIndex);
+            }
+        }, true);
+        
+        // تفعيل الكاردات عند الضغط عليها
+        cards.forEach((card, index) => {
+            card.addEventListener('click', (e) => {
+                currentIndex = index;
+            }, false);
+            
+            card.addEventListener('focus', (e) => {
+                currentIndex = index;
+            }, false);
+        });
+        
+        // فوكس تلقائي عند التحميل
+        window.addEventListener('load', () => {
+            if (cards.length > 0) {
+                focusCard(0);
+            }
+        });
+    </script>
+</body>
+</html>
