@@ -165,6 +165,8 @@
         document.addEventListener('keydown', function(e) {
             const cols = getGridColumns();
             const totalCards = cards.length;
+            const currentRow = Math.floor(currentIndex / cols);
+            const currentCol = currentIndex % cols;
             
             // تحديد أول عنصر في البداية
             if (currentIndex === -1) {
@@ -179,26 +181,33 @@
             switch(e.key) {
                 case 'ArrowRight':
                     e.preventDefault();
-                    newIndex = currentIndex + 1;
-                    if (newIndex >= totalCards) newIndex = currentIndex;
+                    // في العربية: اليمين يعني الذهاب يساراً (تقليل الفهرس)
+                    newIndex = currentIndex - 1;
+                    if (currentCol === 0) newIndex = currentIndex;
                     break;
                     
                 case 'ArrowLeft':
                     e.preventDefault();
-                    newIndex = currentIndex - 1;
-                    if (newIndex < 0) newIndex = currentIndex;
+                    // في العربية: اليسار يعني الذهاب يميناً (زيادة الفهرس)
+                    newIndex = currentIndex + 1;
+                    if (newIndex >= totalCards || (Math.floor(newIndex / cols) !== currentRow)) newIndex = currentIndex;
                     break;
                     
                 case 'ArrowDown':
                     e.preventDefault();
                     newIndex = currentIndex + cols;
-                    if (newIndex >= totalCards) newIndex = currentIndex;
+                    // التأكد من أن العنصر في نفس العمود تقريباً
+                    if (newIndex >= totalCards) {
+                        newIndex = currentIndex;
+                    }
                     break;
                     
                 case 'ArrowUp':
                     e.preventDefault();
                     newIndex = currentIndex - cols;
-                    if (newIndex < 0) newIndex = currentIndex;
+                    if (newIndex < 0) {
+                        newIndex = currentIndex;
+                    }
                     break;
                     
                 case 'Enter':
@@ -213,7 +222,7 @@
                     return;
             }
             
-            if (newIndex !== currentIndex) {
+            if (newIndex !== currentIndex && newIndex >= 0 && newIndex < totalCards) {
                 focusCard(newIndex);
             }
         }, true);
