@@ -9,7 +9,7 @@
     <style>
         :root { 
             --primary-color: #26ab56; 
-            --focus-color: #ffaa00; /* لون التحديد عند استخدام الريموت */
+            --focus-color: #ffaa00; 
             --dark-bg: #121212; 
             --dark-card: #1e1e1e; 
             --text-dark: #ffffff; 
@@ -26,16 +26,15 @@
             padding-bottom: 20px;
         }
 
-        /* هيدر بسيط جداً للتلفاز */
+        /* هيدر بسيط - حذفنا منه الأيقونات والبحث */
         header { 
             background-color: #000; 
-            padding: 10px 30px; 
+            padding: 0 30px; 
             position: fixed; 
             top: 0; 
             width: 100%; 
             z-index: 1000; 
             display: flex; 
-            justify-content: space-between; 
             align-items: center; 
             height: 60px;
             border-bottom: 1px solid #333;
@@ -43,63 +42,65 @@
 
         .logo { font-size: 1.8rem; font-weight: 700; color: var(--primary-color); }
 
-        /* الأقسام (التصنيفات) */
+        /* الأقسام (الباقات) - تم ضبط موقعها لتظهر مباشرة تحت الهيدر */
         .categories-wrapper { 
             position: fixed; 
-            top: 60px; 
+            top: 60px; /* تحت الهيدر مباشرة */
             width: 100%; 
-            background-color: #000; 
+            background-color: #1a1a1a; 
             z-index: 900; 
-            padding: 5px 20px;
+            padding: 10px 20px;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.3);
         }
 
         .categories-scroll { 
             display: flex; 
             overflow-x: auto; 
             white-space: nowrap; 
-            padding: 10px 0; 
             gap: 15px; 
             scrollbar-width: none; 
         }
         .categories-scroll::-webkit-scrollbar { display: none; }
 
         .cat-btn { 
-            background: #222; 
+            background: #2d2d2d; 
             border: 2px solid transparent; 
-            color: #bbb; 
-            padding: 8px 20px; 
-            border-radius: 20px;
+            color: #8fa3b0; 
+            padding: 10px 20px; 
+            border-radius: 10px;
             font-family: inherit;
+            font-weight: 600;
             cursor: pointer;
             transition: var(--transition);
         }
 
-        /* حالة التركيز للريموت في الأقسام */
+        /* التفاعل مع الريموت للأقسام */
         .cat-btn:focus, .cat-btn.active { 
             background: var(--primary-color); 
             color: white; 
             border-color: var(--focus-color);
             transform: scale(1.05);
+            outline: none;
         }
 
-        /* شبكة القنوات - تبدأ من الأعلى مباشرة بعد الأقسام */
+        /* شبكة القنوات - تم تقليل الـ margin-top لتملأ الفراغ */
         #page { 
-            margin-top: 130px; 
+            margin-top: 140px; /* مساحة الهيدر + الباقات */
             padding: 20px; 
             display: grid; 
-            grid-template-columns: repeat(auto-fill, minmax(160px, 1fr)); 
-            gap: 25px; 
+            grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); 
+            gap: 20px; 
         }
 
         @media (max-width: 480px) { 
-            #page { grid-template-columns: repeat(auto-fill, minmax(120px, 1fr)); } 
+            #page { grid-template-columns: repeat(auto-fill, minmax(110px, 1fr)); } 
         }
 
         /* بطاقة القناة */
         .channel-card { 
             background-color: var(--dark-card); 
-            border-radius: 15px; 
-            padding: 20px 10px; 
+            border-radius: 12px; 
+            padding: 15px 10px; 
             display: flex; 
             flex-direction: column; 
             align-items: center; 
@@ -107,41 +108,35 @@
             border: 3px solid transparent; 
             transition: var(--transition);
             cursor: pointer;
-            text-decoration: none;
-            color: inherit;
         }
 
-        /* أهم جزء: تأثير الريموت كنترول */
+        /* تأثير الريموت كنترول عند الوقوف على القناة */
         .channel-card:focus { 
-            transform: scale(1.15); 
+            transform: scale(1.1); 
             border-color: var(--focus-color); 
             background: #252525;
-            box-shadow: 0 0 20px rgba(255, 170, 0, 0.4);
-            z-index: 5;
+            box-shadow: 0 0 15px rgba(255, 170, 0, 0.4);
+            outline: none;
         }
 
         .channel-card img { 
-            width: 90px; height: 90px; 
+            width: 80px; height: 80px; 
             object-fit: contain; 
-            margin-bottom: 12px; 
+            margin-bottom: 10px; 
             background: #fff;
-            padding: 8px;
-            border-radius: 12px;
+            padding: 5px;
+            border-radius: 10px;
         }
 
-        .channel-card p { font-size: 1rem; font-weight: 600; line-height: 1.3; }
+        .channel-card p { font-size: 0.9rem; font-weight: 600; line-height: 1.4; }
 
         .empty-state { grid-column: 1 / -1; text-align: center; padding: 50px; color: #888; }
-        
-        /* إخفاء القائمة الجانبية القديمة إذا لم تعد بحاجة لها */
-        .sidenav { display: none; }
     </style>
 </head>
 <body>
 
     <header>
         <div class="logo">A LIVE</div>
-        <div style="color: #666; font-size: 0.8rem;">استخدم أسهم الريموت للتنقل</div>
     </header>
 
     <div class="categories-wrapper">
@@ -156,7 +151,6 @@
         const channelsList = document.getElementById('page');
         const categoriesList = document.getElementById('categoriesList');
         const DEFAULT_LOGO = 'https://via.placeholder.com/100x100/2c2c2c/f0f0f0?text=TV';
-        let currentChannels = [];
 
         function base64Encode(str) {
             return btoa(unescape(encodeURIComponent(str)));
@@ -168,7 +162,6 @@
                 `name=${name}`,
                 `user-agent=ExoPlayerDemo/2.15.1 (Linux; Android 11) ExoPlayerLib/2.15.1`
             ];
-
             const rawUrl = `["${parts.join('|')}|httpcanary=false|rot=false|deviceroot=false|cast=false|name=ET|logosize=40x40|applogobl=https://up6.cc/2025/10/176371402217761.png|applink=https://t.me/A_Tv_Chat"]`;
             const encodedUrl = base64Encode(rawUrl);
             const intentUrl = `intent://${encodedUrl}#Intent;scheme=xmtv;package=com.xpola.player;end`;
@@ -183,15 +176,12 @@
                 .then(categories => {
                     renderCategories(categories);
                     if(categories.length > 0) loadCategoryChannels(categories[0].name);
-                }).catch(() => {
-                    // في حال فشل الـ API (للتجربة فقط)
-                    renderCategories([{name: "الكل", count: 0}]);
                 });
         }
 
         function renderCategories(categories) {
             categoriesList.innerHTML = categories.map((cat, index) => 
-                `<button class="cat-btn" tabindex="0" onclick="handleCatClick('${cat.name}', this)">${cat.name}</button>`
+                `<button class="cat-btn" tabindex="0" onclick="handleCatClick('${cat.name}', this)">${cat.name} <small>(${cat.count})</small></button>`
             ).join('');
         }
 
@@ -203,37 +193,28 @@
         }
 
         function loadCategoryChannels(catName) {
-            channelsList.innerHTML = `<div class="empty-state"><i class="fas fa-spinner fa-spin fa-2x"></i><p>جاري تحميل ${catName}...</p></div>`;
+            channelsList.innerHTML = `<div class="empty-state">جاري تحميل ${catName}...</div>`;
             fetch(`?api=channels&cat=${encodeURIComponent(catName)}&t=` + Date.now())
                 .then(r => r.json())
                 .then(channels => {
-                    currentChannels = channels;
                     displayChannels(channels);
                 });
         }
 
         function displayChannels(list) {
-            if(list.length === 0) {
-                channelsList.innerHTML = '<div class="empty-state">لا توجد قنوات في هذا القسم</div>';
-                return;
-            }
             channelsList.innerHTML = list.map(ch => `
-                <div class="channel-card" 
-                     tabindex="0" 
-                     onclick="playChannel('${ch.url}', '${ch.name}')">
-                    ${ch.logo ? `<img src="${ch.logo}" onerror="this.src='${DEFAULT_LOGO}'">` : `<div style="font-size:3rem; margin-bottom:10px;"><i class="fas fa-tv"></i></div>`}
+                <div class="channel-card" tabindex="0" onclick="playChannel('${ch.url}', '${ch.name}')">
+                    ${ch.logo ? `<img src="${ch.logo}" onerror="this.src='${DEFAULT_LOGO}'">` : `<div style="font-size:2rem; margin-bottom:10px;"><i class="fas fa-tv"></i></div>`}
                     <p>${ch.name}</p>
                 </div>
             `).join('');
         }
 
-        // دعم زر Enter في الريموت كنترول
+        // دعم أزرار الريموت
         document.addEventListener('keydown', function(e) {
             if (e.key === 'Enter') {
                 const activeEl = document.activeElement;
-                if (activeEl && (activeEl.classList.contains('channel-card') || activeEl.classList.contains('cat-btn'))) {
-                    activeEl.click();
-                }
+                if (activeEl) activeEl.click();
             }
         });
     </script>
