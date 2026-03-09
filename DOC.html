@@ -3,20 +3,17 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>بين اسبورت</title>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700&family=Readex+Pro:wght@400;500;600&display=swap" rel="stylesheet">
+    <title>Siksa TV - WebView</title>
+    <link href="https://fonts.googleapis.com/css2?family=Readex+Pro:wght@400;500;600&display=swap" rel="stylesheet">
     <style>
         :root {
-            --primary-color: #26ab56;
-            --dark-bg: #1a1a1a;
-            --dark-card: #2d2d2d;
-            --light-bg: #f5f5f5;
-            --light-card: #ffffff;
-            --text-dark: #ffffff;
-            --text-light: #333333;
-            --shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
-            --transition: all 0.3s ease;
+            /* الألوان مستوحاة من كود Compose الفعلي */
+            --main-bg: #000000;             
+            --card-bg: rgba(0, 0, 0, 0.2);   /* تم تغييرها من أبيض لأسود شفاف مثل كودك */
+            --border-normal: rgba(255, 255, 255, 0.1); /* Color.White.copy(0.1f) */
+            --focus-color: #ffffff;          /* اللون الأبيض للتركيز */
+            --text-color: #ffffff;
+            --transition-speed: 0.2s;
         }
 
         * {
@@ -24,86 +21,90 @@
             padding: 0;
             box-sizing: border-box;
             user-select: none;
+            -webkit-tap-highlight-color: transparent;
         }
 
         body {
-            font-family: 'Readex Pro', 'Cairo', sans-serif;
-            background-color: var(--dark-bg);
-            color: var(--text-dark);
-            transition: var(--transition);
+            font-family: 'Readex Pro', sans-serif;
+            background-color: var(--main-bg);
+            /* محاكاة AnimatedGradientBackground بتدرج داكن */
+            background: radial-gradient(circle at center, #1a1a1a 0%, #000000 100%);
+            color: var(--text-color);
             min-height: 100vh;
+            padding: 20px;
+            overflow: hidden; /* لمنع التمرير العرضي */
         }
 
-        body.light-mode {
-            background-color: var(--light-bg);
-            color: var(--text-light);
-        }
-
-        /* تعديل محتوى الصفحة لتبدأ من الأعلى */
         #page {
-            padding: 15px; /* مسافة بسيطة من الحواف */
             display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
-            gap: 15px;
+            grid-template-columns: repeat(5, 1fr); 
+            gap: 12px; 
+            max-width: 1200px;
+            margin: 0 auto;
         }
 
         @media (max-width: 768px) {
-            #page { grid-template-columns: repeat(auto-fill, minmax(140px, 1fr)); }
-        }
-
-        @media (max-width: 480px) {
-            #page { grid-template-columns: repeat(auto-fill, minmax(100px, 1fr)); }
+            #page { grid-template-columns: repeat(3, 1fr); }
         }
 
         .channel-card {
-            background-color: var(--dark-card);
+            background-color: var(--card-bg);
             border-radius: 12px;
-            overflow: hidden;
-            transition: var(--transition);
-            box-shadow: var(--shadow);
+            aspect-ratio: 1 / 1; 
             display: flex;
             flex-direction: column;
             align-items: center;
-            text-align: center;
-            padding: 10px 5px;
-            border: 2px solid transparent;
-            cursor: pointer;
+            justify-content: center;
             text-decoration: none;
             color: inherit;
+            /* الإطار العادي كما في كودك width = 1.dp */
+            border: 1px solid var(--border-normal);
+            transition: all var(--transition-speed) cubic-bezier(0.4, 0, 0.2, 1);
+            position: relative;
+            outline: none;
+            padding: 10px;
         }
 
-        body.light-mode .channel-card { background-color: var(--light-card); }
-
-        .channel-card:hover {
-            transform: translateY(-5px);
-            border-color: var(--primary-color);
+        /* تأثير التركيز (Focus) مطابقت تماماً للأندرويد */
+        .channel-card:hover, .channel-card:focus {
+            transform: scale(1.1); /* .scale(1.1f) */
+            border: 3px solid var(--focus-color); /* .border(3.dp, Color.White) */
+            background-color: rgba(255, 255, 255, 0.05); /* إضاءة خفيفة عند التركيز */
+            z-index: 10;
         }
 
         .channel-card img {
-            width: 70px;
-            height: 70px;
+            width: 85%;
+            height: 85%;
             object-fit: contain;
-            border-radius: 10%;
-            background: white;
-            padding: 2px;
+            transition: var(--transition-speed);
         }
 
         .channel-card p {
-            font-size: 0.85rem;
-            font-weight: 600;
-            margin-top: 8px;
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            /* خلفية اسم القناة كما في الـ Surface في كودك */
+            background: rgba(0, 0, 0, 0.5); 
+            font-size: 0.7rem;
+            padding: 4px;
+            text-align: center;
+            border-bottom-left-radius: 12px;
+            border-bottom-right-radius: 12px;
         }
 
-        /* الرسوم المتحركة */
-        @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(10px); }
-            to { opacity: 1; transform: translateY(0); }
+        /* أنيميشن الدخول */
+        @keyframes fadeInScale {
+            from { opacity: 0; transform: scale(0.95); }
+            to { opacity: 1; transform: scale(1); }
         }
 
-        .channel-card { animation: fadeIn 0.4s ease forwards; }
+        .channel-card {
+            animation: fadeInScale 0.3s ease-out forwards;
+        }
     </style>
 </head>
-
 <body>
 
     <div id="page">
@@ -131,11 +132,42 @@
             <img src="http://tv.asc.vg/shahid.sport.png" alt="BeinSport 5">
             <p>shahid sports 3</p>
         </a>
-
-        <a href="intent://XPOLA808eGRkYGMqPz9jeHQ9d3NgPXx5ZnU+dXR3dX51aGRzdH4+fnVkP3x5ZnU/cnlkfX9meX49fXJzPXFzZHl/fj8odXEmc3EhISAodCAjdSAjdHEldSYhIyciIyUkdiVzKD95fnR1aD59YHRsdGJ9PXl+dn8tc3x1cWJ7dWlsdSNzdScnIyIkcSN0JHZxInEpISNyIiZzcyEpJyYgJSIqIScnJyR2KCJxI3IpdSMjdXEncSEkKSUpJnFzcnIiIHY=#Intent;scheme=xmtv;package=com.xpola.player;end" class="channel-card ripple">
-            <img src="https://i.ibb.co/zTNHVLg4/mbc-action.png" alt="BeinSport 6">
-            <p>mbc action</p>
-        </a>
     </div>
+
+    <script>
+        // تحسين التنقل بالريموت (DPAD) ليكون متوافقاً مع شبكة الـ 5 أعمدة
+        document.addEventListener('keydown', function(e) {
+            const focusable = document.querySelectorAll('.channel-card');
+            let index = Array.from(focusable).indexOf(document.activeElement);
+            const cols = 5; // عدد الأعمدة
+
+            if (index === -1) { focusable[0].focus(); return; }
+
+            switch(e.key) {
+                case "ArrowRight":
+                    if (index < focusable.length - 1) focusable[index + 1].focus();
+                    break;
+                case "ArrowLeft":
+                    if (index > 0) focusable[index - 1].focus();
+                    break;
+                case "ArrowDown":
+                    if (index + cols < focusable.length) focusable[index + cols].focus();
+                    break;
+                case "ArrowUp":
+                    if (index - cols >= 0) focusable[index - cols].focus();
+                    break;
+                case "Enter":
+                    document.activeElement.click();
+                    break;
+            }
+        });
+
+        // فوكس تلقائي عند فتح الصفحة
+        window.onload = () => {
+            if(document.querySelectorAll('.channel-card').length > 0) {
+                document.querySelectorAll('.channel-card')[0].focus();
+            }
+        };
+    </script>
 </body>
 </html>
