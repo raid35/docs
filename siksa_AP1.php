@@ -1,3 +1,5 @@
+
+
 <!DOCTYPE html>
 <html lang="ar" dir="rtl">
 <head>
@@ -37,15 +39,9 @@
         body.light-mode .cat-btn.active { color: #000; border-bottom: 3px solid var(--primary-color); }
         #page { margin-top: 170px; padding: 20px; display: grid; grid-template-columns: repeat(auto-fill, minmax(160px, 1fr)); gap: 20px; align-items: start; }
         @media (max-width: 480px) { #page { grid-template-columns: repeat(auto-fill, minmax(110px, 1fr)); } }
-        
         .channel-card { background-color: var(--dark-card); border-radius: 12px; overflow: hidden; transition: var(--transition); box-shadow: var(--shadow); display: flex; flex-direction: column; align-items: center; text-align: center; padding: 15px 10px; border: 2px solid transparent; cursor: pointer; position: relative; text-decoration: none; color: inherit; height: 100%; }
         body.light-mode .channel-card { background-color: var(--light-card); }
-        
-        /* التعديلات لدعم الريموت (التحديد) */
-        .channel-card:focus { transform: scale(1.05); border-color: var(--focus-border); box-shadow: 0 0 15px var(--focus-border); outline: none; background: rgba(255, 170, 0, 0.05); }
-        .cat-btn:focus { color: white; border-bottom: 3px solid var(--focus-border); outline: none; }
-        .header-left-icons i:focus, .header-right-icons i:focus, .theme-toggle:focus { color: var(--focus-border); transform: scale(1.2); outline: none; }
-
+        .channel-card:hover, .channel-card.focused { transform: translateY(-5px); box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2); border-color: var(--primary-color); background: rgba(38, 171, 86, 0.05); }
         .channel-card img { width: 80px; height: 80px; object-fit: contain; margin-bottom: 10px; transition: var(--transition); border-radius: 10px; background: white; padding: 5px; flex-shrink: 0; }
         .channel-card p { font-size: 0.85rem; font-weight: 600; margin-top: 10px; color: inherit; white-space: normal; overflow: visible; text-overflow: unset; word-wrap: break-word; line-height: 1.4; }
         .empty-state { grid-column: 1 / -1; text-align: center; padding: 50px; color: #888; }
@@ -54,32 +50,33 @@
     </style>
 </head>
 <body dir="rtl">
-    <header>
+   <header>
         <div class="header-right-icons">
-            <i class="fas fa-bars" onclick="openNav()" tabindex="0"></i>
+            <i class="fas fa-bars" onclick="openNav()"></i>
         </div>
         <div class="logo">A Live</div>
         <div class="header-left-icons">
-            <i class="fas fa-calendar-alt" onclick="window.location.href='go:jd5'" tabindex="0"></i>
-            <i class="fas fa-bell" onclick="window.location.href='http://action_notifications'" tabindex="0"></i>
-            <button class="theme-toggle" id="themeToggle" tabindex="0">
+            <i class="fas fa-calendar-alt" onclick="window.location.href='go:jd5'"></i>
+            <i class="fas fa-bell" onclick="window.location.href='http://action_notifications'"></i>
+            <button class="theme-toggle" id="themeToggle">
                 <i class="fas fa-moon"></i>
             </button>
         </div>
     </header>
     <div class="search-container">
-        <input type="text" class="search-box" id="searchInput" placeholder="ابحث في القسم الحالي..." tabindex="0">
+        <input type="text" class="search-box" id="searchInput" placeholder="ابحث في القسم الحالي...">
     </div>
     <div class="categories-wrapper">
         <div class="categories-scroll" id="categoriesList"></div>
     </div>
-    <div id="mySidenav" class="sidenav">
-        <a href="javascript:void(0)" class="closebtn" onclick="closeNav()" tabindex="0">×</a>
-        <a href="go:a141" tabindex="0">ملخصات كرة القدم</a>
-        <a href="go:telegram" tabindex="0">تلكرام</a>
-        <a href="go:a11" tabindex="0">حول التطبيق</a>
+     <div id="mySidenav" class="sidenav">
+        <a href="javascript:void(0)" class="closebtn" onclick="closeNav()">×</a>
+        <a href="go:a141">ملخصات كرة القدم</a>
+        <a href="go:telegram">تلكرام</a>
+        <a href="go:a11">حول التطبيق</a>
     </div>
     <div id="page"></div>
+
     <script>
         const channelsList = document.getElementById('page');
         const categoriesList = document.getElementById('categoriesList');
@@ -107,23 +104,15 @@
             const intentUrl = `intent://${encodedUrl}#Intent;scheme=xmtv;package=com.xpola.player;end`;
             window.location.href = intentUrl;
         }
+
         document.addEventListener("DOMContentLoaded", function() {
             loadTheme();
             initApp();
-            
             searchInput.addEventListener("input", function() {
                 const term = this.value.toLowerCase();
                 if(!currentChannels.length) return;
                 const filtered = currentChannels.filter(ch => ch.name.toLowerCase().includes(term));
                 displayChannels(filtered);
-            });
-
-            // دعم زر Enter في الريموت
-            document.addEventListener('keydown', function(e) {
-                if (e.key === 'Enter') {
-                    const focused = document.activeElement;
-                    if (focused) focused.click();
-                }
             });
         });
 
@@ -138,7 +127,7 @@
 
         function renderCategories(categories) {
             categoriesList.innerHTML = categories.map((cat, index) => 
-                `<button class="cat-btn ${index === 0 ? 'active' : ''}" onclick="handleCatClick('${cat.name}', this)" tabindex="0">${cat.name} <small>(${cat.count})</small></button>`
+                `<button class="cat-btn ${index === 0 ? 'active' : ''}" onclick="handleCatClick('${cat.name}', this)">${cat.name} <small>(${cat.count})</small></button>`
             ).join('');
         }
 
@@ -161,7 +150,7 @@
 
         function displayChannels(list) {
             channelsList.innerHTML = list.map(ch => `
-                <div class="channel-card" onclick="playChannel('${ch.url}', '${ch.name}')" tabindex="0">
+                <div class="channel-card" onclick="playChannel('${ch.url}', '${ch.name}')">
                     ${ch.logo ? `<img src="${ch.logo}" onerror="this.src='${DEFAULT_LOGO}'">` : `<div class="channel-logo-placeholder"><i class="fas fa-tv"></i></div>`}
                     <p>${ch.name}</p>
                 </div>
