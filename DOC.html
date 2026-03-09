@@ -143,75 +143,96 @@
     </div>
 
     <script>
-        // نظام التنقل المحسّن للريموت كنترول (مثل تطبيق Android)
-        const GRID_COLS = 5;
+        // نظام التنقل السلس والفعال للريموت كنترول
+        let currentIndex = -1;
+        const cards = document.querySelectorAll('.channel-card');
+        
+        function getGridColumns() {
+            const width = window.innerWidth;
+            if (width <= 480) return 2;
+            if (width <= 768) return 3;
+            return 5;
+        }
+        
+        function focusCard(index) {
+            if (index >= 0 && index < cards.length) {
+                currentIndex = index;
+                cards[index].focus();
+                cards[index].scrollIntoView({ behavior: 'smooth', block: 'center' });
+            }
+        }
         
         document.addEventListener('keydown', function(e) {
-            const cards = Array.from(document.querySelectorAll('.channel-card'));
-            let currentIndex = cards.indexOf(document.activeElement);
-
-            // تحديد أول عنصر إذا لم يكن هناك تركيز
+            const cols = getGridColumns();
+            const totalCards = cards.length;
+            
+            // تحديد أول عنصر في البداية
             if (currentIndex === -1) {
-                if (cards.length > 0) {
-                    cards[0].focus();
-                    cards[0].scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+                if (totalCards > 0) {
+                    focusCard(0);
                 }
                 return;
             }
-
-            let nextIndex = currentIndex;
-
-            // معالجة أزرار الأسهم
-            if (e.key === "ArrowRight") {
-                e.preventDefault();
-                nextIndex = currentIndex + 1;
-                if (nextIndex >= cards.length) nextIndex = currentIndex;
-            } 
-            else if (e.key === "ArrowLeft") {
-                e.preventDefault();
-                nextIndex = currentIndex - 1;
-                if (nextIndex < 0) nextIndex = currentIndex;
-            } 
-            else if (e.key === "ArrowDown") {
-                e.preventDefault();
-                nextIndex = currentIndex + GRID_COLS;
-                if (nextIndex >= cards.length) nextIndex = currentIndex;
-            } 
-            else if (e.key === "ArrowUp") {
-                e.preventDefault();
-                nextIndex = currentIndex - GRID_COLS;
-                if (nextIndex < 0) nextIndex = currentIndex;
-            } 
-            else if (e.key === "Enter" || e.keyCode === 13 || e.key === "Ok") {
-                e.preventDefault();
-                document.activeElement.click();
-                return;
+            
+            let newIndex = currentIndex;
+            
+            switch(e.key) {
+                case 'ArrowRight':
+                    e.preventDefault();
+                    newIndex = currentIndex + 1;
+                    if (newIndex >= totalCards) newIndex = currentIndex;
+                    break;
+                    
+                case 'ArrowLeft':
+                    e.preventDefault();
+                    newIndex = currentIndex - 1;
+                    if (newIndex < 0) newIndex = currentIndex;
+                    break;
+                    
+                case 'ArrowDown':
+                    e.preventDefault();
+                    newIndex = currentIndex + cols;
+                    if (newIndex >= totalCards) newIndex = currentIndex;
+                    break;
+                    
+                case 'ArrowUp':
+                    e.preventDefault();
+                    newIndex = currentIndex - cols;
+                    if (newIndex < 0) newIndex = currentIndex;
+                    break;
+                    
+                case 'Enter':
+                case ' ':
+                    e.preventDefault();
+                    if (cards[currentIndex]) {
+                        cards[currentIndex].click();
+                    }
+                    return;
+                    
+                default:
+                    return;
             }
-
-            // تطبيق التركيز الجديد
-            if (nextIndex !== currentIndex && nextIndex >= 0 && nextIndex < cards.length) {
-                cards[nextIndex].focus();
-                cards[nextIndex].scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+            
+            if (newIndex !== currentIndex) {
+                focusCard(newIndex);
             }
+        }, true);
+        
+        // تفعيل الكاردات عند الضغط عليها
+        cards.forEach((card, index) => {
+            card.addEventListener('click', (e) => {
+                currentIndex = index;
+            }, false);
+            
+            card.addEventListener('focus', (e) => {
+                currentIndex = index;
+            }, false);
         });
-
+        
         // فوكس تلقائي عند التحميل
         window.addEventListener('load', () => {
-            const firstCard = document.querySelector('.channel-card');
-            if (firstCard) {
-                firstCard.focus();
-            }
-        }, false);
-
-        // معالجة إعادة حساب عدد الأعمدة عند تغيير حجم الشاشة
-        window.addEventListener('resize', () => {
-            const width = window.innerWidth;
-            if (width <= 480) {
-                GRID_COLS = 2;
-            } else if (width <= 768) {
-                GRID_COLS = 3;
-            } else {
-                GRID_COLS = 5;
+            if (cards.length > 0) {
+                focusCard(0);
             }
         });
     </script>
