@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Siksa Smart Parser</title>
+    <title>Siksa Smart Parser v2</title>
     <link href="https://fonts.googleapis.com/css2?family=Readex+Pro:wght@400;700&display=swap" rel="stylesheet">
     <style>
         body {
@@ -12,30 +12,64 @@
             color: white;
             padding: 20px;
             text-align: center;
+            margin: 0;
         }
+        h2 { color: #fff; margin-bottom: 30px; font-weight: 700; }
         .upload-container {
             border: 2px dashed #444;
-            padding: 40px;
+            padding: 30px;
             border-radius: 20px;
-            margin-bottom: 20px;
-            background: rgba(255,255,255,0.05);
+            margin-bottom: 30px;
+            background: rgba(255,255,255,0.03);
+            transition: 0.3s;
         }
+        .upload-container:hover { border-color: #fff; }
         #channelList {
             display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
-            gap: 15px;
+            grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+            gap: 20px;
+            padding: 10px;
         }
         .card {
             background: #111;
             padding: 15px;
-            border-radius: 12px;
-            border: 1px solid #333;
+            border-radius: 15px;
+            border: 1px solid #222;
             cursor: pointer;
+            transition: all 0.2s ease-in-out;
+            outline: none;
         }
-        .card:focus { border-color: #fff; outline: none; transform: scale(1.05); }
-        .card img { width: 100%; height: 80px; object-fit: contain; }
+        /* تحسين التنقل بالريموت كنترول */
+        .card:focus, .card:hover { 
+            border-color: #fff; 
+            transform: scale(1.08); 
+            background: #1a1a1a;
+            box-shadow: 0 10px 20px rgba(255,255,255,0.1);
+        }
+        .card img { 
+            width: 100%; 
+            height: 90px; 
+            object-fit: contain; 
+            margin-bottom: 10px;
+            border-radius: 8px;
+        }
+        .card p {
+            margin: 0;
+            font-size: 0.85rem;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
         input[type="file"] { display: none; }
-        .btn-select { background: #fff; color: #000; padding: 10px 20px; border-radius: 8px; cursor: pointer; }
+        .btn-select { 
+            background: #fff; 
+            color: #000; 
+            padding: 12px 25px; 
+            border-radius: 10px; 
+            cursor: pointer; 
+            font-weight: bold;
+            display: inline-block;
+        }
     </style>
 </head>
 <body>
@@ -43,9 +77,9 @@
     <h2>محلل Siksa الذكي</h2>
     
     <div class="upload-container" id="dropZone">
-        <p>اختر ملف Canal_SP (1).m3u من جهازك</p>
-        <label class="btn-select">
-            فتح الملف
+        <p style="color: #888;">قم برفع ملف M3U الخاص بك لبدء المشاهدة</p>
+        <label class="btn-select" tabindex="0">
+            فتح ملف القنوات
             <input type="file" id="fileInput" accept=".m3u,.m3u8">
         </label>
     </div>
@@ -62,8 +96,7 @@
 
             const reader = new FileReader();
             reader.onload = function(event) {
-                const content = event.target.result;
-                parseM3U(content);
+                parseM3U(event.target.result);
             };
             reader.readAsText(file);
         });
@@ -71,59 +104,71 @@
         function parseM3U(content) {
             channelList.innerHTML = "";
             const lines = content.split('\n');
-            let currentName = "قناة غير معروفة";
+            let currentName = "";
             let currentLogo = "https://cdn-icons-png.flaticon.com/512/716/716429.png";
             let currentDrm = "";
 
             lines.forEach(line => {
                 line = line.trim();
                 
-                // استخراج الاسم والشعار
                 if (line.startsWith('#EXTINF:')) {
+                    // استخراج الاسم
                     const nameMatch = line.match(/,(.*)$/);
-                    if (nameMatch) currentName = nameMatch[1];
+                    currentName = nameMatch ? nameMatch[1] : "قناة غير معروفة";
                     
+                    // استخراج الشعار
                     const logoMatch = line.match(/tvg-logo="(.*?)"/);
                     if (logoMatch) currentLogo = logoMatch[1];
                 }
                 
-                // استخراج مفتاح ClearKey (الذكاء البرمجي)
+                // استخراج مفتاح ClearKey
                 if (line.includes('license_key=')) {
                     currentDrm = line.split('=')[1].trim();
                 }
 
-                // استخراج الرابط وإنشاء الكارد
                 if (line.startsWith('http')) {
                     createCard(currentName, currentLogo, line, currentDrm);
-                    // تصفير البيانات للقناة التالية
-                    currentDrm = ""; 
+                    currentDrm = ""; // إعادة التعيين
                 }
             });
         }
 
         function createCard(name, logo, url, drm) {
-            const div = document.createElement('div');
-            div.className = 'card';
-            div.tabIndex = 0;
-            div.innerHTML = `
-                <img src="${logo}">
-                <p style="font-size: 0.8rem;">${name}</p>
-            `;
+    const div = document.createElement('div');
+    div.className = 'card';
+    div.tabIndex = 0; 
+    div.innerHTML = `
+        <img src="${logo}" onerror="this.src='https://cdn-icons-png.flaticon.com/512/716/716429.png'">
+        <p>${name}</p>
+    `;
 
-            div.onclick = () => {
-                // بناء الـ Intent الذكي بناءً على محتوى الملف
-                let intent = `intent://${url.replace(/^https?:\/\//, '')}#Intent;scheme=https;action=android.intent.action.VIEW;package=com.genuine.leone;component=com.genuine.leone/.player.PlayerActivity`;
-                
-                if (drm) {
-                    intent += `;S.drm_license_key=${drm};S.drm_scheme=clearkey`;
-                }
-                
-                intent += `;end`;
-                window.location.href = intent;
-            };
+    div.onclick = () => {
+        // بناء رابط الـ Intent المخصص لمشغل Leone
+        // نقوم بإزالة http:// أو https:// من بداية الرابط لأن الـ scheme يوضع لاحقاً
+        const cleanUrl = url.replace(/^https?:\/\//, '');
+        const scheme = url.startsWith('https') ? 'https' : 'http';
 
-            channelList.appendChild(div);
+        let intent = `intent://${cleanUrl}#Intent;scheme=${scheme};action=android.intent.action.VIEW;package=com.genuine.leone;component=com.genuine.leone/com.genuine.leone.player.PlayerActivity`;
+        
+        // إضافة مفاتيح الـ DRM إذا كانت موجودة (ClearKey)
+        if (drm) {
+            // ملاحظة: Leone غالباً ما يستقبل مفتاح الـ DRM عبر هذه الإضافات (Extras)
+            intent += `;S.drm_license_key=${drm};S.drm_scheme=clearkey`;
         }
+        
+        intent += `;end`;
+
+        console.log("Opening Leone Player with Intent:", intent);
+        window.location.href = intent;
+    };
+
+    // لدعم زر الـ OK في الريموت
+    div.addEventListener('keydown', (e) => {
+        if (e.key === 'Enter') div.click();
+    });
+
+    channelList.appendChild(div);
+   }
     </script>
 </body>
 </html>
