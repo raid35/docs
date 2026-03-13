@@ -1,119 +1,129 @@
-
 <!DOCTYPE html>
-<html lang="ar">
+<html lang="ar" dir="rtl">
 <head>
-  <meta charset="UTF-8">
-  <meta name="referrer" content="no-referrer" />
-  <title>مشغل الفيديو</title>
-  <script src="//ssl.p.jwpcdn.com/player/v/8.26.0/jwplayer.js"></script>
-  <script>jwplayer.key = "XSuP4qMl+9tK17QNb+4+th2Pm9AWgMO/cYH8CI0HGGr7bdjo";</script>
-  <link href="https://fonts.googleapis.com/css2?family=Cairo&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.2.1/css/all.min.css" />
-  <link rel="stylesheet" href="https://akomov.com/todapi/jw_ako.css">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <style>
-    * { margin: 0; padding: 0; outline: none; }
-    body, html { width: 100%; height: 100%; overflow: hidden; background-color: black; font-family: 'Cairo', sans-serif; }
-    #jwplayerDiv { width: 100%!important; height: 100%!important; }
-    .jw-expandButton svg { width: 24px; height: 24px; }
-  </style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Siksa Smart Parser</title>
+    <link href="https://fonts.googleapis.com/css2?family=Readex+Pro:wght@400;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Readex Pro', sans-serif;
+            background: #000;
+            color: white;
+            padding: 20px;
+            text-align: center;
+        }
+        .upload-container {
+            border: 2px dashed #444;
+            padding: 40px;
+            border-radius: 20px;
+            margin-bottom: 20px;
+            background: rgba(255,255,255,0.05);
+        }
+        #channelList {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+            gap: 15px;
+        }
+        .card {
+            background: #111;
+            padding: 15px;
+            border-radius: 12px;
+            border: 1px solid #333;
+            cursor: pointer;
+        }
+        .card:focus { border-color: #fff; outline: none; transform: scale(1.05); }
+        .card img { width: 100%; height: 80px; object-fit: contain; }
+        input[type="file"] { display: none; }
+        .btn-select { background: #fff; color: #000; padding: 10px 20px; border-radius: 8px; cursor: pointer; }
+    </style>
 </head>
 <body>
-  <div id="jwplayerDiv"></div>
-  
-  <script>
-    let isExpanded = true; 
-    const expandSvg = `<svg fill="#ffffff" version="1.1" id="expand_icon" xmlns="http://www.w3.org/2000/svg" width="24px" height="24px" viewBox="0 0 100 100" xml:space="preserve">
-      <g>
-        <path d="M22.661,20.5H36c1.104,0,2-0.896,2-2s-0.896-2-2-2H19c-1.104,0-2.5,1.276-2.5,2.381v17c0,1.104,0.896,2,2,2s2-0.896,2-2V24.876l16.042,15.791c0.391,0.391,1.027,0.586,1.539,0.586s1.086-0.195,1.477-0.586c0.781-0.781,0.812-2.237,0.031-3.019L22.661,20.5z"/>
-        <path d="M83,16.5H66c-1.104,0-2,0.896-2,2s0.896,2,2,2h12.605L61.647,37.648c-0.781,0.781-0.781,2.142,0,2.923c0.39,0.391,0.902,0.633,1.414,0.633s0.774-0.171,1.164-0.562l16.274-16.5v11.738c0,1.104,0.896,2,2,2s2-0.896,2-2v-17C84.5,17.776,84.104,16.5,83,16.5z"/>
-        <path d="M36.542,60.962L20.5,76.754V65.881c0-1.104-0.896-2-2-2s-2,0.896-2,2v17c0,1.104,1.396,1.619,2.5,1.619h17c1.104,0,2-0.896,2-2s-0.896-2-2-2H22.529L39.62,63.6c0.781-0.781,0.656-1.951-0.125-2.732C38.715,60.086,37.322,60.181,36.542,60.962z"/>
-        <path d="M82.5,63.881c-1.104,0-2,0.896-2,2v11.606L64.226,60.962c-0.78-0.781-1.923-0.781-2.703,0c-0.781,0.781-0.719,1.856,0.062,2.638l17.152,16.9H66c-1.104,0-2,0.896-2,2s0.896,2,2,2h17c1.104,0,1.5-0.515,1.5-1.619v-17C84.5,64.776,83.604,63.881,82.5,63.881z"/>
-      </g>
-    </svg>`;
 
-    function setupPlayer() {
-      const playerConfig = {
-        file: "https://prod-fastly-eu-central-1.video.pscp.tv/Transcoding/v1/hls/7h3FeJSiQk25i_GM_5XN0x42yHm3ANKGDgRD9srz0JCNOljzkKGYmTP9VLHw9zaZlFv0eUDzAH6AjqJ72Fib4Q/non_transcode/eu-central-1/periscope-replay-direct-prod-eu-central-1-public/master_dynamic_highlatency.m3u8?type=live",
-        width: "100%",
-        height: "100%",
-        autostart: true,
-        mute: false,
-        volume: 100,
-        stretching: "uniform",
-        playbackRateControls: true,
-        playbackRates: [0.5, 1, 1.25, 1.5, 2],
-        drm: {
-          clearkey: {
-            keyId: "10ab229ff8ea478992cd1ec1bb8ad2fb",
-            key: "299a7c63072d4796ae7ba28e2df80fb1"
-          }
+    <h2>محلل Siksa الذكي</h2>
+    
+    <div class="upload-container" id="dropZone">
+        <p>اختر ملف Canal_SP (1).m3u من جهازك</p>
+        <label class="btn-select">
+            فتح الملف
+            <input type="file" id="fileInput" accept=".m3u,.m3u8">
+        </label>
+    </div>
+
+    <div id="channelList"></div>
+
+    <script>
+        const fileInput = document.getElementById('fileInput');
+        const channelList = document.getElementById('channelList');
+
+        fileInput.addEventListener('change', function(e) {
+            const file = e.target.files[0];
+            if (!file) return;
+
+            const reader = new FileReader();
+            reader.onload = function(event) {
+                const content = event.target.result;
+                parseM3U(content);
+            };
+            reader.readAsText(file);
+        });
+
+        function parseM3U(content) {
+            channelList.innerHTML = "";
+            const lines = content.split('\n');
+            let currentName = "قناة غير معروفة";
+            let currentLogo = "https://cdn-icons-png.flaticon.com/512/716/716429.png";
+            let currentDrm = "";
+
+            lines.forEach(line => {
+                line = line.trim();
+                
+                // استخراج الاسم والشعار
+                if (line.startsWith('#EXTINF:')) {
+                    const nameMatch = line.match(/,(.*)$/);
+                    if (nameMatch) currentName = nameMatch[1];
+                    
+                    const logoMatch = line.match(/tvg-logo="(.*?)"/);
+                    if (logoMatch) currentLogo = logoMatch[1];
+                }
+                
+                // استخراج مفتاح ClearKey (الذكاء البرمجي)
+                if (line.includes('license_key=')) {
+                    currentDrm = line.split('=')[1].trim();
+                }
+
+                // استخراج الرابط وإنشاء الكارد
+                if (line.startsWith('http')) {
+                    createCard(currentName, currentLogo, line, currentDrm);
+                    // تصفير البيانات للقناة التالية
+                    currentDrm = ""; 
+                }
+            });
         }
-      };
-      
-      const player = jwplayer("jwplayerDiv").setup(playerConfig);
 
-      player.on('ready', function() {
-        applyObjectFit();
-      });
+        function createCard(name, logo, url, drm) {
+            const div = document.createElement('div');
+            div.className = 'card';
+            div.tabIndex = 0;
+            div.innerHTML = `
+                <img src="${logo}">
+                <p style="font-size: 0.8rem;">${name}</p>
+            `;
 
-      return player;
-    }
-    
-    var player = setupPlayer();
+            div.onclick = () => {
+                // بناء الـ Intent الذكي بناءً على محتوى الملف
+                let intent = `intent://${url.replace(/^https?:\/\//, '')}#Intent;scheme=https;action=android.intent.action.VIEW;package=com.genuine.leone;component=com.genuine.leone/.player.PlayerActivity`;
+                
+                if (drm) {
+                    intent += `;S.drm_license_key=${drm};S.drm_scheme=clearkey`;
+                }
+                
+                intent += `;end`;
+                window.location.href = intent;
+            };
 
-    // ✅ ضمان تشغيل الصوت بأعلى مستوى
-    player.on("play", function () {
-      player.setMute(false);
-      player.setVolume(100);
-    });
-
-    // ✅ دالة لضبط تمدد الفيديو
-    function applyObjectFit() {
-      const videoElement = document.querySelector("#jwplayerDiv video");
-      if (!videoElement) return;
-      videoElement.style.objectFit = isExpanded ? 'fill' : 'contain';
-    }
-
-    // ✅ عند تغيير الجودة
-    player.on("levelsChanged", function () {
-      setTimeout(applyObjectFit, 100);
-    });
-
-    player.on("visualQuality", function () {
-      setTimeout(applyObjectFit, 100);
-    });
-    
-    player.addButton(
-      expandSvg,
-      'تمدد الفيديو',
-      function() { toggleExpand(); },
-      'expandButton'
-    );
-    
-    function toggleExpand() {
-      isExpanded = !isExpanded;
-      applyObjectFit();
-      updateExpandButtonTooltip();
-    }
-    
-    function updateExpandButtonTooltip() {
-      const button = document.querySelector('.jw-expandButton');
-      if (button) {
-        button.setAttribute('aria-label', isExpanded ? 'تصغير الفيديو' : 'تمدد الفيديو');
-      }
-    }
-    
-    player.on('pause', function() { player.play(); });
-    
-    window.addEventListener("beforeunload", function () { player.stop(); });
-    document.addEventListener("visibilitychange", function() {
-      if (document.hidden) { player.stop(); }
-    });
-    
-    player.on('error', function(error) {
-      console.error("فشل تشغيل الفيديو: " + error.message);
-    });
-  </script>
+            channelList.appendChild(div);
+        }
+    </script>
 </body>
 </html>
