@@ -132,37 +132,50 @@
 function createCard(name, logo, url, drm, ua) {
     const div = document.createElement('div');
     div.className = 'card';
-    div.tabIndex = 0;
     div.innerHTML = `<img src="${logo}"><p>${name}</p>`;
 
     div.onclick = () => {
-        const cleanUrl = url.replace(/^https?:\/\//, '');
+        // 1. بناء الرابط بالصيغة التي يتوقعها تطبيق Ettfarej (|||REF: و |||UA:)
+        // المشغل يبحث عن هذه الكلمات في دالة j()
+        let finalUrl = url;
+        let referer = "https://shahid.mbc.net/"; // افتراضي لضمان التشغيل
+        
+        if (ua) {
+            finalUrl += `|||REF:${referer}|||UA:${ua}`;
+        } else {
+            finalUrl += `|||REF:${referer}|||UA:Mozilla/5.0 (Windows NT 10.0; Win64; x64)`;
+        }
+
+        const cleanUrl = finalUrl.replace(/^https?:\/\//, '');
         const scheme = url.startsWith('https') ? 'https' : 'http';
 
-        // بناء الـ Intent باحترافية
+        // 2. بناء الـ Intent
+        // التطبيق يستخدم PlayerActivity لاستقبال البيانات
         let intent = `intent://${cleanUrl}#Intent;` +
                      `action=android.intent.action.VIEW;` +
                      `scheme=${scheme};` +
-                     `package=com.genuine.leone;` +
-                     `component=com.genuine.leone/.player.PlayerActivity;` +
-                     `type=application/dash+xml;`; // تحديد النوع ليفهم أنه بث DASH
+                     `package=com.tv.ettfarej;` +
+                     `component=com.tv.ettfarej/.PlayerActivity;` +
+                     `S.url=${encodeURIComponent(url)};` + // الرابط الأصلي
+                     `S.urls_list=${encodeURIComponent(JSON.stringify([finalUrl]))};`; // القائمة التي يقرأ منها المشغل
 
-        // إضافة مفتاح التشفير
+        // 3. تمرير مفاتيح التشفير (DRM)
         if (drm) {
-            intent += `S.drm_license_key=${drm};S.drm_scheme=clearkey;`;
+            // الكود يستخدم S.drm_key و S.drm_scheme
+            intent += `S.drm_key=${drm};` +
+                      `S.drm_scheme=clearkey;` +
+                      `S.key=${drm};` +
+                      `S.scheme=clearkey;`;
         }
 
-        // إضافة الـ User-Agent (هذا هو الحل لمنع "تحميل الملف")
-        if (ua) {
-            intent += `S.user_agent=${ua};`;
-        } else {
-            intent += `S.user_agent=Mozilla/5.0;`; // UA افتراضي
-        }
+        // 4. إرسال الـ Headers الإضافية
+        intent += `S.referer=${referer};` +
+                  `S.user_agent=${ua || 'Mozilla/5.0'};` +
+                  `S.type=application/dash+xml;` + // إجبار النظام على أنه فيديو وليس تحميل
+                  `end`;
 
-        intent += `end`;
         window.location.href = intent;
     };
-    
     channelList.appendChild(div);
     }
     </script>
