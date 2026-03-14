@@ -135,49 +135,35 @@ function createCard(name, logo, url, drm, ua) {
     div.innerHTML = `<img src="${logo}"><p>${name}</p>`;
 
     div.onclick = () => {
-        // 1. بناء الرابط بالصيغة التي يتوقعها تطبيق Ettfarej (|||REF: و |||UA:)
-        // المشغل يبحث عن هذه الكلمات في دالة j()
+        let referer = "https://shahid.mbc.net/";
         let finalUrl = url;
-        let referer = "https://shahid.mbc.net/"; // افتراضي لضمان التشغيل
         
+        // بناء الرابط المدمج بالبيانات (الذي يفهمه Ettfarej داخلياً)
         if (ua) {
             finalUrl += `|||REF:${referer}|||UA:${ua}`;
         } else {
             finalUrl += `|||REF:${referer}|||UA:Mozilla/5.0 (Windows NT 10.0; Win64; x64)`;
         }
 
-        const cleanUrl = finalUrl.replace(/^https?:\/\//, '');
-        const scheme = url.startsWith('https') ? 'https' : 'http';
-
-        // 2. بناء الـ Intent
-        // التطبيق يستخدم PlayerActivity لاستقبال البيانات
-        let intent = `intent://${cleanUrl}#Intent;` +
+        // بناء Intent بسيط يركز على الحزمة (Package) لفتح المشغل
+        // حذفنا الـ component المعقد لضمان عدم حدوث تعارض
+        let intent = `intent:${finalUrl}#Intent;` +
                      `action=android.intent.action.VIEW;` +
-                     `scheme=${scheme};` +
-                     `package=com.tv.ettfarej;` +
-                     `component=com.tv.ettfarej/.PlayerActivity;` +
-                     `S.url=${encodeURIComponent(url)};` + // الرابط الأصلي
-                     `S.urls_list=${encodeURIComponent(JSON.stringify([finalUrl]))};`; // القائمة التي يقرأ منها المشغل
+                     `package=com.tv.ettfarej;` + 
+                     `S.url=${encodeURIComponent(url)};` +
+                     `S.user_agent=${encodeURIComponent(ua || 'Mozilla/5.0')};`;
 
-        // 3. تمرير مفاتيح التشفير (DRM)
         if (drm) {
-            // الكود يستخدم S.drm_key و S.drm_scheme
-            intent += `S.drm_key=${drm};` +
-                      `S.drm_scheme=clearkey;` +
-                      `S.key=${drm};` +
-                      `S.scheme=clearkey;`;
+            intent += `S.drm_key=${drm};S.drm_scheme=clearkey;S.key=${drm};`;
         }
 
-        // 4. إرسال الـ Headers الإضافية
-        intent += `S.referer=${referer};` +
-                  `S.user_agent=${ua || 'Mozilla/5.0'};` +
-                  `S.type=application/dash+xml;` + // إجبار النظام على أنه فيديو وليس تحميل
-                  `end`;
+        intent += `end`;
 
+        console.log("Sending Intent: ", intent); // للتأكد في المتصفح
         window.location.href = intent;
     };
     channelList.appendChild(div);
-    }
+   }
     </script>
 </body>
 </html>
