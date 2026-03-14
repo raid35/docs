@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Siksa Smart Parser v2</title>
+    <title>Siksa Smart Player</title>
     <link href="https://fonts.googleapis.com/css2?family=Readex+Pro:wght@400;700&display=swap" rel="stylesheet">
     <style>
         body {
@@ -14,156 +14,167 @@
             text-align: center;
             margin: 0;
         }
-        h2 { color: #fff; margin-bottom: 30px; font-weight: 700; }
-        .upload-container {
-            border: 2px dashed #444;
-            padding: 30px;
-            border-radius: 20px;
-            margin-bottom: 30px;
-            background: rgba(255,255,255,0.03);
-            transition: 0.3s;
+        h2 { color: #fff; margin-bottom: 20px; font-weight: 700; }
+        
+        .status-bar {
+            font-size: 0.8rem;
+            color: #888;
+            margin-bottom: 20px;
         }
-        .upload-container:hover { border-color: #fff; }
+
         #channelList {
             display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
-            gap: 20px;
+            grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+            gap: 15px;
             padding: 10px;
         }
+
         .card {
             background: #111;
-            padding: 15px;
+            padding: 12px;
             border-radius: 15px;
             border: 1px solid #222;
             cursor: pointer;
             transition: all 0.2s ease-in-out;
             outline: none;
         }
-        /* تحسين التنقل بالريموت كنترول */
+
         .card:focus, .card:hover { 
-            border-color: #fff; 
-            transform: scale(1.08); 
+            border-color: #FFD700; 
+            transform: scale(1.05); 
             background: #1a1a1a;
-            box-shadow: 0 10px 20px rgba(255,255,255,0.1);
+            box-shadow: 0 5px 15px rgba(255, 215, 0, 0.2);
         }
+
         .card img { 
             width: 100%; 
-            height: 90px; 
+            height: 80px; 
             object-fit: contain; 
             margin-bottom: 10px;
             border-radius: 8px;
+            background: #050505;
         }
+
         .card p {
             margin: 0;
-            font-size: 0.85rem;
+            font-size: 0.8rem;
             white-space: nowrap;
             overflow: hidden;
             text-overflow: ellipsis;
         }
-        input[type="file"] { display: none; }
-        .btn-select { 
-            background: #fff; 
-            color: #000; 
-            padding: 12px 25px; 
-            border-radius: 10px; 
-            cursor: pointer; 
-            font-weight: bold;
-            display: inline-block;
+
+        /* زر مخفي للرفع اليدوي عند الحاجة */
+        .manual-upload {
+            margin-top: 40px;
+            font-size: 0.7rem;
+            color: #333;
         }
+        input[type="file"] { display: none; }
     </style>
 </head>
 <body>
 
     <h2>محلل Siksa الذكي</h2>
-    
-    <div class="upload-container" id="dropZone">
-        <p style="color: #888;">قم برفع ملف M3U الخاص بك لبدء المشاهدة</p>
-        <label class="btn-select" tabindex="0">
-            فتح ملف القنوات
+    <div class="status-bar" id="statusBar">جاري تحميل القنوات من السحابة...</div>
+
+    <div id="channelList"></div>
+
+    <div class="manual-upload">
+        <label>
+            تحديث يدوي
             <input type="file" id="fileInput" accept=".m3u,.m3u8">
         </label>
     </div>
 
-    <div id="channelList"></div>
-
     <script>
-        const fileInput = document.getElementById('fileInput');
         const channelList = document.getElementById('channelList');
+        const statusBar = document.getElementById('statusBar');
+        const fileInput = document.getElementById('fileInput');
+        
+        // رابط مستودعك على GitHub
+        const githubUrl = "https://raw.githubusercontent.com/raid35/channel-links/main/Canal_SP.m3u";
 
+        // 1. جلب تلقائي عند الفتح
+        window.onload = () => {
+            fetchChannels(githubUrl);
+        };
+
+        // 2. معالجة الرفع اليدوي
         fileInput.addEventListener('change', function(e) {
             const file = e.target.files[0];
             if (!file) return;
-
             const reader = new FileReader();
-            reader.onload = function(event) {
-                parseM3U(event.target.result);
-            };
+            reader.onload = (event) => parseM3U(event.target.result);
             reader.readAsText(file);
         });
 
+        async function fetchChannels(url) {
+            try {
+                const response = await fetch(url);
+                if (!response.ok) throw new Error();
+                const data = await response.text();
+                parseM3U(data);
+                statusBar.innerText = "تم تحديث القنوات تلقائياً من GitHub";
+            } catch (e) {
+                statusBar.innerText = "فشل التحديث التلقائي. يمكنك الرفع يدوياً.";
+            }
+        }
+
         function parseM3U(content) {
-    channelList.innerHTML = "";
-    const lines = content.split('\n');
-    let currentName = "", currentLogo = "", currentDrm = "", currentUA = "";
+            channelList.innerHTML = "";
+            const lines = content.split('\n');
+            let currentName = "", currentLogo = "", currentDrm = "", currentUA = "";
 
-    lines.forEach(line => {
-        line = line.trim();
-        if (line.startsWith('#EXTINF:')) {
-            const nameMatch = line.match(/,(.*)$/);
-            currentName = nameMatch ? nameMatch[1] : "قناة";
-            const logoMatch = line.match(/tvg-logo="(.*?)"/);
-            currentLogo = logoMatch ? logoMatch[1] : "";
-        } 
-        // استخراج الـ User-Agent (مهم جداً لقنوات beIN و Shahid)
-        else if (line.includes('http-user-agent=')) {
-            currentUA = line.split('http-user-agent=')[1].split(' ')[0].trim();
-        }
-        // استخراج الـ DRM (يدعم الصيغتين)
-        else if (line.includes('license_key=') || line.includes('http-drm-license=')) {
-            currentDrm = line.split('=')[1].trim();
-        }
-        else if (line.startsWith('http')) {
-            createCard(currentName, currentLogo, line, currentDrm, currentUA);
-            currentDrm = ""; currentUA = ""; // تصفير البيانات للقناة التالية
-        }
-    });
-}
-
-function createCard(name, logo, url, drm, ua) {
-    const div = document.createElement('div');
-    div.className = 'card';
-    div.innerHTML = `<img src="${logo}"><p>${name}</p>`;
-
-    div.onclick = () => {
-        let referer = "https://shahid.mbc.net/";
-        let finalUrl = url;
-        
-        // بناء الرابط المدمج بالبيانات (الذي يفهمه Ettfarej داخلياً)
-        if (ua) {
-            finalUrl += `|||REF:${referer}|||UA:${ua}`;
-        } else {
-            finalUrl += `|||REF:${referer}|||UA:Mozilla/5.0 (Windows NT 10.0; Win64; x64)`;
+            lines.forEach(line => {
+                line = line.trim();
+                if (line.startsWith('#EXTINF:')) {
+                    const nameMatch = line.match(/,(.*)$/);
+                    currentName = nameMatch ? nameMatch[1] : "قناة";
+                    const logoMatch = line.match(/tvg-logo="(.*?)"/);
+                    currentLogo = logoMatch ? logoMatch[1] : "";
+                } 
+                else if (line.includes('http-user-agent=')) {
+                    currentUA = line.split('http-user-agent=')[1].split(' ')[0].trim();
+                }
+                else if (line.includes('license_key=') || line.includes('http-drm-license=')) {
+                    currentDrm = line.split('=')[1].trim();
+                }
+                else if (line.startsWith('http')) {
+                    createCard(currentName, currentLogo, line, currentDrm, currentUA);
+                    currentDrm = ""; currentUA = ""; 
+                }
+            });
         }
 
-        // بناء Intent بسيط يركز على الحزمة (Package) لفتح المشغل
-        // حذفنا الـ component المعقد لضمان عدم حدوث تعارض
-        let intent = `intent:${finalUrl}#Intent;` +
-                     `action=android.intent.action.VIEW;` +
-                     `package=com.tv.ettfarej;` + 
-                     `S.url=${encodeURIComponent(url)};` +
-                     `S.user_agent=${encodeURIComponent(ua || 'Mozilla/5.0')};`;
+        function createCard(name, logo, url, drm, ua) {
+            const div = document.createElement('div');
+            div.className = 'card';
+            div.tabIndex = "0"; // مهم جداً لدعم أزرار الريموت (D-pad)
+            div.innerHTML = `<img src="${logo || 'https://via.placeholder.com/80?text=TV'}"><p>${name}</p>`;
 
-        if (drm) {
-            intent += `S.drm_key=${drm};S.drm_scheme=clearkey;S.key=${drm};`;
+            div.onclick = () => {
+                let referer = "https://shahid.mbc.net/";
+                let finalUrl = url;
+                
+                if (ua) {
+                    finalUrl += `|||REF:${referer}|||UA:${ua}`;
+                } else {
+                    finalUrl += `|||REF:${referer}|||UA:Mozilla/5.0 (Windows NT 10.0; Win64; x64)`;
+                }
+
+                // الـ Intent بصيغته النهائية والآمنة
+                let intent = `intent:${finalUrl}#Intent;` +
+                             `action=android.intent.action.VIEW;` +
+                             `package=com.tv.ettfarej;` + 
+                             `S.url=${encodeURIComponent(url)};` +
+                             `S.user_agent=${encodeURIComponent(ua || 'Mozilla/5.0')};` +
+                             (drm ? `S.drm_key=${drm};S.drm_scheme=clearkey;S.key=${drm};` : "") +
+                             `end`;
+
+                window.location.href = intent;
+            };
+            channelList.appendChild(div);
         }
-
-        intent += `end`;
-
-        console.log("Sending Intent: ", intent); // للتأكد في المتصفح
-        window.location.href = intent;
-    };
-    channelList.appendChild(div);
-   }
     </script>
 </body>
 </html>
