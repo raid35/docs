@@ -134,41 +134,45 @@
         }
 
         function createCard(name, logo, url, drm) {
-    const div = document.createElement('div');
-    div.className = 'card';
-    div.tabIndex = 0; 
-    div.innerHTML = `
-        <img src="${logo}" onerror="this.src='https://cdn-icons-png.flaticon.com/512/716/716429.png'">
-        <p>${name}</p>
-    `;
+            const div = document.createElement('div');
+            div.className = 'card';
+            div.tabIndex = 0; 
+            div.innerHTML = `
+                <img src="${logo}" onerror="this.src='https://cdn-icons-png.flaticon.com/512/716/716429.png'">
+                <p>${name}</p>
+            `;
 
-    div.onclick = () => {
-        // بناء رابط الـ Intent المخصص لمشغل Leone
-        // نقوم بإزالة http:// أو https:// من بداية الرابط لأن الـ scheme يوضع لاحقاً
-        const cleanUrl = url.replace(/^https?:\/\//, '');
-        const scheme = url.startsWith('https') ? 'https' : 'http';
+            div.onclick = () => {
+                // تنظيف الرابط من البروتوكول
+                const cleanUrl = url.replace(/^https?:\/\//, '');
+                
+                // بناء الـ Intent بشكل دقيق لمشغل Leone
+                // التعديل هنا في الجزء الخاص بـ component
+                let intent = `intent://${cleanUrl}#Intent;` +
+                             `action=android.intent.action.VIEW;` +
+                             `scheme=http;` + 
+                             `package=com.genuine.leone;` +
+                             `component=com.genuine.leone/.player.PlayerActivity;` +
+                             `type=video/*;`;
 
-        let intent = `intent://${cleanUrl}#Intent;scheme=${scheme};action=android.intent.action.VIEW;package=com.genuine.leone;component=com.genuine.leone/com.genuine.leone.player.PlayerActivity`;
-        
-        // إضافة مفاتيح الـ DRM إذا كانت موجودة (ClearKey)
-        if (drm) {
-            // ملاحظة: Leone غالباً ما يستقبل مفتاح الـ DRM عبر هذه الإضافات (Extras)
-            intent += `;S.drm_license_key=${drm};S.drm_scheme=clearkey`;
+                // إضافة بيانات الـ DRM إذا وجدت
+                if (drm) {
+                    intent += `S.drm_license_key=${drm};S.drm_scheme=clearkey;`;
+                }
+                
+                intent += `end`;
+
+                console.log("الرابط المرسل: ", intent);
+                window.location.href = intent;
+            };
+
+            // دعم الريموت كنترول
+            div.addEventListener('keydown', (e) => {
+                if (e.key === 'Enter') div.click();
+            });
+
+            channelList.appendChild(div);
         }
-        
-        intent += `;end`;
-
-        console.log("Opening Leone Player with Intent:", intent);
-        window.location.href = intent;
-    };
-
-    // لدعم زر الـ OK في الريموت
-    div.addEventListener('keydown', (e) => {
-        if (e.key === 'Enter') div.click();
-    });
-
-    channelList.appendChild(div);
-   }
     </script>
 </body>
 </html>
