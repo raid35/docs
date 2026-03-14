@@ -102,77 +102,69 @@
         });
 
         function parseM3U(content) {
-            channelList.innerHTML = "";
-            const lines = content.split('\n');
-            let currentName = "";
-            let currentLogo = "https://cdn-icons-png.flaticon.com/512/716/716429.png";
-            let currentDrm = "";
+    channelList.innerHTML = "";
+    const lines = content.split('\n');
+    let currentName = "", currentLogo = "", currentDrm = "", currentUA = "";
 
-            lines.forEach(line => {
-                line = line.trim();
-                
-                if (line.startsWith('#EXTINF:')) {
-                    // استخراج الاسم
-                    const nameMatch = line.match(/,(.*)$/);
-                    currentName = nameMatch ? nameMatch[1] : "قناة غير معروفة";
-                    
-                    // استخراج الشعار
-                    const logoMatch = line.match(/tvg-logo="(.*?)"/);
-                    if (logoMatch) currentLogo = logoMatch[1];
-                }
-                
-                // استخراج مفتاح ClearKey
-                if (line.includes('license_key=')) {
-                    currentDrm = line.split('=')[1].trim();
-                }
+    lines.forEach(line => {
+        line = line.trim();
+        if (line.startsWith('#EXTINF:')) {
+            const nameMatch = line.match(/,(.*)$/);
+            currentName = nameMatch ? nameMatch[1] : "قناة";
+            const logoMatch = line.match(/tvg-logo="(.*?)"/);
+            currentLogo = logoMatch ? logoMatch[1] : "";
+        } 
+        // استخراج الـ User-Agent (مهم جداً لقنوات beIN و Shahid)
+        else if (line.includes('http-user-agent=')) {
+            currentUA = line.split('http-user-agent=')[1].split(' ')[0].trim();
+        }
+        // استخراج الـ DRM (يدعم الصيغتين)
+        else if (line.includes('license_key=') || line.includes('http-drm-license=')) {
+            currentDrm = line.split('=')[1].trim();
+        }
+        else if (line.startsWith('http')) {
+            createCard(currentName, currentLogo, line, currentDrm, currentUA);
+            currentDrm = ""; currentUA = ""; // تصفير البيانات للقناة التالية
+        }
+    });
+}
 
-                if (line.startsWith('http')) {
-                    createCard(currentName, currentLogo, line, currentDrm);
-                    currentDrm = ""; // إعادة التعيين
-                }
-            });
+function createCard(name, logo, url, drm, ua) {
+    const div = document.createElement('div');
+    div.className = 'card';
+    div.tabIndex = 0;
+    div.innerHTML = `<img src="${logo}"><p>${name}</p>`;
+
+    div.onclick = () => {
+        const cleanUrl = url.replace(/^https?:\/\//, '');
+        const scheme = url.startsWith('https') ? 'https' : 'http';
+
+        // بناء الـ Intent باحترافية
+        let intent = `intent://${cleanUrl}#Intent;` +
+                     `action=android.intent.action.VIEW;` +
+                     `scheme=${scheme};` +
+                     `package=com.genuine.leone;` +
+                     `component=com.genuine.leone/.player.PlayerActivity;` +
+                     `type=application/dash+xml;`; // تحديد النوع ليفهم أنه بث DASH
+
+        // إضافة مفتاح التشفير
+        if (drm) {
+            intent += `S.drm_license_key=${drm};S.drm_scheme=clearkey;`;
         }
 
-        function createCard(name, logo, url, drm) {
-            const div = document.createElement('div');
-            div.className = 'card';
-            div.tabIndex = 0; 
-            div.innerHTML = `
-                <img src="${logo}" onerror="this.src='https://cdn-icons-png.flaticon.com/512/716/716429.png'">
-                <p>${name}</p>
-            `;
-
-            div.onclick = () => {
-                // تنظيف الرابط من البروتوكول
-                const cleanUrl = url.replace(/^https?:\/\//, '');
-                
-                // بناء الـ Intent بشكل دقيق لمشغل Leone
-                // التعديل هنا في الجزء الخاص بـ component
-                let intent = `intent://${cleanUrl}#Intent;` +
-                             `action=android.intent.action.VIEW;` +
-                             `scheme=http;` + 
-                             `package=com.genuine.leone;` +
-                             `component=com.genuine.leone/.player.PlayerActivity;` +
-                             `type=video/*;`;
-
-                // إضافة بيانات الـ DRM إذا وجدت
-                if (drm) {
-                    intent += `S.drm_license_key=${drm};S.drm_scheme=clearkey;`;
-                }
-                
-                intent += `end`;
-
-                console.log("الرابط المرسل: ", intent);
-                window.location.href = intent;
-            };
-
-            // دعم الريموت كنترول
-            div.addEventListener('keydown', (e) => {
-                if (e.key === 'Enter') div.click();
-            });
-
-            channelList.appendChild(div);
+        // إضافة الـ User-Agent (هذا هو الحل لمنع "تحميل الملف")
+        if (ua) {
+            intent += `S.user_agent=${ua};`;
+        } else {
+            intent += `S.user_agent=Mozilla/5.0;`; // UA افتراضي
         }
+
+        intent += `end`;
+        window.location.href = intent;
+    };
+    
+    channelList.appendChild(div);
+    }
     </script>
 </body>
 </html>
