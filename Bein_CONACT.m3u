@@ -2,12 +2,12 @@
 #EXTVLCOPT:http-drm-scheme=clearkey
 #KODIPROP:inputstream.adaptive.license_key=cbdd636bb2e44f1fa6ebd41f46a3cc52:e6ab6c56a79962dcab612e9dc4fea986
 https://c9851ec-rbm-hilv-fsly.cdn.redbee.live/L26/669bb376/9069a322.isml/.mpd
-#EXTINF:-1 group-title="ALWAN" tvg-logo="https://raw.githubusercontent.com/whs4030/Logo/refs/heads/main/Bein-MY3.png" , Bein Sports 1 🇲🇾
-http://wahyu1ptv.pages.dev/AstroBein1.m3u8
-#EXTINF:-1 group-title="ALWAN" tvg-logo="https://raw.githubusercontent.com/whs4030/Logo/refs/heads/main/Bein-MY3.png" , Bein Sports 2 🇲🇾
-http://wahyu1ptv.pages.dev/AstroBein2.m3u8
-#EXTINF:-1 group-title="ALWAN" tvg-logo="https://raw.githubusercontent.com/whs4030/Logo/refs/heads/main/Bein-MY3.png" , Bein Sports 3 🇲🇾
-http://wahyu1ptv.pages.dev/AstroBein3.m3u8
+#EXTINF:-1 group-title="Astro Sports" tvg-id="" tvg-logo="http://caranytv.shop/logotiger3/pl.jpg",ASTRO PL1 nd 
+https://raw.githubusercontent.com/Cutsiffa/pl/refs/heads/main/Astpl.m3u8 
+#EXTINF:-1 group-title="Astro Sports" tvg-id="" tvg-logo="http://caranytv.shop/logotiger3/pl2.jpg",ASTRO PL2 hd 
+https://raw.githubusercontent.com/Cutsiffa/pl/refs/heads/main/Astpl2.m3u8
+#EXTINF:-1 group-title="Astro Sports" tvg-id="" tvg-logo="http://caranytv.shop/logotiger3/pl2.jpg",ASTRO PL3 hd 
+https://raw.githubusercontent.com/Cutsiffa/pl/refs/heads/main/Astpl3.m3u8
 #EXTINF:-1 tvg-logo="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQ4wTXZ0qi8xjWXrTWJKWkmfRFK7NlhsRHmgw&s" group-title="PREMIUM SPORT",BEIN SPORTS 1 AU
 #KODIPROP:inputstream.adaptive.license_type=clearkey
 #KODIPROP:inputstream.adaptive.license_key=335dad778109954503dcbb21dc92015f:24bfd75d436cbf73168a2a2dccd40281
