@@ -21,6 +21,10 @@ https://live-event-3-enc.edgenextcdn.net/out/v1/1117b28b859948afa6d5660460b392df
 #EXTVLCOPT:http-drm-scheme=clearkey
 #EXTVLCOPT:http-drm-license=e3ce77324a3d4fa2a913b26cc1976052:17774f82a3b9e33ea7a149596acbb20f
 https://shd-gcp-live.edgenextcdn.net/live/bitmovin-mbc-action/8ea6ca1108d03e03da5e61372354f5c8/index.mpd
+#EXTINF:-1 group-title="Starz-play" tvg-logo="http://tv.asc.vg/shahid.sport.png", shahid SPORTS 4 🇦🇪
+http://ksauae.xyz:8080/live/462738737337/352672622626/430915.ts
+#EXTINF:-1 group-title="Starz-play" tvg-logo="http://tv.asc.vg/shahid.sport.png", shahid SPORTS 5 🇦🇪
+http://ksauae.xyz:8080/live/462738737337/352672622626/430916.ts
 #EXTINF:-1 tvg-name="Thmanayh 1 4K" tvg-logo="http://tv.asc.vg/thmanayh.ksa.png" group-title="Thmanayh 8 ⚽ RSL",Thmanayh 1 4K
 http://ksauae.xyz:8080/live/462738737337/352672622626/421785.ts
 #EXTINF:-1 tvg-name="Thmanayh 2 4K" tvg-logo="http://tv.asc.vg/thmanayh.ksa.png" group-title="Thmanayh 8 ⚽ RSL",Thmanayh 2 4K
