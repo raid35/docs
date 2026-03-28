@@ -3,1129 +3,135 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ZIGGO Sports 1 - مباشر</title>
-    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700&display=swap" rel="stylesheet">
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/shaka-player/4.15.9/shaka-player.ui.min.js"></script>
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/shaka-player/4.15.9/controls.min.css" rel="stylesheet">
-    
+    <title>بين اسبورت</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700&family=Readex+Pro:wght@400;500;600&display=swap" rel="stylesheet">
     <style>
+        :root {
+            --primary-color: #26ab56;
+            --dark-bg: #1a1a1a;
+            --dark-card: #2d2d2d;
+            --light-bg: #f5f5f5;
+            --light-card: #ffffff;
+            --text-dark: #ffffff;
+            --text-light: #333333;
+            --shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+            --transition: all 0.3s ease;
+        }
+
         * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
+            user-select: none;
         }
 
         body {
-            font-family: 'Cairo', sans-serif;
-            background: #000;
-            color: #ffffff;
-            overflow: hidden;
-            height: 100vh;
+            font-family: 'Readex Pro', 'Cairo', sans-serif;
+            background-color: var(--dark-bg);
+            color: var(--text-dark);
+            transition: var(--transition);
+            min-height: 100vh;
         }
 
-        /* Video Player Container */
-        .video-player {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100vw;
-            height: 100vh;
-            background: #000;
-            z-index: 1000;
+        body.light-mode {
+            background-color: var(--light-bg);
+            color: var(--text-light);
         }
 
-        .video-container {
-            width: 100%;
-            height: 100%;
-            position: relative;
+        /* تعديل محتوى الصفحة لتبدأ من الأعلى */
+        #page {
+            padding: 15px; /* مسافة بسيطة من الحواف */
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+            gap: 15px;
         }
 
-        #dash-video {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-            image-rendering: -webkit-optimize-contrast;
-            image-rendering: crisp-edges;
-        }
-
-        /* Watermark - أصغر وأكثر شفافية */
-        .watermark {
-            position: absolute;
-            top: 20px;
-            left: 20px;
-            font-size: 1.5rem;
-            font-weight: 600;
-            color: rgba(255, 255, 255, 0.15);
-            text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.3);
-            z-index: 2000;
-            pointer-events: none;
-            font-family: 'Cairo', sans-serif;
-            opacity: 0.2;
-        }
-
-        /* VPN Status Indicator - مبسط */
-        .vpn-status {
-            position: absolute;
-            top: 20px;
-            right: 20px;
-            background: rgba(0, 255, 0, 0.7);
-            color: white;
-            padding: 4px 10px;
-            border-radius: 15px;
-            font-size: 0.7rem;
-            font-weight: 500;
-            z-index: 2000;
-            display: flex;
-            align-items: center;
-            gap: 5px;
-            opacity: 0;
-            transition: all 0.3s ease;
-        }
-
-        .vpn-status.show {
-            opacity: 1;
-        }
-
-        .vpn-status.connecting {
-            background: rgba(255, 165, 0, 0.7);
-        }
-
-        .vpn-status.error {
-            background: rgba(255, 0, 0, 0.7);
-        }
-
-        .vpn-icon {
-            font-size: 0.6rem;
-        }
-
-        /* Control Bar */
-        .control-bar {
-            position: absolute;
-            bottom: 30px;
-            left: 50%;
-            transform: translateX(-50%);
-            background: rgba(0, 0, 0, 0.8);
-            padding: 20px 40px;
-            border-radius: 50px;
-            display: flex;
-            align-items: center;
-            gap: 25px;
-            opacity: 0;
-            transition: opacity 0.3s ease;
-            backdrop-filter: blur(10px);
-            z-index: 2000;
-        }
-
-        .control-bar.show {
-            opacity: 1;
-        }
-
-        .control-btn {
-            background: none;
-            border: none;
-            color: white;
-            font-size: 1.8rem;
-            cursor: pointer;
-            padding: 12px;
-            border-radius: 50%;
-            transition: all 0.3s ease;
-            position: relative;
-        }
-
-        .control-btn:hover,
-        .control-btn.focused {
-            background: rgba(255, 255, 255, 0.2);
-            transform: scale(1.2);
-        }
-
-        /* Audio/Subtitle Menu */
-        .audio-subtitle-menu {
-            position: absolute;
-            bottom: 120px;
-            left: 50%;
-            transform: translateX(-50%) translateY(100px);
-            background: rgba(0, 0, 0, 0.9);
-            border-radius: 12px;
-            padding: 15px;
-            min-width: 250px;
-            max-width: 280px;
-            opacity: 0;
-            visibility: hidden;
-            transition: all 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
-            backdrop-filter: blur(15px);
-            z-index: 2500;
-            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.6);
-        }
-
-        .audio-subtitle-menu.show {
-            opacity: 1;
-            visibility: visible;
-            transform: translateX(-50%) translateY(0);
-        }
-
-        .menu-section {
-            margin-bottom: 15px;
-        }
-
-        .menu-section:last-child {
-            margin-bottom: 0;
-        }
-
-        .menu-title {
-            font-size: 1.1rem;
-            font-weight: 600;
-            color: #ff6b35;
-            margin-bottom: 8px;
-            text-align: center;
-        }
-
-        .menu-item {
-            background: rgba(255, 255, 255, 0.1);
-            color: white;
-            border: none;
-            padding: 8px 15px;
-            margin: 3px 0;
-            border-radius: 20px;
-            font-size: 0.95rem;
-            cursor: pointer;
-            width: 100%;
-            transition: all 0.3s ease;
-            text-align: center;
-        }
-
-        .menu-item:hover,
-        .menu-item.focused {
-            background: rgba(255, 107, 53, 0.8);
-            transform: scale(1.03);
-        }
-
-        .menu-item.active {
-            background: rgba(0, 255, 136, 0.8);
-            font-weight: 600;
-        }
-
-        /* Loading Animation - مبسط */
-        .loading {
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            z-index: 3000;
-            text-align: center;
-        }
-
-        .spinner {
-            width: 60px;
-            height: 60px;
-            border: 3px solid rgba(255, 107, 53, 0.3);
-            border-top: 3px solid #ff6b35;
-            border-radius: 50%;
-            animation: spin 0.8s linear infinite;
-            margin-bottom: 15px;
-        }
-
-        .loading-text {
-            color: #ffffff;
-            font-size: 1.5rem;
-            font-weight: 600;
-            text-shadow: 0 2px 10px rgba(0, 0, 0, 0.8);
-        }
-
-        .loading-channel {
-            color: #ff6b35;
-            font-size: 1.1rem;
-            margin-top: 5px;
-        }
-
-        @keyframes spin {
-            0% { transform: rotate(0deg); }
-            100% { transform: rotate(360deg); }
-        }
-
-        /* Error Message */
-        .error-message {
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            background: rgba(255, 0, 0, 0.9);
-            color: white;
-            padding: 30px 40px;
-            border-radius: 20px;
-            text-align: center;
-            z-index: 3000;
-            display: none;
-            backdrop-filter: blur(10px);
-            box-shadow: 0 10px 30px rgba(255, 0, 0, 0.3);
-        }
-
-        .error-title {
-            font-size: 2rem;
-            font-weight: 700;
-            margin-bottom: 15px;
-        }
-
-        .error-text {
-            font-size: 1.3rem;
-            margin-bottom: 20px;
-        }
-
-        .retry-btn {
-            background: rgba(255, 255, 255, 0.2);
-            color: white;
-            border: none;
-            padding: 15px 30px;
-            border-radius: 50px;
-            font-size: 1.2rem;
-            font-weight: 600;
-            cursor: pointer;
-            transition: all 0.3s ease;
-        }
-
-        .retry-btn:hover,
-        .retry-btn.focused {
-            background: rgba(255, 255, 255, 0.3);
-            transform: scale(1.1);
-        }
-
-        /* Volume Indicator */
-        .volume-indicator {
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            background: rgba(0, 0, 0, 0.8);
-            padding: 20px 40px;
-            border-radius: 15px;
-            opacity: 0;
-            transition: opacity 0.3s ease;
-            z-index: 2000;
-            backdrop-filter: blur(10px);
-        }
-
-        .volume-indicator.show {
-            opacity: 1;
-        }
-
-        .volume-text {
-            color: #ffffff;
-            font-size: 1.8rem;
-            font-weight: 600;
-            text-align: center;
-        }
-
-        /* Quality Indicator */
-        .quality-indicator {
-            position: absolute;
-            top: 60px;
-            right: 20px;
-            background: rgba(0, 0, 0, 0.7);
-            color: #00ff88;
-            padding: 4px 10px;
-            border-radius: 15px;
-            font-size: 0.7rem;
-            font-weight: 500;
-            z-index: 2000;
-            opacity: 0;
-            transition: opacity 0.3s ease;
-        }
-
-        .quality-indicator.show {
-            opacity: 1;
-        }
-
-        /* Responsive Design */
         @media (max-width: 768px) {
-            .watermark {
-                top: 15px;
-                left: 15px;
-                font-size: 1.2rem;
-                opacity: 0.15;
-            }
-
-            .vpn-status {
-                top: 15px;
-                right: 15px;
-                font-size: 0.6rem;
-                padding: 3px 8px;
-            }
-
-            .control-bar {
-                bottom: 20px;
-                padding: 15px 25px;
-                gap: 20px;
-            }
-
-            .control-btn {
-                font-size: 1.5rem;
-                padding: 10px;
-            }
-
-            .audio-subtitle-menu {
-                min-width: 220px;
-                max-width: 250px;
-                bottom: 100px;
-                padding: 12px;
-            }
-
-            .quality-indicator {
-                top: 50px;
-                right: 15px;
-                font-size: 0.6rem;
-                padding: 3px 8px;
-            }
+            #page { grid-template-columns: repeat(auto-fill, minmax(140px, 1fr)); }
         }
+
+        @media (max-width: 480px) {
+            #page { grid-template-columns: repeat(auto-fill, minmax(100px, 1fr)); }
+        }
+
+        .channel-card {
+            background-color: var(--dark-card);
+            border-radius: 12px;
+            overflow: hidden;
+            transition: var(--transition);
+            box-shadow: var(--shadow);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            text-align: center;
+            padding: 10px 5px;
+            border: 2px solid transparent;
+            cursor: pointer;
+            text-decoration: none;
+            color: inherit;
+        }
+
+        body.light-mode .channel-card { background-color: var(--light-card); }
+
+        .channel-card:hover {
+            transform: translateY(-5px);
+            border-color: var(--primary-color);
+        }
+
+        .channel-card img {
+            width: 70px;
+            height: 70px;
+            object-fit: contain;
+            border-radius: 10%;
+            background: white;
+            padding: 2px;
+        }
+
+        .channel-card p {
+            font-size: 0.85rem;
+            font-weight: 600;
+            margin-top: 8px;
+        }
+
+        /* الرسوم المتحركة */
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .channel-card { animation: fadeIn 0.4s ease forwards; }
     </style>
 </head>
+
 <body>
-    <!-- Video Player -->
-    <div class="video-player" id="videoPlayer">
-        <!-- Watermark - أصغر -->
-        <div class="watermark">SIKSA</div>
 
-        <!-- VPN Status - مبسط -->
-        <div class="vpn-status" id="vpnStatus">
-            <i class="fas fa-shield-alt vpn-icon"></i>
-            <span id="vpnText">VPN</span>
-        </div>
-
-        <!-- Quality Indicator -->
-        <div class="quality-indicator" id="qualityIndicator">HD</div>
-
-        <!-- Loading Animation - مبسط -->
-        <div class="loading" id="loading">
-            <div class="spinner"></div>
-            <div class="loading-text">جاري التحميل</div>
-            <div class="loading-channel">MBMH</div>
-        </div>
-
-        <!-- Error Message -->
-        <div class="error-message" id="errorMessage">
-            <div class="error-title">خطأ في التحميل</div>
-            <div class="error-text">لا يمكن تشغيل القناة حالياً</div>
-            <button class="retry-btn" id="retryBtn">إعادة المحاولة</button>
-        </div>
-
-        <!-- Video Container -->
-        <div class="video-container" id="videoContainer">
-            <!-- Video will be inserted here -->
-        </div>
-
-        <!-- Audio/Subtitle Menu -->
-        <div class="audio-subtitle-menu" id="audioSubtitleMenu">
-            <div class="menu-section" id="audioSection">
-                <div class="menu-title">مسارات الصوت</div>
-                <div id="audioTracks">
-                    <!-- Audio tracks will be populated here -->
-                </div>
-            </div>
-            <div class="menu-section" id="subtitleSection">
-                <div class="menu-title">الترجمة</div>
-                <div id="subtitleTracks">
-                    <!-- Subtitle tracks will be populated here -->
-                </div>
-            </div>
-        </div>
-
-        <!-- Volume Indicator -->
-        <div class="volume-indicator" id="volumeIndicator">
-            <div class="volume-text" id="volumeText">الصوت: 100%</div>
-        </div>
-
-        <!-- Control Bar -->
-        <div class="control-bar" id="controlBar">
-            <button class="control-btn" id="audioBtn" title="مسارات الصوت">
-                <i class="fas fa-volume-up"></i>
-            </button>
-            <button class="control-btn" id="subtitleBtn" title="الترجمة">
-                <i class="fas fa-closed-captioning"></i>
-            </button>
-        </div>
+    <div id="page">
+        <a href="intent://XPOLA808eGRkYGMqPz91Zj12ZXo9dGhyPXN0fj11dHd1Ij5xZ2M+YHxxaXN/PnN/fT98eWZ1P3V0Yz9RQkRPUXZ8cX0/VFFDWD9RQkRPUXZ8cX0+fWB0bHhkZGBzcX5xYmktdnF8Y3VsYn9kLXZxfGN1bHR1ZnlzdWJ/f2QtdnF8Y3VsdX1lfHFkf2ItdnF8Y3VsdX11fHFkf2ItdnF8Y3Vsc3FjZC12cXxjdWxkeWR8dS1RQkQwUXZ8cX1sfH93f2N5anUtJCBoJCBscWBgfH93f3J8LXhkZGBjKj8/ZWAmPnNzPyIgIiU/ISA/IScmIychJCAiIiEnJyYhPmB+d2xxYGB8eX57LXhkZGBjKj8/ZD59dT9RT0RmT1N4cWRsdGJ9PXl+dn8tc3x1cWJ7dWlsIiYkdSdzcil0dnQmcil1JXMiKCFzKSd0ciRzInIkdnEqJCckIiVxJ3Uodid1JCAjIHQhKCYlJSkoJSJxdSkndHI=#Intent;scheme=xmtv;package=com.xpola.player;end" class="channel-card ripple">
+            <img src="https://up6.cc/2025/10/176371735162251.png" alt="ART Aflam">
+            <p>ART Aflam</p>
+        </a>
+        
+        <a href="intent://XPOLA808eGRkYGMqPz91Zj12ZXo9dGhyPXN0fj11dHd1Ij5xZ2M+YHxxaXN/PnN/fT98eWZ1P3V0Yz9RQkRPUXZ8cX1PIj9UUUNYP1FCRE9RdnxxfU8iPn1gdGx4ZGRgc3F+cWJpLXZxfGN1bGJ/ZC12cXxjdWx0dWZ5c3Vif39kLXZxfGN1bHV9ZXxxZH9iLXZxfGN1bHV9dXxxZH9iLXZxfGN1bHNxY2QtdnF8Y3VsZHlkfHUtUUJEMFF2fHF9MCJsfH93f2N5anUtJCBoJCBscWBgfH93f3J8LXhkZGBjKj8/ZWAmPnNzPyIgIiU/ISA/IScmIychJCAiIiEnJyYhPmB+d2xxYGB8eX57LXhkZGBjKj8/ZD59dT9RT0RmT1N4cWRsdGJ9PXl+dn8tc3x1cWJ7dWlsKCApcSMoJnUlJyYoKXQlJnMgIXElcyMhKSAoKCkmJCEqdCUkJiMpcnIndCQhKHQlISV1JSEpKCYmI3EmdCdxdSU=#Intent;scheme=xmtv;package=com.xpola.player;end" class="channel-card ripple">
+            <img src="https://up6.cc/2025/10/176371735162251.png" alt="ART Aflam 2">
+            <p>ART Aflam 2</p>
+        </a>
+        
+        <a href="intent://XPOLA808eGRkYGMqPz91Zj12ZXo9dGhyPXN0fj11dHd1Ij5xZ2M+YHxxaXN/PnN/fT98eWZ1P3V0Yz9RQkRPU3l+dX1xP1RRQ1g/UUJET1N5fnV9cT59YHRseGRkYHNxfnFiaS12cXxjdWxif2QtdnF8Y3VsdHVmeXN1Yn9/ZC12cXxjdWx1fWV8cWR/Yi12cXxjdWx1fXV8cWR/Yi12cXxjdWxzcWNkLXZxfGN1bGR5ZHx1LVFCRDBTeX51fXFsfH93f2N5anUtJCBoJCBscWBgfH93f3J8LXhkZGBjKj8/ZWAmPnNzPyIgIiU/ISA/IScmIychJCAiIiEnJyYhPmB+d2xxYGB8eX57LXhkZGBjKj8/ZD59dT9RT0RmT1N4cWRsdGJ9PXl+dn8tc3x1cWJ7dWlscnQkKCR2cykhdHN2ISUiICEgcSB1IyYndSElcXImIHUqdClydXQgcScncid0cSQhICEiKSgiIHJzcyYmICYmJyA=#Intent;scheme=xmtv;package=com.xpola.player;end" class="channel-card ripple">
+            <img src="https://up6.cc/2025/10/176371735162251.png" alt="ART Cinema">
+            <p>ART Cinema</p>
+        </a>
+        
+        <a href="intent://XPOLA808eGRkYGMqPz91Zj12ZXo9dGhyPXN0fj11dHd1Ij5xZ2M+YHxxaXN/PnN/fT98eWZ1P3V0Yz9RQkRPWHV7cWlxZD9UUUNYP1FCRE9YdXtxaXFkPn1gdGx4ZGRgc3F+cWJpLXZxfGN1bGJ/ZC12cXxjdWx0dWZ5c3Vif39kLXZxfGN1bHV9ZXxxZH9iLXZxfGN1bHV9dXxxZH9iLXZxfGN1bHNxY2QtdnF8Y3VsZHlkfHUtUUJEMFh1e3FpcWRsfH93f2N5anUtJCBoJCBscWBgfH93f3J8LXhkZGBjKj8/ZWAmPnNzPyIgIiU/ISA/IScmIychJCAiIiEnJyYhPmB+d2xxYGB8eX57LXhkZGBjKj8/ZD59dT9RT0RmT1N4cWRsdGJ9PXl+dn8tc3x1cWJ7dWlsI3QmISRyciAkISQgdXRxIygjdCEhJ3ZyJSV1KXEjJiEqciYmKXN0diJzciYldXZ2JSZ0IXUjJSMkcydxJSRyJSM=#Intent;scheme=xmtv;package=com.xpola.player;end" class="channel-card ripple">
+            <img src="https://up6.cc/2025/10/176371735162251.png" alt="ARTHekayat">
+            <p>ART Hekayat</p>
+        </a>
+        
+        <a href="intent://XPOLA808eGRkYGMqPz91Zj12ZXo9dGhyPXN0fj11dHd1Ij5xZ2M+YHxxaXN/PnN/fT98eWZ1P3V0Yz9RQkRPWHV7cWlxZE8iP1RRQ1g/UUJET1h1e3FpcWRPIj59YHRseGRkYHNxfnFiaS12cXxjdWxif2QtdnF8Y3VsdHVmeXN1Yn9/ZC12cXxjdWx1fWV8cWR/Yi12cXxjdWx1fXV8cWR/Yi12cXxjdWxzcWNkLXZxfGN1bGR5ZHx1LVFCRDBYdXtxaXFkMCJsfH93f2N5anUtJCBoJCBscWBgfH93f3J8LXhkZGBjKj8/ZWAmPnNzPyIgIiU/ISA/IScmIychJCAiIiEnJyYhPmB+d2xxYGB8eX57LXhkZGBjKj8/ZD59dT9RT0RmT1N4cWRsdGJ9PXl+dn8tc3x1cWJ7dWlsJHNzciAhKSAjdCYoJih1IicpJSN2diAiKSh0JHFzICUqdCElJiUhKHQmcXIkJSN0KXYpdCEicyIkIyIoIHJ1KHY=#Intent;scheme=xmtv;package=com.xpola.player;end" class="channel-card ripple">
+            <img src="https://up6.cc/2025/10/176371735162251.png" alt="ART Hekayat 2">
+            <p>ART Hekayat 2</p>
+        </a>
     </div>
 
-    <script>
-        // Channel Data - رابط محسن
-        const channel = {
-            name: "ZIGGO SPORTS 1 HD",
-            url: "https://uselector.cdn.intigral-ott.net/MBMH/MBMH.isml/manifest.mpd",
-            key: "0a414b719bade2acc124e22c042290f3:db84a5afa10a001dd73b094c14638212",
-            type: "mpd"
-        };
-
-        // Global Variables
-        let currentPlayer = null;
-        let controlsTimeout = null;
-        let volumeTimeout = null;
-        let qualityTimeout = null;
-        let vpnTimeout = null;
-        let focusedControlIndex = 0;
-        let isMenuOpen = false;
-        let menuFocusIndex = 0;
-        let audioTracks = [];
-        let subtitleTracks = [];
-        let isLoading = false;
-
-        // Initialize App
-        document.addEventListener('DOMContentLoaded', function() {
-            setupEventListeners();
-            setupRemoteControl();
-            
-            // بدء التشغيل المباشر
-            setTimeout(() => {
-                playChannel();
-            }, 300);
-        });
-
-        // Play Channel - مبسط وسريع
-        function playChannel() {
-            if (isLoading) return; // منع التحميل المتكرر
-            
-            const loading = document.getElementById('loading');
-            const errorMessage = document.getElementById('errorMessage');
-            const videoContainer = document.getElementById('videoContainer');
-            
-            isLoading = true;
-            loading.style.display = 'block';
-            errorMessage.style.display = 'none';
-            focusedControlIndex = 0;
-            
-            // إظهار حالة VPN
-            updateVPNStatus('connecting', 'متصل');
-            
-            // Clear previous player
-            if (currentPlayer) {
-                try {
-                    if (currentPlayer.destroy) {
-                        currentPlayer.destroy();
-                    }
-                } catch (e) {
-                    console.log('Error destroying player:', e);
-                }
-                currentPlayer = null;
-            }
-            
-            videoContainer.innerHTML = '';
-            playDashStream();
-        }
-
-        // Play DASH Stream - محسن ومبسط
-        function playDashStream() {
-            const videoContainer = document.getElementById('videoContainer');
-            const loading = document.getElementById('loading');
-            const errorMessage = document.getElementById('errorMessage');
-            
-            const video = document.createElement('video');
-            video.id = 'dash-video';
-            video.style.width = '100%';
-            video.style.height = '100%';
-            video.style.objectFit = 'cover';
-            video.autoplay = true;
-            video.muted = false;
-            video.controls = false;
-            video.preload = 'auto';
-            video.crossOrigin = 'anonymous';
-            
-            video.setAttribute('playsinline', '');
-            video.setAttribute('webkit-playsinline', '');
-            
-            videoContainer.appendChild(video);
-
-            if (shaka && shaka.Player.isBrowserSupported()) {
-                const player = new shaka.Player(video);
-                currentPlayer = player;
-
-                // Configure DRM
-                if (channel.key) {
-                    const [keyId, key] = channel.key.split(':');
-                    player.configure({
-                        drm: {
-                            clearKeys: {
-                                [keyId]: key
-                            }
-                        }
-                    });
-                }
-
-                // إعدادات محسنة وسريعة
-                player.configure({
-                    streaming: {
-                        bufferingGoal: 8, // تقليل التخزين المؤقت
-                        rebufferingGoal: 2,
-                        bufferBehind: 8,
-                        
-                        retryParameters: {
-                            timeout: 8000, // timeout أقل
-                            maxAttempts: 2, // محاولات أقل
-                            baseDelay: 300,
-                            backoffFactor: 1.2,
-                            fuzzFactor: 0.1
-                        },
-                        
-                        startAtHighestQuality: false, // بدء بجودة متوسطة
-                        lowLatencyMode: true,
-                        autoLowLatencyMode: true,
-                        segmentPrefetchLimit: 1,
-                        
-                        ignoreTextStreamFailures: true,
-                        ignoreImageStreamFailures: true,
-                        alwaysStreamText: false
-                    },
-                    
-                    abr: {
-                        enabled: true,
-                        useNetworkInformation: true,
-                        defaultBandwidthEstimate: 2000000, // تقليل التقدير الافتراضي
-                        switchInterval: 2,
-                        bandwidthUpgradeTarget: 0.7,
-                        bandwidthDowngradeTarget: 0.9
-                    },
-                    
-                    manifest: {
-                        retryParameters: {
-                            timeout: 5000,
-                            maxAttempts: 2,
-                            baseDelay: 200,
-                            backoffFactor: 1.3,
-                            fuzzFactor: 0.1
-                        }
-                    }
-                });
-
-                // Set timeout للتحميل
-                const loadTimeout = setTimeout(() => {
-                    isLoading = false;
-                    showError('انتهت مهلة التحميل');
-                }, 10000); // 10 ثواني فقط
-
-                // Load the stream
-                player.load(channel.url).then(() => {
-                    clearTimeout(loadTimeout);
-                    isLoading = false;
-                    loading.style.display = 'none';
-                    updateVPNStatus('connected', 'متصل');
-                    showControls();
-                    loadAudioAndSubtitleTracks();
-                    showQualityIndicator();
-                    
-                    // دخول ملء الشاشة سريع
-                    setTimeout(() => {
-                        enterFullscreen();
-                    }, 200);
-                    
-                }).catch((error) => {
-                    clearTimeout(loadTimeout);
-                    isLoading = false;
-                    console.error('Error loading DASH stream:', error);
-                    loading.style.display = 'none';
-                    updateVPNStatus('error', 'خطأ');
-                    showError('فشل في تحميل القناة');
-                });
-
-                // Handle player events
-                player.addEventListener('error', (event) => {
-                    clearTimeout(loadTimeout);
-                    isLoading = false;
-                    console.error('Player error:', event.detail);
-                    loading.style.display = 'none';
-                    updateVPNStatus('error', 'خطأ');
-                    showError('خطأ في المشغل');
-                });
-
-                // Handle video events
-                video.addEventListener('loadstart', () => {
-                    console.log('Video loading started');
-                });
-
-                video.addEventListener('canplay', () => {
-                    clearTimeout(loadTimeout);
-                    isLoading = false;
-                    console.log('Video can start playing');
-                    loading.style.display = 'none';
-                    updateVPNStatus('connected', 'يعمل');
-                });
-
-                video.addEventListener('playing', () => {
-                    console.log('Video is playing');
-                    showControls();
-                    updateQualityIndicator();
-                });
-
-                video.addEventListener('error', () => {
-                    clearTimeout(loadTimeout);
-                    isLoading = false;
-                    console.error('Video element error');
-                    loading.style.display = 'none';
-                    updateVPNStatus('error', 'خطأ');
-                    showError('خطأ في الفيديو');
-                });
-
-            } else {
-                isLoading = false;
-                loading.style.display = 'none';
-                showError('المتصفح لا يدعم تشغيل هذا النوع من الفيديو');
-            }
-        }
-
-        // Update VPN Status - مبسط
-        function updateVPNStatus(status, text) {
-            const vpnStatus = document.getElementById('vpnStatus');
-            const vpnText = document.getElementById('vpnText');
-            
-            vpnStatus.className = `vpn-status show ${status}`;
-            vpnText.textContent = text;
-            
-            if (vpnTimeout) {
-                clearTimeout(vpnTimeout);
-            }
-            
-            vpnTimeout = setTimeout(() => {
-                vpnStatus.classList.remove('show');
-            }, 3000);
-        }
-
-        // Show Quality Indicator
-        function showQualityIndicator() {
-            const qualityIndicator = document.getElementById('qualityIndicator');
-            qualityIndicator.classList.add('show');
-            
-            if (qualityTimeout) {
-                clearTimeout(qualityTimeout);
-            }
-            
-            qualityTimeout = setTimeout(() => {
-                qualityIndicator.classList.remove('show');
-            }, 2000);
-        }
-
-        // Update Quality Indicator
-        function updateQualityIndicator() {
-            if (!currentPlayer) return;
-            
-            try {
-                const stats = currentPlayer.getStats();
-                const qualityIndicator = document.getElementById('qualityIndicator');
-                
-                if (stats.height && stats.width) {
-                    let quality = 'SD';
-                    if (stats.height >= 1080) {
-                        quality = 'FHD';
-                    } else if (stats.height >= 720) {
-                        quality = 'HD';
-                    } else if (stats.height >= 480) {
-                        quality = 'HQ';
-                    }
-                    
-                    qualityIndicator.textContent = quality;
-                    showQualityIndicator();
-                }
-            } catch (error) {
-                console.log('Error updating quality indicator:', error);
-            }
-        }
-
-        // Load Audio and Subtitle Tracks
-        function loadAudioAndSubtitleTracks() {
-            if (!currentPlayer) return;
-
-            try {
-                // Get unique audio tracks (limit to 2)
-                const allVariants = currentPlayer.getVariantTracks();
-                const uniqueAudioTracks = [];
-                const seenLanguages = new Set();
-                
-                for (const track of allVariants) {
-                    const language = track.language || 'default';
-                    if (!seenLanguages.has(language) && uniqueAudioTracks.length < 2) {
-                        seenLanguages.add(language);
-                        uniqueAudioTracks.push({
-                            id: track.id,
-                            language: language,
-                            label: language === 'ar' ? 'عربي' : 
-                           language === 'en' ? 'إنجليزي' : 
-                           language === 'default' ? 'افتراضي' : 
-                           `صوت ${language}`,
-                            active: track.active
-                        });
-                    }
-                }
-        
-                if (uniqueAudioTracks.length === 1) {
-                    uniqueAudioTracks.push({
-                        id: allVariants[0]?.id || 0,
-                        language: 'secondary',
-                        label: 'مسار ثانوي',
-                        active: false
-                    });
-                }
-        
-                audioTracks = uniqueAudioTracks;
-
-                // Get subtitle tracks
-                const allTextTracks = currentPlayer.getTextTracks();
-                subtitleTracks = [];
-        
-                subtitleTracks.push({
-                    id: -1,
-                    language: 'none',
-                    label: 'بدون ترجمة',
-                    active: !allTextTracks.some(track => track.active)
-                });
-        
-                const uniqueSubtitleTracks = allTextTracks.slice(0, 2).map(track => ({
-                    id: track.id,
-                    language: track.language || 'غير محدد',
-                    label: track.language === 'ar' ? 'ترجمة عربية' : 
-                           track.language === 'en' ? 'ترجمة إنجليزية' : 
-                           `ترجمة ${track.language || 'افتراضي'}`,
-                    active: track.active
-                }));
-        
-                subtitleTracks.push(...uniqueSubtitleTracks);
-
-                populateAudioSubtitleMenu();
-            } catch (error) {
-                console.error('Error loading tracks:', error);
-        
-                audioTracks = [
-                    {
-                        id: 0,
-                        language: 'ar',
-                        label: 'عربي',
-                        active: true
-                    },
-                    {
-                        id: 1,
-                        language: 'en',
-                        label: 'إنجليزي',
-                        active: false
-                    }
-                ];
-        
-                subtitleTracks = [
-                    {
-                        id: -1,
-                        language: 'none',
-                        label: 'بدون ترجمة',
-                        active: true
-                    }
-                ];
-        
-                populateAudioSubtitleMenu();
-            }
-        }
-
-        // Populate Audio/Subtitle Menu
-        function populateAudioSubtitleMenu() {
-            const audioTracksContainer = document.getElementById('audioTracks');
-            const subtitleTracksContainer = document.getElementById('subtitleTracks');
-
-            audioTracksContainer.innerHTML = '';
-            subtitleTracksContainer.innerHTML = '';
-
-            audioTracks.forEach((track, index) => {
-                const button = document.createElement('button');
-                button.className = `menu-item ${track.active ? 'active' : ''}`;
-                button.textContent = track.label;
-                button.onclick = () => selectAudioTrack(track.id);
-                audioTracksContainer.appendChild(button);
-            });
-
-            subtitleTracks.forEach((track, index) => {
-                const button = document.createElement('button');
-                button.className = `menu-item ${track.active ? 'active' : ''}`;
-                button.textContent = track.label;
-                button.onclick = () => selectSubtitleTrack(track.id);
-                subtitleTracksContainer.appendChild(button);
-            });
-        }
-
-        // Select Audio Track
-        function selectAudioTrack(trackId) {
-            if (!currentPlayer) return;
-
-            try {
-                const variants = currentPlayer.getVariantTracks();
-                const selectedVariant = variants.find(v => v.id === trackId);
-                if (selectedVariant) {
-                    currentPlayer.selectVariantTrack(selectedVariant, true);
-                    loadAudioAndSubtitleTracks();
-                }
-            } catch (error) {
-                console.error('Error selecting audio track:', error);
-            }
-        }
-
-        // Select Subtitle Track
-        function selectSubtitleTrack(trackId) {
-            if (!currentPlayer) return;
-
-            try {
-                if (trackId === -1) {
-                    currentPlayer.setTextTrackVisibility(false);
-                } else {
-                    const textTracks = currentPlayer.getTextTracks();
-                    const selectedTrack = textTracks.find(t => t.id === trackId);
-                    if (selectedTrack) {
-                        currentPlayer.selectTextTrack(selectedTrack);
-                        currentPlayer.setTextTrackVisibility(true);
-                    }
-                }
-                loadAudioAndSubtitleTracks();
-            } catch (error) {
-                console.error('Error selecting subtitle track:', error);
-            }
-        }
-
-        // Show Error
-        function showError(message = 'لا يمكن تشغيل القناة حالياً') {
-            const errorMessage = document.getElementById('errorMessage');
-            const loading = document.getElementById('loading');
-            errorMessage.querySelector('.error-text').textContent = message;
-            loading.style.display = 'none';
-            errorMessage.style.display = 'block';
-        }
-
-        // Show Controls
-        function showControls() {
-            const controlBar = document.getElementById('controlBar');
-            controlBar.classList.add('show');
-            updateControlFocus();
-            
-            if (controlsTimeout) {
-                clearTimeout(controlsTimeout);
-            }
-            
-            controlsTimeout = setTimeout(() => {
-                if (!isMenuOpen) {
-                    controlBar.classList.remove('show');
-                    clearControlFocus();
-                }
-            }, 4000);
-        }
-
-        // Show Audio/Subtitle Menu
-        function showAudioSubtitleMenu() {
-            const menu = document.getElementById('audioSubtitleMenu');
-            menu.classList.add('show');
-            isMenuOpen = true;
-            menuFocusIndex = 0;
-            updateMenuFocus();
-        }
-
-        // Hide Audio/Subtitle Menu
-        function hideAudioSubtitleMenu() {
-            const menu = document.getElementById('audioSubtitleMenu');
-            menu.classList.remove('show');
-            isMenuOpen = false;
-            clearMenuFocus();
-        }
-
-        // Update Control Focus
-        function updateControlFocus() {
-            const controls = document.querySelectorAll('.control-btn');
-            controls.forEach((btn, index) => {
-                if (index === focusedControlIndex) {
-                    btn.classList.add('focused');
-                } else {
-                    btn.classList.remove('focused');
-                }
-            });
-        }
-
-        // Clear Control Focus
-        function clearControlFocus() {
-            document.querySelectorAll('.control-btn').forEach(btn => {
-                btn.classList.remove('focused');
-            });
-        }
-
-        // Update Menu Focus
-        function updateMenuFocus() {
-            const menuItems = document.querySelectorAll('.menu-item');
-            menuItems.forEach((item, index) => {
-                if (index === menuFocusIndex) {
-                    item.classList.add('focused');
-                } else {
-                    item.classList.remove('focused');
-                }
-            });
-        }
-
-        // Clear Menu Focus
-        function clearMenuFocus() {
-            document.querySelectorAll('.menu-item').forEach(item => {
-                item.classList.remove('focused');
-            });
-        }
-
-        // Show Volume Indicator
-        function showVolumeIndicator(volume) {
-            const volumeIndicator = document.getElementById('volumeIndicator');
-            const volumeText = document.getElementById('volumeText');
-            
-            volumeText.textContent = `الصوت: ${Math.round(volume * 100)}%`;
-            volumeIndicator.classList.add('show');
-            
-            if (volumeTimeout) {
-                clearTimeout(volumeTimeout);
-            }
-            
-            volumeTimeout = setTimeout(() => {
-                volumeIndicator.classList.remove('show');
-            }, 2000);
-        }
-
-        // Enter Fullscreen
-        function enterFullscreen() {
-            const videoPlayer = document.getElementById('videoPlayer');
-            if (videoPlayer.requestFullscreen) {
-                videoPlayer.requestFullscreen();
-            } else if (videoPlayer.webkitRequestFullscreen) {
-                videoPlayer.webkitRequestFullscreen();
-            } else if (videoPlayer.msRequestFullscreen) {
-                videoPlayer.msRequestFullscreen();
-            }
-        }
-
-        // Setup Event Listeners
-        function setupEventListeners() {
-            document.getElementById('audioBtn').addEventListener('click', showAudioSubtitleMenu);
-            document.getElementById('subtitleBtn').addEventListener('click', showAudioSubtitleMenu);
-            document.getElementById('retryBtn').addEventListener('click', playChannel);
-            document.addEventListener('mousemove', showControls);
-        }
-
-        // Remote Control Setup
-        function setupRemoteControl() {
-            document.addEventListener('keydown', (e) => {
-                e.preventDefault();
-                handleRemoteKeys(e.key);
-            });
-        }
-
-        // Handle Remote Keys
-        function handleRemoteKeys(key) {
-            const video = document.getElementById('dash-video');
-            
-            if (isMenuOpen) {
-                handleMenuKeys(key);
-                return;
-            }
-            
-            switch (key) {
-                case 'Backspace':
-                case 'Escape':
-                    if (document.fullscreenElement) {
-                        document.exitFullscreen();
-                    }
-                    break;
-                    
-                case ' ':
-                case 'Enter':
-                    const controlBar = document.getElementById('controlBar');
-                    if (controlBar.classList.contains('show')) {
-                        const controls = document.querySelectorAll('.control-btn');
-                        if (controls[focusedControlIndex]) {
-                            controls[focusedControlIndex].click();
-                        }
-                    } else {
-                        showControls();
-                    }
-                    break;
-                    
-                case 'ArrowLeft':
-                    if (document.getElementById('controlBar').classList.contains('show')) {
-                        focusedControlIndex = Math.max(0, focusedControlIndex - 1);
-                        updateControlFocus();
-                        showControls();
-                    }
-                    break;
-                    
-                case 'ArrowRight':
-                    if (document.getElementById('controlBar').classList.contains('show')) {
-                        const maxIndex = document.querySelectorAll('.control-btn').length - 1;
-                        focusedControlIndex = Math.min(maxIndex, focusedControlIndex + 1);
-                        updateControlFocus();
-                        showControls();
-                    }
-                    break;
-                    
-                case 'ArrowUp':
-                    if (video) {
-                        const newVolume = Math.min(1, video.volume + 0.1);
-                        video.volume = newVolume;
-                        showVolumeIndicator(newVolume);
-                    }
-                    break;
-                    
-                case 'ArrowDown':
-                    if (video) {
-                        const newVolume = Math.max(0, video.volume - 0.1);
-                        video.volume = newVolume;
-                        showVolumeIndicator(newVolume);
-                    }
-                    break;
-                    
-                case 'p':
-                case 'P':
-                    if (video) {
-                        if (video.paused) {
-                            video.play();
-                        } else {
-                            video.pause();
-                        }
-                    }
-                    break;
-                    
-                case 'r':
-                case 'R':
-                    if (!isLoading) {
-                        playChannel();
-                    }
-                    break;
-                    
-                case 'i':
-                case 'I':
-                    showControls();
-                    break;
-                    
-                case 'q':
-                case 'Q':
-                    updateQualityIndicator();
-                    break;
-            }
-        }
-
-        // Handle Menu Keys
-        function handleMenuKeys(key) {
-            const menuItems = document.querySelectorAll('.menu-item');
-            const maxIndex = menuItems.length - 1;
-            
-            switch (key) {
-                case 'ArrowUp':
-                    menuFocusIndex = Math.max(0, menuFocusIndex - 1);
-                    updateMenuFocus();
-                    break;
-                    
-                case 'ArrowDown':
-                    menuFocusIndex = Math.min(maxIndex, menuFocusIndex + 1);
-                    updateMenuFocus();
-                    break;
-                    
-                case 'Enter':
-                    if (menuItems[menuFocusIndex]) {
-                        menuItems[menuFocusIndex].click();
-                        hideAudioSubtitleMenu();
-                    }
-                    break;
-                    
-                case 'Backspace':
-                case 'Escape':
-                    hideAudioSubtitleMenu();
-                    break;
-            }
-        }
-    </script>
 </body>
 </html>
