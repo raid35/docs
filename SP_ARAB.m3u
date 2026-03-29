@@ -44,6 +44,21 @@ http://ksauae.xyz:8080/live/462738737337/352672622626/421785.ts
 http://ksauae.xyz:8080/live/462738737337/352672622626/421786.ts
 #EXTINF:-1 tvg-name="Thmanayh 3 4K" tvg-logo="http://tv.asc.vg/thmanayh.ksa.png" group-title="Thmanayh 8 ⚽ RSL",Thmanayh 3 4K
 http://ksauae.xyz:8080/live/462738737337/352672622626/429518.ts
+#KODIPROP:inputstream=inputstream.adaptive
+#KODIPROP:inputstream.adaptive.license_type=clearkey
+#KODIPROP:inputstream.adaptive.license_key=1e23e51b09a67b83813c17049870bcd4:c3d6288e378b0dc55320fd0e6fd2e55f
+#EXTINF:-1 tvg-logo="https://i.imgur.com/WDFmm6k.png" group-title="قنوات ترفيهية",CricLife 1
+https://ev-fast-mpd.starzplayarabia.com/live/eds/CricLife1/DASH/CricLife1.mpd
+#KODIPROP:inputstream=inputstream.adaptive
+#KODIPROP:inputstream.adaptive.license_type=clearkey
+#KODIPROP:inputstream.adaptive.license_key=48bef83b4c6a3c5189b01b0126210da4:bd085230b7b09e50954fe0af111a8a9f
+#EXTINF:-1 tvg-logo="https://i.imgur.com/7WTztSz.png" group-title="قنوات ترفيهية",CricLife 2
+https://ev-fast-mpd.starzplayarabia.com/live/eds/CricLife2/DASH/CricLife2.mpd
+#KODIPROP:inputstream=inputstream.adaptive
+#KODIPROP:inputstream.adaptive.license_type=clearkey
+#KODIPROP:inputstream.adaptive.license_key=4e8b5ddac5332a4e66c002b4c0f22322:d06de29b0eacb81ac6e3f325849047e8
+#EXTINF:-1 tvg-logo="https://i.imgur.com/rDxJuhv.png" group-title="قنوات ترفيهية",CricLife 3
+https://ev-fast-mpd.starzplayarabia.com/live/eds/Criclife_3/DASH/Criclife_3.mpd
 #EXTINF:-1 group-title="Starz-play" tvg-logo="https://go4.pw/ARABE/AD_SPORTS_1_PREMIUM.png", STC SPORTS 1 🇦🇪
 #EXTVLCOPT:http-user-agent=Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/109.0.0.0 Safari/537.36
 #KODIPROP:inputstreamaddon=inputstream.adaptive
