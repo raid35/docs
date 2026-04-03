@@ -80,6 +80,10 @@ http://169.150.223.25/ArtSport4/index.m3u8
 http://169.150.223.25/ArtSport5/index.m3u8
 #EXTINF:-1 tvg-logo="https://img2.sport-tv-guide.live/images/tv-station-artsport-6-2664.png" ,ArtSport6
 http://169.150.223.25/ArtSport6/index.m3u8
+#EXTINF:-1 tvg-logo="https://yootv.online/images/logo-channel/setanta-sports-1-tv.png" ,setanta 1
+https://stream8.cinerama.uz/1263/tracks-v1a1/mono.m3u8
+#EXTINF:-1 tvg-logo="https://yootv.online/images/logo-channel/setanta-sports-2-tv.png" ,setanta 2
+https://stream8.cinerama.uz/1264/tracks-v1a1/mono.m3u8
 #EXTINF:-1 tvg-logo="https://i.imgur.com/Tz3h8de.jpg" group-title="SPORTS",PRIMA SPORT 2
 #EXTVLCOPT:http-user-agent=Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Mobile Safari/537.36
 #EXTVLCOPT:http-referrer=https://arwen1.panaka1.cfd/000/
