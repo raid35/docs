@@ -54,10 +54,24 @@ https://video.beeline.tv/live/d/channel320.isml/manifest-stb.mpd
 #KODIPROP:inputstream.adaptive.license_type=clearkey
 #KODIPROP:inputstream.adaptive.license_key=6cfb55b12aaa9df1626a8adaa4f26329:84486e2e8e5fdee2ef8240019923078c
 https://video.beeline.tv/live/d/channel321.isml/manifest-stb.mpd
+#EXTINF:-1 tvg-logo="https://nstatic.nova.bg/public/doc/doc/1625131615_ds_web.jpg" ,diemasport
+http://87.246.54.249:8080/DiemaSport/index.m3u8
+#EXTINF:-1 tvg-logo="https://nstatic.nova.bg/public/doc/doc/1625131829_ds_2_web.jpg" ,diemasport2
+http://87.246.54.249:8080/DiemaSport2/index.m3u8
+#EXTINF:-1 tvg-logo="https://nstatic.nova.bg/public/doc/doc/1625056324_thumbnaild3.jpg" ,diemasport3
+http://87.246.54.249:8080/DiemaSport3/index.m3u8
+#EXTINF:-1 tvg-logo="https://maxsport.live/wp-content/uploads/2024/07/max-sport-1-logo-1536x274.png" ,MaxSport1
+http://87.246.54.249:8080/MaxSport1/index.m3u8
+#EXTINF:-1 tvg-logo="https://maxsport.live/wp-content/uploads/2024/07/max-sport-2-logo-1536x274.png" ,MaxSport2
+http://87.246.54.249:8080/MaxSport2/index.m3u8
+#EXTINF:-1 tvg-logo="https://maxsport.live/wp-content/uploads/2024/07/max-sport-3-logo-1536x274.png" ,MaxSport3
+http://87.246.54.249:8080/MaxSport3/index.m3u8
 #EXTINF:-1 tvg-logo="https://maxsport.live/wp-content/uploads/2024/07/max-sport-2-logo-1536x274.png" ,MaxSport4
 http://87.246.54.249:8080/MaxSport4/index.m3u8
-#EXTINF:-1 tvg-logo="https://img2.sport-tv-guide.live/images/tv-station-artsport-1-2659.png" ,ArtSport1
-http://169.150.223.25/ArtSport1HD/index.m3u8
+#EXTINF:-1 tvg-logo="https://maxsport.live/wp-content/uploads/2024/07/max-sport-2-logo-1536x274.png" ,MaxSport4
+http://87.246.54.249:8080/MaxSport4/index.m3u8
+#EXTINF:-1 tvg-logo="https://www.gledaitv.live/assets/images/channels/9Ndnova_sport.png" ,NovaSport
+http://87.246.54.249:8080/NovaSport/index.m3u8
 #EXTINF:-1 tvg-logo="https://img2.sport-tv-guide.live/images/tv-station-artsport-2-2659.png" ,ArtSport2
 http://169.150.223.25/ArtSport2/index.m3u8
 #EXTINF:-1 tvg-logo="https://img2.sport-tv-guide.live/images/tv-station-artsport-3-2661.png" ,ArtSport3
