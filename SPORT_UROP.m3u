@@ -88,6 +88,10 @@ http://169.150.223.25/ArtSport4/index.m3u8
 http://169.150.223.25/ArtSport5/index.m3u8
 #EXTINF:-1 tvg-logo="https://img2.sport-tv-guide.live/images/tv-station-artsport-6-2664.png" ,ArtSport6
 http://169.150.223.25/ArtSport6/index.m3u8
+#EXTINF:-1, ARENA SPORT 1 🇨🇿
+http://88.212.15.19/live/test_arenasport/playlist.m3u8
+#EXTINF:-1, ARENA SPORT 2 🇨🇿
+http://88.212.15.19/live/test_arenasport_dva/playlist.m3u8
 #EXTINF:-1 tvg-logo="https://yootv.online/images/logo-channel/setanta-sports-1-tv.png" ,setanta 1
 http://158.101.222.193:88/georgia_play.php?id=setanta_georgia
 #EXTINF:-1 tvg-logo="https://yootv.online/images/logo-channel/setanta-sports-2-tv.png" ,setanta 2
