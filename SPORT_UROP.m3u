@@ -64,10 +64,8 @@ http://87.246.54.249:8080/DiemaSport3/index.m3u8
 http://87.246.54.249:8080/MaxSport1/index.m3u8
 #EXTINF:-1 tvg-logo="https://maxsport.live/wp-content/uploads/2024/07/max-sport-2-logo-1536x274.png" ,MaxSport2
 http://87.246.54.249:8080/MaxSport2/index.m3u8
-#EXTINF:-1 tvg-logo="https://maxsport.live/wp-content/uploads/2024/07/max-sport-2-logo-1536x274.png" ,MaxSport2
-http://87.246.54.249:8080/MaxSport3/index.m3u8
 #EXTINF:-1 tvg-logo="https://maxsport.live/wp-content/uploads/2024/07/max-sport-3-logo-1536x274.png" ,MaxSport3
-http://87.246.54.249:8080/MaxSport4/index.m3u8
+http://87.246.54.249:8080/MaxSport3/index.m3u8
 #EXTINF:-1 tvg-logo="https://maxsport.live/wp-content/uploads/2024/07/max-sport-4-logo-1536x274.png" ,MaxSport4
 http://87.246.54.249:8080/MaxSport4/index.m3u8
 #EXTINF:-1 tvg-logo="https://www.gledaitv.live/assets/images/channels/9Ndnova_sport.png" ,NovaSport
