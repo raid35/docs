@@ -11,7 +11,7 @@ http://77.137.40.221:8000/play/a01j
 http://77.137.40.221:8000/play/a01k
 #EXTINF:-1 tvg-id="BeIN Sports 1" tvg-name="BEIN SPORTS 1 HD GHD" tvg-logo="https://assets.bein.com/mena/sites/4/2015/06/beIN_SPORTS1_DIGITAL_Mono.png" BEIN FHD",BEIN SPORTS 1
 http://77.137.40.221:8000/play/a01e
-#EXTINF:-1 tvg-name="FR : beIN SPOR 1 HD" tvg-logo="http://tayaara.store/live/france/max1.jpg" group-title="FRANCE SPOR",FR : beIN SPOR 1 FHD
+#EXTINF:-1 tvg-name="FR : beIN SPOR 1 HD" tvg-logo="https://prod-media.beinsports.com/image/85029984d97fda2dd293f3c7d6cf0c0d.png?ver=03-06-2025",FR : beIN SPOR 1 FHD
 http://99.27.51.147:8080/BeinSport/index.m3u8
 #EXTINF:-1 tvg-logo="https://raw.githubusercontent.com/whs4030/Logo/refs/heads/main/Bein-MY1.png" group-title="PREMIUM SPORT",BEIN SPORTS 1 AU
 https://wahyu1ptv.pages.dev/AstroBein1.m3u8
@@ -24,10 +24,12 @@ https://wahyu1ptv.pages.dev/AstroBein1.m3u8
 https://otte.live.fly.ww.aiv-cdn.net/syd-nitro/live/clients/dash/enc/ghwcl6hv68/out/v1/83536910d8034e9b9895a20fbe1c1687/cenc.mpd
 #EXTINF:-1 tvg-name="BEIN Sports 1 1080P" tvg-logo="https://d.top4top.io/p_3339nvbfo1.png" group-title="AR | BEIN SPORT 4K (SS)",BEIN Sports 1 
 https://corestream.ronaldovurdu.help//hls/bein-sports-1.m3u8
-#EXTINF:-1 tvg-name="BEIN Sports 1 1080P" tvg-logo="https://cdn.livesoccertv.com/images/channels/thumbnails/bein-sport-en-espanol.png" beIN SPORTS en Español
+#EXTINF:-1 tvg-name="BEIN Sports 1 1080P" tvg-logo="https://cdn.livesoccertv.com/images/channels/thumbnails/bein-sport-en-espanol.png",beIN SPORTS en Español
 https://bein-esp-xumo.amagi.tv/playlistR1080p.m3u8
 #EXTINF:-1 tvg-id="BeIN Sports 2" tvg-name="BEIN SPORTS 2 HD GHD" tvg-logo="https://assets.bein.com/mena/sites/4/2021/02/beIN_SPORTS2_DIGITAL_Mono.png" group-title="BEIN FHD",BEIN 2
 http://77.137.40.221:8000/play/a01g
+#EXTINF:-1 tvg-name="FR : beIN SPOR 2 FHD" tvg-logo="https://prod-media.beinsports.com/image/a5603bab80b01482a13023b47f67193a.png?ver=03-06-2025" group-title="FRANCE SPOR",FR : beIN SPOR 2 FHD
+http://99.27.51.147:8080/BeinSport2/index.m3u8
 #EXTINF:-1 tvg-logo="https://raw.githubusercontent.com/whs4030/Logo/refs/heads/main/Bein-MY2.png" group-title="PREMIUM SPORT",BEIN SPORTS 1 AU
 https://wahyu1ptv.pages.dev/AstroBein2.m3u8
 #EXTINF:-1 tvg-logo="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRqvht3Vvx9Gz1UNHKukYRaAoEyqhhCc1IHt2qkVAE-e3AKEiI8Tuncnvmj&s=10" group-title="PREMIUM SPORT",BEIN SPORTS 2 AU
@@ -37,19 +39,11 @@ https://wahyu1ptv.pages.dev/AstroBein2.m3u8
 #KODIPROP:inputstream.adaptive.license_type=clearkey
 #KODIPROP:inputstream.adaptive.license_key=0b42be2664d7e811d04f3e504e0924c5:ae24090123b8c72ac5404dc152847cb8
 https://otte.live.fly.ww.aiv-cdn.net/syd-nitro/live/clients/dash/enc/8m8cd46i1t/out/v1/83985c68e4174e90a58a1f2c024be4c9/cenc.mpd
-#EXTINF:-1 tvg-logo="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRqvht3Vvx9Gz1UNHKukYRaAoEyqhhCc1IHt2qkVAE-e3AKEiI8Tuncnvmj&s=10" group-title="PREMIUM SPORT",BEIN SPORTS 2 AU
-#EXTVLCOPT:http-user-agent=Mozilla/5.0 (Linux; Android 13; UltraBox Build/TP1A.220624.014; wv) AppleWebKit/537.36 (KHTML, like Gecko) Version/4.0 Chrome/136.0.7103.61 Mobile Safari/537.36
-#EXTVLCOPT:http-user-agent=Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/109.0.0.0 Safari/537.36
-#KODIPROP:inputstreamaddon=inputstream.adaptive
-#KODIPROP:inputstream.adaptive.manifest_type=dash
-#KODIPROP:inputstream.adaptive.license_type=clearkey
-#KODIPROP:inputstream.adaptive.license_key=0b42be2664d7e811d04f3e504e0924c5:ae24090123b8c72ac5404dc152847cb8
-https://otte.live.fly.ww.aiv-cdn.net/syd-nitro/live/clients/dash/enc/8m8cd46i1t/out/v1/83985c68e4174e90a58a1f2c024be4c9/cenc.mpd
 #EXTINF:-1 tvg-name="BEIN Sports 2 1080P" tvg-logo="https://d.top4top.io/p_3339nvbfo1.png" group-title="AR | BEIN SPORT 4K (SS)",BEIN Sports 2 
 https://corestream.ronaldovurdu.help//hls/bein-sports-2.m3u8
 #EXTINF:-1 tvg-name="BEIN SPORTS 3 HD " tvg-logo="https://assets.bein.com/mena/sites/4/2015/06/beIN_SPORTS3_DIGITAL_Mono.png" group-title="BEIN FHD",BEIN 3
 http://77.137.40.221:8000/play/a01h
-#EXTINF:-1 tvg-name="FR : beIN SPOR 3 HD" tvg-logo="http://tayaara.store/live/france/max3.jpg" group-title="FRANCE SPORm3u8",FR : beIN SPOR 3 FHD
+#EXTINF:-1 tvg-name="FR : beIN SPOR 3 HD" tvg-logo="https://prod-media.beinsports.com/image/d2dec7dfa1b1393f4b5dced45011b955.png?ver=03-06-2025" group-title="FRANCE SPOR",FR : beIN SPOR 3 FHD
 http://99.27.51.147:8080/BeinSport3/index.m3u8
 #EXTINF:-1 tvg-logo="https://raw.githubusercontent.com/whs4030/Logo/refs/heads/main/Bein-MY3.png" group-title="PREMIUM SPORT",BEIN SPORTS 1 AU
 https://wahyu1ptv.pages.dev/AstroBein3.m3u8
