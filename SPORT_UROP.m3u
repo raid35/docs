@@ -79,15 +79,15 @@ http://87.246.54.249:8080/MaxSport4/index.m3u8
 #EXTINF:-1 tvg-logo="https://www.gledaitv.live/assets/images/channels/9Ndnova_sport.png" ,NovaSport
 http://87.246.54.249:8080/NovaSport/index.m3u8
 #EXTINF:-1 tvg-logo="https://img2.sport-tv-guide.live/images/tv-station-artsport-1-2659.png" ,ArtSport1
-http://169.150.223.25/ArtSport1HD/index.m3u8
+http://79.127.207.193:80/ArtSport1HD/playlist.m3u8
 #EXTINF:-1 tvg-logo="https://img2.sport-tv-guide.live/images/tv-station-artsport-2-2659.png" ,ArtSport2
-http://169.150.223.25/ArtSport2/index.m3u8
+http://79.127.207.193:80/ArtSport2/playlist.m3u8
 #EXTINF:-1 tvg-logo="https://img2.sport-tv-guide.live/images/tv-station-artsport-3-2661.png" ,ArtSport3
-http://169.150.223.25/ArtSport3/index.m3u8
+http://79.127.207.193:80/ArtSport3/playlist.m3u8
 #EXTINF:-1 tvg-logo="https://img2.sport-tv-guide.live/images/tv-station-artsport-4-2662.png" ,ArtSport4
-http://169.150.223.25/ArtSport4/index.m3u8
+http://79.127.207.193:80/ArtSport4/playlist.m3u8
 #EXTINF:-1 tvg-logo="https://img2.sport-tv-guide.live/images/tv-station-artsport-5-2663.png" ,ArtSport5
-http://169.150.223.25/ArtSport5/index.m3u8
+http://79.127.207.193:80/ArtSport5/playlist.m3u8
 #EXTINF:-1 tvg-logo="https://img2.sport-tv-guide.live/images/tv-station-artsport-6-2664.png" ,ArtSport6
 http://169.150.223.25/ArtSport6/index.m3u8
 #EXTINF:-1, ARENA SPORT 1 🇨🇿
@@ -141,9 +141,9 @@ https://otte.live.fly.ww.aiv-cdn.net/iad-nitro/live/clients/dash/enc/tepjqej1ys/
 #KODIPROP:inputstream.adaptive.license_key=9f327d24c66fbd84e15ab5c9ead7c7a4:83837185529c0c4048f81386c2d36426
 https://otte.live.fly.ww.aiv-cdn.net/iad-nitro/live/clients/dash/enc/fdx74zqzhu/out/v1/7d7a8c6981a842b98a683e9fbfe51d17/cenc.mpd
 #EXTINF:-1 group-title="☆SPORT+☆" tvg-logo="https://i.pinimg.com/236x/df/5d/1e/df5d1e2a1121620204c9608ea7e9b77f.jpg", SONY 1
-https://raw.githubusercontent.com/Cutsiffa/Bin/refs/heads/main/Splus2/Sonyt.m3u8
+http://stvlive.net:8080/sonyten1/index.m3u8
 #EXTINF:-1 group-title="☆SPORT+☆" tvg-logo="https://i.pinimg.com/236x/df/5d/1e/df5d1e2a1121620204c9608ea7e9b77f.jpg", SONY 2
-https://raw.githubusercontent.com/Cutsiffa/Bin/refs/heads/main/Splus2/Sonyt2.m3u8
+http://stvlive.net:8080/sonyten2/index.m3u8
 #EXTINF:-1 group-title="☆SPORT+☆" tvg-logo="https://i.pinimg.com/236x/df/5d/1e/df5d1e2a1121620204c9608ea7e9b77f.jpg", SONY 3
 https://raw.githubusercontent.com/Cutsiffa/Bin/refs/heads/main/Splus2/Sonyt3.m3u8
 #EXTINF:-1 tvg-id="" tvg-name="PT | SPORT TV 1" tvg-logo="https://lo1.in/por/sptv1.png" group-title="Portugal",PT | SPORT TV 1
