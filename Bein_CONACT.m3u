@@ -44,7 +44,7 @@ https://corestream.ronaldovurdu.help//hls/bein-sports-2.m3u8
 #EXTINF:-1 tvg-name="BEIN SPORTS 3 HD " tvg-logo="https://assets.bein.com/mena/sites/4/2015/06/beIN_SPORTS3_DIGITAL_Mono.png" group-title="BEIN FHD",BEIN 3 🇶🇦
 http://77.137.40.221:8000/play/a01h
 #EXTINF:-1 tvg-name="FR : beIN SPOR 3 HD" tvg-logo="https://prod-media.beinsports.com/image/d2dec7dfa1b1393f4b5dced45011b955.png?ver=03-06-2025" group-title="FRANCE SPOR",FR : beIN SPOR 3 🇫🇷
-http://99.27.51.147:8080/BeinSport3/index.m3u8
+http://145.239.5.177/559/mpegts
 #EXTINF:-1 tvg-logo="https://raw.githubusercontent.com/whs4030/Logo/refs/heads/main/Bein-MY3.png" group-title="PREMIUM SPORT",BEIN SPORTS 1 AU
 https://wahyu1ptv.pages.dev/AstroBein3.m3u8
 #EXTINF:-1 tvg-logo="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSqsjcNy_IDohefZUIH1APnJwclfHByEcy6_w&s" group-title="PREMIUM SPORT",BEIN SPORTS 3 AU
