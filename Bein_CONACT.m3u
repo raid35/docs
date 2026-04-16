@@ -23,6 +23,30 @@ http://99.27.51.147:8080/BeinSport2/index.m3u8
 http://145.239.5.177/559/mpegts
 #EXTINF:-1 tvg-name="BEIN Sports 1 1080P" tvg-logo="https://cdn.livesoccertv.com/images/channels/thumbnails/bein-sport-en-espanol.png",beIN SPORTS en Español
 https://bein-esp-xumo.amagi.tv/playlistR1080p.m3u8
+#EXTINF:-1 tvg-id="" tvg-name="" group-title="Perfect TV" tvg-logo="https://get.perfecttv.net/logo/bein1fhd.png",Astro Bein Sports 1
+#KODIPROP:inputstreamaddon=inputstream.adaptive
+#KODIPROP:inputstream.adaptive.manifest_type=dash
+#KODIPROP:inputstream.adaptive.license_type=org.w3.clearkey
+#KODIPROP:inputstream.adaptive.license_key=d48b6088253c443eb94d27cb7828f707:e9776141f9e949273a072b0e035070ab
+https://get.perfecttv.net/myunifi.mpd?username=vip_3klp0es8&password=wg3piwEs&channel=Bein1
+#EXTINF:-1 tvg-id="" tvg-name="" group-title="Perfect TV" tvg-logo="https://get.perfecttv.net/logo/bein2fhd.png",Astro Bein Sports 2
+#KODIPROP:inputstreamaddon=inputstream.adaptive
+#KODIPROP:inputstream.adaptive.manifest_type=dash
+#KODIPROP:inputstream.adaptive.license_type=org.w3.clearkey
+#KODIPROP:inputstream.adaptive.license_key=efa6ff1acefa43048e8b7adc21d98871:5d0f448b52a92035e3763c4a60275933
+https://get.perfecttv.net/myunifi.mpd?username=vip_3klp0es8&password=wg3piwEs&channel=Bein2
+#EXTINF:-1 tvg-id="" tvg-name="" group-title="Perfect TV" tvg-logo="https://get.perfecttv.net/logo/bein2fhd.png",Astro Bein Sports 3
+#KODIPROP:inputstreamaddon=inputstream.adaptive
+#KODIPROP:inputstream.adaptive.manifest_type=dash
+#KODIPROP:inputstream.adaptive.license_type=org.w3.clearkey
+#KODIPROP:inputstream.adaptive.license_key=816ee2f7c19f49ed84276f34541b465b:ca764a9973b6123a1112cffd3b32010d
+https://get.perfecttv.net/myunifi.mpd?username=vip_3klp0es8&password=wg3piwEs&channel=Bein3
+#EXTINF:-1 tvg-id="" tvg-name="" group-title="Perfect TV" tvg-logo="https://get.perfecttv.net/logo/bein4fhd.png",Astro Bein Sports 4
+#KODIPROP:inputstreamaddon=inputstream.adaptive
+#KODIPROP:inputstream.adaptive.manifest_type=dash
+#KODIPROP:inputstream.adaptive.license_type=org.w3.clearkey
+#KODIPROP:inputstream.adaptive.license_key=d561ff976397473e9b456b44cdffcdd2:2b6cff42f7fae7e8bc32f3d5c62dc3c2
+https://get.perfecttv.net/myunifi.mpd?username=vip_3klp0es8&password=wg3piwEs&channel=Bein4
 #EXTINF:-1 tvg-logo="https://raw.githubusercontent.com/whs4030/Logo/refs/heads/main/Bein-MY1.png" group-title="PREMIUM SPORT",BEIN SPORTS 1 AU
 https://wahyu1ptv.pages.dev/AstroBein1.m3u8
 #EXTINF:-1 tvg-logo="https://raw.githubusercontent.com/whs4030/Logo/refs/heads/main/Bein-MY2.png" group-title="PREMIUM SPORT",BEIN SPORTS 1 AU
