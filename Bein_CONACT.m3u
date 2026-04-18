@@ -16,11 +16,11 @@ http://77.137.40.221:8000/play/a01h
 #EXTINF:-1 tvg-name="BEIN SPORTS 4 HD " tvg-logo="https://prod-media.beinsports.com/image/a886c65b0bcb407579a079ed4564fffa.png?ver=03-06-2025" group-title="BEIN FHD",BEIN 4 🇶🇦
 http://77.137.40.221:8000/play/a01i
 #EXTINF:-1 tvg-name="FR : beIN SPOR 1 HD" tvg-logo="https://prod-media.beinsports.com/image/85029984d97fda2dd293f3c7d6cf0c0d.png?ver=03-06-2025",FR : beIN SPOR 1 🇫🇷
-http://99.27.51.147:8080/BeinSport/index.m3u8
+http://ua.online24.pm/play/1101/350B326FB34F4B8/video.m3u8
 #EXTINF:-1 tvg-name="FR : beIN SPOR 2 FHD" tvg-logo="https://prod-media.beinsports.com/image/a5603bab80b01482a13023b47f67193a.png?ver=03-06-2025" group-title="FRANCE SPOR",FR : beIN SPOR 2 🇫🇷
-http://99.27.51.147:8080/BeinSport2/index.m3u8
+http://ua.online24.pm/play/1102/350B326FB34F4B8/video.m3u8
 #EXTINF:-1 tvg-name="FR : beIN SPOR 3 HD" tvg-logo="https://prod-media.beinsports.com/image/d2dec7dfa1b1393f4b5dced45011b955.png?ver=03-06-2025" group-title="FRANCE SPOR",FR : beIN SPOR 3 🇫🇷
-http://145.239.5.177/559/mpegts
+http://ua.online24.pm/play/1103/350B326FB34F4B8/video.m3u8
 #EXTINF:-1 tvg-name="BEIN Sports 1 1080P" tvg-logo="https://cdn.livesoccertv.com/images/channels/thumbnails/bein-sport-en-espanol.png",beIN SPORTS en Español
 https://bein-esp-xumo.amagi.tv/playlistR1080p.m3u8
 #EXTINF:-1 tvg-id="" tvg-name="" group-title="Perfect TV" tvg-logo="https://get.perfecttv.net/logo/bein1fhd.png",Astro Bein Sports 1
