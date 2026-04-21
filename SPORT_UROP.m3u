@@ -1,3 +1,5 @@
+#EXTINF:-1 tvg-id="LaLigaTV.es@SD" group-title="Thể Thao" tvg-logo="https://i.imgur.com/ilay5Jr.png",LaLiga TV (eng5) (English) (Sports)
+http://162.19.255.233:8080/play/UNbAl57p9hXZClOu56FCTZID4SFOqZLZ81NguVP-JxM/m3u8
 #EXTINF:-1 tvg-id="v-sport-1-no" tvg-logo="https://i.ibb.co.com/WsDcpQq/vsport1.png" group-title="SPORTS 🇳🇴",  V Sport 1 [NO]
 #KODIPROP:inputstream.adaptive.manifest_type=dash
 #KODIPROP:inputstream.adaptive.license_type=clearkey
