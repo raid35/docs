@@ -7,14 +7,14 @@
 https://otte.live.fly.ww.aiv-cdn.net/lhr-nitro/live/clients/dash/enc/rbem8rorcw/out/v1/5318821e2c3c44c2a439681b9aa86e9b/cenc.mpd
 #EXTINF:-1 tvg-id="" group-title="Thể Thao" tvg-logo="https://tse2.mm.bing.net/th/id/OIP.YOFd90jWALEnwrJ4X6arUgHaEK?pid=Api&h=220&P=0",CNBC Sport
 https://customer-fpmmd9cdewmb1wz2.cloudflarestream.com/7b2add8f6c990c9e43454caedce67487/manifest/video.m3u8
-#EXTINF:-1 tvg-id="v-sport-1-no" tvg-logo="https://i.ibb.co.com/WsDcpQq/vsport1.png" group-title="SPORTS 🇳🇴",  V Sport 1 [NO]
+#EXTINF:-1 tvg-id="" tvg-name="NO | TV2 SPORT 1 HD" tvg-logo="https://raw.githubusercontent.com/tv-logo/tv-logos/main/countries/nordic/norway/tv2-sport1-no.png" group-title="NORWAY",NO | TV2 SPORT 1 HD
 #EXTVLCOPT:http-user-agent=Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:90.0) Gecko/20100101 Firefox/90.0
 #KODIPROP:inputstreamaddon=inputstream.adaptive
 #KODIPROP:inputstream.adaptive.manifest_type=dash
 #KODIPROP:inputstream.adaptive.license_type=org.w3.clearkey
 #KODIPROP:inputstream.adaptive.license_key={"a0e68f01a5428cbdb8cfac2080c66b20":"556d72c812df452fad9bed66292bfc63","a0e68f01a5428cbdb8cfac2080c66b10":"be7f9d1a00bbd0478335a4a48379157d"}
 https://cors-proxy.cooks.fyi/https://cd-stream-live.telenorcdn.net/cdgo/sm_viasport1_hd_live/sm_viasport1_hd_live.isml/playlist.mpd
-#EXTINF:-1 tvg-id="v-sport-2-no" tvg-logo="https://i.ibb.co.com/fxPGRt7/vsport2.png" group-title="SPORTS 🇳🇴",  V Sport 2 [NO]
+#EXTINF:-1 tvg-id="" tvg-name="NO | TV2 SPORT 2 HD" tvg-logo="https://raw.githubusercontent.com/tv-logo/tv-logos/main/countries/nordic/norway/tv2-sport2-no.png" group-title="NORWAY",NO | TV2 SPORT 2 HD
 #EXTVLCOPT:http-user-agent=Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:90.0) Gecko/20100101 Firefox/90.0
 #KODIPROP:inputstreamaddon=inputstream.adaptive
 #KODIPROP:inputstream.adaptive.manifest_type=dash
@@ -84,7 +84,7 @@ https://cors-proxy.cooks.fyi/https://cd-stream-live.telenorcdn.net/cdgo/sm_tv2sp
 #KODIPROP:inputstream.adaptive.license_type=org.w3.clearkey
 #KODIPROP:inputstream.adaptive.license_key={"8bcb911fa8af2f5b6d7211a7a80e0d20":"c37e1743b2f4b98360b0b19698edb194","8bcb911fa8af2f5b6d7211a7a80e0d10":"fd192fb86701ab096fc58ebbc8c3f112"}
 https://cors-proxy.cooks.fyi/https://cd-stream-live.telenorcdn.net/cdgo/sm_tv2sportpremium2_live/sm_tv2sportpremium2_live.isml/playlist.mpd
-#EXTINF:-1 tvg-id="TV3+ HD (N) (T).no" tvg-logo="https://i.ibb.co.com/k3ML0XR/tv3plus.png" group-title="SPORTS🏅", TV3+ 🇳🇴
+#EXTINF:-1 tvg-id="" tvg-name="NO | TV3 NORGE FHD" tvg-logo="https://raw.githubusercontent.com/tv-logo/tv-logos/main/countries/nordic/norway/tv3-no.png" group-title="NORWAY",NO | TV3 NORGE FHD
 #EXTVLCOPT:http-user-agent=Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:90.0) Gecko/20100101 Firefox/90.0
 #KODIPROP:inputstreamaddon=inputstream.adaptive
 #KODIPROP:inputstream.adaptive.manifest_type=dash
