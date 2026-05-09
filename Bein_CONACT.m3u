@@ -14,13 +14,12 @@ https://d1yi40sjj0ca0v.cloudfront.net/TVD232/index.mpd
 #KODIPROP:inputstream.adaptive.license_type=clearkey
 #KODIPROP:inputstream.adaptive.license_key=620e51b82596475517a27aa425c52280:2b9ba811e9c5aeafc8ae1b71cdca4d6a
 https://otte.live.fly.ww.aiv-cdn.net/dub-nitro/live/clients/dash/enc/k0duzgfejg/out/v1/70a50b1bda944628b8e7e66ab4069419/cenc.mpd
+#EXTINF:-1 tvg-id="" group-title="Thể Thao" tvg-logo="https://freeshot.live/upload/source/sky-sports-premier-league_logo.png",Sky Sports Premier League
+https://d1yi40sjj0ca0v.cloudfront.net/TVD233/index.mpd
 #EXTINF:-1 tvg-id="" group-title="⚽️🏴󠁧󠁢󠁥󠁮󠁧󠁿|Live Premier League" tvg-logo="https://freeshot.live/upload/source/SkySportPremierLeague-logo.png",05/05 02:00 AM | Everton vs Manchester-City (Sky Sports Premier League)
 https://cdn-2.ttvb.eu.org/api/Sky-Sports-EPL/index.m3u8
 #EXTINF:-1 tvg-id="" group-title="⚽️🏴󠁧󠁢󠁥󠁮󠁧󠁿|Live Premier League" tvg-logo="https://freeshot.live/upload/source/SkySportPremierLeague-logo.png",05/05 02:00 AM | Everton vs Manchester City (Sky Sports Premier League HD)
 http://cdn.tv-rds.workers.dev/SkySportPremierLeagueDE.m3u8
-#EXTINF:-1 tvg-id="" group-title="⚽️🏴󠁧󠁢󠁥󠁮󠁧󠁿|Live Premier League" tvg-logo="https://www.lyngsat-logo.com/logo/tv/pp/premier_league_tv_uk.png",05/05 02:00 AM | Everton vs Manchester-City (Sky Sports Premier League)
-#EXTVLCOPT:http-user-agent=VidioPlayer/6.41.11
-https://ratuvidio.adptv.workers.dev/index.mpd?id=9353&type=dash
 #EXTINF:-1 tvg-id="BeIN Sports 1" tvg-name="BEIN SPORTS 1 HD GHD" tvg-logo="https://assets.bein.com/mena/sites/4/2015/06/beIN_SPORTS1_DIGITAL_Mono.png" BEIN FHD",BEIN SPORTS 1 🇶🇦
 http://tkiptv.net:80/play/live.php?mac=00:1A:79:A2:D6:A2&stream=13682&extension=ts&play_token=7UvwkqDLTP
 #EXTINF:-1 tvg-id="BeIN Sports 2" tvg-name="BEIN SPORTS 2 HD GHD" tvg-logo="https://assets.bein.com/mena/sites/4/2021/02/beIN_SPORTS2_DIGITAL_Mono.png" group-title="BEIN FHD",BEIN 2 🇶🇦
