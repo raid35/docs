@@ -20,19 +20,19 @@ http://cdn.tv-rds.workers.dev/SkySportPremierLeagueDE.m3u8
 #EXTVLCOPT:http-user-agent=VidioPlayer/6.41.11
 https://ratuvidio.adptv.workers.dev/index.mpd?id=9353&type=dash
 #EXTINF:-1 tvg-id="BeIN Sports 1" tvg-name="BEIN SPORTS 1 HD GHD" tvg-logo="https://assets.bein.com/mena/sites/4/2015/06/beIN_SPORTS1_DIGITAL_Mono.png" BEIN FHD",BEIN SPORTS 1 🇶🇦
-http://tkiptv.net:80/play/live.php?mac=00:1A:79:A2:D6:A2&stream=13681&extension=ts&play_token=W7OqngH5r8
+http://tkiptv.net:80/play/live.php?mac=00:1A:79:A2:D6:A2&stream=13682&extension=ts&play_token=7UvwkqDLTP
 #EXTINF:-1 tvg-id="BeIN Sports 2" tvg-name="BEIN SPORTS 2 HD GHD" tvg-logo="https://assets.bein.com/mena/sites/4/2021/02/beIN_SPORTS2_DIGITAL_Mono.png" group-title="BEIN FHD",BEIN 2 🇶🇦
 http://tkiptv.net:80/play/live.php?mac=00:1A:79:A2:D6:A2&stream=13680&extension=ts&play_token=VYNt10xLnF
 #EXTINF:-1 tvg-name="BEIN SPORTS 3 HD " tvg-logo="https://assets.bein.com/mena/sites/4/2015/06/beIN_SPORTS3_DIGITAL_Mono.png" group-title="BEIN FHD",BEIN 3 🇶🇦
-http://tkiptv.net:80/play/live.php?mac=00:1A:79:A2:D6:A2&stream=13677&extension=ts&play_token=EfmhGsEU4h
+http://tkiptv.net:80/play/live.php?mac=00:1A:79:A2:D6:A2&stream=89342&extension=ts&play_token=URkqLspZnE
 #EXTINF:-1 tvg-name="BEIN SPORTS 4 HD " tvg-logo="https://prod-media.beinsports.com/image/a886c65b0bcb407579a079ed4564fffa.png?ver=03-06-2025" group-title="BEIN FHD",BEIN 4 🇶🇦
-http://tkiptv.net:80/play/live.php?mac=00:1A:79:A2:D6:A2&stream=13678&extension=ts&play_token=EfmhGsEU4h
+http://tkiptv.net:80/play/live.php?mac=00:1A:79:A2:D6:A2&stream=78381&extension=ts&play_token=EkB9FvrUZ0
 #EXTINF:-1 tvg-name="FR : beIN SPOR 1 HD" tvg-logo="https://prod-media.beinsports.com/image/85029984d97fda2dd293f3c7d6cf0c0d.png?ver=03-06-2025",FR : beIN SPOR 1 🇫🇷
-http://tkiptv.net:80/play/live.php?mac=00:1A:79:A2:D6:A2&stream=14160&extension=ts&play_token=PVyZz1XlB3
+http://tkiptv.net:80/play/live.php?mac=00:1A:79:A2:D6:A2&stream=47499&extension=ts&play_token=uWy4KsnhfM
 #EXTINF:-1 tvg-name="FR : beIN SPOR 2 FHD" tvg-logo="https://prod-media.beinsports.com/image/a5603bab80b01482a13023b47f67193a.png?ver=03-06-2025" group-title="FRANCE SPOR",FR : beIN SPOR 2 🇫🇷
-http://tkiptv.net:80/play/live.php?mac=00:1A:79:A2:D6:A2&stream=14160&extension=ts&play_token=PVyZz1XlB3
+http://tkiptv.net:80/play/live.php?mac=00:1A:79:A2:D6:A2&stream=47500&extension=ts&play_token=BqTTamLLVq
 #EXTINF:-1 tvg-name="FR : beIN SPOR 3 HD" tvg-logo="https://prod-media.beinsports.com/image/d2dec7dfa1b1393f4b5dced45011b955.png?ver=03-06-2025" group-title="FRANCE SPOR",FR : beIN SPOR 3 🇫🇷
-http://tkiptv.net:80/play/live.php?mac=00:1A:79:A2:D6:A2&stream=14163&extension=ts&play_token=V7JxDP2KvT
+http://tkiptv.net:80/play/live.php?mac=00:1A:79:A2:D6:A2&stream=47501&extension=ts&play_token=uX2IlCb5WR
 #EXTINF:-1 tvg-name="BEIN Sports 1 1080P" tvg-logo="https://cdn.livesoccertv.com/images/channels/thumbnails/bein-sport-en-espanol.png",beIN SPORTS en Español
 http://pro.netmos.ovh:7355/live/31546503486949622/U09ZEDdu@6X!PeD/213383.ts
 #EXTINF:-1 tvg-id="" tvg-name="" group-title="Perfect TV" tvg-logo="https://get.perfecttv.net/logo/bein1fhd.png",Astro Bein Sports 1
