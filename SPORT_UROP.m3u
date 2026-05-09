@@ -301,10 +301,12 @@ https://otte.cache.aiv-cdn.net/bom-nitro/live/clients/dash/enc/h9urpo3cwb/out/v1
 #KODIPROP:inputstream.adaptive.license_type=clearkey
 #KODIPROP:inputstream.adaptive.license_key=e853333da2c9196ea11374634231bc45:de2e2dbe818d78dfad07d6cd9a4c63d4
 https://otte.cache.aiv-cdn.net/bom-nitro/clients/dash/enc/jkcljgqbx8/out/v1/63bfa701559340f3a2a2cb1fccd24807/cenc.mpd
-#EXTINF:-1 tvg-logo="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSzuJoGPwN42BUNm7bN5658_pEJrC2WpmcJpQ&s" group-title="Sports",FS1
+#EXTINF:-1 tvg-logo="https://www.sportsmediawatch.com/wp-content/uploads/2013/08/fs1logo-500x375.gif" group-title="Sports",FS1
 #KODIPROP:inputstream.adaptive.license_type=clearkey
 #KODIPROP:inputstream.adaptive.license_key=5466ebd70704bdeb657f0abf3c5ca4ef:bdd79b72d8e48ed483aa623cc38a8a16
 https://otte.live.fly.ww.aiv-cdn.net/iad-nitro/live/clients/dash/enc/tmpzbbdj9y/out/v1/962736723a534ba294e7592fef49827b/cenc.mpd
+#EXTINF:-1 tvg-logo="https://d.top4top.io/p_3781d7my91.jpg" group-title="Channel Olahraga",US Fox Sports 2
+http://nocable.cc:8080/PHn1bv/649364/1847
 #EXTINF:-1 tvg-logo="https://i.pinimg.com/236x/7f/7b/67/7f7b67c9a9fd36132bdccd94756b0c79.jpg" group-title="☆SPORT+☆",FX PREM
 #EXTVLCOPT:http-user-agent=Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:90.0) Gecko/20100101 Firefox/90.0
 #KODIPROP:inputstream.adaptive.license_type=clearkey
@@ -326,4 +328,10 @@ https://otte.live.fly.ww.aiv-cdn.net/iad-nitro/live/clients/dash/enc/tepjqej1ys/
 #KODIPROP:inputstream.adaptive.license_type=clearkey
 #KODIPROP:inputstream.adaptive.license_key=11c8c1c2ef0385cf1e64d44bb9c3a395:5769730ffbdc4b2fd8945929d9ace063
 https://otte.live.fly.ww.aiv-cdn.net/iad-nitro/live/clients/dash/enc/wybgz0orr8/out/v1/2f6d1612abd44f5883917f8a585b955f/cenc.mpd
+#EXTINF:-1 group-title="Channel Olahraga" tvg-logo="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEiDK5wO1M6YOy_2_IuEtYuj25ReGg3p-V3j60gGqa-cd8rz6f9xuH2o4mQVCRN1rApaVMGLT1q-bhDKcYGS4FbkseAgUhNFvAsDug1hI9wg4iFAGY6JAEEHtqsqdSK2A3CaqugX-fctkzTaywaYoaSIY1ZfFQjwdrQX_CNBMT5IpunnbZNpg2QzZuWjcPvt/s700/MUTV.png",MUTV
+https://get.perfecttv.net/mutv.mpd
+#EXTINF:-1 group-title="Channel Olahraga" tvg-logo="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEi2OjD6NCGtzCZWfhQzNpcVW_euLrpCnnStlicVuXpUmCPtmLdmrc0y-z2Gtm5ZzzoqMhaMNBevoWkih3cUkIpSU82YIpa3kPXoIUZDqP8OHhUB_3pJ6nVL40_skRSu01QU1J_nhgjkFiRa0lYdI91qKDv9j8Y82GlTWYOOHv3wnwT_K0NypITkf7v31iev/s700/BARCA%20TV.png",Barca TV
+https://amg17560-fcb-amg17560c1-rakuten-uk-4891.playouts.now.amagi.tv/playlist/amg17560-fcbarcelona-topbarcaenglish-rakutenuk/playlist.m3u8
+#EXTINF:-1 group-title="Channel Olahraga" tvg-logo="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEhYFK8bRVMMWBh1sGyooDuLOKoGi8jXXDfX5XVv7Qg8yFEMgUOEO9kJn2z7-b9GPiDdziVyzpvqvn-o9FdMsQdiXiO_oe3urHconDmrdNzGMliRK9LNrVzoUqDMdWkcHOdOnE0u6trlBorH9_YSt7uvDYQb4VPSu9Oat12tCuUcxus9DA3RLg35duBhsZFU/s700/INTER%20TV.png",Inter TV
+https://ilglobotv-live.akamaized.net/channels/InterTV/Live.m3u8
 
