@@ -39,11 +39,11 @@ http://ksauae.xyz:8080/live/462738737337/352672622626/430915.ts
 #EXTINF:-1 group-title="Starz-play" tvg-logo="http://tv.asc.vg/shahid.sport.png", shahid SPORTS 5 🇦🇪
 http://ksauae.xyz:8080/live/462738737337/352672622626/430916.ts
 #EXTINF:-1 tvg-name="Thmanayh 1 4K" tvg-logo="http://tv.asc.vg/thmanayh.ksa.png" group-title="Thmanayh 8 ⚽ RSL",Thmanayh 1 4K
-http://xlion.net:8080/live/747645/lion123123/421785.ts
+ http://116.202.165.211:8888/android/live?action=link&id=9882&hash=4e074207460355500e54194502014c02014651434f1a4d014107
 #EXTINF:-1 tvg-name="Thmanayh 2 4K" tvg-logo="http://tv.asc.vg/thmanayh.ksa.png" group-title="Thmanayh 8 ⚽ RSL",Thmanayh 2 4K
-http://xlion.net:8080/live/747645/lion123123/421786.ts
+ http://116.202.165.211:8888/android/live?action=link&id=9883&hash=4e074207460355500e54194502014c02014651434f1a4d014107
 #EXTINF:-1 tvg-name="Thmanayh 3 4K" tvg-logo="http://tv.asc.vg/thmanayh.ksa.png" group-title="Thmanayh 8 ⚽ RSL",Thmanayh 3 4K
-http://xlion.net:8080/live/747645/lion123123/429403.ts
+ http://116.202.165.211:8888/android/live?action=link&id=9884&hash=4e074207460355500e54194502014c02014651434f1a4d014107
 #KODIPROP:inputstream=inputstream.adaptive
 #KODIPROP:inputstream.adaptive.license_type=clearkey
 #KODIPROP:inputstream.adaptive.license_key=1e23e51b09a67b83813c17049870bcd4:c3d6288e378b0dc55320fd0e6fd2e55f
