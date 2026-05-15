@@ -13,9 +13,9 @@ https://c9851ec-rbm-hilv-fsly.cdn.redbee.live/L26/669bb376/9069a322.isml/.mpd
 #KODIPROP:inputstream.adaptive.license_key=620e51b82596475517a27aa425c52280:2b9ba811e9c5aeafc8ae1b71cdca4d6a
 https://otte.live.fly.ww.aiv-cdn.net/dub-nitro/live/clients/dash/enc/k0duzgfejg/out/v1/70a50b1bda944628b8e7e66ab4069419/cenc.mpd
 #EXTINF:-1 tvg-id="" group-title="Thể Thao" tvg-logo="https://raw.githubusercontent.com/lamtung16/iptv/refs/heads/main/logos/dazn-1.png",DAZN 1 
-http://116.202.165.211:8888/android/live?action=link&id=2669&hash=4b044f05440e565f0651194502014c02014251424d1a4d014107
+http://116.202.165.211:8888/android/live?action=link&id=2669&hash=4b024b0241035f570054194502014c0d00435f44481a4d014107
 #EXTINF:-1 tvg-id="" group-title="Thể Thao" tvg-logo="https://raw.githubusercontent.com/lamtung16/iptv/refs/heads/main/logos/dazn-2.png",DAZN 2 
-http://116.202.165.211:8888/android/live?action=link&id=2670&hash=4b044f05440e565f0651194502014c02014251424d1a4d014107
+http://116.202.165.211:8888/android/live?action=link&id=2670&hash=4b024b0241035f570054194502014c0d00435f44481a4d014107
 #EXTINF:-1 tvg-id="" group-title="Thể Thao" tvg-logo="https://freeshot.live/upload/source/sky-sports-premier-league_logo.png",Sky Sports Premier League
 https://d1yi40sjj0ca0v.cloudfront.net/TVD233/index.mpd
 #EXTINF:-1 tvg-logo="https://i.ibb.co.com/7Md2qy9/fubosp.png" group-title="LIGA INGGRIS",FUBO SPORTS 1
