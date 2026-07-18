@@ -66,9 +66,9 @@
     }
   </style>
   <script>
-    const serverUrl = "http://arox.cc:80";
-    const username = "24335738729223";
-    const password = "24335738729223";
+    const serverUrl = "http://nexon-tv.org:8000";
+    const username = "ijsgiufsl4";
+    const password = "er00rpptmb";
     
     let categories = [];
     let currentState = "CATEGORIES"; 
@@ -179,7 +179,7 @@
     function playEpisode(episode) {
       const streamUrl = `${serverUrl}/series/${username}/${password}/${episode.id}.${episode.container_extension}`;
       const title = encodeURIComponent(episode.title || `الحلقة ${episode.episode_num}`);
-      window.location.href = `intent:${streamUrl}#Intent;action=android.intent.action.VIEW;package=com.example.siksa;type=video/*;S.title=${title};end`;
+      window.location.href = `intent:${streamUrl}#Intent;action=android.intent.action.VIEW;package=com.example.sis;type=video/*;S.title=${title};end`;
     }
 
     window.onpopstate = function(event) {
