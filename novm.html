@@ -66,9 +66,9 @@
     }
   </style>
   <script>
-    const serverUrl = "http://pro.netmos.ovh:7355";
-    const username = "749372580907053";
-    const password = "FJCMIII@3777OIDN";
+    const serverUrl = "http://nexon-tv.org:8000";
+    const username = "ijsgiufsl4";
+    const password = "er00rpptmb";
     
     let categories = [];
     let currentState = "CATEGORIES"; 
@@ -152,7 +152,7 @@
     function playMovie(movie) {
       const streamUrl = `${serverUrl}/movie/${username}/${password}/${movie.stream_id}.${movie.container_extension}`;
       const title = encodeURIComponent(movie.name);
-      window.location.href = `intent:${streamUrl}#Intent;action=android.intent.action.VIEW;package=com.example.siksa;type=video/*;S.title=${title};end`;
+      window.location.href = `intent:${streamUrl}#Intent;action=android.intent.action.VIEW;package=com.example.sis;type=video/*;S.title=${title};end`;
     }
 
     // نظام الرجوع
