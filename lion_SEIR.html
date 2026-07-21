@@ -179,7 +179,7 @@
     function playEpisode(episode) {
       const streamUrl = `${serverUrl}/series/${username}/${password}/${episode.id}.${episode.container_extension}`;
       const title = encodeURIComponent(episode.title || `الحلقة ${episode.episode_num}`);
-      window.location.href = `intent:${streamUrl}#Intent;action=android.intent.action.VIEW;package=com.example.sis;type=video/*;S.title=${title};end`;
+      window.location.href = `intent:${streamUrl}#Intent;action=android.intent.action.VIEW;package=com.example.siksa;type=video/*;S.title=${title};end`;
     }
 
     window.onpopstate = function(event) {
