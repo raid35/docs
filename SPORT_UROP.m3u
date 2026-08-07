@@ -11,6 +11,7 @@ https://otte.live.fly.ww.aiv-cdn.net/gru-nitro/live/clients/dash/enc/3ynrpdanq2/
 #KODIPROP:inputstream.adaptive.license_type=org.w3.clearkey
 #KODIPROP:inputstream.adaptive.license_key=d9623774ac5c8c351aafe97c5fe70267:5164e6d05164a2d65fa8fcc962aa4861
 https://otte.live.fly.ww.aiv-cdn.net/lhr-nitro/live/clients/dash/enc/rbem8rorcw/out/v1/5318821e2c3c44c2a439681b9aa86e9b/cenc.mpd
+https://dash2.antik.sk/live/test_rai_uno_tizen/playlist.m3u8
 #EXTINF:-1 tvg-id="v-sport-plus-no" tvg-logo="https://tvepg.eu/img/norway/logo/v-sport-plus.webp" group-title="SPORTS 🇳🇴",  v-sport-plus 
 #EXTVLCOPT:http-user-agent=Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:90.0) Gecko/20100101 Firefox/90.0
 #KODIPROP:inputstreamaddon=inputstream.adaptive
@@ -299,5 +300,5 @@ https://get.perfecttv.net/mutv.mpd
 #EXTINF:-1 group-title="Channel Olahraga" tvg-logo="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEi2OjD6NCGtzCZWfhQzNpcVW_euLrpCnnStlicVuXpUmCPtmLdmrc0y-z2Gtm5ZzzoqMhaMNBevoWkih3cUkIpSU82YIpa3kPXoIUZDqP8OHhUB_3pJ6nVL40_skRSu01QU1J_nhgjkFiRa0lYdI91qKDv9j8Y82GlTWYOOHv3wnwT_K0NypITkf7v31iev/s700/BARCA%20TV.png",Barca TV
 https://amg17560-fcb-amg17560c1-rakuten-uk-4891.playouts.now.amagi.tv/playlist/amg17560-fcbarcelona-topbarcaenglish-rakutenuk/playlist.m3u8
 #EXTINF:-1 group-title="Channel Olahraga" tvg-logo="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEhYFK8bRVMMWBh1sGyooDuLOKoGi8jXXDfX5XVv7Qg8yFEMgUOEO9kJn2z7-b9GPiDdziVyzpvqvn-o9FdMsQdiXiO_oe3urHconDmrdNzGMliRK9LNrVzoUqDMdWkcHOdOnE0u6trlBorH9_YSt7uvDYQb4VPSu9Oat12tCuUcxus9DA3RLg35duBhsZFU/s700/INTER%20TV.png",Inter TV
-https://ilglobotv-live.akamaized.net/channels/InterTV/Live.m3u8
+https://amg27604-amg27604c1-amgplt0165.playout.now3.amagi.tv/playlist/amg27604-amg27604c1-amgplt0165/playlist.m3u8?
 
