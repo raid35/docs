@@ -38,7 +38,7 @@ http://pro.netmos.ovh:7355/live/UDJPRCRA1L055B/Ep27yiiwbb56mjkl/158901.ts
 http://pro.netmos.ovh:7355/live/UDJPRCRA1L055B/Ep27yiiwbb56mjkl/158902.ts
 #EXTINF:-1 tvg-id="BeIN Sports 5" tvg-name="BEIN SPORTS 5 HD GHD" tvg-logo="https://c.top4top.io/p_3678uvdqq1.jpg" group-title="BEIN FHD",BEIN 5 🇶🇦
 http://pro.netmos.ovh:7355/live/UDJPRCRA1L055B/Ep27yiiwbb56mjkl/158903.ts
-#EXTINF:-1 tvg-id="" tvg-name="" group-title="Perfect TV" tvg-logo="https://i.imgur.com/V562tpO.png",
+#EXTINF:-1 tvg-logo="https://mma.prnewswire.com/media/1610429/beIN_SPORTS_XTRA_Logo.jpg" group-title="SPORTS",BEIN SPORTS XTRA
 https://dc1644a9jazgj.cloudfront.net/beIN_Sports_Xtra_Espanol.m3u8
 #EXTINF:-1 tvg-logo="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQ4wTXZ0qi8xjWXrTWJKWkmfRFK7NlhsRHmgw&s" group-title="PREMIUM SPORT",BEIN SPORTS 1 🇦🇺
 #EXTVLCOPT:http-user-agent=Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/109.0.0.0 Safari/537.36
