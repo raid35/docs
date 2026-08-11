@@ -103,13 +103,13 @@ https://cors-proxy.cooks.fyi/https://cd-stream-live.telenorcdn.net/cdgo/sm_viasa
 #KODIPROP:inputstream.adaptive.license_type=org.w3.clearkey
 #KODIPROP:inputstream.adaptive.license_key=8bcec6b31cc9edcb6768ab26548e22c3:e3c5b07328894c33734a4de6ae55a87f
 https://otte.cache.aiv-cdn.net/bom-nitro/live/clients/dash/enc/puehlftk5j/out/v1/f7f0da1ee112481ca0024e6d4dd97f4a/cenc.mpd
-#EXTINF:-1 tvg-id="btsport1.uk" tvg-name="UK | TNT SPORTS 1" tvg-logo="http://aptvpix.net/pubs/2022/tntsports.png" group-title="UK",UK | TNT SPORTS 1
-http://hellosky.fun/live/ginomathew/skyplay3068/83837.ts
+#EXTINF:-1 tvg-id="btsport1.uk" tvg-name="UK | TNT SPORTS 1" tvg-logo="https://images-live.youview.tv/images/entity/10068955/ident/1_256x144.png" group-title="UK",UK | TNT SPORTS 1
 #EXTVLCOPT:http-user-agent=Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:90.0) Gecko/20100101 Firefox/90.0
 #KODIPROP:inputstreamaddon=inputstream.adaptive
 #KODIPROP:inputstream.adaptive.manifest_type=dash
 #KODIPROP:inputstream.adaptive.license_type=org.w3.clearkey
 #KODIPROP:inputstream.adaptive.license_key=f3df7843080ae743bf865dc5fdf64c68:567c863bc12eb74788ea74888c042e1b
+https://otte.cache.aiv-cdn.net/bom-nitro/live/clients/dash/enc/puehlftk5j/out/v1/f7f0da1ee112481ca0024e6d4dd97f4a/cenc.mpd
 #EXTINF:-1 tvg-id="4seven.uk" tvg-name="UK | PREMIER SPORTS 1 [ROI] " tvg-logo="http://aptvpix.net/pubs/2022/premiersport.png" group-title="UK",UK | PREMIER SPORTS 1
 #EXTVLCOPT:http-user-agent=Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:90.0) Gecko/20100101 Firefox/90.0
 #KODIPROP:inputstream.adaptive.license_type=clearkey
