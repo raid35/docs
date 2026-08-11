@@ -39,15 +39,15 @@ https://shd-gcp-live.edgenextcdn.net/live/bitmovin-mbc-action/8ea6ca1108d03e03da
 #EXTVLCOPT:http-drm-license=1ef41252601d15b560384657fa94e854:168e8db00dc987474b11fe806f523415
 https://ev-tcn-dxb-cdn.aws.playco.com/live/eds/MBC_Maser_2/DASH/MBC_Maser_2.mpd
 #EXTINF:-1 group-title="Starz-play" tvg-logo="http://tv.asc.vg/shahid.sport.png", shahid SPORTS 4 🇦🇪
-http://ksauae.xyz:8080/live/462738737337/352672622626/430915.ts
+http://pro.netmos.ovh:7355/live/UDJPRCRA1L055B/Ep27yiiwbb56mjkl/187275.ts
 #EXTINF:-1 group-title="Starz-play" tvg-logo="http://tv.asc.vg/shahid.sport.png", shahid SPORTS 5 🇦🇪
-http://ksauae.xyz:8080/live/462738737337/352672622626/430916.ts
+http://pro.netmos.ovh:7355/live/UDJPRCRA1L055B/Ep27yiiwbb56mjkl/187276.ts
 #EXTINF:-1 tvg-name="Thmanayh 1 4K" tvg-logo="http://tv.asc.vg/thmanayh.ksa.png" group-title="Thmanayh 8 ⚽ RSL",Thmanayh 1 4K
- http://116.202.165.211:8888/android/live?action=link&id=9882&hash=4e074207460355500e54194502014c02014651434f1a4d014107
+http://pro.netmos.ovh:7355/live/UDJPRCRA1L055B/Ep27yiiwbb56mjkl/220684.ts
 #EXTINF:-1 tvg-name="Thmanayh 2 4K" tvg-logo="http://tv.asc.vg/thmanayh.ksa.png" group-title="Thmanayh 8 ⚽ RSL",Thmanayh 2 4K
- http://116.202.165.211:8888/android/live?action=link&id=9883&hash=4e074207460355500e54194502014c02014651434f1a4d014107
+http://pro.netmos.ovh:7355/live/UDJPRCRA1L055B/Ep27yiiwbb56mjkl/220685.ts
 #EXTINF:-1 tvg-name="Thmanayh 3 4K" tvg-logo="http://tv.asc.vg/thmanayh.ksa.png" group-title="Thmanayh 8 ⚽ RSL",Thmanayh 3 4K
- http://116.202.165.211:8888/android/live?action=link&id=9884&hash=4e074207460355500e54194502014c02014651434f1a4d014107
+http://pro.netmos.ovh:7355/live/UDJPRCRA1L055B/Ep27yiiwbb56mjkl/235939.ts
 #KODIPROP:inputstream=inputstream.adaptive
 #KODIPROP:inputstream.adaptive.license_type=clearkey
 #KODIPROP:inputstream.adaptive.license_key=1e23e51b09a67b83813c17049870bcd4:c3d6288e378b0dc55320fd0e6fd2e55f
