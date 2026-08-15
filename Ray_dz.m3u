@@ -1,6 +1,6 @@
 #EXTM3U
 #EXTINF:-1 tvg-logo="https://shahid.mbc.net/mediaObject/d7354fd2-4d5e-4e0e-93e1-8e759b29b892?width=144&version=1&type=avif&q=80" group-title="قنوات ترفيهية",MBC+ Movies Action
-https://jmp2.uk/plu-5f8ed1ff5c39700007e2204a.m3u8
+https://shd-amg-fast.edgenextcdn.net/tx011/playlist.m3u8
 #EXTINF:-1 tvg-logo="https://shahid.mbc.net/mediaObject/40a83fb3-2eb3-4d13-83dd-f39a3060d20e?width=144&version=1&type=avif&q=80" group-title="قنوات ترفيهية",MBC+ Movies Thriller
 https://shd-amg-fast.edgenextcdn.net/tx012/playlist.m3u8
 #KODIPROP:inputstream=inputstream.adaptive
