@@ -86,3 +86,5 @@ https://amg00711-zylo-france-zylo-emotional-rakuten-frukp.amagi.tv/hls/amagi_hls
 https://amg00711-zylo-amg00711c4-rakuten-us-769.playouts.now.amagi.tv/playlist/amg00711-zylofast-frequencenovelas-rakutenus/playlist.m3u8
 #EXTINF:-1 tvg-chno="129" tvg-id="FRBB4600002K5" tvg-log="https://time2replay.com/wp-content/uploads/2023/03/scream-in-tv-direct-1194x681.jpg" group-title="CINEMA VIP FR",FR | SCREAM'IN
 https://zylo-screamin-rakuten.amagi.tv/hls/amagi_hls_data_rakutenAA-zylo-screamin-rakuten/CDN/master.m3u8
+#EXTINF:-1 tvg-logo="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSgbqkRFa8aadV9CT7Z3g3pJGnw0LOrzhVvuqwpnCvhPg&s=10" group-title="HBO",HBO Hits HD East
+http://4.30.180.36:8420/hbo2/index.m3u8?token=test
