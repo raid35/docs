@@ -1,4 +1,8 @@
 #EXTM3U
+#EXTINF:-1 tvg-logo="https://shahid.mbc.net/mediaObject/d7354fd2-4d5e-4e0e-93e1-8e759b29b892?width=144&version=1&type=avif&q=80" group-title="قنوات ترفيهية",MBC+ Movies Action
+https://jmp2.uk/plu-5f8ed1ff5c39700007e2204a.m3u8
+#EXTINF:-1 tvg-logo="https://shahid.mbc.net/mediaObject/40a83fb3-2eb3-4d13-83dd-f39a3060d20e?width=144&version=1&type=avif&q=80" group-title="قنوات ترفيهية",MBC+ Movies Thriller
+https://shd-amg-fast.edgenextcdn.net/tx012/playlist.m3u8
 #KODIPROP:inputstream=inputstream.adaptive
 #KODIPROP:inputstream.adaptive.license_type=clearkey
 #KODIPROP:inputstream.adaptive.license_key=867c8d7670eab5e7aa10571830ad3d8c:030cf68626950b12145bc7147d6a9bda
@@ -53,6 +57,11 @@ https://9affb6144c4c4cdca25d58908cb55a64.mediatailor.eu-west-1.amazonaws.com/v1/
 #KODIPROP:inputstream.adaptive.license_type=clearkey
 #KODIPROP:inputstream.adaptive.license_key=c99d8404fee24f907870cbf212924967:03591856cc3dd05a1e297de8ecd422f8
 https://live.corusdigitaldev.com/groupd/live/376c96cd-193f-46d1-a2b6-7c2b78cb0aa5/corus-showcase.isml/.mpd
+#EXTINF:-1 tvg-logo="https://images.pluto.tv/channels/5dcb62e63d4d8f0009f36881/featuredImage_1760802090341.jpg" group-title="USA Channels",Ciné Action
+https://jmp2.uk/plu-5f8ed1ff5c39700007e2204a.m3u8
+https://jmp2.uk/plu-62ea3c2e4823db00072788ed.m3u8
+#EXTINF:-1 tvg-logo="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQhy06Sp-2CIw8rLiqu2ywWmqNFjaVlCyy8GO6pFfn-czu5FSJWOQDmEvo&s=10" group-title="USA Channels",Ciné Thrillers 
+https://jmp2.uk/plu-60c3472a51a2050008dad272.m3u8
 #EXTINF:-1 tvg-id="rolandgarros_sonyonehitsaction" tvg-name="|FR| SONY ONE HITS ACTION FHD" tvg-logo="https://i.imgur.com/oEhrOke.png" group-title="CINEMA VIP FR",FR  | SONY ONE HITS ACTION FHD
 https://5098a8b860504a3690fd2e7c0a18d68f.mediatailor.us-west-2.amazonaws.com/v1/master/ba62fe743df0fe93366eba3a257d792884136c7f/LINEAR-817-FR-SONYONEHITSACTION-LG_FR/playlist.m3u8
 #EXTINF:-1 tvg-chno="76" tvg-id="FR300010HD" group-title="CINEMA VIP FR",FR | SONY ONE THE BLACKLIST
@@ -75,5 +84,5 @@ https://amg00711-zylo-amg00711c8-rakuten-uk-2686.playouts.now.amagi.tv/playlist/
 https://amg00711-zylo-france-zylo-emotional-rakuten-frukp.amagi.tv/hls/amagi_hls_data_rakutenAA-zylo-emotional-rakuten/CDN/master.m3u8
 #EXTINF:-1 tvg-chno="128" tvg-id="FRBC800001X0" tvg-id="https://static.wixstatic.com/media/6ba705_5bd15f9ba6f440e0a0ff97a2fba1cd97~mv2.png" group-title="CINEMA VIP FR",FR | FREQUENCE NOVELAS
 https://amg00711-zylo-amg00711c4-rakuten-us-769.playouts.now.amagi.tv/playlist/amg00711-zylofast-frequencenovelas-rakutenus/playlist.m3u8
-#EXTINF:-1 tvg-chno="129" tvg-id="FRBB4600002K5" tvg-log="https://static.wixstatic.com/media/6ba705_7aaafdef307149ee8290018a1a80aa96~mv2.png" group-title="CINEMA VIP FR",FR | SCREAM'IN
+#EXTINF:-1 tvg-chno="129" tvg-id="FRBB4600002K5" tvg-log="https://time2replay.com/wp-content/uploads/2023/03/scream-in-tv-direct-1194x681.jpg" group-title="CINEMA VIP FR",FR | SCREAM'IN
 https://zylo-screamin-rakuten.amagi.tv/hls/amagi_hls_data_rakutenAA-zylo-screamin-rakuten/CDN/master.m3u8
