@@ -150,9 +150,11 @@
 
     // تشغيل الفيلم
     function playMovie(movie) {
-      const streamUrl = `${serverUrl}/movie/${username}/${password}/${movie.stream_id}.${movie.container_extension}`;
-      const title = encodeURIComponent(movie.name);
-      window.location.href = `intent:${streamUrl}#Intent;action=android.intent.action.VIEW;package=com.example.siksa;type=video/*;S.title=${title};end`;
+      // إرسال رابط الفيلم المباشر ومعه الامتداد (mp4/mkv/avi)
+      const streamUrl = `${serverUrl}/movie/${username}/${password}/${movie.stream_id}.${movie.container_extension || 'mp4'}`;
+      
+      // توجيه للفيلم مباشرة، الكود في Kotlin سيلتقطه عبر isVideoUrl أو handleExternalIntent
+      window.location.href = streamUrl;
     }
 
     // نظام الرجوع
