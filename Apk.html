@@ -1,176 +1,36 @@
-<!DOCTYPE html>
-<html lang="ar" dir="rtl">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Siksa Pro Player</title>
-    
-    <meta name="referrer" content="no-referrer" />
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/shaka-player/4.3.5/shaka-player.compiled.js"></script>
-    <script src="//ssl.p.jwpcdn.com/player/v/8.26.0/jwplayer.js"></script>
-    <script>jwplayer.key = "XSuP4qMl+9tK17QNb+4+th2Pm9AWgMO/cYH8CI0HGGr7bdjo";</script>
-    <link rel="stylesheet" href="https://akomov.com/todapi/jw_ako.css">
-
-    <style>
-        :root { --primary: #00d2ff; --bg: #050505; }
-        body { background: var(--bg); color: white; font-family: 'Segoe UI', sans-serif; margin: 0; overflow: hidden; }
-        
-        .header { display: flex; align-items: center; padding: 15px 25px; background: #111; border-bottom: 2px solid #222; }
-        .back-btn { background: #ff4b2b; color: white; border: none; padding: 10px 20px; border-radius: 8px; cursor: pointer; display: none; margin-left: 15px; font-weight: bold; }
-        
-        #main-content { 
-            display: grid; 
-            grid-template-columns: repeat(auto-fill, minmax(160px, 1fr)); 
-            gap: 20px; padding: 25px; 
-            height: calc(100vh - 100px); overflow-y: auto; 
-        }
-
-        .card { 
-            background: #1a1a1a; border: 3px solid transparent; border-radius: 12px; 
-            padding: 15px; text-align: center; cursor: pointer; transition: 0.25s;
-            outline: none;
-        }
-        /* دعم الريموت (التحديد) */
-        .card:focus, .card:hover { border-color: var(--primary); transform: translateY(-5px); background: #222; outline: none; }
-        
-        .card img { width: 100%; aspect-ratio: 1; object-fit: contain; background: #000; border-radius: 8px; }
-        .card span { display: block; margin-top: 12px; font-size: 15px; font-weight: 500; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-
-        #player-wrapper { 
-            display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; 
-            background: #000; z-index: 9999; 
-        }
-        #jwplayerDiv { width: 100% !important; height: 100% !important; }
-
-        .loader { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); border: 5px solid #333; border-top: 5px solid var(--primary); border-radius: 50%; width: 50px; height: 50px; animation: spin 1s linear infinite; display: none; }
-        @keyframes spin { 0% { transform: translate(-50%, -50%) rotate(0deg); } 100% { transform: translate(-50%, -50%) rotate(360deg); } }
-    </style>
-</head>
-<body>
-
-    <div class="header">
-        <button id="btn-back" class="back-btn" onclick="showPackages()">السابق</button>
-        <h2 id="title">Siksa TV - الباقات</h2>
-    </div>
-
-    <div id="main-content"></div>
-
-    <div id="player-wrapper">
-        <div id="loading-spinner" class="loader"></div>
-        <div id="jwplayerDiv"></div>
-    </div>
-
-    <script>
-        const MASTER_URL = 'https://raw.githubusercontent.com/raid35/channel-links/main/siksa_tv.m3u';
-        const contentContainer = document.getElementById('main-content');
-        const spinner = document.getElementById('loading-spinner');
-        let jwInst = null;
-        let isInsidePackage = false;
-
-        async function start() {
-            try {
-                const res = await fetch(MASTER_URL);
-                const data = await res.text();
-                window.allPackages = parseM3U(data);
-                showPackages();
-            } catch (e) { alert("خطأ في التحميل"); }
-        }
-
-        function parseM3U(text) {
-            const lines = text.split('\n');
-            const items = [];
-            let current = null;
-            lines.forEach(line => {
-                line = line.trim();
-                if (line.startsWith('#EXTINF')) {
-                    const name = line.split(',').pop();
-                    const logo = line.match(/tvg-logo="([^"]+)"/)?.[1] || '';
-                    current = { name, logo };
-                } else if (line.startsWith('http')) {
-                    if (current) { current.url = line; items.push(current); current = null; }
-                }
-            });
-            return items;
-        }
-
-        function showPackages() {
-            isInsidePackage = false;
-            document.getElementById('btn-back').style.display = 'none';
-            document.getElementById('title').innerText = "Siksa TV - الباقات";
-            renderCards(window.allPackages, true);
-        }
-
-        async function loadSubMenu(url, title) {
-            contentContainer.innerHTML = '';
-            spinner.style.display = 'block';
-            try {
-                const res = await fetch(url);
-                const data = await res.text();
-                const channels = parseM3U(data);
-                isInsidePackage = true;
-                document.getElementById('btn-back').style.display = 'block';
-                document.getElementById('title').innerText = title;
-                renderCards(channels, false);
-            } catch (e) { alert("فشل التحميل"); }
-            spinner.style.display = 'none';
-        }
-
-        function renderCards(items, isPackage) {
-            contentContainer.innerHTML = '';
-            items.forEach((item, index) => {
-                const div = document.createElement('div');
-                div.className = 'card';
-                div.tabIndex = 0;
-                div.innerHTML = `<img src="${item.logo}" onerror="this.src='https://via.placeholder.com/150?text=TV'"><span>${item.name}</span>`;
-                div.onclick = () => isPackage ? loadSubMenu(item.url, item.name) : playStream(item.url);
-                contentContainer.appendChild(div);
-                if(index === 0) div.focus();
-            });
-        }
-
-        function playStream(url) {
-            document.getElementById('player-wrapper').style.display = 'block';
-            if (jwInst) jwInst.remove();
-            jwInst = jwplayer("jwplayerDiv").setup({
-                file: url,
-                width: "100%", height: "100%", autostart: true,
-                stretching: "exactfit",
-                type: (url.includes(".mpd")) ? "dash" : (url.includes(".m3u8") ? "hls" : "mp4"),
-            });
-            jwInst.on('buffer', () => spinner.style.display = 'block');
-            jwInst.on('play', () => spinner.style.display = 'none');
-        }
-
-        function closePlayer() {
-            if (jwInst) { jwInst.remove(); jwInst = null; }
-            document.getElementById('player-wrapper').style.display = 'none';
-        }
-
-        // --- نظام الريموت (الأسهم والرجوع فقط) ---
-        window.addEventListener('keydown', function(e) {
-            const cards = Array.from(document.querySelectorAll('.card'));
-            const index = cards.indexOf(document.activeElement);
-            const cols = Math.floor(contentContainer.offsetWidth / 180);
-
-            switch(e.key) {
-                case "ArrowRight": if(cards[index+1]) cards[index+1].focus(); break;
-                case "ArrowLeft":  if(cards[index-1]) cards[index-1].focus(); break;
-                case "ArrowDown":  if(cards[index+cols]) cards[index+cols].focus(); break;
-                case "ArrowUp":    if(cards[index-cols]) cards[index-cols].focus(); break;
-                case "Enter":      document.activeElement.click(); break;
-                case "BackSpace":
-                case "Escape":
-                    e.preventDefault();
-                    if (document.getElementById('player-wrapper').style.display === 'block') {
-                        closePlayer();
-                    } else if (isInsidePackage) {
-                        showPackages();
-                    }
-                    break;
-            }
-        });
-
-        start();
-    </script>
-</body>
-</html>
+#EXTINF:-1 tvg-id="CanalPlusSport.fr" tvg-name="CANAL+ SPORT FHD" tvg-logo="https://thumb.canalplus.pro/http/unsafe/160x120/filters:quality(80)/canalplus-cdn.canal-plus.io/p1/channel/40075/canal-ouah/CHN43FN/CHN43FN_177_29082023" group-title="myCANAL SPORT FR",FR | CANAL+ SPORT FHD
+http://pro.netmos.ovh:7355/live/UDJPRCRA1L055B/Ep27yiiwbb56mjkl/168.ts
+#EXTINF:-1 tvg-id="CanalPlusSport.fr" tvg-name="CANAL+ SPORT FHD" tvg-logo="https://thumb.canalplus.pro/http/unsafe/160x120/filters:quality(80)/canalplus-cdn.canal-plus.io/p1/channel/40075/canal-ouah/CHN43FN/CHN43FN_177_29082023" group-title="SPORT FR",CANAL+ SPORT HD
+http://81637.org:2052/live/023987531643/023987531643/260333.ts
+#EXTINF:-1 tvg-id="canalplussport360.fr" tvg-name="CANAL+ SPORT360 FHD" tvg-logo="https://thumb.canalplus.pro/http/unsafe/121x91/filters:quality(80)/canalplus-cdn.canal-plus.io/p1/channel/83/canal-ouah/CHN43FN/CHN43FN_83_29082023" group-title="myCANAL SPORT FR",FR | CANAL+ SPORT360 FHD
+http://pro.netmos.ovh:7355/live/UDJPRCRA1L055B/Ep27yiiwbb56mjkl/239420.ts
+#EXTINF:-1 tvg-id="canalplussport360.fr" tvg-name="CANAL+ SPORT360 FHD" tvg-logo="https://thumb.canalplus.pro/http/unsafe/121x91/filters:quality(80)/canalplus-cdn.canal-plus.io/p1/channel/83/canal-ouah/CHN43FN/CHN43FN_83_29082023" group-title="SPORT FR",CANAL+ SPORT360 HD
+http://81637.org:2052/live/023987531643/023987531643/141054.ts
+#EXTINF:-1 tvg-id="canalplusfoot.fr" tvg-name="CANAL+ FOOT FHD" tvg-logo="https://thumb.canalplus.pro/http/unsafe/160x120/filters:quality(80)/canalplus-cdn.canal-plus.io/p1/channel/40208/canal-ouah/CHN43FN/CHN43FN_19_29082023" group-title="myCANAL SPORT FR",FR | CANAL+ FOOT FHD
+http://pro.netmos.ovh:7355/live/UDJPRCRA1L055B/Ep27yiiwbb56mjkl/2751.ts
+#EXTINF:-1 tvg-id="canalplusfoot.fr" tvg-name="CANAL+ FOOT FHD" tvg-logo="https://thumb.canalplus.pro/http/unsafe/160x120/filters:quality(80)/canalplus-cdn.canal-plus.io/p1/channel/40208/canal-ouah/CHN43FN/CHN43FN_19_29082023" group-title="SPORT FR",CANAL+ FOOT HD
+http://81637.org:2052/live/023987531643/023987531643/15394.ts
+#EXTINF:-1 tvg-name="|FR| CANAL+ SPORT 1 HD" tvg-logo="https://i.imgur.com/W7dLvdz.png" group-title="myCANAL SPORT AF",AF | CANAL+ SPORT 1 HD
+http://pro.netmos.ovh:7355/live/PR1125024867281/4641912740375/238613.ts
+#EXTINF:-1 tvg-name="|FR| CANAL+ SPORT 1 HD" tvg-logo="https://i.imgur.com/W7dLvdz.png" group-title="FR SPORTS (France)",|FR| CANAL+ SPORT 1 HD
+http://streamlyy.space:80/play/live.php?mac=00:1A:79:D5:48:F3&stream=356183&extension=ts
+#EXTINF:-1 tvg-name="|FR| CANAL+ SPORT 2 HD" tvg-logo="https://i.imgur.com/dSW77wl.png" group-title="myCANAL SPORT AF",AF | CANAL+ SPORT 2 HD
+http://pro.netmos.ovh:7355/live/PR1125024867281/4641912740375/33838.ts
+#EXTINF:-1 tvg-name="|FR| CANAL+ SPORT 2 HD" tvg-logo="https://i.imgur.com/dSW77wl.png" group-title="FR SPORTS (France)",|FR| CANAL+ SPORT 2 HD
+http://streamlyy.space:80/play/live.php?mac=00:1A:79:D5:48:F3&stream=356182&extension=ts
+#EXTINF:-1 tvg-name="|FR| CANAL+ SPORT 3 HD" tvg-logo="https://i.imgur.com/HL2NrRi.png" group-title="myCANAL SPORT AF",AF | CANAL+ SPORT 3 HD
+http://pro.netmos.ovh:7355/live/PR1125024867281/4641912740375/33839.ts
+#EXTINF:-1 tvg-name="|FR| CANAL+ SPORT 3 HD" tvg-logo="https://i.imgur.com/HL2NrRi.png" group-title="FR SPORTS (France)",|FR| CANAL+ SPORT 3 HD
+http://streamlyy.space:80/play/live.php?mac=00:1A:79:D5:48:F3&stream=356181&extension=ts
+#EXTINF:-1 tvg-name="|FR| CANAL+ SPORT 4 HD" tvg-logo="https://i.imgur.com/1Ikjjzo.png" group-title="myCANAL SPORT AF",AF | CANAL+ SPORT 4 HD
+http://pro.netmos.ovh:7355/live/PR1125024867281/4641912740375/33840.ts
+#EXTINF:-1 tvg-name="|FR| CANAL+ SPORT 4 HD" tvg-logo="https://i.imgur.com/1Ikjjzo.png" group-title="FR SPORTS (France)",|FR| CANAL+ SPORT 4 HD
+http://streamlyy.space:80/play/live.php?mac=00:1A:79:D5:48:F3&stream=356180&extension=ts
+#EXTINF:-1 tvg-name="|FR| CANAL+ SPORT 5 HD" tvg-logo="https://i.imgur.com/szq4wBg.png" group-title="myCANAL SPORT AF",AF | CANAL+ SPORT 5 HD
+http://pro.netmos.ovh:7355/live/PR1125024867281/4641912740375/33841.ts
+#EXTINF:-1 tvg-name="|FR| CANAL+ SPORT 5 HD" tvg-logo="https://i.imgur.com/szq4wBg.png" group-title="FR SPORTS (France)",|FR| CANAL+ SPORT 5 HD
+http://streamlyy.space:80/play/live.php?mac=00:1A:79:D5:48:F3&stream=356179&extension=ts
+#EXTINF:-1 tvg-chno="174" tvg-id="InfosportPlus.fr" tvg-logo="https://raw.githubusercontent.com/tv-logo/tv-logos/main/countries/france/infosport-plus-fr.png" group-title="myCANAL SPORT FR",FR | INFOSPORT+ HD
+http://212.102.60.80/Infosport/index.m3u8
+#EXTINF:-1 tvg-id="" tvg-name="FR | L'EQUIPE 21" tvg-logo="https://thumb.canalplus.pro/http/unsafe/121x91/filters:quality(80)/img-hapi.canalplus.pro:80/ServiceImage/ImageID/44863403" group-title="myCANAL SPORT FR",FR | L'EQUIPE 21
+https://dq37unyetkpcz.cloudfront.net/v1/master/3722c60a815c199d9c0ef36c5b73da68a62b09d1/cc-m04j89j7k5gtp/LEquipe_FR.m3u8
