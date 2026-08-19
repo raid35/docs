@@ -7,34 +7,48 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/shaka-player/4.15.9/shaka-player.ui.min.js"></script>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/shaka-player/4.15.9/controls.min.css" rel="stylesheet">
     <style>
-        body, html { margin: 0; padding: 0; background: #000; width: 100%; height: 100%; overflow: hidden; }
-        .shaka-video-container { width: 100%; height: 100%; }
+        body, html { 
+            margin: 0; 
+            padding: 0; 
+            background: #000; 
+            width: 100%; 
+            height: 100%; 
+            overflow: hidden; 
+        }
 
-        /* --- محرك معالجة الألوان (هنا السحر) --- */
+        .shaka-video-container { 
+            width: 100%; 
+            height: 100%; 
+        }
+
+        /* --- تحسين الأداء وتفعيل التسريع العتادي (Hardware Acceleration) --- */
         video { 
             width: 100%; 
             height: 100%; 
             object-fit: contain;
-            /* زيادة التباين والتشبع والحدة لتحاكي جودة الهاتف */
-            filter: contrast(1.1) saturate(1.2) brightness(1.05);
-            /* تحسين جودة الحواف (الحدة) */
-            image-rendering: -webkit-optimize-contrast;
-            image-rendering: crisp-edges;
+            transform: translateZ(0); /* تفعيل التسريع بواسطة GPU مباشرة */
+            will-change: transform;
         }
 
-        /* تنسيق خاص لدائرة التحميل */
+        /* تنسيق دائرة التحميل */
         .shaka-spinner-container {
-            width: 100% !important; height: 100% !important;
-            display: flex; justify-content: center; align-items: center;
+            width: 100% !important; 
+            height: 100% !important;
+            display: flex; 
+            justify-content: center; 
+            align-items: center;
         }
         .shaka-spinner {
-            width: 75px !important; height: 75px !important;
+            width: 75px !important; 
+            height: 75px !important;
             border-width: 6px !important;
             border-top-color: #ff6b35 !important;
         }
         
-        /* جعل شريط التحكم مريح للعين في التلفاز */
-        .shaka-bottom-controls { direction: ltr; padding-bottom: 20px; }
+        .shaka-bottom-controls { 
+            direction: ltr; 
+            padding-bottom: 20px; 
+        }
     </style>
 </head>
 <body>
@@ -67,10 +81,12 @@
             }
         };
 
+        let controls; // متغيرة عامة لاستخدام عناصر التحكم بالريموت
+
         async function initPlayer() {
             const video = document.getElementById('dash-video');
             const ui = video['ui'];
-            const controls = ui.getControls();
+            controls = ui.getControls();
             const player = controls.getPlayer();
 
             const params = new URLSearchParams(window.location.search);
@@ -79,7 +95,7 @@
 
             if (!channel) return;
 
-            // فلتر تخطي حماية السيرفر
+            // فلتر ترويسة الطلبات
             player.getNetworkingEngine().registerRequestFilter(function(type, request) {
                 request.headers['User-Agent'] = 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36';
             });
@@ -89,22 +105,74 @@
 
             player.configure({
                 drm: { clearKeys: drmConfig },
-                abr: { enabled: true, switchInterval: 1 },
+                
+                // تحسينات التبديل التلقائي للجودة (ABR) لتقليل الضغط
+                abr: { 
+                    enabled: true, 
+                    switchInterval: 8, 
+                    defaultBandwidthEstimate: 10000000 
+                },
+                
+                // إعدادات البفر الخاصة بالأجهزة والتلفاز
                 streaming: {
-                    bufferingGoal: 45, // زيادة التخزين المؤقت لثبات الجودة الناقية
-                    rebufferingGoal: 2,
-                    lowLatencyEnabled: true
+                    bufferingGoal: 20,       
+                    rebufferingGoal: 4,      
+                    bufferBehind: 10,        
+                    lowLatencyMode: false,   
+                    safeSeekOffset: 5
                 }
             });
 
             try {
                 await player.load(channel.url);
-            } catch (e) { console.error('Load Error:', e); }
+            } catch (e) { 
+                console.error('Load Error:', e); 
+            }
         }
 
         document.addEventListener('shaka-ui-loaded', initPlayer);
+
+        /* ==========================================================
+           مُستمع أزرار الريموت كنترول (D-Pad Control Listener)
+           ========================================================== */
+        document.addEventListener('keydown', (e) => {
+            const video = document.getElementById('dash-video');
+            if (!video) return;
+
+            // إظهار شريط التحكم عند الضغط على أي زر في الريموت
+            if (controls) {
+                controls.getControlsContainer().classList.remove('shaka-controls-hidden');
+            }
+
+            switch(e.keyCode) {
+                case 13: // Enter / OK (زر التحديد المنتصف)
+                case 19: // Pause
+                case 20: // Play
+                case 126: // Play/Pause Media
+                    if (video.paused) {
+                        video.play();
+                    } else {
+                        video.pause();
+                    }
+                    break;
+
+                case 37: // Left Arrow - إرجاع 10 ثوانٍ
+                    video.currentTime = Math.max(0, video.currentTime - 10);
+                    break;
+
+                case 39: // Right Arrow - تقديم 10 ثوانٍ
+                    video.currentTime = Math.min(video.duration, video.currentTime + 10);
+                    break;
+
+                case 38: // Up Arrow - رفع الصوت
+                    video.volume = Math.min(1, video.volume + 0.1);
+                    break;
+
+                case 40: // Down Arrow - خفض الصوت
+                    video.volume = Math.max(0, video.volume - 0.1);
+                    break;
+            }
+        });
     </script>
 </body>
 </html>
-
-
