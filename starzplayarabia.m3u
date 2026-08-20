@@ -6,9 +6,6 @@ https://raid35.github.io/docs/AD_S.html?id=sps2
 https://raid35.github.io/docs/AD_S.html?id=ADS1
 #EXTINF:-1 tvg-logo="" group-title="Unknown" drm="true",AbuDhabi Sports 2 🇦🇪
 https://raid35.github.io/docs/AD_S.html?id=ADS2
-#KODIPROP:inputstream=inputstream.adaptive
-#KODIPROP:inputstream.adaptive.license_type=clearkey
-#KODIPROP:inputstream.adaptive.license_key=1e23e51b09a67b83813c17049870bcd4:c3d6288e378b0dc55320fd0e6fd2e55f
 #EXTINF:-1 tvg-logo="https://i.imgur.com/WDFmm6k.png" group-title="قنوات ترفيهية",CricLife 1
 https://ev-fast-mpd.starzplayarabia.com/live/eds/CricLife1/DASH/CricLife1.mpd
 #KODIPROP:inputstream=inputstream.adaptive
@@ -20,4 +17,7 @@ https://ev-fast-mpd.starzplayarabia.com/live/eds/CricLife2/DASH/CricLife2.mpd
 #KODIPROP:inputstream.adaptive.license_type=clearkey
 #KODIPROP:inputstream.adaptive.license_key=4e8b5ddac5332a4e66c002b4c0f22322:d06de29b0eacb81ac6e3f325849047e8
 #EXTINF:-1 tvg-logo="https://i.imgur.com/rDxJuhv.png" group-title="قنوات ترفيهية",CricLife 3
+#KODIPROP:inputstream=inputstream.adaptive
+#KODIPROP:inputstream.adaptive.license_type=clearkey
+#KODIPROP:inputstream.adaptive.license_key=1e23e51b09a67b83813c17049870bcd4:c3d6288e378b0dc55320fd0e6fd2e55f
 https://ev-fast-mpd.starzplayarabia.com/live/eds/Criclife_3/DASH/Criclife_3.mpd
