@@ -1,0 +1,35 @@
+#EXTM3U
+#EXTINF:-1 tvg-ID="" tvg-name="||---|FR| CHAINES CANALPLAY |FR|---||" tvg-logo="" group-title="BOUQUET  FRANCAIS",||---|FR| CHAINES CANALPLAY |FR|---||
+http://hdlocal.de:8080/live/maveniptv.tv/e8yvmG8um2yhhgsjhgdd22/2473.m3u8
+#EXTINF:-1 tvg-ID="" tvg-name="|FR| CANAL PLAY 1 HD" tvg-logo="http://haphead.com/wp-content/uploads/2015/05/canalplayinfinity-300x300.png" group-title="BOUQUET  FRANCAIS",|FR| CANAL PLAY 1 HD
+http://hdlocal.de:8080/live/maveniptv.tv/e8yvmG8um2yhhgsjhgdd22/2351.m3u8
+#EXTINF:-1 tvg-ID="" tvg-name="|FR| CANAL PLAY 2 HD" tvg-logo="http://haphead.com/wp-content/uploads/2015/05/canalplayinfinity-300x300.png" group-title="BOUQUET  FRANCAIS",|FR| CANAL PLAY 2 HD
+http://hdlocal.de:8080/live/maveniptv.tv/e8yvmG8um2yhhgsjhgdd22/2352.m3u8
+#EXTINF:-1 tvg-ID="" tvg-name="|FR| CANAL PLAY 3 HD" tvg-logo="http://haphead.com/wp-content/uploads/2015/05/canalplayinfinity-300x300.png" group-title="BOUQUET  FRANCAIS",|FR| CANAL PLAY 3 HD
+http://hdlocal.de:8080/live/maveniptv.tv/e8yvmG8um2yhhgsjhgdd22/2353.m3u8
+#EXTINF:-1 tvg-ID="" tvg-name="|FR| CANAL PLAY 4 HD" tvg-logo="http://haphead.com/wp-content/uploads/2015/05/canalplayinfinity-300x300.png" group-title="BOUQUET  FRANCAIS",|FR| CANAL PLAY 4 HD
+http://hdlocal.de:8080/live/maveniptv.tv/e8yvmG8um2yhhgsjhgdd22/2354.m3u8
+#EXTINF:-1 tvg-ID="" tvg-name="|FR| CANAL PLAY 5 HD" tvg-logo="http://haphead.com/wp-content/uploads/2015/05/canalplayinfinity-300x300.png" group-title="BOUQUET  FRANCAIS",|FR| CANAL PLAY 5 HD
+http://hdlocal.de:8080/live/maveniptv.tv/e8yvmG8um2yhhgsjhgdd22/2355.m3u8
+#EXTINF:-1 tvg-ID="" tvg-name="|FR| CANAL PLAY 6 HD" tvg-logo="http://haphead.com/wp-content/uploads/2015/05/canalplayinfinity-300x300.png" group-title="BOUQUET  FRANCAIS",|FR| CANAL PLAY 6 HD
+http://hdlocal.de:8080/live/maveniptv.tv/e8yvmG8um2yhhgsjhgdd22/2356.m3u8
+#EXTINF:-1 tvg-ID="" tvg-name="||---|FR| CHAINES A LA CARTE |FR|---||" tvg-logo="http://dvb.oppserver.net/unix/xbmc/addons/vdr/stationlogos/a%20la%20carte.png" group-title="BOUQUET  FRANCAIS",||---|FR| CHAINES A LA CARTE |FR|---||
+http://hdlocal.de:8080/live/maveniptv.tv/e8yvmG8um2yhhgsjhgdd22/2472.m3u8
+#EXTINF:-1 tvg-ID="" tvg-name="|FR| A LA CARTE 1 HD" tvg-logo="http://dvb.oppserver.net/unix/xbmc/addons/vdr/stationlogos/a%20la%20carte.png" group-title="BOUQUET  FRANCAIS",|FR| A LA CARTE 1 HD
+http://hdlocal.de:8080/live/maveniptv.tv/e8yvmG8um2yhhgsjhgdd22/49.m3u8
+#EXTINF:-1 tvg-ID="" tvg-name="|FR| A LA CARTE 3 HD" tvg-logo="http://dvb.oppserver.net/unix/xbmc/addons/vdr/stationlogos/a%20la%20carte.png" group-title="BOUQUET  FRANCAIS",|FR| A LA CARTE 3 HD
+http://hdlocal.de:8080/live/maveniptv.tv/e8yvmG8um2yhhgsjhgdd22/47.m3u8
+#EXTINF:-1 tvg-ID="" tvg-name="|FR| A LA CARTE 4 HD" tvg-logo="http://dvb.oppserver.net/unix/xbmc/addons/vdr/stationlogos/a%20la%20carte.png" group-title="BOUQUET  FRANCAIS",|FR| A LA CARTE 4 HD
+http://hdlocal.de:8080/live/maveniptv.tv/e8yvmG8um2yhhgsjhgdd22/46.m3u8
+#EXTINF:-1 tvg-ID="" tvg-name="|FR| A LA CARTE 5 HD" tvg-logo="http://f.pure-redirect.com/flags/fr.png" group-title="BOUQUET  FRANCAIS",|FR| A LA CARTE 5 HD
+http://hdlocal.de:8080/live/maveniptv.tv/e8yvmG8um2yhhgsjhgdd22/45.m3u8
+#EXTINF:-1 tvg-ID="EVENEMENTALACARTE.fr" tvg-name="|FR| A LA CARTE 6 HD" tvg-logo="http://f.pure-redirect.com/flags/fr.png" group-title="BOUQUET  FRANCAIS",|FR| A LA CARTE 6 HD
+http://hdlocal.de:8080/live/maveniptv.tv/e8yvmG8um2yhhgsjhgdd22/1817.m3u8
+#EXTINF:-1 tvg-ID="" tvg-name="|FR| A LA CARTE 7 HD" tvg-logo="http://dvb.oppserver.net/unix/xbmc/addons/vdr/stationlogos/a%20la%20carte.png" group-title="BOUQUET  FRANCAIS",|FR| A LA CARTE 7 HD
+http://hdlocal.de:8080/live/maveniptv.tv/e8yvmG8um2yhhgsjhgdd22/962.m3u8
+#EXTINF:-1 tvg-ID="" tvg-name="|FR| A LA CARTE 8 HD" tvg-logo="http://dvb.oppserver.net/unix/xbmc/addons/vdr/stationlogos/a%20la%20carte.png" group-title="BOUQUET  FRANCAIS",|FR| A LA CARTE 8 HD
+http://hdlocal.de:8080/live/maveniptv.tv/e8yvmG8um2yhhgsjhgdd22/1591.m3u8
+#EXTINF:-1 tvg-ID="" tvg-name="|FR| A LA CARTE 9 HD" tvg-logo="http://dvb.oppserver.net/unix/xbmc/addons/vdr/stationlogos/a%20la%20carte.png" group-title="BOUQUET  FRANCAIS",|FR| A LA CARTE 9 HD
+http://hdlocal.de:8080/live/maveniptv.tv/e8yvmG8um2yhhgsjhgdd22/1590.m3u8
+#EXTINF:-1 tvg-ID="" tvg-name="|FR| A LA CARTE 10 HD" tvg-logo="http://dvb.oppserver.net/unix/xbmc/addons/vdr/stationlogos/a%20la%20carte.png" group-title="BOUQUET  FRANCAIS",|FR| A LA CARTE 10 HD
+http://hdlocal.de:8080/live/maveniptv.tv/e8yvmG8um2yhhgsjhgdd22/960.m3u8
