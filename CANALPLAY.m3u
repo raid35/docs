@@ -1,6 +1,4 @@
 #EXTM3U
-#EXTINF:-1 tvg-ID="" tvg-name="||---|FR| CHAINES CANALPLAY |FR|---||" tvg-logo="" group-title="BOUQUET  FRANCAIS",||---|FR| CHAINES CANALPLAY |FR|---||
-http://hdlocal.de:8080/live/maveniptv.tv/e8yvmG8um2yhhgsjhgdd22/2473.m3u8
 #EXTINF:-1 tvg-ID="" tvg-name="|FR| CANAL PLAY 1 HD" tvg-logo="http://haphead.com/wp-content/uploads/2015/05/canalplayinfinity-300x300.png" group-title="BOUQUET  FRANCAIS",|FR| CANAL PLAY 1 HD
 http://hdlocal.de:8080/live/maveniptv.tv/e8yvmG8um2yhhgsjhgdd22/2351.m3u8
 #EXTINF:-1 tvg-ID="" tvg-name="|FR| CANAL PLAY 2 HD" tvg-logo="http://haphead.com/wp-content/uploads/2015/05/canalplayinfinity-300x300.png" group-title="BOUQUET  FRANCAIS",|FR| CANAL PLAY 2 HD
@@ -13,8 +11,6 @@ http://hdlocal.de:8080/live/maveniptv.tv/e8yvmG8um2yhhgsjhgdd22/2354.m3u8
 http://hdlocal.de:8080/live/maveniptv.tv/e8yvmG8um2yhhgsjhgdd22/2355.m3u8
 #EXTINF:-1 tvg-ID="" tvg-name="|FR| CANAL PLAY 6 HD" tvg-logo="http://haphead.com/wp-content/uploads/2015/05/canalplayinfinity-300x300.png" group-title="BOUQUET  FRANCAIS",|FR| CANAL PLAY 6 HD
 http://hdlocal.de:8080/live/maveniptv.tv/e8yvmG8um2yhhgsjhgdd22/2356.m3u8
-#EXTINF:-1 tvg-ID="" tvg-name="||---|FR| CHAINES A LA CARTE |FR|---||" tvg-logo="http://dvb.oppserver.net/unix/xbmc/addons/vdr/stationlogos/a%20la%20carte.png" group-title="BOUQUET  FRANCAIS",||---|FR| CHAINES A LA CARTE |FR|---||
-http://hdlocal.de:8080/live/maveniptv.tv/e8yvmG8um2yhhgsjhgdd22/2472.m3u8
 #EXTINF:-1 tvg-ID="" tvg-name="|FR| A LA CARTE 1 HD" tvg-logo="http://dvb.oppserver.net/unix/xbmc/addons/vdr/stationlogos/a%20la%20carte.png" group-title="BOUQUET  FRANCAIS",|FR| A LA CARTE 1 HD
 http://hdlocal.de:8080/live/maveniptv.tv/e8yvmG8um2yhhgsjhgdd22/49.m3u8
 #EXTINF:-1 tvg-ID="" tvg-name="|FR| A LA CARTE 3 HD" tvg-logo="http://dvb.oppserver.net/unix/xbmc/addons/vdr/stationlogos/a%20la%20carte.png" group-title="BOUQUET  FRANCAIS",|FR| A LA CARTE 3 HD
