@@ -30,8 +30,6 @@ https://alive-tmc-hls.cdn-0.diff.tf1.fr/eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ
 https://origin-m6web.live.6cloud.fr/out/v1/6play/6play-w9/cmaf_cenc00/dash-short-hd.mpd
 #EXTINF:-1 group-title="France" tvg-chno="18" tvg-id="C4139.api.telerama.fr" tvg-logo="https://media.ouest-france.fr/v1/pictures/1543e040537dac5b4d7797dfd838e92f-t18-programme-tv",T18
 https://raw.githubusercontent.com/Paradise-91/ParaTV/main/streams/t18/t18-dm.m3u8
-#EXTINF:-1,RTL Lëtzebuerg
-https://live-edge.rtl.lu/channel1/smil:channel1/playlist.m3u8
 #EXTINF:-1 tvg-logo="https://i.ibb.co/KxScZcQD/boxoffact.png",BOX OFFICE ACTION
 https://stream.ads.ottera.tv/playlist.m3u8?network_id=15080
 #EXTINF:-1 tvg-logo="https://i.ibb.co/gLd0qtKr/boxoffdra.png",BOX OFFICE DRAMA
