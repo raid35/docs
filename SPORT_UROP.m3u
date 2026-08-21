@@ -145,6 +145,29 @@ https://otte.live.fly.ww.aiv-cdn.net/iad-nitro/live/clients/dash/enc/tepjqej1ys/
 #KODIPROP:inputstream.adaptive.license_type=clearkey
 #KODIPROP:inputstream.adaptive.license_key=11c8c1c2ef0385cf1e64d44bb9c3a395:5769730ffbdc4b2fd8945929d9ace063
 https://otte.live.fly.ww.aiv-cdn.net/iad-nitro/live/clients/dash/enc/wybgz0orr8/out/v1/2f6d1612abd44f5883917f8a585b955f/cenc.mpd
+#EXTINF:-1 data-source="Manual" group-title="🔴FIFA WORLD CUP 2026🔴" tvg-logo="https://upload.wikimedia.org/wikipedia/commons/thumb/4/4c/DSports_logo_2022.svg/960px-DSports_logo_2022.svg.png?_=20240702054322" tvg-uid="cc33fc1b672f9667cee9d4dd358a18cb",DSPORTS (Latin America)
+#KODIPROP:inputstream.adaptive.license_type=clearkey
+#KODIPROP:inputstream.adaptive.license_key=45bbd582f220f438f896450d8306a3f2:582c6ba7f64bbc0f2d91c6b0c265760c
+https://otte.live.fly.ww.aiv-cdn.net/gru-nitro/live/clients/dash-sd/enc/hubonmgf5k/out/v1/10560d92577e4917973aa4624124ecd6/cenc-sd.mpd
+#EXTINF:-1 data-source="Manual" group-title="🔴FIFA WORLD CUP 2026🔴" tvg-logo="https://upload.wikimedia.org/wikipedia/commons/thumb/4/4c/DSports_logo_2022.svg/960px-DSports_logo_2022.svg.png?_=20240702054322" tvg-uid="6b01106814de2063179191d07a48337b",DSPORTS+ (Latin America)
+#KODIPROP:inputstream.adaptive.license_type=clearkey
+#KODIPROP:inputstream.adaptive.license_key=8afa490e1640be969729fb459182e4ec:6f129820cdd5b6978a98c604c72cf05b
+https://otte.live.fly.ww.aiv-cdn.net/gru-nitro/live/clients/dash-sd/enc/kp7qfx2tly/out/v1/bbfb730b45b74d4ea875d75786ea3f13/cenc-sd.mpd
+#EXTINF:-1 data-source="Manual" group-title="🔴FIFA WORLD CUP 2026🔴" tvg-logo="https://upload.wikimedia.org/wikipedia/commons/8/83/DSports2.png" tvg-uid="7bf84fcaa62763110d18be3fa4c11c72",DSPORTS2 (Latin America)
+#KODIPROP:inputstream.adaptive.license_type=clearkey
+#KODIPROP:inputstream.adaptive.license_key=18044a84b7e6c1bbf852591797e53a2c:38b3b6f8810917d89636927bddb79294
+https://otte.live.fly.ww.aiv-cdn.net/gru-nitro/live/clients/dash-sd/enc/hufm7lgnhx/out/v1/5045630288d44123ba85427b2c36f29f/cenc-sd.mpd
+#EXTINF:-1 data-source="Manual" group-title="🔴FIFA WORLD CUP 2026🔴" tvg-id="TUDN.mx" tvg-logo="https://i.imgur.com/oT5CAvd.png" tvg-uid="d1b523267bc2d57ea044b73a012919f6",TUDN (Mexico)
+#KODIPROP:inputstream=inputstream.adaptive
+#KODIPROP:inputstream.adaptive.manifest_type=mpd
+#KODIPROP:inputstream.adaptive.license_type=clearkey
+#KODIPROP:inputstream.adaptive.license_key=5f096c1f9e243b31ddc3bf4f5d88fc5f:27334536d6077737b321c64663ebf59d
+https://otte.live.fly.ww.aiv-cdn.net/iad-nitro/live/clients/dash-sd/enc/1a5vdd4i8j/out/v1/db14823b937045ac8b2b0effbcdded45/cenc-sd.mpd
+#EXTINF:-1 tvg-name="Premiere Clubes.br" tvg-logo="https://i.ibb.co.com/F0jTVwQ/premierebr.png" group-title="Sports",PREMIERE
+https://otte.live.fly.ww.aiv-cdn.net/pdx-nitro/live/clients/dash/enc/nelfyucw9a/out/v1/6ffb2c365ad14f88b154591beb43d1f6/cenc.mpd
+#KODIPROP:inputstream.adaptive.manifest_type=mpd
+#KODIPROP:inputstream.adaptive.license_type=clearkey
+#KODIPROP:inputstream.adaptive.license_key={ce5d18ffd68650affce1985201983ab7:397c64e42507d95e5460830918c22a98}
 #EXTINF:-1 group-title="Channel Olahraga" tvg-logo="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEiDK5wO1M6YOy_2_IuEtYuj25ReGg3p-V3j60gGqa-cd8rz6f9xuH2o4mQVCRN1rApaVMGLT1q-bhDKcYGS4FbkseAgUhNFvAsDug1hI9wg4iFAGY6JAEEHtqsqdSK2A3CaqugX-fctkzTaywaYoaSIY1ZfFQjwdrQX_CNBMT5IpunnbZNpg2QzZuWjcPvt/s700/MUTV.png",group-title="Sports",MUTV
 https://get.perfecttv.net/mutv.mpd
 #EXTINF:-1 group-title="Channel Olahraga" tvg-logo="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEi2OjD6NCGtzCZWfhQzNpcVW_euLrpCnnStlicVuXpUmCPtmLdmrc0y-z2Gtm5ZzzoqMhaMNBevoWkih3cUkIpSU82YIpa3kPXoIUZDqP8OHhUB_3pJ6nVL40_skRSu01QU1J_nhgjkFiRa0lYdI91qKDv9j8Y82GlTWYOOHv3wnwT_K0NypITkf7v31iev/s700/BARCA%20TV.png",group-title="Sports ",Barca TV
