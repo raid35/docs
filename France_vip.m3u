@@ -1,0 +1,66 @@
+#EXTINF:-1 tvg-logo="https://i.ibb.co/BBpR1Wx/tf1.png",TF1 CH/SWISS
+https://gitlab.com/-/snippets/6000776/raw/main/f1t.m3u8
+#EXTINF:-1 tvg-logo="https://i.ibb.co/wgJTdGY/m6.png",M6 CH/SWISS
+https://gitlab.com/-/snippets/6000777/raw/main/6m.m3u8
+#EXTINF:-1 group-title="France" tvg-chno="6" tvg-id="C118.api.telerama.fr" tvg-logo="https://media.ouest-france.fr/v1/pictures/7f640a7c251cf7deeb0879887a098b84-m6-programme-tv",M6
+#KODIPROP:inputstream=inputstream.adaptive
+#KODIPROP:inputstream.adaptive.manifest_type=mpd
+#KODIPROP:mimetype=application/dash+xml
+#KODIPROP:inputstream.adaptive.license_type=clearkey
+#KODIPROP:inputstream.adaptive.license_key=433ffba670963e70857859a9dff4be04:51ede3a821229fe81e71282c8eff80e3
+https://origin-m6web.live.6cloud.fr/out/v1/6play/6play-m6/cmaf_cenc00/dash-short-hd.mpd
+#EXTINF:-1 group-title="France" tvg-chno="6" tvg-id="C118.api.telerama.fr" tvg-logo="https://media.ouest-france.fr/v1/pictures/7f640a7c251cf7deeb0879887a098b84-m6-programme-tv",M6
+#KODIPROP:inputstream=inputstream.adaptive
+#KODIPROP:inputstream.adaptive.manifest_type=mpd
+#KODIPROP:mimetype=application/dash+xml
+#KODIPROP:inputstream.adaptive.license_type=clearkey
+#KODIPROP:inputstream.adaptive.license_key=21ec256354883d6f9b71c6e76276efe7:02ab4f8a7bbfb9e00f21bc59e2bcf98a
+https://origin-m6web.live.6cloud.fr/out/v1/6play/6play-m6/cmaf_cenc00/dash-short-hd.mpd
+#EXTINF:-1 group-title="France" tvg-chno="22" tvg-id="C1403.api.telerama.fr" tvg-logo="https://media.ouest-france.fr/v1/pictures/10a2527cca92e52154bac7795d245bef-6ter-programme-tv",6ter
+#KODIPROP:inputstream=inputstream.adaptive
+#KODIPROP:inputstream.adaptive.manifest_type=mpd
+#KODIPROP:mimetype=application/dash+xml
+#KODIPROP:inputstream.adaptive.license_type=clearkey
+#KODIPROP:inputstream.adaptive.license_key=be42db5bcf21387e838f22d0da5b80c3:4603398e17b27d8330c1870764ccc1bd
+https://origin-caf900c010ea8046.live.6cloud.fr/out/v1/29c7a579af3348b48230f76cd75699a5/dash_short_cenc10_6ter_hd_index.mpd
+#EXTINF:-1 tvg-logo="https://i.ibb.co/hKVyKj4/tmc.png",TMC
+https://alive-tmc-hls.cdn-0.diff.tf1.fr/eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJjaXAiOiIxNDkuMTAyLjI0NS4xMzUiLCJjbWNkIjoiIiwiZXhwIjoxNzg3MjgyMjk4LCJnaWQiOiJlNzIwMzhjMzU5NDg0MDc1YjgzOGUwNjY5NWI3ZDQ5NiIsImlhdCI6MTc4NzI2Nzg5OCwiaXNzIjoiZGVsaXZlcnkiLCJtYXhiIjowLCJzdGVtIjoiL3Byb2QvVE1DL2NtYWYvb3V0Iiwic3ViIjoiZTcyMDM4YzM1OTQ4NDA3NWI4MzhlMDY2OTViN2Q0OTYifQ.2O0scelR_VduzNMrr77PhcEy8g1CrhVHT7xtBuMuuU4/prod/TMC/cmaf/out/TMC.m3u8
+#EXTINF:-1 group-title="France" tvg-chno="9" tvg-id="C119.api.telerama.fr" tvg-logo="https://media.ouest-france.fr/v1/pictures/79d9a5490fbc2466a6e6869ef940013f-w9-programme-tv",W9
+#KODIPROP:inputstream=inputstream.adaptive
+#KODIPROP:inputstream.adaptive.manifest_type=mpd
+#KODIPROP:mimetype=application/dash+xml
+#KODIPROP:inputstream.adaptive.license_type=clearkey
+#KODIPROP:inputstream.adaptive.license_key=e8ae44faa1e73658bfe725dec8204259:d90e4519b41352e2791370dfcc20406b
+https://origin-m6web.live.6cloud.fr/out/v1/6play/6play-w9/cmaf_cenc00/dash-short-hd.mpd
+#EXTINF:-1 group-title="France" tvg-chno="19" tvg-id="C4138.api.telerama.fr" tvg-logo="https://media.ouest-france.fr/v1/pictures/b0359db82b4909c989b6e49448738fcb-novo19-programme-tv",NOVO19
+#KODIPROP:inputstream=inputstream.adaptive
+#KODIPROP:inputstream.adaptive.manifest_type=mpd
+#KODIPROP:mimetype=application/dash+xml
+#KODIPROP:inputstream.adaptive.license_type=clearkey
+#KODIPROP:inputstream.adaptive.license_key=d49c8fa0c3a546e2ad4185d5e38611cd:363ee79a774e401bfaa88cf22cad0099
+https://5eb46ec-rbm-hilv-fsly.cdn.redbee.live/L6/8e2b4270/9fc956ca.isml/.mpd
+#EXTINF:-1 group-title="France" tvg-chno="18" tvg-id="C4139.api.telerama.fr" tvg-logo="https://media.ouest-france.fr/v1/pictures/1543e040537dac5b4d7797dfd838e92f-t18-programme-tv",T18
+https://raw.githubusercontent.com/Paradise-91/ParaTV/main/streams/t18/t18-dm.m3u8
+#EXTINF:-1,RTL Lëtzebuerg
+https://live-edge.rtl.lu/channel1/smil:channel1/playlist.m3u8
+#EXTINF:-1 tvg-logo="https://i.ibb.co/jkZ9fckv/pluto.png",ANIMAUX PLUTO
+https://jmp2.uk/plu-60925a44f0350600075a1fdc.m3u8
+#EXTINF:-1 tvg-logo="https://i.ibb.co/rRnKwDYL/rmcstor.png",RMC STORY
+https://d15aro46bnpfm8.cloudfront.net/v1/master/3722c60a815c199d9c0ef36c5b73da68a62b09d1/cc-fqkqiax1078up/RMC_Story_FR.m3u8
+#EXTINF:-1 tvg-logo="https://i.ibb.co/ZRj1ZqhB/rmcdecou.png",RMC DÉCOUVERTE
+https://d16zzycxcd0m0r.cloudfront.net/v1/master/3722c60a815c199d9c0ef36c5b73da68a62b09d1/cc-hixvx5kymecr9/RMC_Decouverte_FR.m3u8
+#EXTINF:-1 tvg-logo="https://i.ibb.co/tpRb3k63/rmclife.png",RMC LIFE
+https://d3dcdjv6dx07iz.cloudfront.net/v1/master/3722c60a815c199d9c0ef36c5b73da68a62b09d1/cc-eaaww2dyp3iih/RMC_Life_FR.m3u8
+#EXTINF:-1 tvg-logo="https://i.ibb.co/KxScZcQD/boxoffact.png",BOX OFFICE ACTION
+https://stream.ads.ottera.tv/playlist.m3u8?network_id=15080
+#EXTINF:-1 tvg-logo="https://i.ibb.co/gLd0qtKr/boxoffdra.png",BOX OFFICE DRAMA
+https://dbhl9xt4ay3lq.cloudfront.net/v1/master/3722c60a815c199d9c0ef36c5b73da68a62b09d1/cc-el0y7yl75ynke/bodrm.m3u8
+#EXTINF:-1 tvg-logo="https://i.ibb.co/21c2QcYm/boxoffthr.png",BOX OFFICE THRILLER
+https://stream-us-east-1.getpublica.com/playlist.m3u8?network_id=15046
+#EXTINF:-1 tvg-logo="https://i.ibb.co/d6c87Km/trt122.png" group-title="8. |TR|🇹🇷 ULUSAL GENEL 📺📡",TRT 1
+https://tv-trt1.medya.trt.com.tr/master.m3u8
+#EXTINF:-1 tvg-logo="https://i.ibb.co/GcZR4DM/daserste.png",DAS ERSTE DE
+http://daserstedash.akamaized.net/dash/live/2103597/daserste/dvbt2/manifest.mpd
+#EXTINF:-1 tvg-logo="https://i.ibb.co/Msmh0pG/rtlde.png",RTL DE
+https://ma.anixa.tv/clips/stream/rtl/index.m3u8
+
