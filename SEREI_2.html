@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>مشغل الأفلام</title>
+  <title>مشغل المسلسلات</title>
   <style>
     body {
       font-family: Arial, sans-serif;
@@ -29,8 +29,8 @@
       overflow-y: auto;
       border-right: 3px solid #333;
     }
-    .category, .movie-item {
-      background: #e91e63;
+    .category, .item, .episode {
+      background: #ff5722;
       padding: 15px;
       margin: 8px 0;
       border-radius: 8px;
@@ -40,26 +40,26 @@
       cursor: pointer;
       transition: 0.3s;
     }
-    .movie-item {
+    .item, .episode {
       background: rgba(255, 255, 255, 0.15);
     }
-    .category:focus, .movie-item:focus {
+    .category:focus, .item:focus, .episode:focus {
       background: rgba(255, 255, 255, 0.3);
-      outline: 3px solid #00e5ff;
+      outline: 3px solid yellow;
       transform: scale(1.05);
     }
     .content-container {
       flex: 1;
       display: grid;
       grid-template-columns: repeat(4, 1fr);
-      gap: 15px;
+      gap: 12px;
       padding: 20px;
       overflow-y: auto;
       justify-content: center;
     }
     .content-container img {
       width: 100%;
-      height: 220px;
+      height: 160px;
       object-fit: cover;
       border-radius: 8px;
       background-color: #222;
@@ -75,14 +75,13 @@
     let lastCategoryId = null;
     let lastCategoryIndex = null;
 
-    // جلب فئات الأفلام
     async function loadCategories() {
       try {
-        let response = await fetch(`${serverUrl}/player_api.php?username=${username}&password=${password}&action=get_vod_categories`);
+        let response = await fetch(`${serverUrl}/player_api.php?username=${username}&password=${password}&action=get_series_categories`);
         categories = await response.json();
         showCategoriesView();
       } catch (error) {
-        document.getElementById("categories").innerHTML = "⚠️ خطأ في تحميل فئات الأفلام";
+        document.getElementById("categories").innerHTML = "⚠️ خطأ في تحميل الفئات";
       }
     }
 
@@ -98,7 +97,7 @@
         div.className = "category";
         div.innerText = category.category_name;
         div.tabIndex = 0;
-        div.onclick = () => loadMovies(category.category_id, idx);
+        div.onclick = () => loadSeries(category.category_id, idx);
         container.appendChild(div);
       });
 
@@ -112,64 +111,95 @@
       }, 100);
     }
 
-    // جلب الأفلام التابعة للفئة
-    async function loadMovies(categoryId, idx, pushState = true) {
-      if (pushState) history.pushState({view: "MOVIES", catId: categoryId, catIdx: idx}, "");
+    async function loadSeries(categoryId, idx, pushState = true) {
+      if (pushState) history.pushState({view: "SERIES", catId: categoryId, catIdx: idx}, "");
       
-      currentState = "MOVIES";
+      currentState = "SERIES";
       lastCategoryId = categoryId;
       lastCategoryIndex = idx;
       
       document.getElementById("categories").style.display = "none";
 
       try {
-        let response = await fetch(`${serverUrl}/player_api.php?username=${username}&password=${password}&action=get_vod_streams&category_id=${categoryId}`);
-        let movies = await response.json();
-        displayMovies(movies);
+        let response = await fetch(`${serverUrl}/player_api.php?username=${username}&password=${password}&action=get_series&category_id=${categoryId}`);
+        let series = await response.json();
+        displaySeries(series);
       } catch (error) {
-        document.getElementById("content").innerHTML = "⚠️ خطأ في تحميل قائمة الأفلام";
+        document.getElementById("content").innerHTML = "⚠️ خطأ في تحميل المسلسلات";
       }
     }
 
-    function displayMovies(movies) {
+    function displaySeries(series) {
       let container = document.getElementById("content");
       container.innerHTML = "";
-      movies.forEach(movie => {
+      series.forEach(serie => {
         let div = document.createElement("div");
-        div.className = "movie-item";
+        div.className = "item";
         div.tabIndex = 0;
-        div.onclick = () => playMovie(movie);
-        div.innerHTML = `
-          <img src="${movie.stream_icon}" onerror="this.src='https://via.placeholder.com/200x300?text=Movie'">
-          <div style="margin-top:8px; font-size:14px;">${movie.name}</div>
-        `;
+        div.onclick = () => loadEpisodes(serie.series_id);
+        div.innerHTML = `<img src="${serie.cover}" onerror="this.src='https://via.placeholder.com/150x200?text=No+Image'"><br>${serie.name}`;
         container.appendChild(div);
       });
       setTimeout(() => container.firstChild?.focus(), 100);
     }
 
-    // تشغيل الفيلم (محدثة وتعمل مع أندرويد بشكل مباشر)
-    function playMovie(movie) {
-      const ext = movie.container_extension || 'mp4';
-      const streamUrl = `${serverUrl}/movie/${username}/${password}/${movie.stream_id}.${ext}`;
-      const title = encodeURIComponent(movie.name || '');
-
-      // 1. إذا كان الجسر المباشر متصل بـ Android
-      if (window.Android && typeof window.Android.openPlayer === "function") {
-        window.Android.openPlayer(streamUrl, movie.name);
-        return;
+    async function loadEpisodes(seriesId, pushState = true) {
+      if (pushState) history.pushState({view: "EPISODES", seriesId: seriesId}, "");
+      
+      currentState = "EPISODES";
+      try {
+        let response = await fetch(`${serverUrl}/player_api.php?username=${username}&password=${password}&action=get_series_info&series_id=${seriesId}`);
+        let seriesData = await response.json();
+        const seriesCover = seriesData.info.cover || ""; 
+        displayEpisodes(seriesData.episodes, seriesCover);
+      } catch (error) {
+        document.getElementById("content").innerHTML = "⚠️ خطأ في تحميل الحلقات";
       }
+    }
 
-      // 2. خطة بديلة باستخدام صيغة Intent كاملة
-      const intentUrl = `intent:${streamUrl}#Intent;action=android.intent.action.VIEW;package=com.example.siksa;type=video/*;S.title=${title};end`;
+    function displayEpisodes(episodes, coverImage) {
+      let container = document.getElementById("content");
+      container.innerHTML = "";
+      Object.keys(episodes).forEach(season => {
+        episodes[season].forEach(episode => {
+          let div = document.createElement("div");
+          div.className = "episode";
+          div.tabIndex = 0;
+          div.onclick = () => playEpisode(episode);
+          div.innerHTML = `
+            <img src="${coverImage}" onerror="this.src='https://via.placeholder.com/300x160?text=No+Image'">
+            <div style="margin-top:8px;">الموسم ${season} - حلقة ${episode.episode_num}</div>
+          `;
+          container.appendChild(div);
+        });
+      });
+      setTimeout(() => container.firstChild?.focus(), 100);
+    }
+
+    // الدالة المعدلة لضمان التشغيل التلقائي ومعالجة الامتدادات
+    function playEpisode(episode) {
+      const extension = episode.container_extension || "mp4";
+      const streamUrl = `${serverUrl}/series/${username}/${password}/${episode.id}.${extension}`;
+      const title = encodeURIComponent(`الموسم ${episode.season || ''} - حلقة ${episode.episode_num}`);
+      
+      // استخدام رابط Intent محسّن مع إضافة فلاج الشاشة الكاملة وتحديد المشغل
+      const intentUrl = `intent:${streamUrl}#Intent;` +
+        `action=android.intent.action.VIEW;` +
+        `type=video/*;` +
+        `package=com.example.siksa;` + 
+        `S.title=${title};` +
+        `B.force_fullscreen=true;` + 
+        `S.browser_fallback_url=${encodeURIComponent(streamUrl)};` +
+        `end`;
+
       window.location.href = intentUrl;
     }
 
-    // نظام الرجوع
     window.onpopstate = function(event) {
       if (event.state) {
         if (event.state.view === "CATEGORIES") showCategoriesView();
-        else if (event.state.view === "MOVIES") loadMovies(event.state.catId, event.state.catIdx, false);
+        else if (event.state.view === "SERIES") loadSeries(event.state.catId, event.state.catIdx, false);
+        else if (event.state.view === "EPISODES") loadEpisodes(event.state.seriesId, false);
       } else {
         showCategoriesView();
       }
