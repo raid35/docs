@@ -5,13 +5,6 @@
 #KODIPROP:inputstream.adaptive.license_type=clearkey
 #KODIPROP:inputstream.adaptive.license_key=433ffba670963e70857859a9dff4be04:51ede3a821229fe81e71282c8eff80e3
 https://origin-m6web.live.6cloud.fr/out/v1/6play/6play-m6/cmaf_cenc00/dash-short-hd.mpd
-#EXTINF:-1 group-title="France" tvg-chno="6" tvg-id="C118.api.telerama.fr" tvg-logo="https://media.ouest-france.fr/v1/pictures/7f640a7c251cf7deeb0879887a098b84-m6-programme-tv",M6
-#KODIPROP:inputstream=inputstream.adaptive
-#KODIPROP:inputstream.adaptive.manifest_type=mpd
-#KODIPROP:mimetype=application/dash+xml
-#KODIPROP:inputstream.adaptive.license_type=clearkey
-#KODIPROP:inputstream.adaptive.license_key=0000000000000000000000000063340a:5ce85f1aa5771900b952f0ba58857d7a
-https://olsp.live.dash.c4assets.com/dash_iso_sp_tl/live/channel(c4)/manifest.mpd
 #EXTINF:-1 group-title="France" tvg-chno="22" tvg-id="C1403.api.telerama.fr" tvg-logo="https://media.ouest-france.fr/v1/pictures/10a2527cca92e52154bac7795d245bef-6ter-programme-tv",6ter
 #KODIPROP:inputstream=inputstream.adaptive
 #KODIPROP:inputstream.adaptive.manifest_type=mpd
@@ -19,8 +12,6 @@ https://olsp.live.dash.c4assets.com/dash_iso_sp_tl/live/channel(c4)/manifest.mpd
 #KODIPROP:inputstream.adaptive.license_type=clearkey
 #KODIPROP:inputstream.adaptive.license_key=be42db5bcf21387e838f22d0da5b80c3:4603398e17b27d8330c1870764ccc1bd
 https://origin-caf900c010ea8046.live.6cloud.fr/out/v1/29c7a579af3348b48230f76cd75699a5/dash_short_cenc10_6ter_hd_index.mpd
-#EXTINF:-1 tvg-logo="https://i.ibb.co/hKVyKj4/tmc.png",TMC
-https://alive-tmc-hls.cdn-0.diff.tf1.fr/eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJjaXAiOiIxNDkuMTAyLjI0NS4xMzUiLCJjbWNkIjoiIiwiZXhwIjoxNzg3MjgyMjk4LCJnaWQiOiJlNzIwMzhjMzU5NDg0MDc1YjgzOGUwNjY5NWI3ZDQ5NiIsImlhdCI6MTc4NzI2Nzg5OCwiaXNzIjoiZGVsaXZlcnkiLCJtYXhiIjowLCJzdGVtIjoiL3Byb2QvVE1DL2NtYWYvb3V0Iiwic3ViIjoiZTcyMDM4YzM1OTQ4NDA3NWI4MzhlMDY2OTViN2Q0OTYifQ.2O0scelR_VduzNMrr77PhcEy8g1CrhVHT7xtBuMuuU4/prod/TMC/cmaf/out/TMC.m3u8
 #EXTINF:-1 group-title="France" tvg-chno="9" tvg-id="C119.api.telerama.fr" tvg-logo="https://media.ouest-france.fr/v1/pictures/79d9a5490fbc2466a6e6869ef940013f-w9-programme-tv",W9
 #KODIPROP:inputstream=inputstream.adaptive
 #KODIPROP:inputstream.adaptive.manifest_type=mpd
