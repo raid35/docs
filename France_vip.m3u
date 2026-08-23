@@ -10,8 +10,8 @@ https://origin-m6web.live.6cloud.fr/out/v1/6play/6play-m6/cmaf_cenc00/dash-short
 #KODIPROP:inputstream.adaptive.manifest_type=mpd
 #KODIPROP:mimetype=application/dash+xml
 #KODIPROP:inputstream.adaptive.license_type=clearkey
-#KODIPROP:inputstream.adaptive.license_key=21ec256354883d6f9b71c6e76276efe7:02ab4f8a7bbfb9e00f21bc59e2bcf98a
-https://origin-m6web.live.6cloud.fr/out/v1/6play/6play-m6/cmaf_cenc00/dash-short-hd.mpd
+#KODIPROP:inputstream.adaptive.license_key=0000000000000000000000000063340a:5ce85f1aa5771900b952f0ba58857d7a
+https://olsp.live.dash.c4assets.com/dash_iso_sp_tl/live/channel(c4)/manifest.mpd
 #EXTINF:-1 group-title="France" tvg-chno="22" tvg-id="C1403.api.telerama.fr" tvg-logo="https://media.ouest-france.fr/v1/pictures/10a2527cca92e52154bac7795d245bef-6ter-programme-tv",6ter
 #KODIPROP:inputstream=inputstream.adaptive
 #KODIPROP:inputstream.adaptive.manifest_type=mpd
