@@ -1,5 +1,6 @@
 #EXTINF:-1 tvg-id="dazn.fr" tvg-name="FR: DAZN HD" tvg-logo="https://safiafamily.com/uploads/family/germany/DAZN-1--Channel.png" group-title="France | Sport ",FR: DAZN HD
-http://kdfgh.com:8080/live/9483298617995218/9483298617995218/375151.m3u8
+http://pro.netmos.ovh:7355/live/PR2055477969542/5230682660068/100339.ts
+http://pro.netmos.ovh:7355/live/PR2055477969542/5230682660068/115093.ts
 #EXTINF:-1 tvg-id="CanalPlusSport.fr" tvg-name="CANAL+ SPORT FHD" tvg-logo="https://thumb.canalplus.pro/http/unsafe/160x120/filters:quality(80)/canalplus-cdn.canal-plus.io/p1/channel/40075/canal-ouah/CHN43FN/CHN43FN_177_29082023" group-title="myCANAL SPORT FR",FR | CANAL+ SPORT FHD
 http://31.43.191.212:8080/live/maveniptv.tv/e8yvmG8um2yhhgsjhgdd22/4083.m3u8
 http://atlas06.xyz/live/687159048179/6813835cb731f.30173/49494.m3u8
