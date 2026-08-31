@@ -36,12 +36,6 @@ https://ev-fast-mpd.starzplayarabia.com/live/eds/MBC_2HD/DASH/MBC_2HD.mpd
 #KODIPROP:inputstream.adaptive.manifest_type=dash
 #EXTINF:-1 tvg-logo="https://i.imgur.com/ULylh5V.png" group-title="قنوات ترفيهية",MBC Max HD
 https://ev-fast-mpd.starzplayarabia.com/live/eds/MBC_Max_HD/DASH/MBC_Max_HD.mpd
-#KODIPROP:inputstream=inputstream.adaptive
-#KODIPROP:inputstream.adaptive.license_type=clearkey
-#KODIPROP:inputstream.adaptive.license_key=d889ec7cb5cd8acb44f702726a56ae21:37be04cfb92f19ecd6074b976c1f3c54
-#KODIPROP:inputstream.adaptive.manifest_type=dash
-#EXTINF:-1 tvg-logo="https://i.imgur.com/NCUzHw5.png" group-title="قنوات ترفيهية",MBC Action HD
-https://ev-fast-mpd.starzplayarabia.com/live/eds/MBC_Action_HD/DASH/MBC_Action_HD.mpd
 #EXTINF:-1 tvg-id="" tvg-name="FRANCE" tvg-logo="https://cdn.aptoide.com/imgs/2/5/4/25476755091ba21c724605db2d5a10c2_fgraphic.png",Rakuten TV Films Action 
 https://01ac9352fbfa4204998783d41f9b1a2e.mediatailor.eu-west-1.amazonaws.com/v1/master/0547f18649bd788bec7b67b746e47670f558b6b2/production-LiveChannel-6068/master.m3u8
 #EXTINF:-1 tvg-id="" tvg-name="FRANCE" tvg-logo="https://cdn.aptoide.com/imgs/2/5/4/25476755091ba21c724605db2d5a10c2_fgraphic.png",Rakuten TV Films Thriller 
