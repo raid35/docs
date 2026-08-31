@@ -13,7 +13,7 @@ http://pro.netmos.ovh:7355/live/PR2055477969542/5230682660068/2743.m3u8
 #EXTINF:-1 tvg-id="seasons.fr" tvg-name="SEASONS HD" tvg-logo="https://thumb.canalplus.pro/http/unsafe/121x91/filters:quality(80)/canalplus-cdn.canal-plus.io/p1/channel/577/canal-ouah/CHN43FN/CHN43FN_577_20231128-rzna" group-title="FRANCE HD",SEASONS HD
 http://pro.netmos.ovh:7355/live/PR2055477969542/5230682660068/3110.m3u8
 #EXTINF:-1 tvg-id="discoverychannel.fr" tvg-name="DISCOVERY HD" tvg-logo="https://thumb.canalplus.pro/http/unsafe/121x91/filters:quality(80)/canalplus-cdn.canal-plus.io/p1/channel/174/canal-ouah/CHN43FN/CHN43FN_174_20240611-RzWh" group-title="DUCUMENTAIRE FR",FR | DISCOVERY HD
-http://atlas06.xyz/live/687159048179/6813835cb731f.30173/49197.m3u8
+http://atlas06.xyz/live/687159048179/6813835cb731f.30173/49197.ts
 #EXTINF:-1 tvg-id="DiscoveryInvestigation.fr" tvg-name="DISCOVERY INVESTIGATION HD" tvg-logo="https://thumb.canalplus.pro/http/unsafe/121x91/filters:quality(80)/canalplus-cdn.canal-plus.io/p1/channel/1098/canal-ouah/CHN43FN/CHN43FN_1098_20240611-gw0t" group-title="DUCUMENTAIRE FR",FR | DISCOVERY INVESTIGATION HD
 http://pro.netmos.ovh:7355/live/PR2055477969542/5230682660068/2740.m3u8
 #EXTINF:-1 tvg-id="NatGeoWild.fr" tvg-name="NAT GEO WILD HD" tvg-logo="https://i5.satexpat.com/cha/nl/nat-geo-wild-95x34.png" group-title="DUCUMENTAIRE FR",FR | NAT GEO WILD HD
