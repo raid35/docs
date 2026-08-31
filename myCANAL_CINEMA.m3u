@@ -1,25 +1,25 @@
 #EXTM3U
 #EXTINF:-1 tvg-id="CANALplus.fr" tvg-name="CANAL+ 4K UHD" tvg-logo="https://thumb.canalplus.pro/http/unsafe/160x120/filters:quality(80)/canalplus-cdn.canal-plus.io/p1/channel/40052/canal-ouah/CHN43FN/CHN43FN_301_29082023" group-title="myCANAL CINEMA FR",FR | CANAL+ 4K UHD
-http://81637.org:2052/live/Destie01/HNHYvmQxEWcc/13100.m3u8
+http://81637.org:2052/live/ahemdtounsi/kGUYgg3V56N2/13100.m3u8
 #EXTINF:-1 tvg-id="" tvg-name="FR | CANAL+ CINEMA" tvg-logo="https://thumb.canalplus.pro/http/unsafe/160x120/filters:quality(80)/canalplus-cdn.canal-plus.io/p1/channel/40011/canal-ouah/CHN43FN/CHN43FN_198_29082023" group-title="myCANAL CINEMA FR",FR | CANAL+ CINEMA
-http://81637.org:2052/live/Destie01/HNHYvmQxEWcc/6496.m3u8
+http://81637.org:2052/live/ahemdtounsi/kGUYgg3V56N2/6496.m3u8
 #EXTINF:-1 tvg-id="canalpluskids.fr" tvg-name="CANAL+ KIDS HD " tvg-logo="https://thumb.canalplus.pro/http/unsafe/160x120/filters:quality(80)/canalplus-cdn.canal-plus.io/p1/channel/40183/canal-ouah/CHN43FN/CHN43FN_259_29082023" group-title="myCANAL CINEMA FR",FR | CANAL+ KIDS HD
-http://81637.org:2052/live/Destie01/HNHYvmQxEWcc/82637.m3u8
+http://81637.org:2052/live/ahemdtounsi/kGUYgg3V56N2/82637.m3u8
 #EXTINF:-1 tvg-id="CanalPlusBoxOffice.fr" tvg-name="|FR| CANAL+ BOX OFFICE FHD+ (Resolution Exclusive)" tvg-logo="https://i.imgur.com/VgFbZDF.png" group-title="myCANAL CINEMA FR",FR | CANAL+ BOX OFFICE FHD
-http://81637.org:2052/live/Destie01/HNHYvmQxEWcc/205112.m3u8
+http://81637.org:2052/live/ahemdtounsi/kGUYgg3V56N2/205112.m3u8
 #EXTINF:-1 tvg-id="CanalPlusGrandEcran.fr" tvg-name="CANAL+ GRAND ECRAN HD" tvg-logo="https://thumb.canalplus.pro/http/unsafe/121x91/filters:quality(80)/canalplus-cdn.canal-plus.io/p1/channel/900/canal-ouah/CHN43FN/CHN43FN_900_29082023" group-title="myCANAL CINEMA FR",FR | CANAL+ GRAND ECRAN HD
-http://81637.org:2052/live/Destie01/HNHYvmQxEWcc/296522.m3u8
+http://81637.org:2052/live/ahemdtounsi/kGUYgg3V56N2/296522.m3u8
 #EXTINF:-1 tvg-id="cineplusclassic.fr" tvg-name="CINE+ CLASSIC  HD" tvg-logo="https://thumb.canalplus.pro/http/unsafe/121x91/filters:quality(80)/canalplus-cdn.canal-plus.io/p1/channel/531/canal-ouah/CHN43FN/CHN43FN_531_20240703-2TQN" group-title="myCANAL CINEMA FR",FR | CINE+ CLASSIC  HD
-http://81637.org:2052/live/Destie01/HNHYvmQxEWcc/55.m3u8
+http://81637.org:2052/live/ahemdtounsi/kGUYgg3V56N2/55.m3u8
 #EXTINF:-1 tvg-id="CinePlusEmotion.fr" tvg-name="CINE+ EMOTION HD" tvg-logo="https://thumb.canalplus.pro/http/unsafe/121x91/filters:quality(80)/canalplus-cdn.canal-plus.io/p1/channel/396/canal-ouah/CHN43FN/CHN43FN_396_20240703-ziX9" group-title="myCANAL CINEMA FR",FR | CINE+ EMOTION HD
-http://81637.org:2052/live/Destie01/HNHYvmQxEWcc/4371.m3u8
+http://81637.org:2052/live/ahemdtounsi/kGUYgg3V56N2/4371.m3u8
 #EXTINF:-1 tvg-id="CinePlusFamiz.fr" tvg-name="CINE+ FAMILY HD" tvg-logo="https://thumb.canalplus.pro/http/unsafe/121x91/filters:quality(80)/canalplus-cdn.canal-plus.io/p1/channel/533/canal-ouah/CHN43FN/CHN43FN_533_20240703-hEX8" group-title="myCANAL CINEMA FR",FR | CINE+ FAMILY HD
-http://81637.org:2052/live/Destie01/HNHYvmQxEWcc/58.m3u8
+http://81637.org:2052/live/ahemdtounsi/kGUYgg3V56N2/58.m3u8
 #EXTINF:-1 tvg-id="CinePlusFrisson.fr" tvg-name="CINE+ FRISSON HD" tvg-logo="https://thumb.canalplus.pro/http/unsafe/121x91/filters:quality(80)/canalplus-cdn.canal-plus.io/p1/channel/398/canal-ouah/CHN43FN/CHN43FN_398_20240703--MGY" group-title="myCANAL CINEMA FR",FR | CINE+ FRISSON HD
-http://81637.org:2052/live/Destie01/HNHYvmQxEWcc/56.m3u8
+http://81637.org:2052/live/ahemdtounsi/kGUYgg3V56N2/56.m3u8
 #EXTINF:-1 tvg-id="CinePlusClub.fr" tvg-name="CINE+ FESTIVAL HD" tvg-logo="https://thumb.canalplus.pro/http/unsafe/121x91/filters:quality(80)/canalplus-cdn.canal-plus.io/p1/channel/532/canal-ouah/CHN43FN/CHN43FN_532_20240703-kAx_" group-title="myCANAL CINEMA FR",FR | CINE+ FESTIVAL HD
-http://81637.org:2052/live/Destie01/HNHYvmQxEWcc/141024.m3u8
+http://81637.org:2052/live/ahemdtounsi/kGUYgg3V56N2/141024.m3u8
 #EXTINF:-1 tvg-id="" tvg-name="FR | SÉRIE CLUB HD" tvg-logo="https://thumb.canalplus.pro/http/unsafe/121x91/filters:quality(80)/img-hapi.canalplus.pro:80/ServiceImage/ImageID/19132964" group-title="myCANAL CINEMA FR",FR | SÉRIE CLUB HD
-http://81637.org:2052/live/Destie01/HNHYvmQxEWcc/222.m3u8
+http://81637.org:2052/live/ahemdtounsi/kGUYgg3V56N2/222.m3u8
 #EXTINF:-1 tvg-id="TF1.fr" tvg-name="parispremierere HD" tvg-logo="https://thumb.canalplus.pro/http/unsafe/%7BresolutionXY%7D/filters:quality(%7BimageQualityPercentage%7D)/canalplus-cdn.canal-plus.io/p1/channel/40081/canal-ouah/CHN43FN/CHN43FN__Paris_Premiere_20220415" group-title="myCANAL CINEMA FR",FR | parispremierere HD
 http://151.80.18.177:86/Paris_Premiere_HD/index.m3u8
