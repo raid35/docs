@@ -23,7 +23,3 @@ http://45.139.122.199:2095/live/Pm2e5NEugM/ngORTY5fvp/2124156.m3u8
 http://45.139.122.199:2095/live/Pm2e5NEugM/ngORTY5fvp/2124152.m3u8
 #EXTINF:-1 tvg-id="" tvg-name="OCS Go Cinéma 4 HD FR" tvg-logo="http://138.199.27.237:8080/FRANCE/OCSGO.png" group-title="myCANAL CINEMA FR",FR,OCS Go Cinéma 4 
 http://45.139.122.199:2095/live/Pm2e5NEugM/ngORTY5fvp/2124144.m3u8
-#EXTINF:-1 tvg-id="" tvg-name="FR | SÉRIE CLUB HD" tvg-logo="https://thumb.canalplus.pro/http/unsafe/121x91/filters:quality(80)/img-hapi.canalplus.pro:80/ServiceImage/ImageID/19132964" group-title="myCANAL CINEMA FR",FR | SÉRIE CLUB HD
-http://81637.org:2052/live/ahemdtounsi/kGUYgg3V56N2/222.m3u8
-#EXTINF:-1 tvg-id="TF1.fr" tvg-name="parispremierere HD" tvg-logo="https://thumb.canalplus.pro/http/unsafe/%7BresolutionXY%7D/filters:quality(%7BimageQualityPercentage%7D)/canalplus-cdn.canal-plus.io/p1/channel/40081/canal-ouah/CHN43FN/CHN43FN__Paris_Premiere_20220415" group-title="myCANAL CINEMA FR",FR | parispremierere HD
-http://151.80.18.177:86/Paris_Premiere_HD/index.m3u8
