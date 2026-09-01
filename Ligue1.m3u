@@ -1,19 +1,21 @@
 #EXTM3U
-#EXTINF:-1 tvg-logo="https://ligue1.com/images/Logo_Ligue1.webp" group-title="beIN SPORTS HD",beIN SPORTS 1 HD
-http://81637.org:2052/live/Destie01/HNHYvmQxEWcc/296966.m3u8
-#EXTINF:-1 tvg-logo="https://ligue1.com/images/Logo_Ligue1.webp" group-title="beIN SPORTS HD",beIN SPORTS 2 HD
-http://81637.org:2052/live/Destie01/HNHYvmQxEWcc/315183.m3u8
-#EXTINF:-1 tvg-logo="https://ligue1.com/images/Logo_Ligue1.webp" group-title="beIN SPORTS HD",beIN SPORTS 3 HD
-http://81637.org:2052/live/Destie01/HNHYvmQxEWcc/315184.m3u8
-#EXTINF:-1 tvg-logo="https://ligue1.com/images/Logo_Ligue1.webp" group-title="beIN SPORTS HD",beIN SPORTS 4 HD
-http://81637.org:2052/live/Destie01/HNHYvmQxEWcc/315185.m3u8
-#EXTINF:-1 tvg-logo="https://ligue1.com/images/Logo_Ligue1.webp" group-title="beIN SPORTS HD",beIN SPORTS 5 HD
-http://81637.org:2052/live/Destie01/HNHYvmQxEWcc/315186.m3u8
-#EXTINF:-1 tvg-logo="https://ligue1.com/images/Logo_Ligue1.webp" group-title="beIN SPORTS HD",beIN SPORTS 6 HD
-http://81637.org:2052/live/Destie01/HNHYvmQxEWcc/315187.m3u8
-#EXTINF:-1 tvg-logo="https://ligue1.com/images/Logo_Ligue1.webp" group-title="beIN SPORTS HD",beIN SPORTS 7 HD
-http://81637.org:2052/live/Destie01/HNHYvmQxEWcc/315188.m3u8
-#EXTINF:-1 tvg-logo="https://ligue1.com/images/Logo_Ligue1.webp" group-title="beIN SPORTS HD",beIN SPORTS 8 HD
-http://81637.org:2052/live/Destie01/HNHYvmQxEWcc/315189.m3u8
-#EXTINF:-1 tvg-logo="https://ligue1.com/images/Logo_Ligue1.webp" group-title="beIN SPORTS HD",beIN SPORTS 9 HD
+#EXTINF:-1 tvg-logo="https://ligue1.com/images/Logo_Ligue1.webp" group-title="Ligue Plus FR",Ligue 1+ 1
+http://45.139.122.199:2095/live/Pm2e5NEugM/ngORTY5fvp/2123005.m3u8
+#EXTINF:-1 tvg-logo="https://ligue1.com/images/Logo_Ligue1.webp" group-title="Ligue Plus FR",Ligue 1+ 2
+http://45.139.122.199:2095/live/Pm2e5NEugM/ngORTY5fvp/2123007.m3u8
+#EXTINF:-1 tvg-logo="https://ligue1.com/images/Logo_Ligue1.webp" group-title="Ligue Plus FR",Ligue 1+ 3
+http://45.139.122.199:2095/live/Pm2e5NEugM/ngORTY5fvp/2123009.m3u8
+#EXTINF:-1 tvg-logo="https://ligue1.com/images/Logo_Ligue1.webp" group-title="Ligue Plus FR",Ligue 1+ 4
+http://45.139.122.199:2095/live/Pm2e5NEugM/ngORTY5fvp/2123011.m3u8
+#EXTINF:-1 tvg-logo="https://ligue1.com/images/Logo_Ligue1.webp" group-title="Ligue Plus FR",Ligue 1+ 5
+http://45.139.122.199:2095/live/Pm2e5NEugM/ngORTY5fvp/2123013.m3u8
+#EXTINF:-1 tvg-logo="https://ligue1.com/images/Logo_Ligue1.webp" group-title="Ligue Plus FR",Ligue 1+ 6
+http://45.139.122.199:2095/live/Pm2e5NEugM/ngORTY5fvp/2123015.m3u8
+#EXTINF:-1 tvg-logo="https://ligue1.com/images/Logo_Ligue1.webp" group-title="Ligue Plus FR",Ligue 1+ 7
+http://45.139.122.199:2095/live/Pm2e5NEugM/ngORTY5fvp/2123016.m3u8
+#EXTINF:-1 tvg-logo="https://ligue1.com/images/Logo_Ligue1.webp" group-title="Ligue Plus FR",Ligue 1+ 8
+http://45.139.122.199:2095/live/Pm2e5NEugM/ngORTY5fvp/2123018.m3u8
+#EXTINF:-1 tvg-logo="https://ligue1.com/images/Logo_Ligue1.webp" group-title="Ligue Plus FR",Ligue 1+ 9
 http://81637.org:2052/live/Destie01/HNHYvmQxEWcc/315190.m3u8
+#EXTINF:-1 tvg-logo="https://ligue1.com/images/Logo_Ligue1.webp" group-title="Ligue Plus FR",Ligue 1+ 10
+http://45.139.122.199:2095/live/Pm2e5NEugM/ngORTY5fvp/2123019.m3u8
