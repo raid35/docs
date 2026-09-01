@@ -27,4 +27,6 @@ https://live-event-3-enc.edgenextcdn.net/out/v1/1117b28b859948afa6d5660460b392df
 #EXTINF:-1 group-title="Starz-play" tvg-logo="http://tv.asc.vg/shahid.sport.png", shahid SPORTS 4 🇦🇪
 http://pro.netmos.ovh:7355/live/PR2055477969542/5230682660068/187275.ts
 #EXTINF:-1 group-title="Starz-play" tvg-logo="http://tv.asc.vg/shahid.sport.png", shahid SPORTS 5 🇦🇪
-http://pro.netmos.ovh:7355/live/PR2055477969542/5230682660068/187276.ts
+http://45.139.122.199:2095/live/Pm2e5NEugM/ngORTY5fvp/2096867.m3u8
+#EXTINF:-1 group-title="Starz-play" tvg-logo="http://tv.asc.vg/shahid.sport.png", shahid SPORTS 6 🇦🇪
+http://45.139.122.199:2095/live/Pm2e5NEugM/ngORTY5fvp/2096868.m3u8
