@@ -1,6 +1,8 @@
+#EXTINF:-1 tvg-name="|FR| CANAL+ SPORT 4 HD" tvg-logo="https://i.imgur.com/1Ikjjzo.png" group-title="myCANAL SPORT AF",AF | CANAL+ SPORT 4 HD
+http://oct.nexon.rocks/live/1bqdvpr9z8/gpsdhaqd2l/1163438.m3u8
 #EXTINF:-1 tvg-id="dazn.fr" tvg-name="FR: DAZN HD" tvg-logo="https://safiafamily.com/uploads/family/germany/DAZN-1--Channel.png" group-title="France | Sport ",FR: DAZN HD
-http://81637.org:2052/live/ahemdtounsi/kGUYgg3V56N2/315835.ts
-http://81637.org:2052/live/ahemdtounsi/kGUYgg3V56N2/315836.ts
+http://81637.org:2052/live/ahemdtounsi/kGUYgg3V56N2/315835.m3u8
+http://81637.org:2052/live/ahemdtounsi/kGUYgg3V56N2/315836.m3u8
 #EXTINF:-1 tvg-id="CanalPlusSport.fr" tvg-name="CANAL+ SPORT FHD" tvg-logo="https://thumb.canalplus.pro/http/unsafe/160x120/filters:quality(80)/canalplus-cdn.canal-plus.io/p1/channel/40075/canal-ouah/CHN43FN/CHN43FN_177_29082023" group-title="myCANAL SPORT FR",FR | CANAL+ SPORT FHD
 http://45.139.122.199:2095/live/Pm2e5NEugM/ngORTY5fvp/2122905.m3u8
 #EXTINF:-1 tvg-id="canalplussport360.fr" tvg-name="CANAL+ SPORT360 FHD" tvg-logo="https://thumb.canalplus.pro/http/unsafe/121x91/filters:quality(80)/canalplus-cdn.canal-plus.io/p1/channel/83/canal-ouah/CHN43FN/CHN43FN_83_29082023" group-title="myCANAL SPORT FR",FR | CANAL+ SPORT360 FHD
@@ -8,18 +10,15 @@ http://45.139.122.199:2095/live/Pm2e5NEugM/ngORTY5fvp/2122908.m3u8
 #EXTINF:-1 tvg-id="canalplusfoot.fr" tvg-name="CANAL+ FOOT FHD" tvg-logo="https://thumb.canalplus.pro/http/unsafe/160x120/filters:quality(80)/canalplus-cdn.canal-plus.io/p1/channel/40208/canal-ouah/CHN43FN/CHN43FN_19_29082023" group-title="SPORT FR",CANAL+ FOOT HD
 http://45.139.122.199:2095/live/Pm2e5NEugM/ngORTY5fvp/2122911.m3u8
 #EXTINF:-1 tvg-name="|FR| CANAL+ SPORT 1 HD" tvg-logo="https://i.imgur.com/W7dLvdz.png" group-title="myCANAL SPORT AF",AF | CANAL+ SPORT 1 HD
-http://pro.netmos.ovh:7355/live/PR2055477969542/5230682660068/33837.ts
+http://oct.nexon.rocks/live/1bqdvpr9z8/gpsdhaqd2l/1163432.m3u8
 #EXTINF:-1 tvg-name="|FR| CANAL+ SPORT 2 HD" tvg-logo="https://i.imgur.com/dSW77wl.png" group-title="myCANAL SPORT AF",AF | CANAL+ SPORT 2 HD
-http://pro.netmos.ovh:7355/live/PR1125024867281/4641912740375/33838.ts
-http://atlas06.xyz/live/687159048179/6813835cb731f.30173/44201.m3u8
+http://oct.nexon.rocks/live/1bqdvpr9z8/gpsdhaqd2l/1163434.m3u8
 #EXTINF:-1 tvg-name="|FR| CANAL+ SPORT 3 HD" tvg-logo="https://i.imgur.com/HL2NrRi.png" group-title="myCANAL SPORT AF",AF | CANAL+ SPORT 3 HD
-http://pro.netmos.ovh:7355/live/PR1125024867281/4641912740375/33839.ts
-http://001122.org:2095/live/24:fc:e5:1f:07:ab442/24:fc:e5:1f:07:ab443/91272.m3u8
+http://oct.nexon.rocks/live/1bqdvpr9z8/gpsdhaqd2l/1163436.m3u8
 #EXTINF:-1 tvg-name="|FR| CANAL+ SPORT 4 HD" tvg-logo="https://i.imgur.com/1Ikjjzo.png" group-title="myCANAL SPORT AF",AF | CANAL+ SPORT 4 HD
-http://pro.netmos.ovh:7355/live/PR1125024867281/4641912740375/33840.ts
-http://atlas06.xyz/live/687159048179/6813835cb731f.30173/44203.m3u8
+http://oct.nexon.rocks/live/1bqdvpr9z8/gpsdhaqd2l/1163438.m3u8
 #EXTINF:-1 tvg-name="|FR| CANAL+ SPORT 5 HD" tvg-logo="https://i.imgur.com/szq4wBg.png" group-title="myCANAL SPORT AF",AF | CANAL+ SPORT 5 HD
-http://pro.netmos.ovh:7355/live/PR2055477969542/5230682660068/33841.ts
+http://oct.nexon.rocks/live/1bqdvpr9z8/gpsdhaqd2l/1163440.ts
 #EXTINF:-1 tvg-chno="174" tvg-id="InfosportPlus.fr" tvg-logo="https://raw.githubusercontent.com/tv-logo/tv-logos/main/countries/france/infosport-plus-fr.png" group-title="myCANAL SPORT FR",FR | INFOSPORT+ HD
 http://212.102.60.80/Infosport/index.m3u8
 #EXTINF:-1 tvg-id="" tvg-name="FR | L'EQUIPE 21" tvg-logo="https://thumb.canalplus.pro/http/unsafe/121x91/filters:quality(80)/img-hapi.canalplus.pro:80/ServiceImage/ImageID/44863403" group-title="myCANAL SPORT FR",FR | L'EQUIPE 21
