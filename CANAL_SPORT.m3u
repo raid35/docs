@@ -1,5 +1,5 @@
 #EXTINF:-1 tvg-name="|FR| CANAL+ SPORT 4 HD" tvg-logo="https://i.imgur.com/1Ikjjzo.png" group-title="myCANAL SPORT AF",AF | CANAL+ SPORT 4 HD
-http://oct.nexon.rocks/live/1bqdvpr9z8/gpsdhaqd2l/1163438.m3u8
+http://oct.nexon.rocks/live/1bqdvpr9z8/gpsdhaqd2l/1163438.ts
 #EXTINF:-1 tvg-id="dazn.fr" tvg-name="FR: DAZN HD" tvg-logo="https://safiafamily.com/uploads/family/germany/DAZN-1--Channel.png" group-title="France | Sport ",FR: DAZN HD
 http://81637.org:2052/live/ahemdtounsi/kGUYgg3V56N2/315835.m3u8
 http://81637.org:2052/live/ahemdtounsi/kGUYgg3V56N2/315836.m3u8
@@ -14,9 +14,9 @@ http://oct.nexon.rocks/live/1bqdvpr9z8/gpsdhaqd2l/1163432.ts
 #EXTINF:-1 tvg-name="|FR| CANAL+ SPORT 2 HD" tvg-logo="https://i.imgur.com/dSW77wl.png" group-title="myCANAL SPORT AF",AF | CANAL+ SPORT 2 HD
 http://oct.nexon.rocks/live/1bqdvpr9z8/gpsdhaqd2l/1163434.ts
 #EXTINF:-1 tvg-name="|FR| CANAL+ SPORT 3 HD" tvg-logo="https://i.imgur.com/HL2NrRi.png" group-title="myCANAL SPORT AF",AF | CANAL+ SPORT 3 HD
-http://01072.xyz:2086/live/INwtoxA1Y4/3723619676/294473.ts
-#EXTINF:-1 tvg-name="|FR| CANAL+ SPORT 4 HD" tvg-logo="https://i.imgur.com/1Ikjjzo.png" group-title="myCANAL SPORT AF",AF | CANAL+ SPORT 4 HD
 http://oct.nexon.rocks/live/1bqdvpr9z8/gpsdhaqd2l/1163436.ts
+#EXTINF:-1 tvg-name="|FR| CANAL+ SPORT 4 HD" tvg-logo="https://i.imgur.com/1Ikjjzo.png" group-title="myCANAL SPORT AF",AF | CANAL+ SPORT 4 HD
+http://oct.nexon.rocks/live/1bqdvpr9z8/gpsdhaqd2l/1163438.ts
 #EXTINF:-1 tvg-name="|FR| CANAL+ SPORT 5 HD" tvg-logo="https://i.imgur.com/szq4wBg.png" group-title="myCANAL SPORT AF",AF | CANAL+ SPORT 5 HD
 http://oct.nexon.rocks/live/1bqdvpr9z8/gpsdhaqd2l/1163440.ts
 #EXTINF:-1 tvg-chno="174" tvg-id="InfosportPlus.fr" tvg-logo="https://raw.githubusercontent.com/tv-logo/tv-logos/main/countries/france/infosport-plus-fr.png" group-title="myCANAL SPORT FR",FR | INFOSPORT+ HD
