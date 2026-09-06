@@ -1,6 +1,6 @@
 #EXTM3U
 #EXTINF:-1 tvg-id="TF1.fr" tvg-name="TF1 HD" tvg-logo="https://thumb.canalplus.pro/http/unsafe/121x91/filters:quality(80)/img-hapi.canalplus.pro:80/ServiceImage/ImageID/66746746" ggroup-title="TNT FR",FR | TF1 HD
-http://iptvnow.nl/live/53b18c7f3e/b991312911b5/506638.ts
+http://80.82.64.16:8080/maveniptv.tv/e8yvmG8um2yhhgsjhgdd22/2650
 #EXTINF:-1 tvg-id="TF1SeriesFilms.fr" tvg-name="TF1 SERIES FILMS HD" tvg-logo="https://thumb.canalplus.pro/http/unsafe/121x91/filters:quality(80)/canalplus-cdn.canal-plus.io/p1/channel/526/canal-ouah/CHN43FN/CHN43FN_526_20251024--y7o" group-title="TNT FR",FR | TF1 SERIES FILMS HD
 http://iptvnow.nl/live/53b18c7f3e/b991312911b5/506620.ts
 #EXTINF:-1 tvg-id="TMC.fr" tvg-name="TMC HD" tvg-logo="https://thumb.canalplus.pro/http/unsafe/121x91/filters:quality(80)/img-hapi.canalplus.pro:80/ServiceImage/ImageID/66747568" group-title="TNT FR",FR | TMC HD
@@ -8,21 +8,21 @@ http://iptvnow.nl/live/53b18c7f3e/b991312911b5/506628.ts
 #EXTINF:-1 tvg-id="TFX.fr" tvg-name="TFX HD" tvg-logo="https://thumb.canalplus.pro/http/unsafe/121x91/filters:quality(80)/img-hapi.canalplus.pro:80/ServiceImage/ImageID/66747551" group-title="TNT FR",FR | TFX HD
 http://iptvnow.nl/live/53b18c7f3e/b991312911b5/506627.ts
 #EXTINF:-1 tvg-id="France2.fr" tvg-name="FRANCE 2 HD" tvg-logo="https://thumb.canalplus.pro/http/unsafe/121x91/filters:quality(80)/img-hapi.canalplus.pro:80/ServiceImage/ImageID/67032119" group-title="TNT FR",FR | FRANCE 2 HD
-http://iptvnow.nl/live/53b18c7f3e/b991312911b5/506637.ts
+http://80.82.64.16:8080/maveniptv.tv/e8yvmG8um2yhhgsjhgdd22/2941
 #EXTINF:-1 tvg-id="France3.fr" tvg-name="FRANCE 3 HD" tvg-logo="https://thumb.canalplus.pro/http/unsafe/121x91/filters:quality(80)/img-hapi.canalplus.pro:80/ServiceImage/ImageID/67033022" group-title="TNT FR",FR | FRANCE 3 HD
-http://iptvnow.nl/live/53b18c7f3e/b991312911b5/506636.ts
+http://80.82.64.16:8080/maveniptv.tv/e8yvmG8um2yhhgsjhgdd22/115
 #EXTINF:-1 tvg-id="France4.fr" tvg-name="FRANCE 4 HD" tvg-logo="https://thumb.canalplus.pro/http/unsafe/121x91/filters:quality(80)/img-hapi.canalplus.pro:80/ServiceImage/ImageID/67033024" ggroup-title="TNT FR",FR | FRANCE 4 HD
-http://iptvnow.nl/live/53b18c7f3e/b991312911b5/506624.ts
+http://80.82.64.16:8080/maveniptv.tv/e8yvmG8um2yhhgsjhgdd22/2912
 #EXTINF:-1 tvg-id="France5.fr" tvg-name="FRANCE 5 HD" tvg-logo="https://thumb.canalplus.pro/http/unsafe/121x91/filters:quality(80)/img-hapi.canalplus.pro:80/ServiceImage/ImageID/67033026" group-title="TNT FR",FR | FRANCE 5 HD
-http://iptvnow.nl/live/53b18c7f3e/b991312911b5/506634.ts
+http://80.82.64.16:8080/maveniptv.tv/e8yvmG8um2yhhgsjhgdd22/117
 #EXTINF:-1 tvg-id="M6.fr" tvg-name="M6 HD" tvg-logo="https://thumb.canalplus.pro/http/unsafe/121x91/filters:quality(80)/canalplus-cdn.canal-plus.io/p1/channel/313/canal-ouah/CHN43FN/CHN43FN_M6_20220415" group-title="TNT FR",FR | M6 HD
-http://iptvnow.nl/live/53b18c7f3e/b991312911b5/506633.ts
+http://80.82.64.16:8080/live/maveniptv.tv/e8yvmG8um2yhhgsjhgdd22/1651.ts
 #EXTINF:-1 tvg-id="6ter.fr" tvg-name="6TER HD" tvg-logo="https://thumb.canalplus.pro/http/unsafe/121x91/filters:quality(80)/canalplus-cdn.canal-plus.io/p1/channel/521/canal-ouah/CHN43FN/CHN43FN_6TER_20220415" group-title="TNT FR",FR | 6TER HD
 http://iptvnow.nl/live/53b18c7f3e/b991312911b5/506618.ts
 #EXTINF:-1 tvg-id="W9.fr" tvg-name="W9 HD" tvg-logo="https://thumb.canalplus.pro/http/unsafe/121x91/filters:quality(80)/canalplus-cdn.canal-plus.io/p1/channel/296/canal-ouah/CHN43FN/CHN43FN_W9_20220415" group-title="TNT FR",FR | W9 HD
-http://iptvnow.nl/live/53b18c7f3e/b991312911b5/506629.ts
+http://80.82.64.16:8080/maveniptv.tv/e8yvmG8um2yhhgsjhgdd22/1641
 #EXTINF:-1 tvg-id="" tvg-name="FR | SÉRIE CLUB HD" tvg-logo="https://thumb.canalplus.pro/http/unsafe/121x91/filters:quality(80)/img-hapi.canalplus.pro:80/ServiceImage/ImageID/19132964" group-title="myCANAL CINEMA FR",FR | SÉRIE CLUB HD
-http://iptvnow.nl/live/53b18c7f3e/b991312911b5/506585.ts
+http://80.82.64.16:8080/maveniptv.tv/e8yvmG8um2yhhgsjhgdd22/53
 #EXTINF:-1 tvg-id="TF1.fr" tvg-name="parispremierere HD" tvg-logo="https://thumb.canalplus.pro/http/unsafe/%7BresolutionXY%7D/filters:quality(%7BimageQualityPercentage%7D)/canalplus-cdn.canal-plus.io/p1/channel/40081/canal-ouah/CHN43FN/CHN43FN__Paris_Premiere_20220415" group-title="myCANAL CINEMA FR",FR | parispremierere HD
 http://151.80.18.177:86/Paris_Premiere_HD/index.m3u8
 #EXTINF:-1 tvg-name="FR | myzenfr" tvg-logo="" group-title="REGIONALEA VIP FR",FR Motus La Chaîne 
