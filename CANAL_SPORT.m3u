@@ -4,21 +4,21 @@ http://iptvnow.nl/live/53b18c7f3e/b991312911b5/2127107.ts
 http://81637.org:2052/live/ahemdtounsi/kGUYgg3V56N2/315836.m3u8
 http://iptvnow.nl/live/53b18c7f3e/b991312911b5/2127106.ts
 #EXTINF:-1 tvg-id="CanalPlusSport.fr" tvg-name="CANAL+ SPORT FHD" tvg-logo="https://thumb.canalplus.pro/http/unsafe/160x120/filters:quality(80)/canalplus-cdn.canal-plus.io/p1/channel/40075/canal-ouah/CHN43FN/CHN43FN_177_29082023" group-title="myCANAL SPORT FR",FR | CANAL+ SPORT FHD
-http://iptvnow.nl/live/53b18c7f3e/b991312911b5/506557.ts
+http://activeiptv.sbs:80/play/live.php?mac=00:1B:79:18:A3:B2&stream=543383&extension=ts&play_token=xrQuk8acen
 #EXTINF:-1 tvg-id="canalplussport360.fr" tvg-name="CANAL+ SPORT360 FHD" tvg-logo="https://thumb.canalplus.pro/http/unsafe/121x91/filters:quality(80)/canalplus-cdn.canal-plus.io/p1/channel/83/canal-ouah/CHN43FN/CHN43FN_83_29082023" group-title="myCANAL SPORT FR",FR | CANAL+ SPORT360 FHD
-http://iptvnow.nl/live/53b18c7f3e/b991312911b5/1002841.ts
+http://activeiptv.sbs:80/play/live.php?mac=00:1B:79:18:A3:B2&stream=770797&extension=ts&play_token=GutkIkXf5e
 #EXTINF:-1 tvg-id="canalplusfoot.fr" tvg-name="CANAL+ FOOT FHD" tvg-logo="https://thumb.canalplus.pro/http/unsafe/160x120/filters:quality(80)/canalplus-cdn.canal-plus.io/p1/channel/40208/canal-ouah/CHN43FN/CHN43FN_19_29082023" group-title="SPORT FR",CANAL+ FOOT HD
-http://iptvnow.nl/live/53b18c7f3e/b991312911b5/506539.ts
+http://activeiptv.sbs:80/play/live.php?mac=00:1B:79:18:A3:B2&stream=770798&extension=ts&play_token=bSnDRj21uI
 #EXTINF:-1 tvg-name="|FR| CANAL+ SPORT 1 HD" tvg-logo="https://i.imgur.com/W7dLvdz.png" group-title="myCANAL SPORT AF",AF | CANAL+ SPORT 1 HD
-http://iptvnow.nl/live/53b18c7f3e/b991312911b5/355923.ts
+http://activeiptv.sbs:80/play/live.php?mac=00:1B:79:18:A3:B2&stream=901667&extension=ts&play_token=vjUPXcgbYI
 #EXTINF:-1 tvg-name="|FR| CANAL+ SPORT 2 HD" tvg-logo="https://i.imgur.com/dSW77wl.png" group-title="myCANAL SPORT AF",AF | CANAL+ SPORT 2 HD
-http://iptvnow.nl/live/53b18c7f3e/b991312911b5/355924.ts
+http://activeiptv.sbs:80/play/live.php?mac=00:1B:79:18:A3:B2&stream=901668&extension=ts&play_token=OdrOLTtgTm
 #EXTINF:-1 tvg-name="|FR| CANAL+ SPORT 3 HD" tvg-logo="https://i.imgur.com/HL2NrRi.png" group-title="myCANAL SPORT AF",AF | CANAL+ SPORT 3 HD
-http://oct.nexon.rocks/live/1bqdvpr9z8/gpsdhaqd2l/1163436.ts
+http://activeiptv.sbs:80/play/live.php?mac=00:1B:79:18:A3:B2&stream=901669&extension=ts&play_token=9FT7ababTK
 #EXTINF:-1 tvg-name="|FR| CANAL+ SPORT 4 HD" tvg-logo="https://i.imgur.com/1Ikjjzo.png" group-title="myCANAL SPORT AF",AF | CANAL+ SPORT 4 HD
 http://oct.nexon.rocks/live/1bqdvpr9z8/gpsdhaqd2l/1163438.ts
 #EXTINF:-1 tvg-name="|FR| CANAL+ SPORT 5 HD" tvg-logo="https://i.imgur.com/szq4wBg.png" group-title="myCANAL SPORT AF",AF | CANAL+ SPORT 5 HD
-http://iptvnow.nl/live/53b18c7f3e/b991312911b5/355927.ts
+http://activeiptv.sbs:80/play/live.php?mac=00:1B:79:18:A3:B2&stream=901671&extension=ts&play_token=M0Zpa7Ocac
 #EXTINF:-1 tvg-chno="174" tvg-id="InfosportPlus.fr" tvg-logo="https://raw.githubusercontent.com/tv-logo/tv-logos/main/countries/france/infosport-plus-fr.png" group-title="myCANAL SPORT FR",FR | INFOSPORT+ HD
 http://oct.nexon.rocks/live/1bqdvpr9z8/gpsdhaqd2l/964409.ts
 #EXTINF:-1 tvg-id="" tvg-name="FR | L'EQUIPE 21" tvg-logo="https://thumb.canalplus.pro/http/unsafe/121x91/filters:quality(80)/img-hapi.canalplus.pro:80/ServiceImage/ImageID/44863403" group-title="myCANAL SPORT FR",FR | L'EQUIPE 21
