@@ -4,42 +4,85 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Siksa TV Pro - Vivid Colors</title>
+    <!-- Shaka Player UI Engine -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/shaka-player/4.15.9/shaka-player.ui.min.js"></script>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/shaka-player/4.15.9/controls.min.css" rel="stylesheet">
     <style>
-        body, html { margin: 0; padding: 0; background: #000; width: 100%; height: 100%; overflow: hidden; }
-        .shaka-video-container { width: 100%; height: 100%; }
+        * { box-sizing: border-box; }
+        body, html { 
+            margin: 0; 
+            padding: 0; 
+            background: #000; 
+            width: 100%; 
+            height: 100%; 
+            overflow: hidden; 
+            font-family: system-ui, -apple-system, sans-serif;
+        }
+
+        .shaka-video-container { 
+            width: 100%; 
+            height: 100%; 
+        }
 
         video { 
             width: 100%; 
             height: 100%; 
             object-fit: contain;
-            filter: contrast(1.1) saturate(1.2) brightness(1.05);
+            filter: contrast(1.08) saturate(1.15) brightness(1.02);
             image-rendering: -webkit-optimize-contrast;
             image-rendering: crisp-edges;
         }
 
+        /* Custom Spinner Styling */
         .shaka-spinner-container {
-            width: 100% !important; height: 100% !important;
-            display: flex; justify-content: center; align-items: center;
+            width: 100% !important; 
+            height: 100% !important;
+            display: flex; 
+            justify-content: center; 
+            align-items: center;
         }
         .shaka-spinner {
-            width: 75px !important; height: 75px !important;
-            border-width: 6px !important;
+            width: 70px !important; 
+            height: 70px !important;
+            border-width: 5px !important;
             border-top-color: #ff6b35 !important;
         }
         
-        .shaka-bottom-controls { direction: ltr; padding-bottom: 20px; }
+        .shaka-bottom-controls { 
+            direction: ltr; 
+            padding-bottom: 15px; 
+        }
+
+        /* Error Overlay UI */
+        #error-overlay {
+            display: none;
+            position: absolute;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0, 0, 0, 0.85);
+            color: #fff;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            z-index: 100;
+            text-align: center;
+            padding: 20px;
+        }
+        #error-overlay h3 { margin: 0 0 10px 0; color: #ff4d4d; font-size: 1.4rem; }
+        #error-overlay p { margin: 0; color: #ccc; font-size: 1rem; }
     </style>
 </head>
 <body>
 
-    <div data-shaka-player-container class="shaka-video-container">
+    <div data-shaka-player-container class="shaka-video-container" id="player-container">
         <video id="dash-video" data-shaka-player autoplay crossorigin="anonymous" playsinline></video>
+        <div id="error-overlay">
+            <h3 id="error-title">خطأ في البث</h3>
+            <p id="error-message">تعذر تحميل القناة، يرجى المحاولة لاحقاً.</p>
+        </div>
     </div>
 
     <script>
-        const channelList = {
+        const CHANNEL_DATABASE = {
             "sps1": {
                 url: "https://sps1.starzplayarabia.com/out/v1/eee188845e9543699fd24e5a9890c6e2/index.mpd",
                 kid: "b253c726c24c7c94a3ddf9b1907e2c76",
@@ -77,7 +120,21 @@
             }
         };
 
+        function showError(title, msg) {
+            const overlay = document.getElementById('error-overlay');
+            document.getElementById('error-title').textContent = title;
+            document.getElementById('error-message').textContent = msg;
+            overlay.style.display = 'flex';
+        }
+
         async function initPlayer() {
+            shaka.polyfill.installAll();
+
+            if (!shaka.Player.isBrowserSupported()) {
+                showError('غير مدعوم', 'المتصفح الحالي لا يدعم تشغيل هذا النوع من البث.');
+                return;
+            }
+
             const video = document.getElementById('dash-video');
             const ui = video['ui'];
             const controls = ui.getControls();
@@ -85,27 +142,65 @@
 
             const params = new URLSearchParams(window.location.search);
             const channelId = params.get('id') || "sps1";
-            const channel = channelList[channelId];
+            const channel = CHANNEL_DATABASE[channelId];
 
-            if (!channel) return;
+            if (!channel) {
+                showError('قناة غير موجودة', 'لم يتم العثور على القناة المطلوبة.');
+                return;
+            }
 
+            // DRM Key Configuration
             const drmConfig = {};
             drmConfig[channel.kid] = channel.key;
 
+            // Advanced Engine Optimization
             player.configure({
-                drm: { clearKeys: drmConfig },
-                abr: { enabled: true, switchInterval: 1 },
+                drm: { 
+                    clearKeys: drmConfig 
+                },
+                manifest: {
+                    retryParameters: {
+                        maxAttempts: 3,
+                        baseDelay: 1000,
+                        backoffFactor: 2,
+                        fuzzFactor: 0.5
+                    }
+                },
+                abr: { 
+                    enabled: true, 
+                    switchInterval: 8,
+                    bandwidthUpgradeTarget: 0.85,
+                    bandwidthDowngradeTarget: 0.95,
+                    defaultBandwidthEstimate: 5000000 // 5 Mbps Initial Engine Target
+                },
                 streaming: {
-                    bufferingGoal: 45,
-                    rebufferingGoal: 2,
-                    lowLatencyEnabled: true
+                    bufferingGoal: 12,          // Fast Startup Target
+                    rebufferingGoal: 3,         // Low Stutter Recovery
+                    bufferBehind: 15,           // Garbage Collection Target
+                    lowLatencyEnabled: false,   // Disable Ultra Low Latency to Prevent Buffering
+                    safeSeekOffset: 5,
+                    stallEnabled: true,
+                    stallThreshold: 1,
+                    stallSkip: 0.1
                 }
             });
 
+            // Handle Engine Errors Dynamically
+            player.addEventListener('error', (event) => {
+                console.error('Shaka Engine Error:', event.detail);
+                if (event.detail.severity === shaka.util.Error.Severity.CRITICAL) {
+                    showError('خطأ في الاتصال', 'انقطع الاتصال بسيرفر البث أو انتهت صلاحية مفتاح القناة.');
+                }
+            });
+
+            // Load Video Stream
             try {
                 await player.load(channel.url);
+                // Enable Auto Play Resolution Fix
+                video.play().catch(() => {});
             } catch (e) { 
-                console.error('Load Error:', e); 
+                console.error('Playback Load Exception:', e);
+                showError('فشل التشغيل', 'تعذر جلب البث، تأكد من اتصال الإنترنت أو صلاحية المفتاح.');
             }
         }
 
