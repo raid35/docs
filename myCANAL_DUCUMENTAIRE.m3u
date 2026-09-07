@@ -1,30 +1,30 @@
 #EXTINF:-1 tvg-id="CanalPlusDocs.fr" tvg-name="CANAL+ DOCS HD " tvg-logo="https://thumb.canalplus.pro/http/unsafe/480x270/filters:quality(80)/canalplus-cdn.canal-plus.io/p1/list/csatald_chaine_cplusdocs_selection/canal-ouah/TITLELOGO/myCANAL_Logo_Fiche_Programme_1920x1080-2024-10-07T155431.542-eVsi" group-title="DUCUMENTAIRE FR",FR | CANAL+ DOCS HD
-http://activeiptv.sbs:80/play/live.php?mac=00:1B:79:18:A3:B2&stream=609330&extension=ts&play_token=vKCO5mnOYP
+http://activeiptv.sbs:80/play/live.php?mac=00:1B:79:18:A3:B2&stream=609330&extension=ts
 #EXTINF:-1 tvg-name="FR | TREK" tvg-logo="https://www.trekhd.tv/upload/media/trek-6012bd10e5f77.png" group-title="DUCUMENTAIRE FR",FR | TREK
-http://activeiptv.sbs:80/play/live.php?mac=00:1B:79:18:A3:B2&stream=629707&extension=ts&play_token=hYilJurygA
+http://activeiptv.sbs:80/play/live.php?mac=00:1B:79:18:A3:B2&stream=629707&extension=ts
 #EXTINF:-1 tvg-id="animaux.fr" tvg-name="ANIMAUX HD" tvg-logo="https://thumb.canalplus.pro/http/unsafe/121x91/filters:quality(80)/img-hapi.canalplus.pro:80/ServiceImage/ImageID/54239442" group-title="DUCUMENTAIRE FR",FR | ANIMAUX HD
-http://activeiptv.sbs:80/play/live.php?mac=00:1B:79:18:A3:B2&stream=554045&extension=ts&play_token=BzYY8sABCx
+http://activeiptv.sbs:80/play/live.php?mac=00:1B:79:18:A3:B2&stream=554045&extension=ts
 #EXTINF:-1 tvg-id="ushuaiatv.fr" tvg-name="USHUAÏA TV HD" tvg-logo="https://thumb.canalplus.pro/http/unsafe/121x91/filters:quality(80)/canalplus-cdn.canal-plus.io/p1/channel/142/canal-ouah/CHN43FN/CHN43FN_142_20211018" group-title="FRANCE HD",USHUAÏA TV HD
-http://activeiptv.sbs:80/play/live.php?mac=00:1B:79:18:A3:B2&stream=554036&extension=ts&play_token=A7FQ4vYBYA
+http://activeiptv.sbs:80/play/live.php?mac=00:1B:79:18:A3:B2&stream=554036&extension=ts
 #EXTINF:-1 tvg-id="chassepeche.fr" tvg-name="CHASSE & PECHE HD" tvg-logo="https://thumb.canalplus.pro/http/unsafe/121x91/filters:quality(80)/img-hapi.canalplus.pro:80/ServiceImage/ImageID/44978855" group-title="FRANCE HD",CHASSE & PECHE HD
-http://activeiptv.sbs:80/play/live.php?mac=00:1B:79:18:A3:B2&stream=554031&extension=ts&play_token=CBgNQAg15J
+http://activeiptv.sbs:80/play/live.php?mac=00:1B:79:18:A3:B2&stream=554031&extension=ts
 #EXTINF:-1 tvg-id="ScienceEtVieTV.fr" tvg-name="SCIENCE & VIE TV HD" tvg-logo="https://www.science-et-vie.tv/upload/media/svtv-600af7be54ccb.png" group-title="DUCUMENTAIRE FR",FR | SCIENCE & VIE TV HD
 http://80.82.64.16:8080/maveniptv.tv/e8yvmG8um2yhhgsjhgdd22/912
 #EXTINF:-1 tvg-id="seasons.fr" tvg-name="SEASONS HD" tvg-logo="https://thumb.canalplus.pro/http/unsafe/121x91/filters:quality(80)/canalplus-cdn.canal-plus.io/p1/channel/577/canal-ouah/CHN43FN/CHN43FN_577_20231128-rzna" group-title="FRANCE HD",SEASONS HD
-http://activeiptv.sbs:80/play/live.php?mac=00:1B:79:18:A3:B2&stream=543555&extension=ts&play_token=PvuJmlc94D
+http://activeiptv.sbs:80/play/live.php?mac=00:1B:79:18:A3:B2&stream=543555&extension=ts
 #EXTINF:-1 tvg-id="discoverychannel.fr" tvg-name="DISCOVERY HD" tvg-logo="https://thumb.canalplus.pro/http/unsafe/121x91/filters:quality(80)/canalplus-cdn.canal-plus.io/p1/channel/174/canal-ouah/CHN43FN/CHN43FN_174_20240611-RzWh" group-title="DUCUMENTAIRE FR",FR | DISCOVERY HD
-http://activeiptv.sbs:80/play/live.php?mac=00:1B:79:18:A3:B2&stream=543560&extension=ts&play_token=dp6AJLcpoN
+http://activeiptv.sbs:80/play/live.php?mac=00:1B:79:18:A3:B2&stream=543560&extension=ts
 #EXTINF:-1 tvg-id="DiscoveryInvestigation.fr" tvg-name="DISCOVERY INVESTIGATION HD" tvg-logo="https://thumb.canalplus.pro/http/unsafe/121x91/filters:quality(80)/canalplus-cdn.canal-plus.io/p1/channel/1098/canal-ouah/CHN43FN/CHN43FN_1098_20240611-gw0t" group-title="DUCUMENTAIRE FR",FR | DISCOVERY INVESTIGATION HD
-http://activeiptv.sbs:80/play/live.php?mac=00:1B:79:18:A3:B2&stream=554032&extension=ts&play_token=f2R4BRKsWz
+http://activeiptv.sbs:80/play/live.php?mac=00:1B:79:18:A3:B2&stream=554032&extension=ts
 #EXTINF:-1 tvg-id="NatGeoWild.fr" tvg-name="NAT GEO WILD HD" tvg-logo="https://i5.satexpat.com/cha/nl/nat-geo-wild-95x34.png" group-title="DUCUMENTAIRE FR",FR | NAT GEO WILD HD
 http://iptvnow.nl/live/53b18c7f3e/b991312911b5/507334.ts
 #EXTINF:-1 tvg-id="natgeo.fr" tvg-name="NAT GEO HD" tvg-logo="https://i5.satexpat.com/cha/be/nat-geo-95x25.png" group-title="DUCUMENTAIRE FR",FR | NAT GEO HD
-http://activeiptv.sbs:80/play/live.php?mac=00:1B:79:18:A3:B2&stream=543556&extension=ts&play_token=dWyO8rZFdJ
+http://activeiptv.sbs:80/play/live.php?mac=00:1B:79:18:A3:B2&stream=543556&extension=ts
 #EXTINF:-1 tvg-id="planeteplus.fr" tvg-name="PLANETE+ HD" tvg-logo="https://thumb.canalplus.pro/http/unsafe/121x91/filters:quality(80)/img-hapi.canalplus.pro:80/ServiceImage/ImageID/4492627" group-title="DUCUMENTAIRE FR",FR | PLANETE+ HD
-http://activeiptv.sbs:80/play/live.php?mac=00:1B:79:18:A3:B2&stream=554044&extension=ts&play_token=RfRwyLK8pS
+http://activeiptv.sbs:80/play/live.php?mac=00:1B:79:18:A3:B2&stream=554044&extension=ts
 #EXTINF:-1 tvg-id="PlaneteAction.fr" tvg-name="PLANETE+ AVENTURE HD" tvg-logo="https://thumb.canalplus.pro/http/unsafe/121x91/filters:quality(80)/canalplus-cdn.canal-plus.io/p1/channel/588/canal-ouah/CHN43FN/CHN43FN_588_120122" group-title="DUCUMENTAIRE FR",FR | PLANETE+ AVENTURE HD
-http://activeiptv.sbs:80/play/live.php?mac=00:1B:79:18:A3:B2&stream=543549&extension=ts&play_token=TRUMqn0EZL
+http://activeiptv.sbs:80/play/live.php?mac=00:1B:79:18:A3:B2&stream=543549&extension=ts
 #EXTINF:-1 tvg-id="planetecrimeinvestigation.fr" tvg-name="PLANETE+ CRIME HD" tvg-logo="https://thumb.canalplus.pro/http/unsafe/121x91/filters:quality(80)/canalplus-cdn.canal-plus.io/p1/channel/587/canal-ouah/CHN43FN/CHN43FN_587_120122" group-title="DUCUMENTAIRE FR",FR | PLANETE+ CRIME HD
-http://activeiptv.sbs:80/play/live.php?mac=00:1B:79:18:A3:B2&stream=554043&extension=ts&play_token=CrrxIW6teL
+http://activeiptv.sbs:80/play/live.php?mac=00:1B:79:18:A3:B2&stream=554043&extension=ts
 #EXTINF:-1 tvg-id="histoire.fr" tvg-name="HISTOIRE TV HD" tvg-logo="https://thumb.canalplus.pro/http/unsafe/121x91/filters:quality(80)/canalplus-cdn.canal-plus.io/p1/channel/550/canal-ouah/CHN43FN/CHN43FN_550_20211018" group-title="DUCUMENTAIRE FR",FR | HISTOIRE TV HD
-http://activeiptv.sbs:80/play/live.php?mac=00:1B:79:18:A3:B2&stream=543570&extension=ts&play_token=8UAfsWLSZg
+http://activeiptv.sbs:80/play/live.php?mac=00:1B:79:18:A3:B2&stream=543570&extension=ts
