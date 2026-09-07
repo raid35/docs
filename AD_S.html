@@ -3,8 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Siksa TV Pro - Vivid Colors</title>
-    <!-- Shaka Player UI Engine -->
+    <title>Siksa TV Pro - Google TV Android 14 Edition</title>
+    <!-- Shaka Player Engine & UI -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/shaka-player/4.15.9/shaka-player.ui.min.js"></script>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/shaka-player/4.15.9/controls.min.css" rel="stylesheet">
     <style>
@@ -17,6 +17,7 @@
             height: 100%; 
             overflow: hidden; 
             font-family: system-ui, -apple-system, sans-serif;
+            user-select: none;
         }
 
         .shaka-video-container { 
@@ -28,12 +29,10 @@
             width: 100%; 
             height: 100%; 
             object-fit: contain;
-            filter: contrast(1.08) saturate(1.15) brightness(1.02);
-            image-rendering: -webkit-optimize-contrast;
-            image-rendering: crisp-edges;
+            /* تم حذف CSS Filters لتمكين الـ HDR وتخفيف العبء عن المعالج */
         }
 
-        /* Custom Spinner Styling */
+        /* Custom TV Spinner */
         .shaka-spinner-container {
             width: 100% !important; 
             height: 100% !important;
@@ -42,23 +41,24 @@
             align-items: center;
         }
         .shaka-spinner {
-            width: 70px !important; 
-            height: 70px !important;
-            border-width: 5px !important;
+            width: 80px !important; 
+            height: 80px !important;
+            border-width: 6px !important;
             border-top-color: #ff6b35 !important;
         }
         
+        /* Google TV Remote Safe Controls */
         .shaka-bottom-controls { 
             direction: ltr; 
-            padding-bottom: 15px; 
+            padding-bottom: 30px; 
         }
 
-        /* Error Overlay UI */
+        /* TV Dynamic Error Overlay */
         #error-overlay {
             display: none;
             position: absolute;
             top: 0; left: 0; width: 100%; height: 100%;
-            background: rgba(0, 0, 0, 0.85);
+            background: rgba(0, 0, 0, 0.9);
             color: #fff;
             flex-direction: column;
             justify-content: center;
@@ -67,8 +67,8 @@
             text-align: center;
             padding: 20px;
         }
-        #error-overlay h3 { margin: 0 0 10px 0; color: #ff4d4d; font-size: 1.4rem; }
-        #error-overlay p { margin: 0; color: #ccc; font-size: 1rem; }
+        #error-overlay h3 { margin: 0 0 10px 0; color: #ff4d4d; font-size: 2rem; }
+        #error-overlay p { margin: 0; color: #ccc; font-size: 1.2rem; }
     </style>
 </head>
 <body>
@@ -149,57 +149,70 @@
                 return;
             }
 
-            // DRM Key Configuration
+            // Configuration for Google TV / Android 14 & ClearKey DRM
             const drmConfig = {};
             drmConfig[channel.kid] = channel.key;
 
-            // Advanced Engine Optimization
             player.configure({
                 drm: { 
                     clearKeys: drmConfig 
                 },
                 manifest: {
+                    dash: {
+                        ignoreMinBufferTime: true
+                    },
                     retryParameters: {
-                        maxAttempts: 3,
+                        maxAttempts: 4,
                         baseDelay: 1000,
-                        backoffFactor: 2,
-                        fuzzFactor: 0.5
+                        backoffFactor: 1.5
                     }
+                },
+                mediaSource: {
+                    forceTranscode: false
                 },
                 abr: { 
                     enabled: true, 
-                    switchInterval: 8,
+                    switchInterval: 10,
                     bandwidthUpgradeTarget: 0.85,
                     bandwidthDowngradeTarget: 0.95,
-                    defaultBandwidthEstimate: 5000000 // 5 Mbps Initial Engine Target
+                    defaultBandwidthEstimate: 8000000 // Target higher quality bitrate for 4K TV screens
                 },
                 streaming: {
-                    bufferingGoal: 12,          // Fast Startup Target
-                    rebufferingGoal: 3,         // Low Stutter Recovery
-                    bufferBehind: 15,           // Garbage Collection Target
-                    lowLatencyEnabled: false,   // Disable Ultra Low Latency to Prevent Buffering
+                    bufferingGoal: 15,          
+                    rebufferingGoal: 4,         
+                    bufferBehind: 10,           
+                    lowLatencyEnabled: false,   
                     safeSeekOffset: 5,
                     stallEnabled: true,
-                    stallThreshold: 1,
+                    stallThreshold: 2,
                     stallSkip: 0.1
                 }
             });
 
-            // Handle Engine Errors Dynamically
+            // Handle Error Signals
             player.addEventListener('error', (event) => {
-                console.error('Shaka Engine Error:', event.detail);
                 if (event.detail.severity === shaka.util.Error.Severity.CRITICAL) {
                     showError('خطأ في الاتصال', 'انقطع الاتصال بسيرفر البث أو انتهت صلاحية مفتاح القناة.');
+                }
+            });
+
+            // TV Remote DPAD / Key Event Handler
+            window.addEventListener('keydown', (e) => {
+                switch(e.keyCode) {
+                    case 179: // MediaPlayPause
+                    case 19:  // Pause
+                    case 85:  // Play
+                        if (video.paused) video.play();
+                        else video.pause();
+                        break;
                 }
             });
 
             // Load Video Stream
             try {
                 await player.load(channel.url);
-                // Enable Auto Play Resolution Fix
                 video.play().catch(() => {});
             } catch (e) { 
-                console.error('Playback Load Exception:', e);
                 showError('فشل التشغيل', 'تعذر جلب البث، تأكد من اتصال الإنترنت أو صلاحية المفتاح.');
             }
         }
