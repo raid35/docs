@@ -1,8 +1,8 @@
 #EXTINF:-1 tvg-id="dazn.fr" tvg-name="FR: DAZN HD" tvg-logo="https://safiafamily.com/uploads/family/germany/DAZN-1--Channel.png" group-title="France | Sport ",FR: DAZN HD
 http://81637.org:2052/live/ahemdtounsi/kGUYgg3V56N2/315835.m3u8
-http://iptvnow.nl/live/53b18c7f3e/b991312911b5/2127107.ts
+http://79.132.130.96:8080/live/uaQ6nnnkehR6/etsspXmbhbdA/312698.ts
 http://81637.org:2052/live/ahemdtounsi/kGUYgg3V56N2/315836.m3u8
-http://iptvnow.nl/live/53b18c7f3e/b991312911b5/2127106.ts
+http://79.132.130.96:8080/live/uaQ6nnnkehR6/etsspXmbhbdA/312699.ts
 #EXTINF:-1 tvg-id="CanalPlusSport.fr" tvg-name="CANAL+ SPORT FHD" tvg-logo="https://thumb.canalplus.pro/http/unsafe/160x120/filters:quality(80)/canalplus-cdn.canal-plus.io/p1/channel/40075/canal-ouah/CHN43FN/CHN43FN_177_29082023" group-title="myCANAL SPORT FR",FR | CANAL+ SPORT FHD
 http://vip.sibfungold.org:8080/live/gazi2po2/@RoFdf1tble@QP588zr7dj@/49208.ts
 #EXTINF:-1 tvg-id="canalplussport360.fr" tvg-name="CANAL+ SPORT360 FHD" tvg-logo="https://thumb.canalplus.pro/http/unsafe/121x91/filters:quality(80)/canalplus-cdn.canal-plus.io/p1/channel/83/canal-ouah/CHN43FN/CHN43FN_83_29082023" group-title="myCANAL SPORT FR",FR | CANAL+ SPORT360 FHD
@@ -12,13 +12,13 @@ http://vip.sibfungold.org:8080/live/gazi2po2/@RoFdf1tble@QP588zr7dj@/54658.ts
 #EXTINF:-1 tvg-name="|FR| CANAL+ SPORT 1 HD" tvg-logo="https://i.imgur.com/W7dLvdz.png" group-title="myCANAL SPORT AF",AF | CANAL+ SPORT 1 HD
 http://activeiptv.sbs:80/play/live.php?mac=00:1B:79:18:A3:B2&stream=901667&extension=ts
 #EXTINF:-1 tvg-name="|FR| CANAL+ SPORT 2 HD" tvg-logo="https://i.imgur.com/dSW77wl.png" group-title="myCANAL SPORT AF",AF | CANAL+ SPORT 2 HD
-http://activeiptv.sbs:80/play/live.php?mac=00:1B:79:18:A3:B2&stream=901668&extension=ts
+http://79.132.130.96:8080/live/uaQ6nnnkehR6/etsspXmbhbdA/157702.ts
 #EXTINF:-1 tvg-name="|FR| CANAL+ SPORT 3 HD" tvg-logo="https://i.imgur.com/HL2NrRi.png" group-title="myCANAL SPORT AF",AF | CANAL+ SPORT 3 HD
-http://activeiptv.sbs:80/play/live.php?mac=00:1B:79:18:A3:B2&stream=901669&extension=ts
+http://79.132.130.96:8080/live/uaQ6nnnkehR6/etsspXmbhbdA/157699.ts
 #EXTINF:-1 tvg-name="|FR| CANAL+ SPORT 4 HD" tvg-logo="https://i.imgur.com/1Ikjjzo.png" group-title="myCANAL SPORT AF",AF | CANAL+ SPORT 4 HD
-http://oct.nexon.rocks/live/1bqdvpr9z8/gpsdhaqd2l/1163438.ts
+http://79.132.130.96:8080/live/uaQ6nnnkehR6/etsspXmbhbdA/157700.ts
 #EXTINF:-1 tvg-name="|FR| CANAL+ SPORT 5 HD" tvg-logo="https://i.imgur.com/szq4wBg.png" group-title="myCANAL SPORT AF",AF | CANAL+ SPORT 5 HD
-http://activeiptv.sbs:80/play/live.php?mac=00:1B:79:18:A3:B2&stream=901671&extension=ts
+http://79.132.130.96:8080/live/uaQ6nnnkehR6/etsspXmbhbdA/157703.ts
 #EXTINF:-1 tvg-chno="174" tvg-id="InfosportPlus.fr" tvg-logo="https://raw.githubusercontent.com/tv-logo/tv-logos/main/countries/france/infosport-plus-fr.png" group-title="myCANAL SPORT FR",FR | INFOSPORT+ HD
 http://oct.nexon.rocks/live/1bqdvpr9z8/gpsdhaqd2l/964409.ts
 #EXTINF:-1 tvg-id="" tvg-name="FR | L'EQUIPE 21" tvg-logo="https://thumb.canalplus.pro/http/unsafe/121x91/filters:quality(80)/img-hapi.canalplus.pro:80/ServiceImage/ImageID/44863403" group-title="myCANAL SPORT FR",FR | L'EQUIPE 21
