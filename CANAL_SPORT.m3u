@@ -12,13 +12,13 @@ http://vip.sibfungold.org:8080/live/gazi2po2/@RoFdf1tble@QP588zr7dj@/54658.ts
 #EXTINF:-1 tvg-name="|FR| CANAL+ SPORT 1 HD" tvg-logo="https://i.imgur.com/W7dLvdz.png" group-title="myCANAL SPORT AF",AF | CANAL+ SPORT 1 HD
 http://activeiptv.sbs:80/play/live.php?mac=00:1B:79:18:A3:B2&stream=901667&extension=ts
 #EXTINF:-1 tvg-name="|FR| CANAL+ SPORT 2 HD" tvg-logo="https://i.imgur.com/dSW77wl.png" group-title="myCANAL SPORT AF",AF | CANAL+ SPORT 2 HD
-http://79.132.130.96:8080/live/uaQ6nnnkehR6/etsspXmbhbdA/157702.ts
+http://activeiptv.sbs:80/play/live.php?mac=00:1B:79:18:A3:B2&stream=901668&extension=ts
 #EXTINF:-1 tvg-name="|FR| CANAL+ SPORT 3 HD" tvg-logo="https://i.imgur.com/HL2NrRi.png" group-title="myCANAL SPORT AF",AF | CANAL+ SPORT 3 HD
-http://79.132.130.96:8080/live/uaQ6nnnkehR6/etsspXmbhbdA/157699.ts
+http://activeiptv.sbs:80/play/live.php?mac=00:1B:79:18:A3:B2&stream=901669&extension=ts
 #EXTINF:-1 tvg-name="|FR| CANAL+ SPORT 4 HD" tvg-logo="https://i.imgur.com/1Ikjjzo.png" group-title="myCANAL SPORT AF",AF | CANAL+ SPORT 4 HD
-http://79.132.130.96:8080/live/uaQ6nnnkehR6/etsspXmbhbdA/157700.ts
+http://activeiptv.sbs:80/play/live.php?mac=00:1B:79:18:A3:B2&stream=901670&extension=ts
 #EXTINF:-1 tvg-name="|FR| CANAL+ SPORT 5 HD" tvg-logo="https://i.imgur.com/szq4wBg.png" group-title="myCANAL SPORT AF",AF | CANAL+ SPORT 5 HD
-http://79.132.130.96:8080/live/uaQ6nnnkehR6/etsspXmbhbdA/157703.ts
+http://activeiptv.sbs:80/play/live.php?mac=00:1B:79:18:A3:B2&stream=901671&extension=ts
 #EXTINF:-1 tvg-chno="174" tvg-id="InfosportPlus.fr" tvg-logo="https://raw.githubusercontent.com/tv-logo/tv-logos/main/countries/france/infosport-plus-fr.png" group-title="myCANAL SPORT FR",FR | INFOSPORT+ HD
 http://oct.nexon.rocks/live/1bqdvpr9z8/gpsdhaqd2l/964409.ts
 #EXTINF:-1 tvg-id="" tvg-name="FR | L'EQUIPE 21" tvg-logo="https://thumb.canalplus.pro/http/unsafe/121x91/filters:quality(80)/img-hapi.canalplus.pro:80/ServiceImage/ImageID/44863403" group-title="myCANAL SPORT FR",FR | L'EQUIPE 21
