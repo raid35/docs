@@ -1,25 +1,25 @@
 #EXTM3U
 #EXTINF:-1 tvg-id="CANALplus.fr" tvg-name="CANAL+ 4K UHD" tvg-logo="https://thumb.canalplus.pro/http/unsafe/160x120/filters:quality(80)/canalplus-cdn.canal-plus.io/p1/channel/40052/canal-ouah/CHN43FN/CHN43FN_301_29082023" group-title="myCANAL CINEMA FR",FR | CANAL+ 4K UHD
-http://blue4k.net:8080/live/0016232653391/as2019/578671.ts
+http://81285-bills.cdn-o2.me/live/5cab117768/d59b8adcbec6/543471.ts
 #EXTINF:-1 tvg-id="" tvg-name="FR | CANAL+ CINEMA" tvg-logo="https://thumb.canalplus.pro/http/unsafe/160x120/filters:quality(80)/canalplus-cdn.canal-plus.io/p1/channel/40011/canal-ouah/CHN43FN/CHN43FN_198_29082023" group-title="myCANAL CINEMA FR",FR | CANAL+ CINEMA
-http://blue4k.net:8080/live/0016232653391/as2019/578667.ts
+http://81285-bills.cdn-o2.me/live/5cab117768/d59b8adcbec6/543472.ts
 #EXTINF:-1 tvg-id="canalpluskids.fr" tvg-name="CANAL+ KIDS HD " tvg-logo="https://thumb.canalplus.pro/http/unsafe/160x120/filters:quality(80)/canalplus-cdn.canal-plus.io/p1/channel/40183/canal-ouah/CHN43FN/CHN43FN_259_29082023" group-title="myCANAL CINEMA FR",FR | CANAL+ KIDS HD
-http://blue4k.net:8080/live/0016232653391/as2019/578670.ts
+http://81285-bills.cdn-o2.me/live/5cab117768/d59b8adcbec6/543476.ts
 #EXTINF:-1 tvg-id="CanalPlusBoxOffice.fr" tvg-name="|FR| CANAL+ BOX OFFICE FHD+ (Resolution Exclusive)" tvg-logo="https://i.imgur.com/VgFbZDF.png" group-title="myCANAL CINEMA FR",FR | CANAL+ BOX OFFICE FHD
-http://blue4k.net:8080/live/0016232653391/as2019/578666.ts
+http://81285-bills.cdn-o2.me/live/5cab117768/d59b8adcbec6/960978.ts
 #EXTINF:-1 tvg-id="CanalPlusGrandEcran.fr" tvg-name="CANAL+ GRAND ECRAN HD" tvg-logo="https://thumb.canalplus.pro/http/unsafe/121x91/filters:quality(80)/canalplus-cdn.canal-plus.io/p1/channel/900/canal-ouah/CHN43FN/CHN43FN_900_29082023" group-title="myCANAL CINEMA FR",FR | CANAL+ GRAND ECRAN HD
-http://mybirdhouses.cc/live/uAgg03by/cPfz8Fz/393369.m3u8
+http://81285-bills.cdn-o2.me/live/5cab117768/d59b8adcbec6/845367.ts
 #EXTINF:-1 tvg-id="cineplusclassic.fr" tvg-name="CINE+ CLASSIC  HD" tvg-logo="https://thumb.canalplus.pro/http/unsafe/121x91/filters:quality(80)/canalplus-cdn.canal-plus.io/p1/channel/531/canal-ouah/CHN43FN/CHN43FN_531_20240703-2TQN" group-title="myCANAL CINEMA FR",FR | CINE+ CLASSIC  HD
-http://blue4k.net:8080/live/0016232653391/as2019/578678.ts
+http://81285-bills.cdn-o2.me/live/5cab117768/d59b8adcbec6/576837.ts
 #EXTINF:-1 tvg-id="CinePlusEmotion.fr" tvg-name="CINE+ EMOTION HD" tvg-logo="https://thumb.canalplus.pro/http/unsafe/121x91/filters:quality(80)/canalplus-cdn.canal-plus.io/p1/channel/396/canal-ouah/CHN43FN/CHN43FN_396_20240703-ziX9" group-title="myCANAL CINEMA FR",FR | CINE+ EMOTION HD
-http://blue4k.net:8080/live/0016232653391/as2019/578679.ts
+http://81285-bills.cdn-o2.me/live/5cab117768/d59b8adcbec6/543482.ts
 #EXTINF:-1 tvg-id="CinePlusFamiz.fr" tvg-name="CINE+ FAMILY HD" tvg-logo="https://thumb.canalplus.pro/http/unsafe/121x91/filters:quality(80)/canalplus-cdn.canal-plus.io/p1/channel/533/canal-ouah/CHN43FN/CHN43FN_533_20240703-hEX8" group-title="myCANAL CINEMA FR",FR | CINE+ FAMILY HD
-http://blue4k.net:8080/live/0016232653391/as2019/578680.ts
+http://81285-bills.cdn-o2.me/live/5cab117768/d59b8adcbec6/1129573.ts
 #EXTINF:-1 tvg-id="CinePlusFrisson.fr" tvg-name="CINE+ FRISSON HD" tvg-logo="https://thumb.canalplus.pro/http/unsafe/121x91/filters:quality(80)/canalplus-cdn.canal-plus.io/p1/channel/398/canal-ouah/CHN43FN/CHN43FN_398_20240703--MGY" group-title="myCANAL CINEMA FR",FR | CINE+ FRISSON HD
-http://blue4k.net:8080/live/0016232653391/as2019/578682.ts
+http://81285-bills.cdn-o2.me/live/5cab117768/d59b8adcbec6/543484.ts
 #EXTINF:-1 tvg-id="CinePlusClub.fr" tvg-name="CINE+ FESTIVAL HD" tvg-logo="https://thumb.canalplus.pro/http/unsafe/121x91/filters:quality(80)/canalplus-cdn.canal-plus.io/p1/channel/532/canal-ouah/CHN43FN/CHN43FN_532_20240703-kAx_" group-title="myCANAL CINEMA FR",FR | CINE+ FESTIVAL HD
-http://blue4k.net:8080/live/0016232653391/as2019/578681.ts
+http://81285-bills.cdn-o2.me/live/5cab117768/d59b8adcbec6/543486.ts
 #EXTINF:-1 tvg-id="" tvg-name="Ciné+ OCS UHD FR" tvg-logo="http://138.199.27.237:8080/0tv_logo/5065.png" group-title="myCANAL CINEMA FR",FR Ciné+ OCS 
-http://blue4k.net:8080/live/0016232653391/as2019/578757.ts
+http://81285-bills.cdn-o2.me/live/5cab117768/d59b8adcbec6/543480.ts
 #EXTINF:-1 tvg-id="" tvg-name="OCS Go Cinéma 4 HD FR" tvg-logo="http://138.199.27.237:8080/FRANCE/OCSGO.png" group-title="myCANAL CINEMA FR",FR,OCS Go Cinéma 4 
-http://mybirdhouses.cc/live/uAgg03by/cPfz8Fz/393227.m3u8
+http://81285-bills.cdn-o2.me/live/5cab117768/d59b8adcbec6/543488.ts
