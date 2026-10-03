@@ -1,20 +1,20 @@
 #EXTM3U
 #EXTINF:-1 tvg-ID="" tvg-name="|FR| CANAL PLAY 1 HD" tvg-logo="http://haphead.com/wp-content/uploads/2015/05/canalplayinfinity-300x300.png" group-title="BOUQUET  FRANCAIS",|FR| CANAL PLAY 1 HD
-http://core.itsall.pro/live/megapeer/PQubhxj8KGGKSLPAKS/256570.ts
+http://core.itsall.pro/live/megapeer/PQubhxj8KGGKSLPAKS/256570.m3u8
 #EXTINF:-1 tvg-ID="" tvg-name="|FR| CANAL PLAY 2 HD" tvg-logo="http://haphead.com/wp-content/uploads/2015/05/canalplayinfinity-300x300.png" group-title="BOUQUET  FRANCAIS",|FR| CANAL PLAY 2 HD
-http://core.itsall.pro/live/megapeer/PQubhxj8KGGKSLPAKS/256571.ts
+http://core.itsall.pro/live/megapeer/PQubhxj8KGGKSLPAKS/256571.m3u8
 #EXTINF:-1 tvg-ID="" tvg-name="|FR| CANAL PLAY 3 HD" tvg-logo="http://haphead.com/wp-content/uploads/2015/05/canalplayinfinity-300x300.png" group-title="BOUQUET  FRANCAIS",|FR| CANAL PLAY 3 HD
-http://core.itsall.pro/live/megapeer/PQubhxj8KGGKSLPAKS/256572.ts
+http://core.itsall.pro/live/megapeer/PQubhxj8KGGKSLPAKS/256572.m3u8
 #EXTINF:-1 tvg-ID="" tvg-name="|FR| CANAL PLAY 4 HD" tvg-logo="http://haphead.com/wp-content/uploads/2015/05/canalplayinfinity-300x300.png" group-title="BOUQUET  FRANCAIS",|FR| CANAL PLAY 4 HD
-http://core.itsall.pro/live/megapeer/PQubhxj8KGGKSLPAKS/256576.ts
+http://core.itsall.pro/live/megapeer/PQubhxj8KGGKSLPAKS/256576.m3u8
 #EXTINF:-1 tvg-ID="" tvg-name="|FR| CANAL PLAY 5 HD" tvg-logo="http://haphead.com/wp-content/uploads/2015/05/canalplayinfinity-300x300.png" group-title="BOUQUET  FRANCAIS",|FR| CANAL PLAY 5 HD
-http://core.itsall.pro/live/megapeer/PQubhxj8KGGKSLPAKS/256577.ts
+http://core.itsall.pro/live/megapeer/PQubhxj8KGGKSLPAKS/256577.m3u8
 #EXTINF:-1 tvg-ID="" tvg-name="|FR| CANAL PLAY 6 HD" tvg-logo="http://haphead.com/wp-content/uploads/2015/05/canalplayinfinity-300x300.png" group-title="BOUQUET  FRANCAIS",|FR| CANAL PLAY 6 HD
-http://core.itsall.pro/live/megapeer/PQubhxj8KGGKSLPAKS/256578.ts
+http://core.itsall.pro/live/megapeer/PQubhxj8KGGKSLPAKS/256578.m3u8
 #EXTINF:-1 tvg-ID="" tvg-name="|FR| A LA CARTE 1 HD" tvg-logo="http://dvb.oppserver.net/unix/xbmc/addons/vdr/stationlogos/a%20la%20carte.png" group-title="BOUQUET  FRANCAIS",|FR| A LA CARTE 1 HD
-http://core.itsall.pro/live/megapeer/PQubhxj8KGGKSLPAKS/261037.ts
+http://core.itsall.pro/live/megapeer/PQubhxj8KGGKSLPAKS/261037.m3u8
 #EXTINF:-1 tvg-ID="" tvg-name="|FR| A LA CARTE 3 HD" tvg-logo="http://dvb.oppserver.net/unix/xbmc/addons/vdr/stationlogos/a%20la%20carte.png" group-title="BOUQUET  FRANCAIS",|FR| A LA CARTE 3 HD
-http://core.itsall.pro/live/megapeer/PQubhxj8KGGKSLPAKS/261038.ts
+http://core.itsall.pro/live/megapeer/PQubhxj8KGGKSLPAKS/261038.m3u8
 #EXTINF:-1 tvg-ID="" tvg-name="|FR| A LA CARTE 4 HD" tvg-logo="http://dvb.oppserver.net/unix/xbmc/addons/vdr/stationlogos/a%20la%20carte.png" group-title="BOUQUET  FRANCAIS",|FR| A LA CARTE 4 HD
 http://vip.sibfungold.org:8080/live/gazi2po2/@RoFdf1tble@QP588zr7dj@/55654.ts
 #EXTINF:-1 tvg-ID="" tvg-name="|FR| A LA CARTE 5 HD" tvg-logo="http://f.pure-redirect.com/flags/fr.png" group-title="BOUQUET  FRANCAIS",|FR| A LA CARTE 5 HD
